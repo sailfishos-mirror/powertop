@@ -98,9 +98,9 @@ int runtime_tunable::good_bad(void)
 
 	content = read_sysfs_string(runtime_path);
 
-	if (strcmp(content.c_str(), "auto") == 0)
+	if (content == "auto")
 		return TUNE_GOOD;
-	if (strcmp(content.c_str(), "on") == 0)
+	if (content == "on")
 		return TUNE_GOOD;
 
 	return TUNE_BAD;
