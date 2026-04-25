@@ -59,7 +59,6 @@ device::device(void)
 	cached_valid = 0;
 	hide = 0;
 
-	memset(guilty, 0, sizeof(guilty));
 	memset(real_path, 0, sizeof(real_path));
 }
 

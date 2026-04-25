@@ -38,7 +38,7 @@ public:
 	int cached_valid;
 	bool hide;
 
-	char guilty[4096];
+	std::string guilty;
 	char real_path[PATH_MAX+1];
 
 	virtual void start_measurement(void);

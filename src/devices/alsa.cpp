@@ -39,6 +39,7 @@ using namespace std;
 
 #include <string.h>
 #include <unistd.h>
+#include <format>
 
 alsa::alsa(const char *_name, const char *path): device()
 {
@@ -58,7 +59,6 @@ alsa::alsa(const char *_name, const char *path): device()
 	pt_strcpy(name, devname);
 	rindex = get_result_index(name);
 
-	guilty[0] = 0;
 	model[0] = 0;
 	vendor[0] = 0;
 	snprintf(devname, sizeof(devname), "%s/modelname", path);
@@ -201,7 +201,7 @@ void alsa::register_power_with_devlist(struct result_bundle *results, struct par
 const char * alsa::human_name(void)
 {
 	pt_strcpy(temp_buf, humanname);
-	if (strlen(guilty) > 0)
-		snprintf(temp_buf, sizeof(temp_buf), "%s (%s)", humanname, guilty);
+	if (!guilty.empty())
+		pt_strcpy(temp_buf, std::format("{} ({})", humanname, guilty).c_str());
 	return temp_buf;
 }
