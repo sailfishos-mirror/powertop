@@ -31,7 +31,7 @@
 class i915gpu: public device {
 	int index;
 	int rindex;
-	vector<device *>child_devices;
+	std::vector<device *>child_devices;
 
 public:
 
@@ -44,7 +44,14 @@ public:
 
 	virtual const char * class_name(void) { return "GPU";};
 
-	virtual const char * device_name(void);
+	virtual const char * device_name(void) {
+		if (child_devices.size())
+			return "GPU misc";
+		return "GPU";
+	};
+	virtual std::string device_name_s(void) { return device_name(); };
+	virtual const char * human_name(void) { return "Intel GPU"; };
+	virtual std::string human_name_s(void) { return human_name(); };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual bool show_in_list(void) {return false;};
 	virtual const char * util_units(void) { return " ops/s"; };

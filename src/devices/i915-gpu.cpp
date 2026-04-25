@@ -52,14 +52,6 @@ i915gpu::i915gpu(): device()
 	rindex = get_result_index("gpu-operations");
 }
 
-const char * i915gpu::device_name(void)
-{
-	if (child_devices.size())
-		return "GPU misc";
-	else
-		return "GPU";
-}
-
 void i915gpu::start_measurement(void)
 {
 }
