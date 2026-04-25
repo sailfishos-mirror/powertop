@@ -129,7 +129,6 @@ static void do_proc_net_dev(void)
 network::network(const char *_name, const char *path): device()
 {
 	char line[4096];
-	std::string filename(path);
 	start_up = 0;
 	end_up = 0;
 	start_speed = 0;
@@ -142,8 +141,8 @@ network::network(const char *_name, const char *path): device()
 	valid_high = -1;
 	valid_powerunsave = -1;
 
-	pt_strcpy(sysfs_path, path);
-	register_sysfs_path(sysfs_path);
+	sysfs_path = path;
+	register_sysfs_path(sysfs_path.c_str());
 	name = _name;
 	humanname = std::format("nic:{}", _name);
 
@@ -166,8 +165,7 @@ network::network(const char *_name, const char *path): device()
 	rindex_pkts = get_result_index(std::format("{}-packets", _name));
 
 	memset(line, 0, 4096);
-	filename.append("/device/driver");
-	if (readlink(filename.c_str(), line, 4096) > 0) {
+	if (readlink(std::format("{}/device/driver", path).c_str(), line, 4096) > 0) {
 		humanname = std::format(_("Network interface: {} ({})"), _name,  basename(line));
 	};
 }

@@ -40,7 +40,7 @@ class network: public device {
 	int start_speed; /* 0 is "no link" */
 	int end_speed; /* 0 is "no link" */
 
-	char sysfs_path[PATH_MAX];
+	std::string sysfs_path;
 	std::string name;
 	std::string humanname;
 	int index_up;
