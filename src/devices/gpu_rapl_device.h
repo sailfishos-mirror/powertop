@@ -46,6 +46,8 @@ public:
 	gpu_rapl_device(i915gpu *parent);
 	virtual const char * class_name(void) { return "GPU core";};
 	virtual const char * device_name(void) { return "GPU core";};
+	virtual std::string device_name_s(void) { return "GPU core";};
+	virtual std::string human_name_s(void) { return "GPU core";};
 	bool device_present() { return device_valid;}
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual void start_measurement(void);
