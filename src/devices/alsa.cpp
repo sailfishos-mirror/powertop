@@ -56,7 +56,7 @@ alsa::alsa(const char *_name, const char *path): device()
 
 	name = std::format("alsa:{}", _name);
 	humanname = std::format("alsa:{}", _name);
-	rindex = get_result_index(name.c_str());
+	rindex = get_result_index(name);
 
 	model[0] = 0;
 	vendor[0] = 0;
@@ -131,7 +131,7 @@ void alsa::end_measurement(void)
 	}
 
 	p = (end_active - start_active) / (0.001 + end_active + end_inactive - start_active - start_inactive) * 100.0;
-	report_utilization(name.c_str(), p);
+	report_utilization(name, p);
 }
 
 
@@ -190,9 +190,9 @@ double alsa::power_usage(struct result_bundle *result, struct parameter_bundle *
 void alsa::register_power_with_devlist(struct result_bundle *results, struct parameter_bundle *bundle)
 {
 	if (name.length() > 7)
-		register_devpower(name.substr(7).c_str(), power_usage(results, bundle), this);
+		register_devpower(name.substr(7), power_usage(results, bundle), this);
 	else
-		register_devpower(name.c_str(), power_usage(results, bundle), this);
+		register_devpower(name, power_usage(results, bundle), this);
 }
 
 std::string alsa::human_name_s(void)

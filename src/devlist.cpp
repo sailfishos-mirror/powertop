@@ -251,24 +251,29 @@ void clear_devpower(void)
 	}
 }
 
-void register_devpower(const char *devstring, double power, class device *_dev)
+void register_devpower(const std::string &devstring, double power, class device *_dev)
 {
 	unsigned int i;
 	struct devpower *dev =  NULL;
 
 	for (i = 0; i < devpower.size(); i++)
-		if (strcmp(devstring, devpower[i]->device) == 0) {
+		if (devstring == devpower[i]->device) {
 			dev = devpower[i];
 		}
 
 	if (!dev) {
 		dev = (struct devpower *)malloc(sizeof (struct devpower));
-		pt_strcpy(dev->device, devstring);
+		pt_strcpy(dev->device, devstring.c_str());
 		dev->power = 0.0;
 		devpower.push_back(dev);
 	}
 	dev->dev = _dev;
 	dev->power = power;
+}
+
+void register_devpower(const char *devstring, double power, class device *_dev)
+{
+	register_devpower(std::string(devstring), power, _dev);
 }
 
 void run_devpower_list(void)
