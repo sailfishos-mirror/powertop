@@ -59,8 +59,6 @@ device::device(void)
 {
 	cached_valid = 0;
 	hide = 0;
-
-	memset(real_path, 0, sizeof(real_path));
 }
 
 
@@ -68,6 +66,8 @@ void device::register_sysfs_path(const char *path)
 {
 	char current_path[PATH_MAX + 1];
 	int iter = 0;
+	char resolved_path[PATH_MAX + 1];
+
 	pt_strcpy(current_path, path);
 
 	while (iter++ < 10) {
@@ -79,8 +79,10 @@ void device::register_sysfs_path(const char *path)
 			break;
 	}
 
-	if (!realpath(current_path, real_path))
-		real_path[0] = 0;
+	if (realpath(current_path, resolved_path))
+		real_path = resolved_path;
+	else
+		real_path.clear();
 }
 
 void device::start_measurement(void)

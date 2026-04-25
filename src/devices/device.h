@@ -39,7 +39,7 @@ public:
 	bool hide;
 
 	std::string guilty;
-	char real_path[PATH_MAX+1];
+	std::string real_path;
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);
