@@ -33,6 +33,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits.h>
+#include <format>
 
 #include "../lib.h"
 
@@ -43,7 +44,6 @@ usb_tunable::usb_tunable(const char *path, const char *name) : tunable("", 0.9, 
 	char vendor[2048];
 	char product[2048];
 	std::string str1, str2;
-	char buffer[4096];
 	snprintf(usb_path, sizeof(usb_path), "%s/power/control", path);
 
 	vendor[0] = 0;
@@ -52,8 +52,7 @@ usb_tunable::usb_tunable(const char *path, const char *name) : tunable("", 0.9, 
 	str1 = read_sysfs_string("%s/idVendor", path);
 	str2 = read_sysfs_string("%s/idProduct", path);
 
-	snprintf(buffer, sizeof(buffer), _("Autosuspend for unknown USB device %s (%s:%s)"), name, str1.c_str(), str2.c_str());
-	desc = buffer;
+	desc = std::format(_("Autosuspend for unknown USB device {} ({}:{})"), name, str1, str2);
 
 	snprintf(filename, sizeof(filename), "%s/manufacturer", path);
 	file.open(filename, ios::in);
@@ -70,14 +69,11 @@ usb_tunable::usb_tunable(const char *path, const char *name) : tunable("", 0.9, 
 		file.close();
 	};
 	if (strlen(vendor) && strlen(product)) {
-		snprintf(buffer, sizeof(buffer), _("Autosuspend for USB device %s [%s]"), product, vendor);
-		desc = buffer;
+		desc = std::format(_("Autosuspend for USB device {} [{}]"), product, vendor);
 	} else if (strlen(product)) {
-		snprintf(buffer, sizeof(buffer), _("Autosuspend for USB device %s [%s]"), product, name);
-		desc = buffer;
+		desc = std::format(_("Autosuspend for USB device {} [{}]"), product, name);
 	} else if (strlen(vendor)) {
-		snprintf(buffer, sizeof(buffer), _("Autosuspend for USB device %s [%s]"), vendor, name);
-		desc = buffer;
+		desc = std::format(_("Autosuspend for USB device {} [{}]"), vendor, name);
 	}
 
 	snprintf(toggle_good, sizeof(toggle_good), "echo 'auto' > '%s';", usb_path);
