@@ -134,10 +134,10 @@ ahci::ahci(char *_name, char *path): device()
 	active_index = get_param_index("ahci-link-power-active");
 	partial_index = get_param_index("ahci-link-power-partial");
 
-	active_rindex = get_result_index(std::format("{}-active", name).c_str());
-	partial_rindex = get_result_index(std::format("{}-partial", name).c_str());
-	slumber_rindex = get_result_index(std::format("{}-slumber", name).c_str());
-	devslp_rindex = get_result_index(std::format("{}-devslp", name).c_str());
+	active_rindex = get_result_index(std::format("{}-active", name));
+	partial_rindex = get_result_index(std::format("{}-partial", name));
+	slumber_rindex = get_result_index(std::format("{}-slumber", name));
+	devslp_rindex = get_result_index(std::format("{}-devslp", name));
 
 	diskname = model_name(path, _name);
 
