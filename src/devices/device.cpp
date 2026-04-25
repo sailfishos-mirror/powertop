@@ -30,6 +30,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <format>
 
 using namespace std;
 
@@ -149,8 +150,8 @@ void report_devices(void)
 	int show_power;
 	double pw;
 
-	char util[128];
-	char power[128];
+	std::string util;
+	char power_buf[128];
 
 	win = get_ncurses_win("Device stats");
         if (!win)
@@ -189,28 +190,30 @@ void report_devices(void)
 
 	for (i = 0; i < all_devices.size(); i++) {
 		double P;
+		std::string power;
 
-		util[0] = 0;
+		util = "";
 
 		if (all_devices[i]->util_units()) {
 			if (all_devices[i]->utilization() < 1000)
-				sprintf(util, "%5.1f%s",  all_devices[i]->utilization(),  all_devices[i]->util_units());
+				util = std::format("{:5.1f}{}",  all_devices[i]->utilization(),  all_devices[i]->util_units());
 			else
-				sprintf(util, "%5i%s",  (int)all_devices[i]->utilization(),  all_devices[i]->util_units());
+				util = std::format("{:5d}{}",  (int)all_devices[i]->utilization(),  all_devices[i]->util_units());
 		}
-		while (strlen(util) < 13) strcat(util, " ");
+		while (util.length() < 13) util.append(" ");
 
 		P = all_devices[i]->power_usage(&all_results, &all_parameters);
 
-		format_watts(P, power, 11);
+		format_watts(P, power_buf, 11);
+		power = power_buf;
 
 		if (!show_power || !all_devices[i]->power_valid())
-			strcpy(power, "           ");
+			power = "           ";
 
 
 		wprintw(win, "%s %s %s\n",
-			power,
-			util,
+			power.c_str(),
+			util.c_str(),
 			all_devices[i]->human_name()
 			);
 	}
@@ -280,35 +283,36 @@ void show_report_devices(void)
 
 	for (i = 0; i < all_devices.size(); i++) {
 		double P;
-		char util[128];
-		char power[128];
+		std::string util;
+		std::string power;
+		char power_buf[128];
 
-		util[0] = 0;
 		if (all_devices[i]->util_units()) {
 			if (all_devices[i]->utilization() < 1000)
-				sprintf(util, "%5.1f%s",
+				util = std::format("{:5.1f}{}",
 					all_devices[i]->utilization(),
 					all_devices[i]->util_units());
 			else
-				sprintf(util, "%5i%s",
+				util = std::format("{:5d}{}",
 					(int)all_devices[i]->utilization(),
 					all_devices[i]->util_units());
 		}
 
 		P = all_devices[i]->power_usage(&all_results, &all_parameters);
-		format_watts(P, power, 11);
+		format_watts(P, power_buf, 11);
+		power = power_buf;
 
 		if (!show_power || !all_devices[i]->power_valid())
-			strcpy(power, "           ");
+			power = "           ";
 
-		device_data[idx]= string(util);
+		device_data[idx]= util;
 		idx+=1;
 
-		device_data[idx]= string(all_devices[i]->human_name());
+		device_data[idx]= all_devices[i]->human_name_s();
 		idx+=1;
 
 		if (show_power) {
-			device_data[idx]= string(power);
+			device_data[idx]= power;
 			idx+=1;
 		}
 	}
