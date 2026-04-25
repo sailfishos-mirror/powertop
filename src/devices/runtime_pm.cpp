@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <limits.h>
+#include <format>
 
 #include "../parameters/parameters.h"
 #include "../lib.h"
@@ -42,18 +43,18 @@ runtime_pmdevice::runtime_pmdevice(const char *_name, const char *path) : device
 {
 	pt_strcpy(sysfs_path, path);
 	register_sysfs_path(sysfs_path);
-	pt_strcpy(name, _name);
-	snprintf(humanname, sizeof(humanname), "runtime-%s", _name);
+	name = _name;
+	humanname = std::format("runtime-{}", _name);
 
-	index = get_param_index(humanname);
-	r_index = get_result_index(humanname);
+	index = get_param_index(humanname.c_str());
+	r_index = get_result_index(humanname.c_str());
 
 	before_suspended_time = 0;
 	before_active_time = 0;
 	after_suspended_time = 0;
 	after_active_time = 0;
 
-	register_parameter(humanname);
+	register_parameter(humanname.c_str());
 }
 
 void runtime_pmdevice::start_measurement(void)
@@ -113,16 +114,6 @@ double runtime_pmdevice::utilization(void) /* percentage */
 	return d;
 }
 
-const char * runtime_pmdevice::device_name(void)
-{
-	return name;
-}
-
-const char * runtime_pmdevice::human_name(void)
-{
-	return humanname;
-}
-
 
 double runtime_pmdevice::power_usage(struct result_bundle *result, struct parameter_bundle *bundle)
 {
@@ -139,9 +130,9 @@ double runtime_pmdevice::power_usage(struct result_bundle *result, struct parame
 	return power;
 }
 
-void runtime_pmdevice::set_human_name(char *_name)
+void runtime_pmdevice::set_human_name(const char *_name)
 {
-	pt_strcpy(humanname, _name);
+	humanname = _name;
 }
 
 
@@ -198,8 +189,7 @@ static void do_bus(const char *bus)
 		dev = new class runtime_pmdevice(entry->d_name, filename);
 
 		if (strcmp(bus, "i2c") == 0) {
-			string devname;
-			char dev_name[4096];
+			std::string devname;
 			bool is_adapter = false;
 
 			snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s/new_device", bus, entry->d_name);
@@ -213,8 +203,7 @@ static void do_bus(const char *bus)
 				file.close();
 			}
 
-			snprintf(dev_name, sizeof(dev_name), _("I2C %s (%s): %s"), (is_adapter ? _("Adapter") : _("Device")), entry->d_name, devname.c_str());
-			dev->set_human_name(dev_name);
+			dev->set_human_name(std::format(_("I2C {} ({}): {}"), (is_adapter ? _("Adapter") : _("Device")), entry->d_name, devname).c_str());
 		}
 
 		if (strcmp(bus, "pci") == 0) {
@@ -237,10 +226,8 @@ static void do_bus(const char *bus)
 			}
 
 			if (vendor && device) {
-				char devname[4096];
-				snprintf(devname, sizeof(devname), _("PCI Device: %s"),
-					pci_id_to_name(vendor, device, filename, 4095));
-				dev->set_human_name(devname);
+				dev->set_human_name(std::format(_("PCI Device: {}"),
+					pci_id_to_name(vendor, device, filename, 4095)).c_str());
 			}
 		}
 		all_devices.push_back(dev);

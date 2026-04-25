@@ -26,6 +26,7 @@
 #define _INCLUDE_GUARD_RUNTIMEPM_H
 
 #include <limits.h>
+#include <string>
 
 #include "device.h"
 #include "../parameters/parameters.h"
@@ -34,8 +35,8 @@ class runtime_pmdevice: public device {
 	uint64_t before_suspended_time, before_active_time;
 	uint64_t after_suspended_time, after_active_time;
 	char sysfs_path[PATH_MAX];
-	char name[4096];
-	char humanname[4096];
+	std::string name;
+	std::string humanname;
 	int index;
 	int r_index;
 public:
@@ -49,12 +50,14 @@ public:
 
 	virtual const char * class_name(void) { return "runtime_pm";};
 
-	virtual const char * device_name(void);
-	virtual const char * human_name(void);
+	virtual const char * device_name(void) { return name.c_str(); };
+	virtual std::string device_name_s(void) { return name; };
+	virtual const char * human_name(void) { return humanname.c_str(); };
+	virtual std::string human_name_s(void) { return humanname; };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual int power_valid(void) { return utilization_power_valid(r_index);};
 
-	void set_human_name(char *name);
+	void set_human_name(const char *name);
 	virtual int grouping_prio(void) { return 1; };
 };
 
