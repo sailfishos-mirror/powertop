@@ -217,7 +217,7 @@ int charge_device_to_openers(const char *devstring, double power, class device *
 			proc = find_create_process(one[i]->comm, one[i]->pid);
 			if (proc) {
 				proc->power_charge += power;
-				if (_dev->guilty.length() < 2000 && _dev->guilty.find(one[i]->comm) == std::string::npos) {
+				if (_dev->guilty.find(one[i]->comm) == std::string::npos) {
 					_dev->guilty += one[i]->comm;
 					_dev->guilty += " ";
 				}
@@ -229,7 +229,7 @@ int charge_device_to_openers(const char *devstring, double power, class device *
 			proc = find_create_process(two[i]->comm, two[i]->pid);
 			if (proc) {
 				proc->power_charge += power;
-				if (_dev->guilty.length() < 2000 && _dev->guilty.find(two[i]->comm) == std::string::npos) {
+				if (_dev->guilty.find(two[i]->comm) == std::string::npos) {
 					_dev->guilty += two[i]->comm;
 					_dev->guilty += " ";
 				}
