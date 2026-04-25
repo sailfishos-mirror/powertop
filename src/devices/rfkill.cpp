@@ -40,33 +40,32 @@ using namespace std;
 
 #include <string.h>
 #include <unistd.h>
+#include <format>
 
 rfkill::rfkill(char *_name, char *path): device()
 {
 	char line[4096];
 	char filename[PATH_MAX];
-	char devname[128];
 	start_soft = 0;
 	start_hard = 0;
 	end_soft = 0;
 	end_hard = 0;
 	pt_strcpy(sysfs_path, path);
 	register_sysfs_path(sysfs_path);
-	snprintf(devname, sizeof(devname), "radio:%s", _name);
-	snprintf(humanname, sizeof(humanname), "radio:%s", _name);
-	pt_strcpy(name, devname);
-	register_parameter(devname);
-	index = get_param_index(devname);
-	rindex = get_result_index(name);
+	name = std::format("radio:{}", _name);
+	humanname = std::format("radio:{}", _name);
+	register_parameter(name.c_str());
+	index = get_param_index(name.c_str());
+	rindex = get_result_index(name.c_str());
 
 	memset(line, 0, 4096);
 	snprintf(filename, sizeof(filename), "%s/device/driver", path);
 	if (readlink(filename, line, sizeof(line)) > 0) {
-		snprintf(humanname, sizeof(humanname), _("Radio device: %s"), basename(line));
+		humanname = std::format(_("Radio device: {}"), basename(line));
 	}
 	snprintf(filename, sizeof(filename), "%s/device/device/driver", path);
 	if (readlink(filename, line, sizeof(line)) > 0) {
-		snprintf(humanname, sizeof(humanname), _("Radio device: %s"), basename(line));
+		humanname = std::format(_("Radio device: {}"), basename(line));
 	}
 }
 
@@ -113,7 +112,7 @@ void rfkill::end_measurement(void)
 	}
 	file.close();
 
-	report_utilization(name, utilization());
+	report_utilization(name.c_str(), utilization());
 }
 
 
@@ -129,11 +128,6 @@ double rfkill::utilization(void)
 	p = 100 - 50.0 * rfk;
 
 	return p;
-}
-
-const char * rfkill::device_name(void)
-{
-	return name;
 }
 
 static void create_all_rfkills_callback(const char *d_name)
