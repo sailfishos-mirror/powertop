@@ -39,15 +39,14 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <errno.h>
+#include <format>
 
 #include "../lib.h"
 #include "bluetooth.h"
 
 bt_tunable::bt_tunable(void) : tunable("", 1.0, _("Good"), _("Bad"), _("Unknown"))
 {
-	char buffer[4096];
-	snprintf(buffer, sizeof(buffer), _("Bluetooth device interface status"));
-	desc = buffer;
+	desc = std::format(_("Bluetooth device interface status"));
 	pt_strcpy(toggle_bad, "/usr/sbin/hciconfig hci0 up &> /dev/null &");
 	pt_strcpy(toggle_good, "/usr/sbin/hciconfig hci0 down &> /dev/null");
 }
