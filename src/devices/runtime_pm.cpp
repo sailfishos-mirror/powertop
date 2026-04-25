@@ -41,8 +41,8 @@
 
 runtime_pmdevice::runtime_pmdevice(const char *_name, const char *path) : device()
 {
-	pt_strcpy(sysfs_path, path);
-	register_sysfs_path(sysfs_path);
+	sysfs_path = path;
+	register_sysfs_path(sysfs_path.c_str());
 	name = _name;
 	humanname = std::format("runtime-{}", _name);
 
@@ -59,7 +59,6 @@ runtime_pmdevice::runtime_pmdevice(const char *_name, const char *path) : device
 
 void runtime_pmdevice::start_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 
 	before_suspended_time = 0;
@@ -67,15 +66,13 @@ void runtime_pmdevice::start_measurement(void)
         after_suspended_time = 0;
 	after_active_time = 0;
 
-	snprintf(filename, sizeof(filename), "%s/power/runtime_suspended_time", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/power/runtime_suspended_time", sysfs_path), ios::in);
 	if (!file)
 		return;
 	file >> before_suspended_time;
 	file.close();
 
-	snprintf(filename, sizeof(filename), "%s/power/runtime_active_time", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/power/runtime_active_time", sysfs_path), ios::in);
 	if (!file)
 		return;
 	file >> before_active_time;
@@ -84,18 +81,15 @@ void runtime_pmdevice::start_measurement(void)
 
 void runtime_pmdevice::end_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 
-	snprintf(filename, sizeof(filename), "%s/power/runtime_suspended_time", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/power/runtime_suspended_time", sysfs_path), ios::in);
 	if (!file)
 		return;
 	file >> after_suspended_time;
 	file.close();
 
-	snprintf(filename, sizeof(filename), "%s/power/runtime_active_time", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/power/runtime_active_time", sysfs_path), ios::in);
 	if (!file)
 		return;
 	file >> after_active_time;
@@ -138,27 +132,24 @@ void runtime_pmdevice::set_human_name(const char *_name)
 
 int device_has_runtime_pm(const char *sysfs_path)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 	unsigned long value;
 
-	snprintf(filename, sizeof(filename), "%s/power/runtime_suspended_time", sysfs_path);
-	file.open(filename, ios::in);
-	if (!file)
-		return 0;
-	file >> value;
-	file.close();
-	if (value)
-		return 1;
+	file.open(std::format("{}/power/runtime_suspended_time", sysfs_path), ios::in);
+	if (file) {
+		file >> value;
+		file.close();
+		if (value)
+			return 1;
+	}
 
-	snprintf(filename, sizeof(filename), "%s/power/runtime_active_time", sysfs_path);
-	file.open(filename, ios::in);
-	if (!file)
-		return 0;
-	file >> value;
-	file.close();
-	if (value)
-		return 1;
+	file.open(std::format("{}/power/runtime_active_time", sysfs_path), ios::in);
+	if (file) {
+		file >> value;
+		file.close();
+		if (value)
+			return 1;
+	}
 
 	return 0;
 }
@@ -169,10 +160,8 @@ static void do_bus(const char *bus)
 
 	struct dirent *entry;
 	DIR *dir;
-	char filename[PATH_MAX];
 
-	snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/", bus);
-	dir = opendir(filename);
+	dir = opendir(std::format("/sys/bus/{}/devices/", bus).c_str());
 	if (!dir)
 		return;
 	while (1) {
@@ -185,19 +174,16 @@ static void do_bus(const char *bus)
 		if (entry->d_name[0] == '.')
 			continue;
 
-		snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s", bus, entry->d_name);
-		dev = new class runtime_pmdevice(entry->d_name, filename);
+		dev = new class runtime_pmdevice(entry->d_name, std::format("/sys/bus/{}/devices/{}", bus, entry->d_name).c_str());
 
 		if (strcmp(bus, "i2c") == 0) {
 			std::string devname;
 			bool is_adapter = false;
 
-			snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s/new_device", bus, entry->d_name);
-			if (access(filename, W_OK) == 0)
+			if (access(std::format("/sys/bus/{}/devices/{}/new_device", bus, entry->d_name).c_str(), W_OK) == 0)
 				is_adapter = true;
 
-			snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s/name", bus, entry->d_name);
-			file.open(filename, ios::in);
+			file.open(std::format("/sys/bus/{}/devices/{}/name", bus, entry->d_name), ios::in);
 			if (file) {
 				getline(file, devname);
 				file.close();
@@ -208,18 +194,16 @@ static void do_bus(const char *bus)
 
 		if (strcmp(bus, "pci") == 0) {
 			uint16_t vendor = 0, device = 0;
+			char filename[4096];
 
-			snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s/vendor", bus, entry->d_name);
-
-			file.open(filename, ios::in);
+			file.open(std::format("/sys/bus/{}/devices/{}/vendor", bus, entry->d_name), ios::in);
 			if (file) {
 				file >> hex >> vendor;
 				file.close();
 			}
 
 
-			snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s/device", bus, entry->d_name);
-			file.open(filename, ios::in);
+			file.open(std::format("/sys/bus/{}/devices/{}/device", bus, entry->d_name), ios::in);
 			if (file) {
 				file >> hex >> device;
 				file.close();

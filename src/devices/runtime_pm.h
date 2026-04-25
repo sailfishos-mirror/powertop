@@ -34,7 +34,7 @@
 class runtime_pmdevice: public device {
 	uint64_t before_suspended_time, before_active_time;
 	uint64_t after_suspended_time, after_active_time;
-	char sysfs_path[PATH_MAX];
+	std::string sysfs_path;
 	std::string name;
 	std::string humanname;
 	int index;
