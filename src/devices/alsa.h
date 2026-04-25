@@ -36,7 +36,7 @@
 class alsa: public device {
 	uint64_t start_active, end_active;
 	uint64_t start_inactive, end_inactive;
-	char sysfs_path[PATH_MAX];
+	std::string sysfs_path;
 	std::string name;
 	std::string humanname;
 	char temp_buf[4096];

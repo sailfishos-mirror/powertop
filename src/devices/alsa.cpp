@@ -45,14 +45,13 @@ alsa::alsa(const char *_name, const char *path): device()
 {
 	ifstream file;
 
-	char devname[4096];
 	char model[4096];
 	char vendor[4096];
 	end_active = 0;
 	start_active = 0;
 	end_inactive = 0;
 	start_inactive = 0;
-	pt_strcpy(sysfs_path, path);
+	sysfs_path = path;
 
 	name = std::format("alsa:{}", _name);
 	humanname = std::format("alsa:{}", _name);
@@ -60,14 +59,12 @@ alsa::alsa(const char *_name, const char *path): device()
 
 	model[0] = 0;
 	vendor[0] = 0;
-	snprintf(devname, sizeof(devname), "%s/modelname", path);
-	file.open(devname);
+	file.open(std::format("{}/modelname", path));
 	if (file) {
 		file.getline(model, sizeof(model));
 		file.close();
 	}
-	snprintf(devname, sizeof(devname), "%s/vendor_name", path);
-	file.open(devname);
+	file.open(std::format("{}/vendor_name", path));
 	if (file) {
 		file.getline(vendor, sizeof(vendor));
 		file.close();
@@ -82,18 +79,15 @@ alsa::alsa(const char *_name, const char *path): device()
 
 void alsa::start_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 
-	snprintf(filename, sizeof(filename), "%s/power_off_acct", sysfs_path);
 	try {
-		file.open(filename, ios::in);
+		file.open(std::format("{}/power_off_acct", sysfs_path));
 		if (file) {
 			file >> start_inactive;
 		}
 		file.close();
-		snprintf(filename, sizeof(filename), "%s/power_on_acct", sysfs_path);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/power_on_acct", sysfs_path));
 
 		if (file) {
 			file >> start_active;
@@ -107,19 +101,16 @@ void alsa::start_measurement(void)
 
 void alsa::end_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 	double p;
 
-	snprintf(filename, sizeof(filename), "%s/power_off_acct", sysfs_path);
 	try {
-		file.open(filename, ios::in);
+		file.open(std::format("{}/power_off_acct", sysfs_path));
 		if (file) {
 			file >> end_inactive;
 		}
 		file.close();
-		snprintf(filename, sizeof(filename), "%s/power_on_acct", sysfs_path);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/power_on_acct", sysfs_path));
 
 		if (file) {
 			file >> end_active;
@@ -146,18 +137,15 @@ double alsa::utilization(void)
 
 static void create_all_alsa_callback(const char *d_name)
 {
-	char filename[PATH_MAX];
 	class alsa *bl;
 
 	if (strncmp(d_name, "hwC", 3) != 0)
 		return;
 
-	snprintf(filename, sizeof(filename), "/sys/class/sound/%s/power_on_acct", d_name);
-	if (access(filename, R_OK) != 0)
+	if (access(std::format("/sys/class/sound/{}/power_on_acct", d_name).c_str(), R_OK) != 0)
 		return;
 
-	snprintf(filename, sizeof(filename), "/sys/class/sound/%s", d_name);
-	bl = new class alsa(d_name, filename);
+	bl = new class alsa(d_name, std::format("/sys/class/sound/{}", d_name).c_str());
 	all_devices.push_back(bl);
 	register_parameter("alsa-codec-power", 0.5);
 }
