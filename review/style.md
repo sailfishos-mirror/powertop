@@ -89,9 +89,14 @@ default:
 *   Use `#pragma once`
 
 ### 4.2 Namespaces
-*   The project frequently uses `using namespace std;` in both source and header files. While generally discouraged in headers, this is the established pattern in the codebase.
+*   Avoid `using namespace std;`.
+*   Always use the `std::` prefix for standard library elements (e.g., `std::string`, `std::vector`, `std::ifstream`).
 
-### 4.3 Includes
+### 4.3 Strings
+*   Prefer `std::string` over C-style strings (`char *`) or fixed-size buffers, unless interfacing with C-only libraries.
+*   Always use the fully qualified `std::string` type.
+
+### 4.4 Includes
 *   Order: Standard library headers first, followed by project-specific headers.
 *   Project headers should be included using quotes (e.g., `#include "lib.h"`).
 

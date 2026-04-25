@@ -12,6 +12,10 @@ PowerTOP uses the C++ 20 language standard
 - [ ] Undefined behavior (UB) language constructs are a violation of coding
     style
 
+- [ ] Any use fixed sized buffers (example: char foo[128]) must be provably
+    correct to not overflow the buffer
+
+- [ ] "using namespace std;" is a deprecated construct
 
 ## STL
 
@@ -20,3 +24,5 @@ PowerTOP uses the C++ 20 language standard
 - [ ] Prefer std::string over C style "char *", except when interfacing with
     C class libraries
 
+- [ ] Use "std::<element>" instead of "<element>" even when code uses 
+    "using namespace std".
