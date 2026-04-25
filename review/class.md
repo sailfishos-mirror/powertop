@@ -15,8 +15,8 @@ Base class for all hardware components that PowerTOP monitors for power consumpt
 
 ### Key public variables
 * `bool hide`: If true, the device is hidden from the UI.
-* `char guilty[4096]`: Stores information about processes responsible for this device's activity.
-* `char real_path[PATH_MAX+1]`: The sysfs path to the device.
+* `std::string guilty`: Stores information about processes responsible for this device's activity.
+* `std::string real_path`: The sysfs path to the device.
 
 ### Derived class cpudevice
 Specialized for CPU devices; serves as a base for RAPL (Running Average Power Limit) devices.
@@ -101,6 +101,10 @@ Base class for power-saving settings that can be "tuned" (e.g., SATA link power 
 * `toggle()`: Switches between "good" and "bad" settings.
 * `description()`: Returns a description of the tunable setting.
 * `description_s()`: Returns a std::string description of the tunable setting.
+* `result_string()`: Returns a string representation of the current state (Good/Bad/Unknown).
+* `result_string_s()`: Returns a std::string representation of the current state.
+* `toggle_script()`: Returns a shell script command to toggle the setting.
+* `toggle_script_s()`: Returns a std::string shell script command to toggle the setting.
 
 ### Key public variables
 * `double score`: The estimated power saving impact.
@@ -134,7 +138,7 @@ Base class for different methods of measuring system-wide power consumption.
 ### Key public methods
 * `power()`: Returns the current power consumption in Watts.
 * `start_measurement()`: Starts a measurement interval.
-* `end_measurement()`: Ends a measurement interval.
+* `end_measurement()`: Finalizes a measurement interval.
 * `is_discharging()`: Returns true if the system is running on battery.
 
 ### Derived class acpi_power_meter
