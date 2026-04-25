@@ -54,9 +54,9 @@ rfkill::rfkill(char *_name, char *path): device()
 	register_sysfs_path(sysfs_path);
 	name = std::format("radio:{}", _name);
 	humanname = std::format("radio:{}", _name);
-	register_parameter(name.c_str());
-	index = get_param_index(name.c_str());
-	rindex = get_result_index(name.c_str());
+	register_parameter(name);
+	index = get_param_index(name);
+	rindex = get_result_index(name);
 
 	memset(line, 0, 4096);
 	snprintf(filename, sizeof(filename), "%s/device/driver", path);
@@ -112,7 +112,7 @@ void rfkill::end_measurement(void)
 	}
 	file.close();
 
-	report_utilization(name.c_str(), utilization());
+	report_utilization(name, utilization());
 }
 
 
