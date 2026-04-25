@@ -45,7 +45,9 @@ public:
 	virtual const char * class_name(void) { return "fan";};
 
 	virtual const char * device_name(void) { return "Fan-1";};
+	virtual std::string device_name_s(void) { return human_name(); };
 	virtual const char * human_name(void) { return "Laptop fan";};
+	virtual std::string human_name_s(void) { return human_name(); };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual const char * util_units(void) { return " rpm"; };
 	virtual int power_valid(void) { return utilization_power_valid(r_index);};
