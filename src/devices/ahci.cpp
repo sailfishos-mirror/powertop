@@ -40,6 +40,7 @@ using namespace std;
 #include "../parameters/parameters.h"
 #include "report/report-data-html.h"
 #include <string.h>
+#include <format>
 
 vector <class ahci *> links;
 
@@ -115,9 +116,7 @@ static string model_name(char *path, char *shortname)
 
 ahci::ahci(char *_name, char *path): device()
 {
-	char buffer[4096];
-	char devname[128];
-	string diskname;
+	std::string diskname;
 
 	end_active = 0;
 	end_slumber = 0;
@@ -131,29 +130,21 @@ ahci::ahci(char *_name, char *path): device()
 
 	register_sysfs_path(sysfs_path);
 
-	snprintf(devname, sizeof(devname), "ahci:%s", _name);
-	pt_strcpy(name, devname);
+	name = std::format("ahci:{}", _name);
 	active_index = get_param_index("ahci-link-power-active");
 	partial_index = get_param_index("ahci-link-power-partial");
 
-	snprintf(buffer, sizeof(buffer), "%s-active", name);
-	active_rindex = get_result_index(buffer);
-
-	snprintf(buffer, sizeof(buffer), "%s-partial", name);
-	partial_rindex = get_result_index(buffer);
-
-	snprintf(buffer, sizeof(buffer), "%s-slumber", name);
-	slumber_rindex = get_result_index(buffer);
-
-	snprintf(buffer, sizeof(buffer), "%s-devslp", name);
-	devslp_rindex = get_result_index(buffer);
+	active_rindex = get_result_index(std::format("{}-active", name).c_str());
+	partial_rindex = get_result_index(std::format("{}-partial", name).c_str());
+	slumber_rindex = get_result_index(std::format("{}-slumber", name).c_str());
+	devslp_rindex = get_result_index(std::format("{}-devslp", name).c_str());
 
 	diskname = model_name(path, _name);
 
-	if (strlen(diskname.c_str()) == 0)
-		snprintf(humanname, sizeof(humanname), _("SATA link: %s"), _name);
+	if (diskname.empty())
+		humanname = std::format(_("SATA link: {}"), _name);
 	else
-		snprintf(humanname, sizeof(humanname), _("SATA disk: %s"), diskname.c_str());
+		humanname = std::format(_("SATA disk: {}"), diskname);
 }
 
 void ahci::start_measurement(void)
@@ -197,7 +188,6 @@ void ahci::start_measurement(void)
 void ahci::end_measurement(void)
 {
 	char filename[PATH_MAX];
-	char powername[4096];
 	ifstream file;
 	double p;
 	double total;
@@ -245,29 +235,25 @@ void ahci::end_measurement(void)
 	p = (end_active - start_active) / total * 100.0;
 	if (p < 0)
 		 p = 0;
-	snprintf(powername, sizeof(powername), "%s-active", name);
-	report_utilization(powername, p);
+	report_utilization(std::format("{}-active", name).c_str(), p);
 
 	/* percent in partial */
 	p = (end_partial - start_partial) / total * 100.0;
 	if (p < 0)
 		 p = 0;
-	snprintf(powername, sizeof(powername), "%s-partial", name);
-	report_utilization(powername, p);
+	report_utilization(std::format("{}-partial", name).c_str(), p);
 
 	/* percent in slumber */
 	p = (end_slumber - start_slumber) / total * 100.0;
 	if (p < 0)
 		 p = 0;
-	snprintf(powername, sizeof(powername), "%s-slumber", name);
-	report_utilization(powername, p);
+	report_utilization(std::format("{}-slumber", name).c_str(), p);
 
 	/* percent in devslp */
 	p = (end_devslp - start_devslp) / total * 100.0;
 	if (p < 0)
 		 p = 0;
-	snprintf(powername, sizeof(powername), "%s-devslp", name);
-	report_utilization(powername, p);
+	report_utilization(std::format("{}-devslp", name).c_str(), p);
 }
 
 
@@ -281,11 +267,6 @@ double ahci::utilization(void)
 		p = 0;
 
 	return p;
-}
-
-const char * ahci::device_name(void)
-{
-	return name;
 }
 
 void create_all_ahcis(void)
@@ -402,27 +383,22 @@ void ahci_create_device_stats_table(void)
 	delete [] ahci_data;
 }
 
-void ahci::report_device_stats(string *ahci_data, int idx)
+void ahci::report_device_stats(std::string *ahci_data, int idx)
 {
 	int offset=(idx*5+5);
-	char util[128];
 	double active_util = get_result_value(active_rindex, &all_results);
 	double partial_util = get_result_value(partial_rindex, &all_results);
 	double slumber_util = get_result_value(slumber_rindex, &all_results);
 	double devslp_util = get_result_value(devslp_rindex, &all_results);
 
-	snprintf(util, sizeof(util), "%5.1f",  active_util);
-	ahci_data[offset]= util;
+	ahci_data[offset]= std::format("{:5.1f}",  active_util);
 	offset +=1;
 
-	snprintf(util, sizeof(util), "%5.1f",  partial_util);
-	ahci_data[offset]= util;
+	ahci_data[offset]= std::format("{:5.1f}",  partial_util);
 	offset +=1;
 
-	snprintf(util, sizeof(util), "%5.1f",  slumber_util);
-	ahci_data[offset]= util;
+	ahci_data[offset]= std::format("{:5.1f}",  slumber_util);
 	offset +=1;
 
-	snprintf(util, sizeof(util), "%5.1f",  devslp_util);
-	ahci_data[offset]= util;
+	ahci_data[offset]= std::format("{:5.1f}",  devslp_util);
 }
