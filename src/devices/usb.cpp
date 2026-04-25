@@ -47,7 +47,7 @@ usbdevice::usbdevice(const char *_name, const char *path, const char *devid): de
 
 	pt_strcpy(sysfs_path, path);
 	register_sysfs_path(sysfs_path);
-	pt_strcpy(name, _name);
+	name = _name;
 	devname = devid;
 	humanname = std::format(_("USB device: {}"), pretty_print(devid, vendor, 4096));
 	active_before = 0;
