@@ -35,23 +35,26 @@ using namespace std;
 
 class cpudevice: public device {
 protected:
-	char _class[128];
-	char _cpuname[128];
+	std::string _class;
+	std::string _cpuname;
 
-	vector<string> params;
+	std::vector<std::string> params;
 	class abstract_cpu *cpu;
 	int wake_index;
 	int consumption_index;
 	int r_wake_index;
 	int r_consumption_index;
 
-	vector<device *>child_devices;
+	std::vector<device *>child_devices;
 
 public:
 	cpudevice(const char *classname = "cpu", const char *device_name = "cpu0", class abstract_cpu *_cpu = NULL);
-	virtual const char * class_name(void) { return _class;};
+	virtual const char * class_name(void) { return _class.c_str(); };
+	virtual std::string class_name_s(void) { return _class; };
 
 	virtual const char * device_name(void);
+	virtual std::string device_name_s(void) { return _cpuname; };
+	virtual std::string human_name_s(void) { return human_name(); };
 
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual bool show_in_list(void) {return false;};

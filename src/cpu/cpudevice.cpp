@@ -32,21 +32,13 @@
 
 cpudevice::cpudevice(const char *classname, const char *dev_name, class abstract_cpu *_cpu)
 {
-	pt_strcpy(_class, classname);
-	pt_strcpy(_cpuname, dev_name);
+	_class = classname;
+	_cpuname = dev_name;
 	cpu = _cpu;
 	wake_index = get_param_index("cpu-wakeups");;
 	consumption_index = get_param_index("cpu-consumption");;
 	r_wake_index = get_result_index("cpu-wakeups");;
 	r_consumption_index = get_result_index("cpu-consumption");;
-}
-
-const char * cpudevice::device_name(void)
-{
-	if (child_devices.size())
-		return "CPU misc";
-	else
-		return "CPU use";
 }
 
 double cpudevice::power_usage(struct result_bundle *result, struct parameter_bundle *bundle)
