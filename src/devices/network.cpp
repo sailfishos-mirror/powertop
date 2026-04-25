@@ -43,6 +43,7 @@ using namespace std;
 #include "../lib.h"
 #include "../parameters/parameters.h"
 #include "../process/process.h"
+#include "../tuning/wifi.h"
 extern "C" {
 #include "../tuning/iw.h"
 }
@@ -316,7 +317,7 @@ void network::end_measurement(void)
 	if (start_pkts > end_pkts)
 		end_pkts = start_pkts;
 
-	u_powerunsave = 100 - 100 * get_wifi_power_saving(name.c_str());
+	u_powerunsave = 100 - 100 * get_wifi_power_saving(name);
 
 	report_utilization(rindex_link_100, u_100);
 	report_utilization(rindex_link_1000, u_1000);
