@@ -185,17 +185,6 @@ void bt_tunable::toggle(void)
 		printf("System is not available\n");
 }
 
-const char *bt_tunable::toggle_script(void)
-{
-	int good;
-	good = good_bad();
-
-	if (good == TUNE_GOOD) {
-		return toggle_bad.c_str();
-	}
-	return toggle_good.c_str();
-}
-
 
 void add_bt_tunable(void)
 {

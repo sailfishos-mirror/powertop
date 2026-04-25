@@ -119,18 +119,6 @@ void runtime_tunable::toggle(void)
 	write_sysfs(runtime_path.c_str(), "auto");
 }
 
-const char *runtime_tunable::toggle_script(void)
-{
-	int good;
-	good = good_bad();
-
-	if (good == TUNE_GOOD) {
-		return toggle_bad.c_str();
-	}
-
-	return toggle_good.c_str();
-}
-
 
 void add_runtime_tunables(const char *bus)
 {

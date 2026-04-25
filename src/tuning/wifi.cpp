@@ -73,18 +73,6 @@ void wifi_tunable::toggle(void)
 	set_wifi_power_saving(iface, 1);
 }
 
-const char *wifi_tunable::toggle_script(void)
-{
-	int good;
-	good = good_bad();
-
-	if (good == TUNE_GOOD) {
-		return toggle_bad.c_str();
-	}
-
-	return toggle_good.c_str();
-}
-
 void add_wifi_tunables(void)
 {
 	struct dirent *entry;

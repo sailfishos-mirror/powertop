@@ -92,12 +92,19 @@ public:
 
 	virtual void toggle(void) { };
 
-	virtual const char *toggle_script(void) { return NULL; }
-	virtual std::string toggle_script_s(void) {
-		const char *c = toggle_script();
-		if (c)
-			return c;
-		return "";
+	virtual std::string toggle_script(void) {
+		if (good_bad() == TUNE_GOOD)
+			return toggle_bad;
+		return toggle_good;
+	}
+
+	virtual const char *toggle_script_c(void) {
+		std::string s = toggle_script();
+		if (s.empty())
+			return NULL;
+		if (good_bad() == TUNE_GOOD)
+			return toggle_bad.c_str();
+		return toggle_good.c_str();
 	}
 };
 

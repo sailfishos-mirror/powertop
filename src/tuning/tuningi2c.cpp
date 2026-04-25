@@ -89,18 +89,6 @@ void i2c_tunable::toggle(void)
 	write_sysfs(i2c_path.c_str(), "auto");
 }
 
-const char *i2c_tunable::toggle_script(void)
-{
-	int good;
-	good = good_bad();
-
-	if (good == TUNE_GOOD) {
-		return toggle_bad.c_str();
-	}
-
-	return toggle_good.c_str();
-}
-
 static void add_i2c_callback(const char *d_name)
 {
 	class i2c_tunable *i2c;

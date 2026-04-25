@@ -36,8 +36,6 @@ public:
 
 	virtual void toggle(void);
 
-	virtual const char *toggle_script(void);
-
 };
 
 extern void add_i2c_tunables(void);

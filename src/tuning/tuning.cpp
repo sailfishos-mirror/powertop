@@ -154,7 +154,7 @@ void tuning_window::cursor_enter(void)
 		return;
 	/** device will change its state so need to store toggle script before
 	 * we toggle()*/
-	toggle_script = tun->toggle_script();
+	toggle_script = tun->toggle_script_c();
 	tun->toggle();
 	ui_notify_user(">> %s\n", toggle_script);
 }

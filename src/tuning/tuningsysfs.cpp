@@ -72,18 +72,6 @@ void sysfs_tunable::toggle(void)
 	write_sysfs(sysfs_path.c_str(), target_value.c_str());
 }
 
-const char *sysfs_tunable::toggle_script(void)
-{
-	int good;
-	good = good_bad();
-
-	if (good == TUNE_GOOD) {
-		return toggle_bad.c_str();
-	}
-
-	return toggle_good.c_str();
-}
-
 
 void add_sysfs_tunable(const char *str, const char *_sysfs_path, const char *_target_content)
 {

@@ -129,18 +129,6 @@ void ethernet_tunable::toggle(void)
 	close(sock);
 }
 
-const char *ethernet_tunable::toggle_script(void)
-{
-	int good;
-	good = good_bad();
-
-	if (good != TUNE_GOOD) {
-		return toggle_good.c_str();
-	}
-
-	return NULL;
-}
-
 
 void ethtunable_callback(const char *d_name)
 {

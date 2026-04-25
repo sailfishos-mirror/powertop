@@ -103,18 +103,6 @@ void usb_tunable::toggle(void)
 	write_sysfs(usb_path.c_str(), "auto");
 }
 
-const char *usb_tunable::toggle_script(void)
-{
-	int good;
-	good = good_bad();
-
-	if (good == TUNE_GOOD) {
-		return toggle_bad.c_str();
-	}
-
-	return toggle_good.c_str();
-}
-
 static void add_usb_callback(const char *d_name)
 {
 	class usb_tunable *usb;
