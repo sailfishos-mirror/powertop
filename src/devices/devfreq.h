@@ -28,18 +28,19 @@
 #include "device.h"
 #include "../parameters/parameters.h"
 #include <sys/time.h>
+#include <string>
 
 struct frequency;
 
 class devfreq: public device {
-	char dir_name[128];
+	std::string dir_name;
 	struct timeval  stamp_before, stamp_after;
 	double sample_time;
 
 	uint64_t parse_freq_time(char *ptr);
 	void add_devfreq_freq_state(uint64_t freq, uint64_t time);
 	void update_devfreq_freq_state(uint64_t freq, uint64_t time);
-	void parse_devfreq_trans_stat(char *dname);
+	void parse_devfreq_trans_stat(const char *dname);
 	void process_time_stamps();
 
 public:
@@ -57,8 +58,10 @@ public:
 
 	virtual const char * class_name(void) { return "devfreq";};
 
-	virtual const char * device_name(void) { return dir_name;};
+	virtual const char * device_name(void) { return dir_name.c_str(); };
+	virtual std::string device_name_s(void) { return dir_name; };
 	virtual const char * human_name(void) { return "devfreq";};
+	virtual std::string human_name_s(void) { return human_name(); };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual const char * util_units(void) { return " rpm"; };
 	virtual int power_valid(void) { return 0; /*utilization_power_valid(r_index);*/};

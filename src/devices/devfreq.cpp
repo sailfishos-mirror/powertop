@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <format>
 
 #include <dirent.h>
 #include <stdlib.h>
@@ -45,7 +46,7 @@ static vector<class devfreq *> all_devfreq;
 
 devfreq::devfreq(const char* dpath): device()
 {
-	pt_strcpy(dir_name, dpath);
+	dir_name = dpath;
 }
 
 uint64_t devfreq::parse_freq_time(char* pchr)
@@ -118,13 +119,13 @@ void devfreq::update_devfreq_freq_state(uint64_t freq, uint64_t time)
 	state->time_after = time;
 }
 
-void devfreq::parse_devfreq_trans_stat(char *dname)
+void devfreq::parse_devfreq_trans_stat(const char *dname)
 {
 	ifstream file;
-	char filename[256];
+	std::string filename;
 
-	snprintf(filename, sizeof(filename), "/sys/class/devfreq/%s/trans_stat", dir_name);
-	file.open(filename);
+	filename = std::format("/sys/class/devfreq/{}/trans_stat", dir_name);
+	file.open(filename.c_str());
 
 	if (!file)
 		return;
@@ -163,14 +164,14 @@ void devfreq::start_measurement(void)
 	sample_time = 0;
 
 	gettimeofday(&stamp_before, NULL);
-	parse_devfreq_trans_stat(dir_name);
+	parse_devfreq_trans_stat(dir_name.c_str());
 	/* add device idle state */
 	update_devfreq_freq_state(0, 0);
 }
 
 void devfreq::end_measurement(void)
 {
-	parse_devfreq_trans_stat(dir_name);
+	parse_devfreq_trans_stat(dir_name.c_str());
 	gettimeofday(&stamp_after, NULL);
 	process_time_stamps();
 }
