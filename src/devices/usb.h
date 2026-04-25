@@ -26,6 +26,7 @@
 #define _INCLUDE_GUARD_USB_H
 
 #include <limits.h>
+#include <string>
 
 #include "device.h"
 #include "../parameters/parameters.h"
@@ -35,8 +36,8 @@ class usbdevice: public device {
 	int connected_before, connected_after;
 	char sysfs_path[PATH_MAX];
 	char name[4096];
-	char devname[4096];
-	char humanname[4096];
+	std::string devname;
+	std::string humanname;
 	int index;
 	int r_index;
 	int rootport;
@@ -53,8 +54,10 @@ public:
 
 	virtual const char * class_name(void) { return "usb";};
 
-	virtual const char * device_name(void);
-	virtual const char * human_name(void);
+	virtual const char * device_name(void) { return devname.c_str(); };
+	virtual std::string device_name_s(void) { return devname; };
+	virtual const char * human_name(void) { return humanname.c_str(); };
+	virtual std::string human_name_s(void) { return humanname; };
 	virtual void register_power_with_devlist(struct result_bundle *results, struct parameter_bundle *bundle);
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual int power_valid(void) { return utilization_power_valid(r_index);};

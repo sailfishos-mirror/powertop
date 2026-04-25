@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <limits.h>
+#include <format>
 
 #include "../lib.h"
 #include "../devlist.h"
@@ -47,8 +48,8 @@ usbdevice::usbdevice(const char *_name, const char *path, const char *devid): de
 	pt_strcpy(sysfs_path, path);
 	register_sysfs_path(sysfs_path);
 	pt_strcpy(name, _name);
-	pt_strcpy(devname, devid);
-	snprintf(humanname, sizeof(humanname), _("USB device: %s"), pretty_print(devid, vendor, 4096));
+	devname = devid;
+	humanname = std::format(_("USB device: {}"), pretty_print(devid, vendor, 4096));
 	active_before = 0;
 	active_after = 0;
 	connected_before = 0;
@@ -56,7 +57,7 @@ usbdevice::usbdevice(const char *_name, const char *path, const char *devid): de
 	busnum = 0;
 	devnum = 0;
 
-	index = get_param_index(devname);
+	index = get_param_index(devname.c_str());
 	r_index = get_result_index(name);
 	rootport = 0;
 	cached_valid = 0;
@@ -91,11 +92,11 @@ usbdevice::usbdevice(const char *_name, const char *path, const char *devid): de
 		file.close();
 	};
 	if (strlen(vendor) && strlen(product))
-		snprintf(humanname, sizeof(humanname), _("USB device: %s (%s)"), product, vendor);
+		humanname = std::format(_("USB device: {} ({})"), product, vendor);
 	else if (strlen(product))
-		snprintf(humanname, sizeof(humanname), _("USB device: %s"), product);
+		humanname = std::format(_("USB device: {}"), product);
 	else if (strlen(vendor))
-		snprintf(humanname, sizeof(humanname), _("USB device: %s"), vendor);
+		humanname = std::format(_("USB device: {}"), vendor);
 
 	/* For usbdevfs we need bus number and device number */
 	snprintf(filename, sizeof(filename), "%s/busnum", path);
@@ -172,16 +173,6 @@ double usbdevice::utilization(void) /* percentage */
 	if (d > 99.8)
 		d = 100.0;
 	return d;
-}
-
-const char * usbdevice::device_name(void)
-{
-	return name;
-}
-
-const char * usbdevice::human_name(void)
-{
-	return humanname;
 }
 
 void usbdevice::register_power_with_devlist(struct result_bundle *results, struct parameter_bundle *bundle)
