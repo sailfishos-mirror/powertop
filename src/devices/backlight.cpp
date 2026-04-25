@@ -47,8 +47,8 @@ backlight::backlight(const char *_name, const char *path): device()
 	max_level = 0;
 	start_level = 0;
 	end_level = 0;
-	pt_strcpy(sysfs_path, path);
-	register_sysfs_path(sysfs_path);
+	sysfs_path = path;
+	register_sysfs_path(sysfs_path.c_str());
 	name = std::format("backlight:{}", _name);
 	r_index = get_result_index(name);
 	r_index_power = 0;
@@ -56,18 +56,15 @@ backlight::backlight(const char *_name, const char *path): device()
 
 void backlight::start_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 
-	snprintf(filename, sizeof(filename), "%s/max_brightness", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/max_brightness", sysfs_path));
 	if (file) {
 		file >> max_level;
 	}
 	file.close();
 
-	snprintf(filename, sizeof(filename), "%s/actual_brightness", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/actual_brightness", sysfs_path));
 	if (file) {
 		file >> start_level;
 		file.close();
@@ -78,8 +75,7 @@ static int dpms_screen_on(void)
 {
 	DIR *dir;
 	struct dirent *entry;
-	char filename[PATH_MAX];
-	char line[4096];
+	std::string line;
 	ifstream file;
 
 	dir = opendir("/sys/class/drm/card0");
@@ -92,21 +88,19 @@ static int dpms_screen_on(void)
 
 		if (strncmp(entry->d_name, "card", 4) != 0)
 			continue;
-		snprintf(filename, sizeof(filename), "/sys/class/drm/card0/%s/enabled", entry->d_name);
-		file.open(filename, ios::in);
+		file.open(std::format("/sys/class/drm/card0/{}/enabled", entry->d_name));
 		if (!file)
 			continue;
-		file.getline(line, sizeof(line));
+		getline(file, line);
 		file.close();
-		if (strcmp(line, "enabled") != 0)
+		if (line != "enabled")
 			continue;
-		snprintf(filename, sizeof(filename), "/sys/class/drm/card0/%s/dpms", entry->d_name);
-		file.open(filename, ios::in);
+		file.open(std::format("/sys/class/drm/card0/{}/dpms", entry->d_name));
 		if (!file)
 			continue;
-		file.getline(line, sizeof(line));
+		getline(file, line);
 		file.close();
-		if (strcmp(line, "On") == 0) {
+		if (line == "On") {
 			closedir(dir);
 			return 1;
 		}
@@ -117,13 +111,11 @@ static int dpms_screen_on(void)
 
 void backlight::end_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 	double p;
 	int _backlight = 0;
 
-	snprintf(filename, sizeof(filename), "%s/actual_brightness", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/actual_brightness", sysfs_path));
 	if (file) {
 		file >> end_level;
 	}
@@ -152,9 +144,7 @@ double backlight::utilization(void)
 static void create_all_backlights_callback(const char *d_name)
 {
 	class backlight *bl;
-	char filename[PATH_MAX];
-	snprintf(filename, sizeof(filename), "/sys/class/backlight/%s", d_name);
-	bl = new class backlight(d_name, filename);
+	bl = new class backlight(d_name, std::format("/sys/class/backlight/{}", d_name).c_str());
 	all_devices.push_back(bl);
 }
 

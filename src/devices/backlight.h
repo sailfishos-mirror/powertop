@@ -33,7 +33,7 @@
 class backlight: public device {
 	int min_level, max_level;
 	int start_level, end_level;
-	char sysfs_path[PATH_MAX];
+	std::string sysfs_path;
 	std::string name;
 	int r_index;
 	int r_index_power;
