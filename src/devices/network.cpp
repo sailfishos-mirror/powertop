@@ -129,7 +129,6 @@ network::network(const char *_name, const char *path): device()
 {
 	char line[4096];
 	std::string filename(path);
-	char devname[128];
 	start_up = 0;
 	end_up = 0;
 	start_speed = 0;
@@ -144,33 +143,26 @@ network::network(const char *_name, const char *path): device()
 
 	pt_strcpy(sysfs_path, path);
 	register_sysfs_path(sysfs_path);
-	pt_strcpy(devname, _name);
+	name = _name;
 	humanname = std::format("nic:{}", _name);
-	pt_strcpy(name, devname);
 
-	snprintf(devname, sizeof(devname), "%s-up", _name);
-	index_up = get_param_index(devname);
-	rindex_up = get_result_index(devname);
+	index_up = get_param_index(std::format("{}-up", _name));
+	rindex_up = get_result_index(std::format("{}-up", _name));
 
-	snprintf(devname, sizeof(devname), "%s-powerunsave", _name);
-	index_powerunsave = get_param_index(devname);
-	rindex_powerunsave = get_result_index(devname);
+	index_powerunsave = get_param_index(std::format("{}-powerunsave", _name));
+	rindex_powerunsave = get_result_index(std::format("{}-powerunsave", _name));
 
-	snprintf(devname, sizeof(devname), "%s-link-100", _name);
-	index_link_100 = get_param_index(devname);
-	rindex_link_100 = get_result_index(devname);
+	index_link_100 = get_param_index(std::format("{}-link-100", _name));
+	rindex_link_100 = get_result_index(std::format("{}-link-100", _name));
 
-	snprintf(devname, sizeof(devname), "%s-link-1000", _name);
-	index_link_1000 = get_param_index(devname);
-	rindex_link_1000 = get_result_index(devname);
+	index_link_1000 = get_param_index(std::format("{}-link-1000", _name));
+	rindex_link_1000 = get_result_index(std::format("{}-link-1000", _name));
 
-	snprintf(devname, sizeof(devname), "%s-link-high", _name);
-	index_link_high = get_param_index(devname);
-	rindex_link_high = get_result_index(devname);
+	index_link_high = get_param_index(std::format("{}-link-high", _name));
+	rindex_link_high = get_result_index(std::format("{}-link-high", _name));
 
-	snprintf(devname, sizeof(devname), "%s-packets", _name);
-	index_pkts = get_param_index(devname);
-	rindex_pkts = get_result_index(devname);
+	index_pkts = get_param_index(std::format("{}-packets", _name));
+	rindex_pkts = get_result_index(std::format("{}-packets", _name));
 
 	memset(line, 0, 4096);
 	filename.append("/device/driver");
@@ -280,9 +272,9 @@ void network::start_measurement(void)
 	end_up = 1;
 	end_speed = 0;
 
-	start_speed = iface_speed(name);
+	start_speed = iface_speed(name.c_str());
 
-	start_up = net_iface_up(name);
+	start_up = net_iface_up(name.c_str());
 
 	do_proc_net_dev();
 	start_pkts = pkts;
@@ -297,8 +289,8 @@ void network::end_measurement(void)
 
 	gettimeofday(&after, NULL);
 
-	end_speed = iface_speed(name);
-	end_up = net_iface_up(name);
+	end_speed = iface_speed(name.c_str());
+	end_up = net_iface_up(name.c_str());
 	do_proc_net_dev();
 	end_pkts = pkts;
 
@@ -324,7 +316,7 @@ void network::end_measurement(void)
 	if (start_pkts > end_pkts)
 		end_pkts = start_pkts;
 
-	u_powerunsave = 100 - 100 * get_wifi_power_saving(name);
+	u_powerunsave = 100 - 100 * get_wifi_power_saving(name.c_str());
 
 	report_utilization(rindex_link_100, u_100);
 	report_utilization(rindex_link_1000, u_1000);
@@ -340,38 +332,20 @@ double network::utilization(void)
 	return (end_pkts - start_pkts) / (duration + 0.001);
 }
 
-const char * network::device_name(void)
-{
-	return name;
-}
-
 static void netdev_callback(const char *d_name)
 {
-	char devname[128];
-
 	std::string f_name("/sys/class/net/");
 	if (strcmp(d_name, "lo") == 0)
 		return;
 
 	f_name.append(d_name);
 
-	snprintf(devname, sizeof(devname), "%s-up", d_name);
-	register_parameter(devname);
-
-	snprintf(devname, sizeof(devname), "%s-powerunsave", d_name);
-	register_parameter(devname);
-
-	snprintf(devname, sizeof(devname), "%s-link-100", d_name);
-	register_parameter(devname);
-
-	snprintf(devname, sizeof(devname), "%s-link-1000", d_name);
-	register_parameter(devname);
-
-	snprintf(devname, sizeof(devname), "%s-link-high", d_name);
-	register_parameter(devname);
-
-	snprintf(devname, sizeof(devname), "%s-packets", d_name);
-	register_parameter(devname);
+	register_parameter(std::format("{}-up", d_name));
+	register_parameter(std::format("{}-powerunsave", d_name));
+	register_parameter(std::format("{}-link-100", d_name));
+	register_parameter(std::format("{}-link-1000", d_name));
+	register_parameter(std::format("{}-link-high", d_name));
+	register_parameter(std::format("{}-packets", d_name));
 
 	network *bl = new(std::nothrow) class network(d_name, f_name.c_str());
 	if (bl) {

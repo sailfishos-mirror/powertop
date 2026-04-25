@@ -41,7 +41,7 @@ class network: public device {
 	int end_speed; /* 0 is "no link" */
 
 	char sysfs_path[PATH_MAX];
-	char name[4096];
+	std::string name;
 	std::string humanname;
 	int index_up;
 	int rindex_up;
@@ -74,7 +74,8 @@ public:
 
 	virtual const char * class_name(void) { return "ethernet";};
 
-	virtual const char * device_name(void);
+	virtual const char * device_name(void) { return name.c_str(); };
+	virtual std::string device_name_s(void) { return name; };
 	virtual const char * human_name(void) { return humanname.c_str(); };
 	virtual std::string human_name_s(void) { return humanname; };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
