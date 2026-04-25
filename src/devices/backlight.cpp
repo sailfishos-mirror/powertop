@@ -50,7 +50,7 @@ backlight::backlight(const char *_name, const char *path): device()
 	pt_strcpy(sysfs_path, path);
 	register_sysfs_path(sysfs_path);
 	name = std::format("backlight:{}", _name);
-	r_index = get_result_index(name.c_str());
+	r_index = get_result_index(name);
 	r_index_power = 0;
 }
 
@@ -136,8 +136,8 @@ void backlight::end_measurement(void)
 		p = 0;
 	}
 
-	report_utilization(name.c_str(), p);
-	report_utilization(std::format("{}-power", name).c_str(), _backlight);
+	report_utilization(name, p);
+	report_utilization(std::format("{}-power", name), _backlight);
 }
 
 
@@ -207,7 +207,7 @@ double backlight::power_usage(struct result_bundle *result, struct parameter_bun
 	factor = get_parameter_value(blp_index, bundle);
 
 	if (!r_index_power) {
-		r_index_power = get_result_index(std::format("{}-power", name).c_str());
+		r_index_power = get_result_index(std::format("{}-power", name));
 	}
 	_utilization = get_result_value(r_index_power, result);
 
