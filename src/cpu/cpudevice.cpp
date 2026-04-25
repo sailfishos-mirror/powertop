@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <format>
 #include "../lib.h"
 #include "../parameters/parameters.h"
 
@@ -39,6 +40,19 @@ cpudevice::cpudevice(const char *classname, const char *dev_name, class abstract
 	consumption_index = get_param_index("cpu-consumption");;
 	r_wake_index = get_result_index("cpu-wakeups");;
 	r_consumption_index = get_result_index("cpu-consumption");;
+}
+
+const char * cpudevice::device_name(void)
+{
+	return _cpuname.c_str();
+}
+
+std::string cpudevice::human_name_s(void)
+{
+	if (!guilty.empty())
+		return std::format("{} ({})", _cpuname, guilty);
+
+	return _cpuname;
 }
 
 double cpudevice::power_usage(struct result_bundle *result, struct parameter_bundle *bundle)

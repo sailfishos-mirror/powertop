@@ -54,7 +54,7 @@ public:
 
 	virtual const char * device_name(void);
 	virtual std::string device_name_s(void) { return _cpuname; };
-	virtual std::string human_name_s(void) { return human_name(); };
+	virtual std::string human_name_s(void);
 
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual bool show_in_list(void) {return false;};
