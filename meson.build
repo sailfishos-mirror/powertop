@@ -2,7 +2,7 @@ project('powertop', 'cpp', 'c',
   version: '2.15',
   meson_version: '>= 0.56.0',
   default_options: [
-    'cpp_std=c++11',
+    'cpp_std=c++20',
     'warning_level=1',
     'buildtype=debugoptimized',
   ]
