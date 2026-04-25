@@ -61,7 +61,7 @@ int usb_wakeup::wakeup_value(void)
 
 	content = read_sysfs_string(usb_path);
 
-	if (strcmp(content.c_str(), "enabled") == 0)
+	if (content == "enabled")
 		return WAKEUP_ENABLE;
 
 	return WAKEUP_DISABLE;
