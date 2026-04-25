@@ -34,7 +34,7 @@
 class rfkill: public device {
 	int start_soft, end_soft;
 	int start_hard, end_hard;
-	char sysfs_path[PATH_MAX];
+	std::string sysfs_path;
 	std::string name;
 	std::string humanname;
 	int index;
