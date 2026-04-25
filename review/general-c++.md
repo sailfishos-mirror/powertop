@@ -26,3 +26,7 @@ PowerTOP uses the C++ 20 language standard
 
 - [ ] Use "std::<element>" instead of "<element>" even when code uses 
     "using namespace std".
+
+## General C++ coding rules
+
+- [ ] Use "const" when possible for method and function parameters
