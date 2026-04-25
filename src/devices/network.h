@@ -27,6 +27,7 @@
 
 #include <sys/time.h>
 #include <limits.h>
+#include <string>
 
 #include "device.h"
 #include "../parameters/parameters.h"
@@ -41,7 +42,7 @@ class network: public device {
 
 	char sysfs_path[PATH_MAX];
 	char name[4096];
-	char humanname[4096];
+	std::string humanname;
 	int index_up;
 	int rindex_up;
 	int index_link_100;
@@ -74,7 +75,8 @@ public:
 	virtual const char * class_name(void) { return "ethernet";};
 
 	virtual const char * device_name(void);
-	virtual const char * human_name(void) { return humanname; };
+	virtual const char * human_name(void) { return humanname.c_str(); };
+	virtual std::string human_name_s(void) { return humanname; };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual int power_valid(void) { return utilization_power_valid(rindex_up) + utilization_power_valid(rindex_link_100) + utilization_power_valid(rindex_link_1000)  + utilization_power_valid(rindex_link_high);};
 	virtual int grouping_prio(void) { return 10; };

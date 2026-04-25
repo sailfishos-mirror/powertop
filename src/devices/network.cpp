@@ -48,6 +48,7 @@ extern "C" {
 }
 
 #include <string.h>
+#include <format>
 #include <net/if.h>
 #include <linux/sockios.h>
 #include <sys/ioctl.h>
@@ -144,7 +145,7 @@ network::network(const char *_name, const char *path): device()
 	pt_strcpy(sysfs_path, path);
 	register_sysfs_path(sysfs_path);
 	pt_strcpy(devname, _name);
-	sprintf(humanname, "nic:%s", _name);
+	humanname = std::format("nic:{}", _name);
 	pt_strcpy(name, devname);
 
 	snprintf(devname, sizeof(devname), "%s-up", _name);
@@ -174,7 +175,7 @@ network::network(const char *_name, const char *path): device()
 	memset(line, 0, 4096);
 	filename.append("/device/driver");
 	if (readlink(filename.c_str(), line, 4096) > 0) {
-		snprintf(humanname, sizeof(humanname), _("Network interface: %s (%s)"), _name,  basename(line));
+		humanname = std::format(_("Network interface: {} ({})"), _name,  basename(line));
 	};
 }
 
