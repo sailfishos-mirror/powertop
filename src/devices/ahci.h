@@ -37,7 +37,7 @@ class ahci: public device {
 	uint64_t start_partial, end_partial;
 	uint64_t start_slumber, end_slumber;
 	uint64_t start_devslp, end_devslp;
-	char sysfs_path[PATH_MAX];
+	std::string sysfs_path;
 	std::string name;
 	int partial_rindex;
 	int active_rindex;

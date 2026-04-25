@@ -49,11 +49,11 @@ static string disk_name(char *path, char *target, char *shortname)
 
 	DIR *dir;
 	struct dirent *dirent;
-	char pathname[PATH_MAX];
 	string diskname = "";
+	std::string pathname;
 
-	snprintf(pathname, sizeof(pathname), "%s/%s", path, target);
-	dir = opendir(pathname);
+	pathname = std::format("{}/{}", path, target);
+	dir = opendir(pathname.c_str());
 	if (!dir)
 		return diskname;
 
@@ -66,8 +66,7 @@ static string disk_name(char *path, char *target, char *shortname)
 		if (!strchr(dirent->d_name, ':'))
 			continue;
 
-		snprintf(line, sizeof(line), "%s/%s/model", pathname, dirent->d_name);
-		file = fopen(line, "r");
+		file = fopen(std::format("{}/{}/model", pathname, dirent->d_name).c_str(), "r");
 		if (file) {
 			if (fgets(line, sizeof(line), file) == NULL) {
 				fclose(file);
@@ -91,11 +90,11 @@ static string model_name(char *path, char *shortname)
 
 	DIR *dir;
 	struct dirent *dirent;
-	char pathname[PATH_MAX];
+	std::string pathname;
 
-	snprintf(pathname, sizeof(pathname), "%s/device", path);
+	pathname = std::format("{}/device", path);
 
-	dir = opendir(pathname);
+	dir = opendir(pathname.c_str());
 	if (!dir)
 		return strdup(shortname);
 
@@ -107,7 +106,7 @@ static string model_name(char *path, char *shortname)
 			continue;
 		if (!strstr(dirent->d_name, "target"))
 			continue;
-		return disk_name(pathname, dirent->d_name, shortname);
+		return disk_name((char *)pathname.c_str(), dirent->d_name, shortname);
 	}
 	closedir(dir);
 
@@ -126,9 +125,9 @@ ahci::ahci(char *_name, char *path): device()
 	start_slumber = 0;
 	start_devslp = 0;
 	start_partial = 0;
-	pt_strcpy(sysfs_path, path);
+	sysfs_path = path;
 
-	register_sysfs_path(sysfs_path);
+	register_sysfs_path(sysfs_path.c_str());
 
 	name = std::format("ahci:{}", _name);
 	active_index = get_param_index("ahci-link-power-active");
@@ -139,7 +138,7 @@ ahci::ahci(char *_name, char *path): device()
 	slumber_rindex = get_result_index(std::format("{}-slumber", name));
 	devslp_rindex = get_result_index(std::format("{}-devslp", name));
 
-	diskname = model_name(path, _name);
+	diskname = model_name((char *)sysfs_path.c_str(), _name);
 
 	if (diskname.empty())
 		humanname = std::format(_("SATA link: {}"), _name);
@@ -149,31 +148,26 @@ ahci::ahci(char *_name, char *path): device()
 
 void ahci::start_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 
-	snprintf(filename, sizeof(filename), "%s/ahci_alpm_active", sysfs_path);
 	try {
-		file.open(filename, ios::in);
+		file.open(std::format("{}/ahci_alpm_active", sysfs_path), ios::in);
 		if (file) {
 			file >> start_active;
 		}
 		file.close();
-		snprintf(filename, sizeof(filename), "%s/ahci_alpm_partial", sysfs_path);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/ahci_alpm_partial", sysfs_path), ios::in);
 
 		if (file) {
 			file >> start_partial;
 		}
 		file.close();
-		snprintf(filename, sizeof(filename), "%s/ahci_alpm_slumber", sysfs_path);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/ahci_alpm_slumber", sysfs_path), ios::in);
 		if (file) {
 			file >> start_slumber;
 		}
 		file.close();
-		snprintf(filename, sizeof(filename), "%s/ahci_alpm_devslp", sysfs_path);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/ahci_alpm_devslp", sysfs_path), ios::in);
 		if (file) {
 			file >> start_devslp;
 		}
@@ -187,32 +181,27 @@ void ahci::start_measurement(void)
 
 void ahci::end_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 	double p;
 	double total;
 
 	try {
-		snprintf(filename, sizeof(filename), "%s/ahci_alpm_active", sysfs_path);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/ahci_alpm_active", sysfs_path), ios::in);
 		if (file) {
 			file >> end_active;
 		}
 		file.close();
-		snprintf(filename, sizeof(filename), "%s/ahci_alpm_partial", sysfs_path);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/ahci_alpm_partial", sysfs_path), ios::in);
 		if (file) {
 			file >> end_partial;
 		}
 		file.close();
-		snprintf(filename, sizeof(filename), "%s/ahci_alpm_slumber", sysfs_path);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/ahci_alpm_slumber", sysfs_path), ios::in);
 		if (file) {
 			file >> end_slumber;
 		}
 		file.close();
-		snprintf(filename, sizeof(filename), "%s/ahci_alpm_devslp", sysfs_path);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/ahci_alpm_devslp", sysfs_path), ios::in);
 		if (file) {
 			file >> end_devslp;
 		}
@@ -273,7 +262,6 @@ void create_all_ahcis(void)
 {
 	struct dirent *entry;
 	DIR *dir;
-	char filename[PATH_MAX];
 
 	dir = opendir("/sys/class/scsi_host/");
 	if (!dir)
@@ -287,22 +275,20 @@ void create_all_ahcis(void)
 			break;
 		if (entry->d_name[0] == '.')
 			continue;
-		snprintf(filename, sizeof(filename), "/sys/class/scsi_host/%s/ahci_alpm_accounting", entry->d_name);
 
-		check_file.open(filename, ios::in);
+		check_file.open(std::format("/sys/class/scsi_host/{}/ahci_alpm_accounting", entry->d_name), ios::in);
 		check_file.get();
 		check_file.close();
 		if (check_file.bad())
 			continue;
 
-		file.open(filename, ios::in);
+		file.open(std::format("/sys/class/scsi_host/{}/ahci_alpm_accounting", entry->d_name), ios::in);
 		if (!file)
 			continue;
 		file << 1 ;
 		file.close();
-		snprintf(filename, sizeof(filename), "/sys/class/scsi_host/%s", entry->d_name);
 
-		bl = new class ahci(entry->d_name, filename);
+		bl = new class ahci(entry->d_name, (char *)std::format("/sys/class/scsi_host/{}", entry->d_name).c_str());
 		all_devices.push_back(bl);
 		register_parameter("ahci-link-power-active", 0.6);  /* active sata link takes about 0.6 W */
 		register_parameter("ahci-link-power-partial");
