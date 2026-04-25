@@ -46,15 +46,15 @@ runtime_pmdevice::runtime_pmdevice(const char *_name, const char *path) : device
 	name = _name;
 	humanname = std::format("runtime-{}", _name);
 
-	index = get_param_index(humanname.c_str());
-	r_index = get_result_index(humanname.c_str());
+	index = get_param_index(humanname);
+	r_index = get_result_index(humanname);
 
 	before_suspended_time = 0;
 	before_active_time = 0;
 	after_suspended_time = 0;
 	after_active_time = 0;
 
-	register_parameter(humanname.c_str());
+	register_parameter(humanname);
 }
 
 void runtime_pmdevice::start_measurement(void)
