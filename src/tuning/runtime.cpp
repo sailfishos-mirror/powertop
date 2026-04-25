@@ -43,7 +43,7 @@
 runtime_tunable::runtime_tunable(const char *path, const char *bus, const char *dev, const char *port) : tunable("", 0.4, _("Good"), _("Bad"), _("Unknown"))
 {
 	ifstream file;
-	sprintf(runtime_path, "%s/power/control", path);
+	runtime_path = std::format("{}/power/control", path);
 
 
 	desc = std::format(_("Runtime PM for {} device {}"), bus, dev);
@@ -88,15 +88,15 @@ runtime_tunable::runtime_tunable(const char *path, const char *bus, const char *
 		}
 
 	}
-	snprintf(toggle_good, sizeof(toggle_good), "echo 'auto' > '%s';", runtime_path);
-	snprintf(toggle_bad, sizeof(toggle_bad), "echo 'on' > '%s';", runtime_path);
+	toggle_good = std::format("echo 'auto' > '{}';", runtime_path);
+	toggle_bad = std::format("echo 'on' > '{}';", runtime_path);
 }
 
 int runtime_tunable::good_bad(void)
 {
 	std::string content;
 
-	content = read_sysfs_string(runtime_path);
+	content = read_sysfs_string(runtime_path.c_str());
 
 	if (content == "auto")
 		return TUNE_GOOD;
@@ -112,11 +112,11 @@ void runtime_tunable::toggle(void)
 	good = good_bad();
 
 	if (good == TUNE_GOOD) {
-		write_sysfs(runtime_path, "on");
+		write_sysfs(runtime_path.c_str(), "on");
 		return;
 	}
 
-	write_sysfs(runtime_path, "auto");
+	write_sysfs(runtime_path.c_str(), "auto");
 }
 
 const char *runtime_tunable::toggle_script(void)
@@ -125,10 +125,10 @@ const char *runtime_tunable::toggle_script(void)
 	good = good_bad();
 
 	if (good == TUNE_GOOD) {
-		return toggle_bad;
+		return toggle_bad.c_str();
 	}
 
-	return toggle_good;
+	return toggle_good.c_str();
 }
 
 

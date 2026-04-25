@@ -32,7 +32,7 @@
 using namespace std;
 
 class runtime_tunable : public tunable {
-	char runtime_path[PATH_MAX];
+	std::string runtime_path;
 public:
 	runtime_tunable(const char *runtime_path, const char *bus, const char *dev, const char *port);
 

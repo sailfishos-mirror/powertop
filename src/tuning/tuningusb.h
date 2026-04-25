@@ -33,7 +33,7 @@
 using namespace std;
 
 class usb_tunable : public tunable {
-	char usb_path[PATH_MAX];
+	std::string usb_path;
 public:
 	usb_tunable(const char *usb_path, const char *path);
 

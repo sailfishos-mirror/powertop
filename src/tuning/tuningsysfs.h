@@ -33,9 +33,9 @@
 using namespace std;
 
 class sysfs_tunable : public tunable {
-	char sysfs_path[PATH_MAX];
-	char target_value[4096];
-	char bad_value[4096];
+	std::string sysfs_path;
+	std::string target_value;
+	std::string bad_value;
 public:
 	sysfs_tunable(const char *str, const char *sysfs_path, const char *target_content);
 

@@ -44,10 +44,8 @@ usb_tunable::usb_tunable(const char *path, const char *name) : tunable("", 0.9, 
 	char vendor[2048];
 	char product[2048];
 	std::string str1, str2;
-	snprintf(usb_path, sizeof(usb_path), "%s/power/control", path);
 
-	vendor[0] = 0;
-	product[0] = 0;
+	usb_path = std::format("{}/power/control", path);
 
 	str1 = read_sysfs_string("%s/idVendor", path);
 	str2 = read_sysfs_string("%s/idProduct", path);
@@ -76,15 +74,15 @@ usb_tunable::usb_tunable(const char *path, const char *name) : tunable("", 0.9, 
 		desc = std::format(_("Autosuspend for USB device {} [{}]"), vendor, name);
 	}
 
-	snprintf(toggle_good, sizeof(toggle_good), "echo 'auto' > '%s';", usb_path);
-	snprintf(toggle_bad, sizeof(toggle_bad), "echo 'on' > '%s';", usb_path);
+	toggle_good = std::format("echo 'auto' > '{}';", usb_path);
+	toggle_bad = std::format("echo 'on' > '{}';", usb_path);
 }
 
 int usb_tunable::good_bad(void)
 {
 	string content;
 
-	content = read_sysfs_string(usb_path);
+	content = read_sysfs_string(usb_path.c_str());
 
 	if (content == "auto")
 		return TUNE_GOOD;
@@ -98,11 +96,11 @@ void usb_tunable::toggle(void)
 	good = good_bad();
 
 	if (good == TUNE_GOOD) {
-		write_sysfs(usb_path, "on");
+		write_sysfs(usb_path.c_str(), "on");
 		return;
 	}
 
-	write_sysfs(usb_path, "auto");
+	write_sysfs(usb_path.c_str(), "auto");
 }
 
 const char *usb_tunable::toggle_script(void)
@@ -111,10 +109,10 @@ const char *usb_tunable::toggle_script(void)
 	good = good_bad();
 
 	if (good == TUNE_GOOD) {
-		return toggle_bad;
+		return toggle_bad.c_str();
 	}
 
-	return toggle_good;
+	return toggle_good.c_str();
 }
 
 static void add_usb_callback(const char *d_name)

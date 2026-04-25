@@ -47,10 +47,10 @@ i2c_tunable::i2c_tunable(const char *path, const char *name, bool is_adapter) : 
 	}
 
 	if (is_adapter) {
-		snprintf(i2c_path, sizeof(i2c_path), "%s/device/power/control", path);
+		i2c_path = std::format("{}/device/power/control", path);
 		snprintf(filename, sizeof(filename), "%s/device", path);
 	} else {
-		snprintf(i2c_path, sizeof(i2c_path),  "%s/power/control", path);
+		i2c_path = std::format("{}/power/control", path);
 		snprintf(filename, sizeof(filename), "%s/device", path);
 	}
 
@@ -60,15 +60,15 @@ i2c_tunable::i2c_tunable(const char *path, const char *name, bool is_adapter) : 
 		desc = std::format(_("I2C {} {} has no runtime power management"), (is_adapter ? _("Adapter") : _("Device")), name);
 	}
 
-	snprintf(toggle_good, sizeof(toggle_good), "echo 'auto' > '%s';", i2c_path);
-	snprintf(toggle_bad, sizeof(toggle_bad), "echo 'on' > '%s';", i2c_path);
+	toggle_good = std::format("echo 'auto' > '{}';", i2c_path);
+	toggle_bad = std::format("echo 'on' > '{}';", i2c_path);
 }
 
 int i2c_tunable::good_bad(void)
 {
 	std::string content;
 
-	content = read_sysfs_string(i2c_path);
+	content = read_sysfs_string(i2c_path.c_str());
 
 	if (content == "auto")
 		return TUNE_GOOD;
@@ -82,11 +82,11 @@ void i2c_tunable::toggle(void)
 	good = good_bad();
 
 	if (good == TUNE_GOOD) {
-		write_sysfs(i2c_path, "on");
+		write_sysfs(i2c_path.c_str(), "on");
 		return;
 	}
 
-	write_sysfs(i2c_path, "auto");
+	write_sysfs(i2c_path.c_str(), "auto");
 }
 
 const char *i2c_tunable::toggle_script(void)
@@ -95,10 +95,10 @@ const char *i2c_tunable::toggle_script(void)
 	good = good_bad();
 
 	if (good == TUNE_GOOD) {
-		return toggle_bad;
+		return toggle_bad.c_str();
 	}
 
-	return toggle_good;
+	return toggle_good.c_str();
 }
 
 static void add_i2c_callback(const char *d_name)

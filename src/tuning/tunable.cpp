@@ -36,9 +36,9 @@ tunable::tunable(const char *str, double _score, const char *good, const char *b
 {
 	score = _score;
 	desc = str;
-	pt_strcpy(good_string, good);
-	pt_strcpy(bad_string, bad);
-	pt_strcpy(neutral_string, neutral);
+	good_string = good;
+	bad_string = bad;
+	neutral_string = neutral;
 }
 
 
@@ -46,7 +46,7 @@ tunable::tunable(void)
 {
 	score = 0;
 	desc = "";
-	pt_strcpy(good_string, _("Good"));
-	pt_strcpy(bad_string, _("Bad"));
-	pt_strcpy(neutral_string, _("Unknown"));
+	good_string = _("Good");
+	bad_string = _("Bad");
+	neutral_string = _("Unknown");
 }
