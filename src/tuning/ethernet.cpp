@@ -1,4 +1,4 @@
-;/*
+/*
  * Copyright 2010, Intel Corporation
  *
  * This file is part of PowerTOP
@@ -39,6 +39,7 @@
 #include <net/if.h>
 #include <linux/sockios.h>
 #include <sys/ioctl.h>
+#include <format>
 
 #include <linux/ethtool.h>
 
@@ -49,11 +50,9 @@ extern void create_all_nics(callback fn);
 
 ethernet_tunable::ethernet_tunable(const char *iface) : tunable("", 0.3, _("Good"), _("Bad"), _("Unknown"))
 {
-	char buffer[4096];
 	memset(interf, 0, sizeof(interf));
 	pt_strcpy(interf, iface);
-	snprintf(buffer, sizeof(buffer), _("Wake-on-lan status for device %s"), iface);
-	desc = buffer;
+	desc = std::format(_("Wake-on-lan status for device {}"), iface);
 	snprintf(toggle_good, sizeof(toggle_good), "ethtool -s %s wol d;", iface);
 
 }
