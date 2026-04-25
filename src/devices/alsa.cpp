@@ -55,7 +55,7 @@ alsa::alsa(const char *_name, const char *path): device()
 	pt_strcpy(sysfs_path, path);
 
 	snprintf(devname, sizeof(devname), "alsa:%s", _name);
-	snprintf(humanname, sizeof(humanname), "alsa:%s", _name);
+	humanname = std::format("alsa:{}", _name);
 	pt_strcpy(name, devname);
 	rindex = get_result_index(name);
 
@@ -74,11 +74,11 @@ alsa::alsa(const char *_name, const char *path): device()
 		file.close();
 	}
 	if (strlen(model) && strlen(vendor))
-		snprintf(humanname, sizeof(humanname), _("Audio codec %s: %s (%s)"), name, model, vendor);
+		humanname = std::format(_("Audio codec {}: {} ({})"), name, model, vendor);
 	else if (strlen(model))
-		snprintf(humanname, sizeof(humanname), _("Audio codec %s: %s"), _name, model);
+		humanname = std::format(_("Audio codec {}: {}"), _name, model);
 	else if (strlen(vendor))
-		snprintf(humanname, sizeof(humanname), _("Audio codec %s: %s"), _name, vendor);
+		humanname = std::format(_("Audio codec {}: {}"), _name, vendor);
 }
 
 void alsa::start_measurement(void)
@@ -198,10 +198,16 @@ void alsa::register_power_with_devlist(struct result_bundle *results, struct par
 	register_devpower(&name[7], power_usage(results, bundle), this);
 }
 
+std::string alsa::human_name_s(void)
+{
+	if (!guilty.empty())
+		return std::format("{} ({})", humanname, guilty);
+
+	return humanname;
+}
+
 const char * alsa::human_name(void)
 {
-	pt_strcpy(temp_buf, humanname);
-	if (!guilty.empty())
-		pt_strcpy(temp_buf, std::format("{} ({})", humanname, guilty).c_str());
+	pt_strcpy(temp_buf, human_name_s().c_str());
 	return temp_buf;
 }

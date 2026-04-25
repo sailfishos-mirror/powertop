@@ -31,13 +31,14 @@
 
 #include <stdint.h>
 #include <limits.h>
+#include <string>
 
 class alsa: public device {
 	uint64_t start_active, end_active;
 	uint64_t start_inactive, end_inactive;
 	char sysfs_path[PATH_MAX];
 	char name[4096];
-	char humanname[4096];
+	std::string humanname;
 	char temp_buf[4096];
 	int rindex;
 public:
@@ -53,6 +54,7 @@ public:
 
 	virtual const char * device_name(void);
 	virtual const char * human_name(void);
+	virtual std::string human_name_s(void);
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual int power_valid(void) { return utilization_power_valid(rindex);};
 
