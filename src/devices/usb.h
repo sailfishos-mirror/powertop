@@ -34,7 +34,7 @@
 class usbdevice: public device {
 	int active_before, active_after;
 	int connected_before, connected_after;
-	char sysfs_path[PATH_MAX];
+	std::string sysfs_path;
 	std::string name;
 	std::string devname;
 	std::string humanname;
