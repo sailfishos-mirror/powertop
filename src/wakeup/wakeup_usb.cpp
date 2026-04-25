@@ -1,4 +1,4 @@
-;/*
+/*
  * Copyright 2018, Intel Corporation
  *
  * This file is part of PowerTOP
@@ -38,6 +38,7 @@
 #include <net/if.h>
 #include <linux/sockios.h>
 #include <sys/ioctl.h>
+#include <format>
 
 #include <linux/ethtool.h>
 
@@ -46,11 +47,9 @@
 
 usb_wakeup::usb_wakeup(const char *path, const char *iface) : wakeup("", 0.5, _("Enabled"), _("Disabled"))
 {
-	char buffer[4096];
 	memset(interf, 0, sizeof(interf));
 	pt_strcpy(interf, iface);
-	snprintf(buffer, sizeof(buffer), _("Wake status for USB device %s"), iface);
-	desc = buffer;
+	desc = std::format(_("Wake status for USB device {}"), iface);
 	snprintf(usb_path, sizeof(usb_path), "/sys/bus/usb/devices/%s/power/wakeup", iface);
 	snprintf(toggle_enable, sizeof(toggle_enable), "echo 'enabled' > '%s';", usb_path);
 	snprintf(toggle_disable, sizeof(toggle_disable), "echo 'disabled' > '%s';", usb_path);
