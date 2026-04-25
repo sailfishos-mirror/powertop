@@ -38,6 +38,7 @@ using namespace std;
 #include "../parameters/parameters.h"
 
 #include <string.h>
+#include <format>
 
 
 backlight::backlight(const char *_name, const char *path): device()
@@ -48,8 +49,8 @@ backlight::backlight(const char *_name, const char *path): device()
 	end_level = 0;
 	pt_strcpy(sysfs_path, path);
 	register_sysfs_path(sysfs_path);
-	snprintf(name, sizeof(name) - 1, "backlight:%s", _name);
-	r_index = get_result_index(name);
+	name = std::format("backlight:{}", _name);
+	r_index = get_result_index(name.c_str());
 	r_index_power = 0;
 }
 
@@ -117,7 +118,6 @@ static int dpms_screen_on(void)
 void backlight::end_measurement(void)
 {
 	char filename[PATH_MAX];
-	char powername[4096];
 	ifstream file;
 	double p;
 	int _backlight = 0;
@@ -136,9 +136,8 @@ void backlight::end_measurement(void)
 		p = 0;
 	}
 
-	report_utilization(name, p);
-	snprintf(powername, sizeof(powername), "%s-power", name);
-	report_utilization(powername, _backlight);
+	report_utilization(name.c_str(), p);
+	report_utilization(std::format("{}-power", name).c_str(), _backlight);
 }
 
 
@@ -148,11 +147,6 @@ double backlight::utilization(void)
 
 	p = 100.0 * (end_level + start_level) / 2 / max_level;
 	return p;
-}
-
-const char * backlight::device_name(void)
-{
-	return name;
 }
 
 static void create_all_backlights_callback(const char *d_name)
@@ -179,7 +173,6 @@ double backlight::power_usage(struct result_bundle *result, struct parameter_bun
 	double power;
 	double factor;
 	double _utilization;
-	char powername[4096];
 	static int bl_index = 0, blp_index = 0, bl_boost_index40 = 0, bl_boost_index80, bl_boost_index100;
 
 	if (!bl_index)
@@ -214,8 +207,7 @@ double backlight::power_usage(struct result_bundle *result, struct parameter_bun
 	factor = get_parameter_value(blp_index, bundle);
 
 	if (!r_index_power) {
-		sprintf(powername, "%s-power", name);
-		r_index_power = get_result_index(powername);
+		r_index_power = get_result_index(std::format("{}-power", name).c_str());
 	}
 	_utilization = get_result_value(r_index_power, result);
 
