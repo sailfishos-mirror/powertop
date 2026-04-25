@@ -43,7 +43,7 @@ static int maxindex = 1;
 map <string, int> result_index;
 static int maxresindex = 1;
 
-int get_param_index(const char *name)
+int get_param_index(const std::string &name)
 {
 	std::map<string, int>::iterator it;
 	int index = 0;
@@ -55,12 +55,15 @@ int get_param_index(const char *name)
 	} else
 		index = it->second;
 
-	if (index == 0)
-		printf("OH BLA\n");
 	return index;
 }
 
-int get_result_index(const char *name)
+int get_param_index(const char *name)
+{
+	return get_param_index(std::string(name));
+}
+
+int get_result_index(const std::string &name)
 {
 	std::map<string, int>::iterator it;
 	int index = 0;
@@ -75,8 +78,13 @@ int get_result_index(const char *name)
 	return index;
 }
 
+int get_result_index(const char *name)
+{
+	return get_result_index(std::string(name));
+}
 
-void register_parameter(const char *name, double default_value, double weight)
+
+void register_parameter(const std::string &name, double default_value, double weight)
 {
 	int index;
 
@@ -93,7 +101,12 @@ void register_parameter(const char *name, double default_value, double weight)
 	all_parameters.weights[index] = weight;
 }
 
-void set_parameter_value(const char *name, double value, struct parameter_bundle *bundle)
+void register_parameter(const char *name, double default_value, double weight)
+{
+	register_parameter(std::string(name), default_value, weight);
+}
+
+void set_parameter_value(const std::string &name, double value, struct parameter_bundle *bundle)
 {
 	int index;
 
@@ -107,11 +120,21 @@ void set_parameter_value(const char *name, double value, struct parameter_bundle
 	bundle->parameters[index] = value;
 }
 
-double get_parameter_value(const char *name, struct parameter_bundle *the_bundle)
+void set_parameter_value(const char *name, double value, struct parameter_bundle *bundle)
+{
+	set_parameter_value(std::string(name), value, bundle);
+}
+
+double get_parameter_value(const std::string &name, struct parameter_bundle *the_bundle)
 {
 	unsigned int index;
 	index = get_param_index(name);
 	return get_parameter_value(index, the_bundle);
+}
+
+double get_parameter_value(const char *name, struct parameter_bundle *the_bundle)
+{
+	return get_parameter_value(std::string(name), the_bundle);
 }
 
 double get_parameter_value(unsigned int index, struct parameter_bundle *the_bundle)
@@ -128,17 +151,27 @@ double get_parameter_weight(int index, struct parameter_bundle *the_bundle)
 	return the_bundle->weights[index];
 }
 
-double get_result_value(const char *name, struct result_bundle *the_bundle)
+double get_result_value(const std::string &name, struct result_bundle *the_bundle)
 {
 	return get_result_value(get_result_index(name), the_bundle);
 }
 
-void set_result_value(const char *name, double value, struct result_bundle *the_bundle)
+double get_result_value(const char *name, struct result_bundle *the_bundle)
+{
+	return get_result_value(std::string(name), the_bundle);
+}
+
+void set_result_value(const std::string &name, double value, struct result_bundle *the_bundle)
 {
 	unsigned int index = get_result_index(name);
 	if (index >= the_bundle->utilization.size())
 		the_bundle->utilization.resize(index+1);
 	the_bundle->utilization[index] = value;
+}
+
+void set_result_value(const char *name, double value, struct result_bundle *the_bundle)
+{
+	set_result_value(std::string(name), value, the_bundle);
 }
 
 void set_result_value(unsigned int index, double value, struct result_bundle *the_bundle)
@@ -168,9 +201,14 @@ int result_device_exists(const char *name)
 	return 0;
 }
 
-void report_utilization(const char *name, double value, struct result_bundle *bundle)
+void report_utilization(const std::string &name, double value, struct result_bundle *bundle)
 {
 	set_result_value(name, value, bundle);
+}
+
+void report_utilization(const char *name, double value, struct result_bundle *bundle)
+{
+	report_utilization(std::string(name), value, bundle);
 }
 void report_utilization(int index, double value, struct result_bundle *bundle)
 {
