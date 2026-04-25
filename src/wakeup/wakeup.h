@@ -28,6 +28,8 @@
 #include<vector>
 #include <limits.h>
 
+#include <string>
+
 using namespace std;
 
 #define WAKEUP_ENABLE 1
@@ -41,7 +43,7 @@ protected:
 	char toggle_enable[4096];
 	char toggle_disable[4096];
 public:
-	char desc[4096];
+	std::string desc;
 	double score;
 
 	wakeup(const char *str, double _score, const char *enable = "", const char *disable = "");
@@ -63,7 +65,8 @@ public:
 	}
 
 
-	virtual const char *description(void) { return desc; };
+	virtual const char *description(void) { return desc.c_str(); };
+	virtual std::string description_s(void) { return desc; };
 
 	virtual void wakeup_toggle(void) { };
 
@@ -71,7 +74,7 @@ public:
 
 };
 
-extern vector<class wakeup *> wakeup_all;
+extern std::vector<class wakeup *> wakeup_all;
 
 extern void initialize_wakeup(void);
 extern void wakeup_update_display(void);

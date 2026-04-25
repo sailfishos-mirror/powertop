@@ -42,12 +42,16 @@
 runtime_tunable::runtime_tunable(const char *path, const char *bus, const char *dev, const char *port) : tunable("", 0.4, _("Good"), _("Bad"), _("Unknown"))
 {
 	ifstream file;
+	char buffer[4096];
 	sprintf(runtime_path, "%s/power/control", path);
 
 
-	sprintf(desc, _("Runtime PM for %s device %s"), bus, dev);
-	if (!device_has_runtime_pm(path))
-		sprintf(desc, _("%s device %s has no runtime power management"), bus, dev);
+	snprintf(buffer, sizeof(buffer), _("Runtime PM for %s device %s"), bus, dev);
+	desc = buffer;
+	if (!device_has_runtime_pm(path)) {
+		snprintf(buffer, sizeof(buffer), _("%s device %s has no runtime power management"), bus, dev);
+		desc = buffer;
+	}
 
 	if (strcmp(bus, "pci") == 0) {
 		char filename[PATH_MAX];
@@ -70,17 +74,24 @@ runtime_tunable::runtime_tunable(const char *path, const char *bus, const char *
 		}
 
 		if (vendor && device) {
-			if (!device_has_runtime_pm(path))
-				sprintf(desc, _("PCI Device %s has no runtime power management"), pci_id_to_name(vendor, device, filename, 4095));
-			else
-				sprintf(desc, _("Runtime PM for PCI Device %s"), pci_id_to_name(vendor, device, filename, 4095));
+			if (!device_has_runtime_pm(path)) {
+				snprintf(buffer, sizeof(buffer), _("PCI Device %s has no runtime power management"), pci_id_to_name(vendor, device, filename, 4095));
+				desc = buffer;
+			} else {
+				snprintf(buffer, sizeof(buffer), _("Runtime PM for PCI Device %s"), pci_id_to_name(vendor, device, filename, 4095));
+				desc = buffer;
+			}
 		}
 
-		if (string(path).find("ata") != string::npos)
-			sprintf(desc, _("Runtime PM for port %s of PCI device: %s"), port, pci_id_to_name(vendor, device, filename, 4095));
+		if (string(path).find("ata") != string::npos) {
+			snprintf(buffer, sizeof(buffer), _("Runtime PM for port %s of PCI device: %s"), port, pci_id_to_name(vendor, device, filename, 4095));
+			desc = buffer;
+		}
 
-		if (string(path).find("block") != string::npos)
-			sprintf(desc, _("Runtime PM for disk %s"), port);
+		if (string(path).find("block") != string::npos) {
+			snprintf(buffer, sizeof(buffer), _("Runtime PM for disk %s"), port);
+			desc = buffer;
+		}
 
 	}
 	snprintf(toggle_good, sizeof(toggle_good), "echo 'auto' > '%s';", runtime_path);

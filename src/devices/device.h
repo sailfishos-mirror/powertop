@@ -28,6 +28,7 @@
 
 #include <vector>
 #include <limits.h>
+#include <string>
 
 struct parameter_bundle;
 struct result_bundle;
@@ -54,9 +55,12 @@ public:
 	virtual const char * util_units(void) { return "%"; };
 
 	virtual const char * class_name(void) { return "abstract device";};
+	virtual std::string class_name_s(void) { return class_name(); };
 	virtual const char * device_name(void) { return "abstract device";};
+	virtual std::string device_name_s(void) { return device_name(); };
 
 	virtual const char * human_name(void) { return device_name(); };
+	virtual std::string human_name_s(void) { return human_name(); };
 
 	virtual double power_usage(struct result_bundle *results, struct parameter_bundle *bundle) { return 0.0; };
 
@@ -71,7 +75,7 @@ public:
 
 using namespace std;
 
-extern vector<class device *> all_devices;
+extern std::vector<class device *> all_devices;
 
 extern void devices_start_measurement(void);
 extern void devices_end_measurement(void);

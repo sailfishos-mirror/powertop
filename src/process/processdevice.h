@@ -39,6 +39,7 @@ public:
 	device_consumer(class device *dev);
 
 	virtual const char * description(void);
+	virtual std::string description_s(void) { return description(); };
 	virtual const char * name(void) { return "device"; };
 	virtual const char * type(void) { return "Device"; };
 	virtual double Witts(void);

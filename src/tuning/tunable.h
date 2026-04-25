@@ -29,6 +29,8 @@
 
 #include "../lib.h"
 
+#include <string>
+
 using namespace std;
 
 #define TUNE_GOOD    1
@@ -46,14 +48,14 @@ protected:
 	char toggle_good[4096];
 	char toggle_bad[4096];
 public:
-	char desc[4096];
+	std::string desc;
 	double score;
 
 	tunable(void);
 	tunable(const char *str, double _score, const char *good = "", const char *bad = "", const char *neutral ="");
 
 	void dump_cmd_good(FILE *fp) {
-		(void) fprintf(fp, "\n### %s\n# %s\n", desc, toggle_good);
+		(void) fprintf(fp, "\n### %s\n# %s\n", desc.c_str(), toggle_good);
 	}
 
 	virtual ~tunable() {};
@@ -73,14 +75,15 @@ public:
 	}
 
 
-	virtual const char *description(void) { return desc; };
+	virtual const char *description(void) { return desc.c_str(); };
+	virtual std::string description_s(void) { return desc; };
 
 	virtual void toggle(void) { };
 
 	virtual const char *toggle_script(void) { return NULL; }
 };
 
-extern vector<class tunable *> all_tunables;
-extern vector<class tunable *> all_untunables;
+extern std::vector<class tunable *> all_tunables;
+extern std::vector<class tunable *> all_untunables;
 
 #endif

@@ -49,9 +49,11 @@ extern void create_all_nics(callback fn);
 
 ethernet_tunable::ethernet_tunable(const char *iface) : tunable("", 0.3, _("Good"), _("Bad"), _("Unknown"))
 {
+	char buffer[4096];
 	memset(interf, 0, sizeof(interf));
 	pt_strcpy(interf, iface);
-	sprintf(desc, _("Wake-on-lan status for device %s"), iface);
+	snprintf(buffer, sizeof(buffer), _("Wake-on-lan status for device %s"), iface);
+	desc = buffer;
 	snprintf(toggle_good, sizeof(toggle_good), "ethtool -s %s wol d;", iface);
 
 }

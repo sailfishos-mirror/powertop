@@ -9,6 +9,8 @@ Base class for all hardware components that PowerTOP monitors for power consumpt
 * `end_measurement()`: Finalizes measurement for the device.
 * `utilization()`: Returns the utilization percentage of the device.
 * `device_name()`: Returns a string representing the device name.
+* `device_name_s()`: Returns a std::string representing the device name.
+* `human_name_s()`: Returns a std::string representing the human readable name.
 * `power_usage(result_bundle, parameter_bundle)`: Calculates power usage based on measurement results and parameters.
 
 ### Key public variables
@@ -38,6 +40,7 @@ Represents any entity (process, interrupt, etc.) that consumes power.
 * `usage()`: Returns a numerical value for usage (e.g., CPU time).
 * `events()`: Returns the rate of events (wakeups, ops) per second.
 * `description()`: Returns a description of the consumer.
+* `description_s()`: Returns a std::string description of the consumer.
 
 ### Key public variables
 * `uint64_t accumulated_runtime`: Total time the consumer was active.
@@ -97,10 +100,11 @@ Base class for power-saving settings that can be "tuned" (e.g., SATA link power 
 * `good_bad()`: Returns whether the current setting is optimal for power saving.
 * `toggle()`: Switches between "good" and "bad" settings.
 * `description()`: Returns a description of the tunable setting.
+* `description_s()`: Returns a std::string description of the tunable setting.
 
 ### Key public variables
 * `double score`: The estimated power saving impact.
-* `char desc[4096]`: Description text.
+* `std::string desc`: Description text.
 
 ### Derived class usb_tunable, ethernet_tunable, wifi_tunable, bt_tunable, etc.
 Specific implementations for different subsystems that allow power-saving toggles.
@@ -114,9 +118,10 @@ Base class for system entities that can wake the system from sleep or idle.
 * `wakeup_value()`: Returns the current enable/disable state.
 * `wakeup_toggle()`: Toggles the wakeup capability.
 * `description()`: Returns a description of the wakeup source.
+* `description_s()`: Returns a std::string description of the wakeup source.
 
 ### Key public variables
-* `char desc[4096]`: Description text.
+* `std::string desc`: Description text.
 
 ### Derived class usb_wakeup, ethernet_wakeup
 Implementations for specific hardware wakeup sources.

@@ -36,7 +36,8 @@ i2c_tunable::i2c_tunable(const char *path, const char *name, bool is_adapter) : 
 {
 	ifstream file;
 	char filename[PATH_MAX];
-	string devname;
+	std::string devname;
+	char buffer[4096];
 
 	snprintf(filename, sizeof(filename), "%s/name", path);
 	file.open(filename, ios::in);
@@ -53,10 +54,13 @@ i2c_tunable::i2c_tunable(const char *path, const char *name, bool is_adapter) : 
 		snprintf(filename, sizeof(filename), "%s/device", path);
 	}
 
-	if (device_has_runtime_pm(filename))
-		snprintf(desc, sizeof(desc), _("Runtime PM for I2C %s %s (%s)"), (is_adapter ? _("Adapter") : _("Device")), name, (devname.empty() ? "" : devname.c_str()));
-	else
-		snprintf(desc, sizeof(desc), _("I2C %s %s has no runtime power management"), (is_adapter ? _("Adapter") : _("Device")), name);
+	if (device_has_runtime_pm(filename)) {
+		snprintf(buffer, sizeof(buffer), _("Runtime PM for I2C %s %s (%s)"), (is_adapter ? _("Adapter") : _("Device")), name, (devname.empty() ? "" : devname.c_str()));
+		desc = buffer;
+	} else {
+		snprintf(buffer, sizeof(buffer), _("I2C %s %s has no runtime power management"), (is_adapter ? _("Adapter") : _("Device")), name);
+		desc = buffer;
+	}
 
 	snprintf(toggle_good, sizeof(toggle_good), "echo 'auto' > '%s';", i2c_path);
 	snprintf(toggle_bad, sizeof(toggle_bad), "echo 'on' > '%s';", i2c_path);
@@ -64,7 +68,7 @@ i2c_tunable::i2c_tunable(const char *path, const char *name, bool is_adapter) : 
 
 int i2c_tunable::good_bad(void)
 {
-	string content;
+	std::string content;
 
 	content = read_sysfs_string(i2c_path);
 

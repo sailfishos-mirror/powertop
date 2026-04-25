@@ -46,9 +46,11 @@
 
 usb_wakeup::usb_wakeup(const char *path, const char *iface) : wakeup("", 0.5, _("Enabled"), _("Disabled"))
 {
+	char buffer[4096];
 	memset(interf, 0, sizeof(interf));
 	pt_strcpy(interf, iface);
-	sprintf(desc, _("Wake status for USB device %s"), iface);
+	snprintf(buffer, sizeof(buffer), _("Wake status for USB device %s"), iface);
+	desc = buffer;
 	snprintf(usb_path, sizeof(usb_path), "/sys/bus/usb/devices/%s/power/wakeup", iface);
 	snprintf(toggle_enable, sizeof(toggle_enable), "echo 'enabled' > '%s';", usb_path);
 	snprintf(toggle_disable, sizeof(toggle_disable), "echo 'disabled' > '%s';", usb_path);

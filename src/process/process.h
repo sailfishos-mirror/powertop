@@ -60,6 +60,7 @@ public:
 	virtual void account_disk_dirty(void);
 
 	virtual const char * description(void);
+	virtual std::string description_s(void) { return description(); };
 	virtual const char * name(void) { return "process"; };
 	virtual const char * type(void) { return "Process"; };
 

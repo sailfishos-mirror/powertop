@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <vector>
 #include <algorithm>
+#include <string>
 
 using namespace std;
 
@@ -55,6 +56,7 @@ public:
 
 	virtual double Witts(void);
 	virtual const char * description(void) { return ""; };
+	virtual std::string description_s(void) { return description(); };
 
 	virtual const char * name(void) { return "abstract"; };
 	virtual const char * type(void) { return "abstract"; };
