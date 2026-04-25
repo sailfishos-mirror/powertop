@@ -38,6 +38,7 @@
 #include <net/if.h>
 #include <linux/sockios.h>
 #include <sys/ioctl.h>
+#include <format>
 
 #include <linux/ethtool.h>
 
@@ -46,11 +47,9 @@
 
 ethernet_wakeup::ethernet_wakeup(const char *path, const char *iface) : wakeup("", 0.5, _("Enabled"), _("Disabled"))
 {
-	char buffer[4096];
 	memset(interf, 0, sizeof(interf));
 	pt_strcpy(interf, iface);
-	snprintf(buffer, sizeof(buffer), _("Wake-on-lan status for device %s"), iface);
-	desc = buffer;
+	desc = std::format(_("Wake-on-lan status for device {}"), iface);
 	snprintf(eth_path, sizeof(eth_path), "/sys/class/net/%s/device/power/wakeup", iface);
 	snprintf(toggle_enable, sizeof(toggle_enable), "echo 'enabled' > '%s';", eth_path);
 	snprintf(toggle_disable, sizeof(toggle_disable), "echo 'disabled' > '%s';", eth_path);
