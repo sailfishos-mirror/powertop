@@ -34,6 +34,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <format>
 
 #include "../lib.h"
 
@@ -44,10 +45,8 @@ extern "C" {
 
 wifi_tunable::wifi_tunable(const char *_iface) : tunable("", 1.5, _("Good"), _("Bad"), _("Unknown"))
 {
-	char buffer[4096];
 	pt_strcpy(iface, _iface);
-	snprintf(buffer, sizeof(buffer), _("Wireless Power Saving for interface %s"), iface);
-	desc = buffer;
+	desc = std::format(_("Wireless Power Saving for interface {}"), iface);
 
 	snprintf(toggle_good, sizeof(toggle_good), "iw dev %s set power_save on", iface);
 	snprintf(toggle_bad, sizeof(toggle_bad), "iw dev %s set power_save off", iface);
