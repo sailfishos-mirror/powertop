@@ -37,7 +37,7 @@ class alsa: public device {
 	uint64_t start_active, end_active;
 	uint64_t start_inactive, end_inactive;
 	char sysfs_path[PATH_MAX];
-	char name[4096];
+	std::string name;
 	std::string humanname;
 	char temp_buf[4096];
 	int rindex;
@@ -52,7 +52,8 @@ public:
 
 	virtual const char * class_name(void) { return "alsa";};
 
-	virtual const char * device_name(void);
+	virtual const char * device_name(void) { return name.c_str(); };
+	virtual std::string device_name_s(void) { return name; };
 	virtual const char * human_name(void);
 	virtual std::string human_name_s(void);
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);

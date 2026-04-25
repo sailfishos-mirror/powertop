@@ -54,10 +54,9 @@ alsa::alsa(const char *_name, const char *path): device()
 	start_inactive = 0;
 	pt_strcpy(sysfs_path, path);
 
-	snprintf(devname, sizeof(devname), "alsa:%s", _name);
+	name = std::format("alsa:{}", _name);
 	humanname = std::format("alsa:{}", _name);
-	pt_strcpy(name, devname);
-	rindex = get_result_index(name);
+	rindex = get_result_index(name.c_str());
 
 	model[0] = 0;
 	vendor[0] = 0;
@@ -132,7 +131,7 @@ void alsa::end_measurement(void)
 	}
 
 	p = (end_active - start_active) / (0.001 + end_active + end_inactive - start_active - start_inactive) * 100.0;
-	report_utilization(name, p);
+	report_utilization(name.c_str(), p);
 }
 
 
@@ -143,11 +142,6 @@ double alsa::utilization(void)
 	p = (end_active - start_active) / (0.001 + end_active - start_active + end_inactive - start_inactive) * 100.0;
 
 	return p;
-}
-
-const char * alsa::device_name(void)
-{
-	return name;
 }
 
 static void create_all_alsa_callback(const char *d_name)
@@ -195,7 +189,10 @@ double alsa::power_usage(struct result_bundle *result, struct parameter_bundle *
 
 void alsa::register_power_with_devlist(struct result_bundle *results, struct parameter_bundle *bundle)
 {
-	register_devpower(&name[7], power_usage(results, bundle), this);
+	if (name.length() > 7)
+		register_devpower(name.substr(7).c_str(), power_usage(results, bundle), this);
+	else
+		register_devpower(name.c_str(), power_usage(results, bundle), this);
 }
 
 std::string alsa::human_name_s(void)
