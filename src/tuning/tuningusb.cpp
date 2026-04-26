@@ -47,8 +47,8 @@ usb_tunable::usb_tunable(const char *path, const char *name) : tunable("", 0.9, 
 
 	usb_path = std::format("{}/power/control", path);
 
-	str1 = read_sysfs_string("%s/idVendor", path);
-	str2 = read_sysfs_string("%s/idProduct", path);
+	str1 = read_sysfs_string(std::format("{}/idVendor", path));
+	str2 = read_sysfs_string(std::format("{}/idProduct", path));
 
 	desc = pt_format(_("Autosuspend for unknown USB device {} ({}:{})"), name, str1, str2);
 
@@ -82,7 +82,7 @@ int usb_tunable::good_bad(void)
 {
 	string content;
 
-	content = read_sysfs_string(usb_path.c_str());
+	content = read_sysfs_string(usb_path);
 
 	if (content == "auto")
 		return TUNE_GOOD;

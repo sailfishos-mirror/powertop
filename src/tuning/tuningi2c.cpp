@@ -68,7 +68,7 @@ int i2c_tunable::good_bad(void)
 {
 	std::string content;
 
-	content = read_sysfs_string(i2c_path.c_str());
+	content = read_sysfs_string(i2c_path);
 
 	if (content == "auto")
 		return TUNE_GOOD;

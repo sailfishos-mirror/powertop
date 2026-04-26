@@ -235,46 +235,18 @@ int read_sysfs(const string &filename, bool *ok)
 string read_sysfs_string(const string &filename)
 {
 	ifstream file;
-	char content[4096];
-	char *c;
+	string content;
 
 	file.open(filename.c_str(), ios::in);
 	if (!file)
 		return "";
 	try
 	{
-		file.getline(content, 4096);
+		getline(file, content);
 		file.close();
-		c = strchr(content, '\n');
-		if (c)
-			*c = 0;
-	} catch (std::exception &exc) {
-		file.close();
-		return "";
-	}
-	return content;
-}
-
-string read_sysfs_string(const char *format, const char *param)
-{
-	ifstream file;
-	char content[4096];
-	char *c;
-	char filename[PATH_MAX];
-
-
-	snprintf(filename, sizeof(filename), format, param);
-
-	file.open(filename, ios::in);
-	if (!file)
-		return "";
-	try
-	{
-		file.getline(content, 4096);
-		file.close();
-		c = strchr(content, '\n');
-		if (c)
-			*c = 0;
+		size_t pos = content.find('\n');
+		if (pos != string::npos)
+			content.erase(pos);
 	} catch (std::exception &exc) {
 		file.close();
 		return "";

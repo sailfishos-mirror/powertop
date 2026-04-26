@@ -135,7 +135,7 @@ double global_time_left(void)
 
 void sysfs_power_meters_callback(const char *d_name)
 {
-	std::string type = read_sysfs_string("/sys/class/power_supply/%s/type", d_name);
+	std::string type = read_sysfs_string(std::format("/sys/class/power_supply/{}/type", d_name));
 
 	if (type != "Battery" && type != "UPS")
 		return;

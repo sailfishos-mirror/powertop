@@ -168,7 +168,7 @@ void collect_open_devices(void)
 				dev->pid = strtoull(entry->d_name, NULL, 10);
 				strncpy(dev->device, link, 251);
 				dev->device[251] = '\0';
-				strncpy(dev->comm, read_sysfs_string("/proc/%s/comm", entry->d_name).c_str(), 31);
+				pt_strcpy(dev->comm, read_sysfs_string(std::format("/proc/{}/comm", entry->d_name)).c_str());
 				dev->comm[31] = '\0';
 				target->push_back(dev);
 

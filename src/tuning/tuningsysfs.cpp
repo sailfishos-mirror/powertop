@@ -51,7 +51,7 @@ int sysfs_tunable::good_bad(void)
 {
 	std::string content;
 
-	content = read_sysfs_string(sysfs_path.c_str());
+	content = read_sysfs_string(sysfs_path);
 
 	if (content == target_value)
 		return TUNE_GOOD;

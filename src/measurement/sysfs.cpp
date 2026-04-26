@@ -135,7 +135,7 @@ void sysfs_power_meter::measure()
 	if (!is_present())
 		return;
 	/** do not jump over. we may have discharging battery */
-	if (read_sysfs_string("/sys/class/power_supply/%s/status", name.c_str()) == "Discharging")
+	if (read_sysfs_string(std::format("/sys/class/power_supply/{}/status", name)) == "Discharging")
 		this->set_discharging(true);
 
 	got_rate = set_rate_from_power();
