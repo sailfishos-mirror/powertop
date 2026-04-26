@@ -232,7 +232,7 @@ std::string cpu_linux::fill_cstate_line(int line_nr, const char *separator)
 	unsigned int i;
 
 	if (line_nr == LEVEL_HEADER) {
-		return std::format(_(" CPU(OS) {}"), number);
+		return pt_format(_(" CPU(OS) {}"), number);
 	}
 
 	for (i = 0; i < cstates.size(); i++) {
@@ -319,7 +319,7 @@ std::string cpu_linux::fill_pstate_line(int line_nr)
 	}
 
 	if (line_nr == LEVEL_HEADER) {
-		return std::format(_(" CPU {}"), number);
+		return pt_format(_(" CPU {}"), number);
 	}
 
 	if (line_nr >= (int)pstates.size() || line_nr < 0)

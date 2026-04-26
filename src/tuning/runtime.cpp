@@ -46,9 +46,9 @@ runtime_tunable::runtime_tunable(const char *path, const char *bus, const char *
 	runtime_path = std::format("{}/power/control", path);
 
 
-	desc = std::format(_("Runtime PM for {} device {}"), bus, dev);
+	desc = pt_format(_("Runtime PM for {} device {}"), bus, dev);
 	if (!device_has_runtime_pm(path)) {
-		desc = std::format(_("{} device {} has no runtime power management"), bus, dev);
+		desc = pt_format(_("{} device {} has no runtime power management"), bus, dev);
 	}
 
 	if (strcmp(bus, "pci") == 0) {
@@ -73,18 +73,18 @@ runtime_tunable::runtime_tunable(const char *path, const char *bus, const char *
 
 		if (vendor && device) {
 			if (!device_has_runtime_pm(path)) {
-				desc = std::format(_("PCI Device {} has no runtime power management"), pci_id_to_name(vendor, device, filename, 4095));
+				desc = pt_format(_("PCI Device {} has no runtime power management"), pci_id_to_name(vendor, device, filename, 4095));
 			} else {
-				desc = std::format(_("Runtime PM for PCI Device {}"), pci_id_to_name(vendor, device, filename, 4095));
+				desc = pt_format(_("Runtime PM for PCI Device {}"), pci_id_to_name(vendor, device, filename, 4095));
 			}
 		}
 
 		if (string(path).find("ata") != string::npos) {
-			desc = std::format(_("Runtime PM for port {} of PCI device: {}"), port, pci_id_to_name(vendor, device, filename, 4095));
+			desc = pt_format(_("Runtime PM for port {} of PCI device: {}"), port, pci_id_to_name(vendor, device, filename, 4095));
 		}
 
 		if (string(path).find("block") != string::npos) {
-			desc = std::format(_("Runtime PM for disk {}"), port);
+			desc = pt_format(_("Runtime PM for disk {}"), port);
 		}
 
 	}

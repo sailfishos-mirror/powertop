@@ -735,7 +735,7 @@ std::string nhm_cpu::fill_pstate_line(int line_nr)
 	}
 
 	if (line_nr == LEVEL_HEADER) {
-		return std::format(_(" CPU {}"), number);
+		return pt_format(_(" CPU {}"), number);
 	}
 
 	if (line_nr == LEVEL_C0) {

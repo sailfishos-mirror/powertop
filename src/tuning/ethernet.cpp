@@ -52,7 +52,7 @@ ethernet_tunable::ethernet_tunable(const char *iface) : tunable("", 0.3, _("Good
 {
 	memset(interf, 0, sizeof(interf));
 	pt_strcpy(interf, iface);
-	desc = std::format(_("Wake-on-lan status for device {}"), iface);
+	desc = pt_format(_("Wake-on-lan status for device {}"), iface);
 	toggle_good = std::format("ethtool -s {} wol d;", iface);
 
 }

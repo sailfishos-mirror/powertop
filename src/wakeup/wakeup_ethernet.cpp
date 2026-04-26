@@ -49,7 +49,7 @@ ethernet_wakeup::ethernet_wakeup(const char *path, const char *iface) : wakeup("
 {
 	memset(interf, 0, sizeof(interf));
 	pt_strcpy(interf, iface);
-	desc = std::format(_("Wake-on-lan status for device {}"), iface);
+	desc = pt_format(_("Wake-on-lan status for device {}"), iface);
 	snprintf(eth_path, sizeof(eth_path), "/sys/class/net/%s/device/power/wakeup", iface);
 	snprintf(toggle_enable, sizeof(toggle_enable), "echo 'enabled' > '%s';", eth_path);
 	snprintf(toggle_disable, sizeof(toggle_disable), "echo 'disabled' > '%s';", eth_path);

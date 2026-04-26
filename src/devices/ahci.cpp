@@ -141,9 +141,9 @@ ahci::ahci(char *_name, char *path): device()
 	diskname = model_name((char *)sysfs_path.c_str(), _name);
 
 	if (diskname.empty())
-		humanname = std::format(_("SATA link: {}"), _name);
+		humanname = pt_format(_("SATA link: {}"), _name);
 	else
-		humanname = std::format(_("SATA disk: {}"), diskname);
+		humanname = pt_format(_("SATA disk: {}"), diskname);
 }
 
 void ahci::start_measurement(void)

@@ -50,7 +50,7 @@ usb_tunable::usb_tunable(const char *path, const char *name) : tunable("", 0.9, 
 	str1 = read_sysfs_string("%s/idVendor", path);
 	str2 = read_sysfs_string("%s/idProduct", path);
 
-	desc = std::format(_("Autosuspend for unknown USB device {} ({}:{})"), name, str1, str2);
+	desc = pt_format(_("Autosuspend for unknown USB device {} ({}:{})"), name, str1, str2);
 
 	snprintf(filename, sizeof(filename), "%s/manufacturer", path);
 	file.open(filename, ios::in);
@@ -67,11 +67,11 @@ usb_tunable::usb_tunable(const char *path, const char *name) : tunable("", 0.9, 
 		file.close();
 	};
 	if (strlen(vendor) && strlen(product)) {
-		desc = std::format(_("Autosuspend for USB device {} [{}]"), product, vendor);
+		desc = pt_format(_("Autosuspend for USB device {} [{}]"), product, vendor);
 	} else if (strlen(product)) {
-		desc = std::format(_("Autosuspend for USB device {} [{}]"), product, name);
+		desc = pt_format(_("Autosuspend for USB device {} [{}]"), product, name);
 	} else if (strlen(vendor)) {
-		desc = std::format(_("Autosuspend for USB device {} [{}]"), vendor, name);
+		desc = pt_format(_("Autosuspend for USB device {} [{}]"), vendor, name);
 	}
 
 	toggle_good = std::format("echo 'auto' > '{}';", usb_path);

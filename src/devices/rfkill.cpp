@@ -59,10 +59,10 @@ rfkill::rfkill(char *_name, char *path): device()
 
 	memset(line, 0, 4096);
 	if (readlink(std::format("{}/device/driver", path).c_str(), line, sizeof(line)) > 0) {
-		humanname = std::format(_("Radio device: {}"), basename(line));
+		humanname = pt_format(_("Radio device: {}"), basename(line));
 	}
 	if (readlink(std::format("{}/device/device/driver", path).c_str(), line, sizeof(line)) > 0) {
-		humanname = std::format(_("Radio device: {}"), basename(line));
+		humanname = pt_format(_("Radio device: {}"), basename(line));
 	}
 }
 

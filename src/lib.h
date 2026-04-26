@@ -25,6 +25,15 @@
 #ifndef INCLUDE_GUARD_LIB_H
 #define INCLUDE_GUARD_LIB_H
 
+#include <format>
+#include <string_view>
+
+template<typename... Args>
+inline std::string pt_format(std::string_view fmt, Args&&... args)
+{
+	return std::vformat(fmt, std::make_format_args(args...));
+}
+
 #include <libintl.h>
 #include <stdint.h>
 #include <stdlib.h>

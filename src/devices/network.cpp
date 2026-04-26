@@ -166,7 +166,7 @@ network::network(const char *_name, const char *path): device()
 
 	memset(line, 0, 4096);
 	if (readlink(std::format("{}/device/driver", path).c_str(), line, 4096) > 0) {
-		humanname = std::format(_("Network interface: {} ({})"), _name,  basename(line));
+		humanname = pt_format(_("Network interface: {} ({})"), _name,  basename(line));
 	};
 }
 

@@ -48,7 +48,7 @@ usbdevice::usbdevice(const char *_name, const char *path, const char *devid): de
 	register_sysfs_path(sysfs_path.c_str());
 	name = _name;
 	devname = devid;
-	humanname = std::format(_("USB device: {}"), pretty_print(devid, vendor, 4096));
+	humanname = pt_format(_("USB device: {}"), pretty_print(devid, vendor, 4096));
 	active_before = 0;
 	active_after = 0;
 	connected_before = 0;
@@ -88,11 +88,11 @@ usbdevice::usbdevice(const char *_name, const char *path, const char *devid): de
 		file.close();
 	};
 	if (strlen(vendor) && strlen(product))
-		humanname = std::format(_("USB device: {} ({})"), product, vendor);
+		humanname = pt_format(_("USB device: {} ({})"), product, vendor);
 	else if (strlen(product))
-		humanname = std::format(_("USB device: {}"), product);
+		humanname = pt_format(_("USB device: {}"), product);
 	else if (strlen(vendor))
-		humanname = std::format(_("USB device: {}"), vendor);
+		humanname = pt_format(_("USB device: {}"), vendor);
 
 	/* For usbdevfs we need bus number and device number */
 	file.open(std::format("{}/busnum", path), ios::in);

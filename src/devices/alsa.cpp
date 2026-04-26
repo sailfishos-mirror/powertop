@@ -70,11 +70,11 @@ alsa::alsa(const char *_name, const char *path): device()
 		file.close();
 	}
 	if (strlen(model) && strlen(vendor))
-		humanname = std::format(_("Audio codec {}: {} ({})"), name, model, vendor);
+		humanname = pt_format(_("Audio codec {}: {} ({})"), name, model, vendor);
 	else if (strlen(model))
-		humanname = std::format(_("Audio codec {}: {}"), _name, model);
+		humanname = pt_format(_("Audio codec {}: {}"), _name, model);
 	else if (strlen(vendor))
-		humanname = std::format(_("Audio codec {}: {}"), _name, vendor);
+		humanname = pt_format(_("Audio codec {}: {}"), _name, vendor);
 }
 
 void alsa::start_measurement(void)

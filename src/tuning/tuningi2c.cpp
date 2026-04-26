@@ -55,9 +55,9 @@ i2c_tunable::i2c_tunable(const char *path, const char *name, bool is_adapter) : 
 	}
 
 	if (device_has_runtime_pm(filename)) {
-		desc = std::format(_("Runtime PM for I2C {} {} ({})"), (is_adapter ? _("Adapter") : _("Device")), name, devname);
+		desc = pt_format(_("Runtime PM for I2C {} {} ({})"), (is_adapter ? _("Adapter") : _("Device")), name, devname);
 	} else {
-		desc = std::format(_("I2C {} {} has no runtime power management"), (is_adapter ? _("Adapter") : _("Device")), name);
+		desc = pt_format(_("I2C {} {} has no runtime power management"), (is_adapter ? _("Adapter") : _("Device")), name);
 	}
 
 	toggle_good = std::format("echo 'auto' > '{}';", i2c_path);
