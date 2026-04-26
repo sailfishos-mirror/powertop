@@ -122,13 +122,13 @@ void all_timers_to_all_power(void)
 }
 
 
-const char * timer::description(void)
+std::string timer::description(void)
 {
 	if (child_runtime > accumulated_runtime)
 		child_runtime = 0;
 
 	desc = handler;
-	return desc.c_str();
+	return desc;
 }
 
 

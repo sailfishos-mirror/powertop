@@ -55,8 +55,7 @@ public:
 	virtual ~power_consumer() {};
 
 	virtual double Witts(void);
-	virtual const char * description(void) { return ""; };
-	virtual std::string description_s(void) { return description(); };
+	virtual std::string description(void) { return ""; };
 
 	virtual const char * name(void) { return "abstract"; };
 	virtual const char * type(void) { return "abstract"; };

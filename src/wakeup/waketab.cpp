@@ -153,7 +153,7 @@ void report_show_wakeup(void)
 			gb = wakeup_all[i]->wakeup_value();
 			if (gb != WAKEUP_DISABLE)
 				continue;
-			wakeup_data[idx]=string(wakeup_all[i]->description());
+			wakeup_data[idx]=wakeup_all[i]->description();
 			idx+=1;
 			wakeup_data[idx]=string(wakeup_all[i]->wakeup_toggle_script());
 			idx+=1;

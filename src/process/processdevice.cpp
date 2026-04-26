@@ -37,10 +37,9 @@ device_consumer::device_consumer(class device *dev) : power_consumer()
 }
 
 
-const char * device_consumer::description(void)
+std::string device_consumer::description(void)
 {
-	snprintf(str, sizeof(str), "%s", device->human_name_s().c_str());
-	return str;
+	return device->human_name_s();
 }
 
 double device_consumer::Witts(void)

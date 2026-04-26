@@ -31,15 +31,13 @@
 #include "../devices/device.h"
 
 class device_consumer : public power_consumer {
-	char str[4096];
 public:
 	int prio;
 	double power;
 	class device *device;
 	device_consumer(class device *dev);
 
-	virtual const char * description(void);
-	virtual std::string description_s(void) { return description(); };
+	virtual std::string description(void);
 	virtual const char * name(void) { return "device"; };
 	virtual const char * type(void) { return "Device"; };
 	virtual double Witts(void);

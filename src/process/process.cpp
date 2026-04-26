@@ -130,13 +130,13 @@ process::process(const char *_comm, int _pid, int _tid) : power_consumer()
 	}
 }
 
-const char * process::description(void)
+std::string process::description(void)
 {
 
 	if (child_runtime > accumulated_runtime)
 		child_runtime = 0;
 
-	return desc.c_str();
+	return desc;
 }
 
 double process::usage_summary(void)

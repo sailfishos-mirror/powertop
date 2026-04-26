@@ -72,11 +72,11 @@ uint64_t interrupt::end_interrupt(uint64_t time)
 	return delta;
 }
 
-const char * interrupt::description(void)
+std::string interrupt::description(void)
 {
 	if (child_runtime > accumulated_runtime)
 		child_runtime = 0;
-	return desc.c_str();
+	return desc;
 }
 
 double interrupt::usage_summary(void)

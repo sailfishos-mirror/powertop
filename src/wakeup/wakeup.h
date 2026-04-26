@@ -65,8 +65,7 @@ public:
 	}
 
 
-	virtual const char *description(void) { return desc.c_str(); };
-	virtual std::string description_s(void) { return desc; };
+	virtual std::string description(void) { return desc; };
 
 	virtual void wakeup_toggle(void) { };
 

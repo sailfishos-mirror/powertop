@@ -109,12 +109,12 @@ void clear_work(void)
 }
 
 
-const char * work::description(void)
+std::string work::description(void)
 {
 	if (child_runtime > accumulated_runtime)
 		child_runtime = 0;
 
-	return desc.c_str();
+	return desc;
 }
 
 

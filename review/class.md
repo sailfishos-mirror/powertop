@@ -39,8 +39,7 @@ Represents any entity (process, interrupt, etc.) that consumes power.
 * `Witts()`: Returns the power consumption in Watts.
 * `usage()`: Returns a numerical value for usage (e.g., CPU time).
 * `events()`: Returns the rate of events (wakeups, ops) per second.
-* `description()`: Returns a description of the consumer.
-* `description_s()`: Returns a std::string description of the consumer.
+* `description()`: Returns a std::string description of the consumer.
 
 ### Key public variables
 * `uint64_t accumulated_runtime`: Total time the consumer was active.
@@ -99,8 +98,7 @@ Base class for power-saving settings that can be "tuned" (e.g., SATA link power 
 ### Key public methods
 * `good_bad()`: Returns whether the current setting is optimal for power saving.
 * `toggle()`: Switches between "good" and "bad" settings.
-* `description()`: Returns a description of the tunable setting.
-* `description_s()`: Returns a std::string description of the tunable setting.
+* `description()`: Returns a std::string description of the tunable setting.
 * `result_string()`: Returns a string representation of the current state (Good/Bad/Unknown).
 * `result_string_s()`: Returns a std::string representation of the current state.
 * `toggle_script()`: Returns a shell script command to toggle the setting.
@@ -121,8 +119,7 @@ Base class for system entities that can wake the system from sleep or idle.
 ### Key public methods
 * `wakeup_value()`: Returns the current enable/disable state.
 * `wakeup_toggle()`: Toggles the wakeup capability.
-* `description()`: Returns a description of the wakeup source.
-* `description_s()`: Returns a std::string description of the wakeup source.
+* `description()`: Returns a std::string description of the wakeup source.
 
 ### Key public variables
 * `std::string desc`: Description text.

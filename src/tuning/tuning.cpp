@@ -111,14 +111,11 @@ static void __tuning_update_display(int cursor_pos)
 
 	for (i = 0; i < all_tunables.size(); i++) {
 		char res[128];
-		char desc[4096];
+		std::string desc = all_tunables[i]->description();
 		pt_strcpy(res, all_tunables[i]->result_string());
-		pt_strcpy(desc, all_tunables[i]->description());
 		while (strlen(res) < 12)
 			strcat(res, " ");
 
-		while (strlen(desc) < 103)
-			strcat(desc, " ");
 		if ((int)i != cursor_pos) {
 			wattrset(win, A_NORMAL);
 			wprintw(win, "   ");
@@ -126,7 +123,7 @@ static void __tuning_update_display(int cursor_pos)
 			wattrset(win, A_REVERSE);
 			wprintw(win, ">> ");
 		}
-		wprintw(win, "%s  %s\n", _(res), _(desc));
+		wprintw(win, "%s  %-103s\n", _(res), _(desc.c_str()));
 	}
 }
 
@@ -176,10 +173,7 @@ static bool tunables_sort(class tunable * i, class tunable * j)
 	if (d > 0.0001)
 		return i->score > j->score;
 
-	if (strcasecmp(i->description(), j->description()) == -1)
-		return true;
-
-	return false;
+	return i->description() < j->description();
 }
 
 void tuning_window::window_refresh()
@@ -247,7 +241,7 @@ void report_show_tunables(void)
 			gb = all_tunables[i]->good_bad();
 			if (gb != TUNE_BAD)
 				continue;
-			tunable_data[idx]=string(all_tunables[i]->description());
+			tunable_data[idx]=all_tunables[i]->description();
 			idx+=1;
 			tunable_data[idx]=string(all_tunables[i]->toggle_script());
 			idx+=1;
@@ -269,9 +263,9 @@ void report_show_tunables(void)
 	string *untunable_data = new string[rows];
 	untunable_data[0]=__("Description");
 
-	for (i = 0; i < all_untunables.size(); i++)
-		untunable_data[i+1]= string(all_untunables[i]->description());
-
+	for (i = 0; i < all_untunables.size(); i++) {
+		untunable_data[i+1]= all_untunables[i]->description();
+	}
 	/* Report Output */
 	report.add_title(&title_attr,__("Untunable Software Issues"));
 	report.add_table(untunable_data, &tune_table_css);
@@ -300,7 +294,7 @@ void report_show_tunables(void)
 		if (gb != TUNE_GOOD)
 			continue;
 
-		tuned_data[idx]=string(all_tunables[i]->description());
+		tuned_data[idx]=all_tunables[i]->description();
 		idx+=1;
         }
 	/* Report Output */
