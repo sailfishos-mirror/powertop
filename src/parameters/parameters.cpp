@@ -487,14 +487,14 @@ int global_power_valid(void)
 }
 
 /* find the directory to store powertop results/parameters based on distribution*/
-char* get_param_directory(const char *filename)
+std::string get_param_directory(const char *filename)
 {
-	static char tempfilename[PATH_MAX];
+	std::string tempfilename;
 
 	if (access("/var/cache/powertop", W_OK ) == 0)
-		snprintf(tempfilename, sizeof(tempfilename), "/var/cache/powertop/%s", filename);
+		tempfilename = std::format("/var/cache/powertop/{}", filename);
 	if (access("/data/local/powertop", W_OK ) == 0)
-		snprintf(tempfilename, sizeof(tempfilename), "/data/local/powertop/%s", filename);
+		tempfilename = std::format("/data/local/powertop/{}", filename);
 
 	return tempfilename;
-};
+}

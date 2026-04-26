@@ -37,11 +37,11 @@ void save_all_results(const char *filename)
 	ofstream file;
 	unsigned int i;
 	struct result_bundle *bundle;
-	char* pathname;
+	std::string pathname;
 
 	pathname = get_param_directory(filename);
 
-	file.open(pathname, ios::out);
+	file.open(pathname.c_str(), ios::out);
 	if (!file) {
 		cout << _("Cannot save to file") << " " << pathname << "\n";
 		return;
@@ -79,12 +79,12 @@ void load_results(const char *filename)
 	struct result_bundle *bundle;
 	int first = 1;
 	unsigned int count = 0;
-	char* pathname;
+	std::string pathname;
 	int bundle_saved = 0;
 
 	pathname = get_param_directory(filename);
 
-	file.open(pathname, ios::in);
+	file.open(pathname.c_str(), ios::in);
 	if (!file) {
 		cout << _("Cannot load from file") << " " << pathname << "\n";
 		return;
@@ -141,7 +141,7 @@ void load_results(const char *filename)
 void save_parameters(const char *filename)
 {
 	ofstream file;
-	char* pathname;
+	std::string pathname;
 
 //	printf("result size is %i, #parameters is %i \n", (int)past_results.size(), (int)all_parameters.parameters.size());
 
@@ -150,7 +150,7 @@ void save_parameters(const char *filename)
 
 	pathname = get_param_directory(filename);
 
-	file.open(pathname, ios::out);
+	file.open(pathname.c_str(), ios::out);
 	if (!file) {
 		cout << _("Cannot save to file") << " " << pathname << "\n";
 		return;
@@ -171,11 +171,11 @@ void load_parameters(const char *filename)
 	ifstream file;
 	char line[4096];
 	char *c1;
-	char* pathname;
+	std::string pathname;
 
 	pathname = get_param_directory(filename);
 
-	file.open(pathname, ios::in);
+	file.open(pathname.c_str(), ios::in);
 	if (!file) {
 		cout << _("Cannot load from file") << " " << pathname << "\n";
 		cout << _("File will be loaded after taking minimum number of measurement(s) with battery only \n");

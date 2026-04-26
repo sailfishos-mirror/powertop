@@ -91,17 +91,17 @@ std::string ethernet_wakeup::wakeup_toggle_script(void)
 	return toggle_enable;
 }
 
-void wakeup_eth_callback(const char *d_name)
+static void wakeup_eth_callback(const char *d_name)
 {
 	class ethernet_wakeup *eth;
-	char filename[PATH_MAX];
+	std::string filename;
 
-	snprintf(filename, sizeof(filename), "/sys/class/net/%s/device/power/wakeup", d_name);
-	if (access(filename, R_OK) != 0)
+	filename = std::format("/sys/class/net/{}/device/power/wakeup", d_name);
+	if (access(filename.c_str(), R_OK) != 0)
 		return;
 
-	snprintf(filename, sizeof(filename), "/sys/class/net/%s/device/power/wakeup", d_name);
-	eth = new class ethernet_wakeup(filename, d_name);
+	filename = std::format("/sys/class/net/{}/device/power/wakeup", d_name);
+	eth = new class ethernet_wakeup(filename.c_str(), d_name);
 	wakeup_all.push_back(eth);
 }
 

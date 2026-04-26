@@ -306,6 +306,15 @@ char *pci_id_to_name(uint16_t vendor, uint16_t device, char *buffer, int len)
 	return ret;
 }
 
+char *pci_id_to_name(uint16_t vendor, uint16_t device, std::string &buffer, int len)
+{
+	char buf[len];
+	char *ret;
+	ret = pci_id_to_name(vendor, device, buf, len);
+	buffer = buf;
+	return ret;
+}
+
 void end_pci_access(void)
 {
 	if (pci_access)
@@ -315,6 +324,11 @@ void end_pci_access(void)
 #else
 
 char *pci_id_to_name(uint16_t vendor, uint16_t device, char *buffer, int len)
+{
+	return NULL;
+}
+
+char *pci_id_to_name(uint16_t vendor, uint16_t device, std::string &buffer, int len)
 {
 	return NULL;
 }
@@ -501,14 +515,14 @@ int read_msr(int cpu, uint64_t offset, uint64_t *value)
 	ssize_t retval;
 	uint64_t msr;
 	int fd;
-	char msr_path[256];
+	std::string msr_path;
 
-	snprintf(msr_path, sizeof(msr_path), "/dev/cpu/%d/msr", cpu);
+	msr_path = std::format("/dev/cpu/{}/msr", cpu);
 
-	if (access(msr_path, R_OK) != 0){
-		snprintf(msr_path, sizeof(msr_path), "/dev/msr%d", cpu);
+	if (access(msr_path.c_str(), R_OK) != 0){
+		msr_path = std::format("/dev/msr{}", cpu);
 
-		if (access(msr_path, R_OK) != 0){
+		if (access(msr_path.c_str(), R_OK) != 0){
 			fprintf(stderr,
 			 _("Model-specific registers (MSR)\
 			 not found (try enabling CONFIG_X86_MSR).\n"));
@@ -516,7 +530,7 @@ int read_msr(int cpu, uint64_t offset, uint64_t *value)
 		}
 	}
 
-	fd = open(msr_path, O_RDONLY);
+	fd = open(msr_path.c_str(), O_RDONLY);
 	if (fd < 0)
 		return -1;
 	retval = pread(fd, &msr, sizeof msr, offset);
@@ -537,14 +551,14 @@ int write_msr(int cpu, uint64_t offset, uint64_t value)
 #if defined(__i386__) || defined(__x86_64__)
 	ssize_t retval;
 	int fd;
-	char msr_path[256];
+	std::string msr_path;
 
-	snprintf(msr_path, sizeof(msr_path), "/dev/cpu/%d/msr", cpu);
+	msr_path = std::format("/dev/cpu/{}/msr", cpu);
 
-	if (access(msr_path, R_OK) != 0){
-		snprintf(msr_path, sizeof(msr_path), "/dev/msr%d", cpu);
+	if (access(msr_path.c_str(), R_OK) != 0){
+		msr_path = std::format("/dev/msr{}", cpu);
 
-		if (access(msr_path, R_OK) != 0){
+		if (access(msr_path.c_str(), R_OK) != 0){
 			fprintf(stderr,
 			 _("Model-specific registers (MSR)\
 			 not found (try enabling CONFIG_X86_MSR).\n"));
@@ -552,7 +566,7 @@ int write_msr(int cpu, uint64_t offset, uint64_t value)
 		}
 	}
 
-	fd = open(msr_path, O_WRONLY);
+	fd = open(msr_path.c_str(), O_WRONLY);
 	if (fd < 0)
 		return -1;
 	retval = pwrite(fd, &value, sizeof value, offset);

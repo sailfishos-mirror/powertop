@@ -91,17 +91,17 @@ std::string usb_wakeup::wakeup_toggle_script(void)
 	return toggle_enable;
 }
 
-void wakeup_usb_callback(const char *d_name)
+static void wakeup_usb_callback(const char *d_name)
 {
 	class usb_wakeup *usb;
-	char filename[PATH_MAX];
+	std::string filename;
 
-	snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s/power/wakeup", d_name);
-	if (access(filename, R_OK) != 0)
+	filename = std::format("/sys/bus/usb/devices/{}/power/wakeup", d_name);
+	if (access(filename.c_str(), R_OK) != 0)
 		return;
 
-	snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s/power/wakeup", d_name);
-	usb = new class usb_wakeup(filename, d_name);
+	filename = std::format("/sys/bus/usb/devices/{}/power/wakeup", d_name);
+	usb = new class usb_wakeup(filename.c_str(), d_name);
 	wakeup_all.push_back(usb);
 }
 

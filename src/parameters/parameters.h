@@ -107,7 +107,7 @@ extern struct parameter_bundle * clone_parameters(struct parameter_bundle *bundl
 
 extern void store_results(double duration);
 extern void learn_parameters(int iterations, int do_base_power);
-extern char *get_param_directory(const char *filename);
+extern std::string get_param_directory(const char *filename);
 extern void save_all_results(const char *filename = "saved_results.powertop");
 extern void close_results(void);
 extern void load_results(const char *filename);

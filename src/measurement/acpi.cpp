@@ -52,7 +52,7 @@ present voltage:         12001 mV
 
 void acpi_power_meter::measure(void)
 {
-	char filename[PATH_MAX];
+	std::string filename;
 	char line[4096];
 	ifstream file;
 
@@ -69,9 +69,9 @@ void acpi_power_meter::measure(void)
 	voltage = 0;
 	capacity = 0;
 
-	snprintf(filename, sizeof(filename), "/proc/acpi/battery/%s/state", name.c_str());
+	filename = std::format("/proc/acpi/battery/{}/state", name);
 
-	file.open(filename, ios::in);
+	file.open(filename.c_str(), ios::in);
 	if (!file)
 		return;
 

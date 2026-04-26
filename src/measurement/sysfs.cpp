@@ -37,10 +37,10 @@ sysfs_power_meter::sysfs_power_meter(const char *power_supply_name) : power_mete
 
 bool sysfs_power_meter::get_sysfs_attr(const char *attribute, int *value)
 {
-	char filename[PATH_MAX];
+	std::string filename;
 	bool ok;
 
-	snprintf(filename, sizeof(filename), "/sys/class/power_supply/%s/%s", name.c_str(), attribute);
+	filename = std::format("/sys/class/power_supply/{}/{}", name, attribute);
 	*value = read_sysfs(filename, &ok);
 
 	return ok;

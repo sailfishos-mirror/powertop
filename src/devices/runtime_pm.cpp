@@ -194,7 +194,7 @@ static void do_bus(const char *bus)
 
 		if (strcmp(bus, "pci") == 0) {
 			uint16_t vendor = 0, device = 0;
-			char filename[4096];
+			std::string pci_name;
 
 			file.open(std::format("/sys/bus/{}/devices/{}/vendor", bus, entry->d_name), ios::in);
 			if (file) {
@@ -211,7 +211,7 @@ static void do_bus(const char *bus)
 
 			if (vendor && device) {
 				dev->set_human_name(pt_format(_("PCI Device: {}"),
-					pci_id_to_name(vendor, device, filename, 4095)));
+					pci_id_to_name(vendor, device, pci_name, 4095)));
 			}
 		}
 		all_devices.push_back(dev);
