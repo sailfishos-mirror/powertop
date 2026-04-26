@@ -53,7 +53,7 @@ uint64_t devfreq::parse_freq_time(const string &pchr_s)
 {
 	char *cptr, *pptr;
 	std::string pchr = pchr_s;
-	uint64_t ctime;
+	uint64_t ctime = 0;
 
 	pptr = pchr.data();
 	cptr = strtok(pchr.data(), " :");

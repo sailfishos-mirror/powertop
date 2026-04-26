@@ -286,8 +286,8 @@ char *pci_id_to_name(uint16_t vendor, uint16_t device, std::string &buffer, int 
 	std::vector<char> buf(len);
 	char *ret;
 	ret = pci_id_to_name(vendor, device, buf.data(), len);
-	buffer = buf.data();
-	return buffer.data();
+	if (ret) buffer = ret;
+	return ret ? (char *)buffer.c_str() : NULL;
 }
 
 void end_pci_access(void)
