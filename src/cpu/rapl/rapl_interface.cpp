@@ -70,7 +70,7 @@
 #define PP0_DOMAIN_PRESENT	0x04
 #define PP1_DOMAIN_PRESENT	0x08
 
-c_rapl_interface::c_rapl_interface(const char *dev_name, int cpu) :
+c_rapl_interface::c_rapl_interface(const string &dev_name, int cpu) :
 	powercap_sysfs_present(false),
 	powercap_core_path(),
 	powercap_uncore_path(),
@@ -92,7 +92,7 @@ c_rapl_interface::c_rapl_interface(const char *dev_name, int cpu) :
 
 	rapl_domains = 0;
 
-	if (dev_name) {
+	if (!dev_name.empty()) {
 		string base_path = "/sys/class/powercap/intel-rapl/";
 		if ((dir = opendir(base_path.c_str())) != NULL) {
 			while ((entry = readdir(dir)) != NULL) {
