@@ -55,7 +55,7 @@ static inline int sys_perf_event_open(struct perf_event_attr *attr,
 			group_fd, flags);
 }
 
-void perf_event::create_perf_event(char *eventname, int _cpu)
+void perf_event::create_perf_event(const string &eventname, int _cpu)
 {
 	struct perf_event_attr attr;
 	int ret;
@@ -133,41 +133,39 @@ void perf_event::create_perf_event(char *eventname, int _cpu)
 
 }
 
-static int parse_event_format(const char *system_name, const char *event_name)
+static int parse_event_format(const string &system_name, const string &event_name)
 {
 	char *buf;
 	int size;
 
-	buf = tracefs_event_file_read(NULL, system_name, event_name, "format", &size);
+	buf = tracefs_event_file_read(NULL, system_name.c_str(), event_name.c_str(), "format", &size);
 	if (!buf)
 		return -1;
 
-	tep_parse_event(perf_event::tep, buf, size, system_name);
+	tep_parse_event(perf_event::tep, buf, size, system_name.c_str());
 	free(buf);
 	return 0;
 }
 
-void perf_event::set_event_name(const char *system_name, const char *event_name)
+void perf_event::set_event_name(const string &system_name, const string &event_name)
 {
 	struct tep_event *event;
 	int ret;
 
-	event = tep_find_event_by_name(perf_event::tep, system_name, event_name);
+	event = tep_find_event_by_name(perf_event::tep, system_name.c_str(), event_name.c_str());
 	if (!event) {
 		ret = parse_event_format(system_name, event_name);
 		if (ret < 0) {
 			trace_type = -1;
 			return;
 		}
-		event = tep_find_event_by_name(perf_event::tep, system_name, event_name);
+		event = tep_find_event_by_name(perf_event::tep, system_name.c_str(), event_name.c_str());
 	}
 	trace_type = event->id;
 }
 
 perf_event::~perf_event(void)
 {
-	free(name);
-
 	if (tep_get_ref(perf_event::tep) == 1) {
 		tep_free(perf_event::tep);
 		perf_event::tep = NULL;
@@ -189,10 +187,9 @@ static void allocate_tep(void)
 		tep_ref(perf_event::tep);
 }
 
-perf_event::perf_event(const char *system_name, const char *event_name, int _cpu, int buffer_size)
+perf_event::perf_event(const string &system_name, const string &event_name, int _cpu, int buffer_size)
 {
 	allocate_tep();
-	name = NULL;
 	perf_fd = -1;
 	bufsize = buffer_size;
 	cpu = _cpu;
@@ -204,7 +201,6 @@ perf_event::perf_event(const char *system_name, const char *event_name, int _cpu
 perf_event::perf_event(void)
 {
 	allocate_tep();
-	name = NULL;
 	perf_fd = -1;
 	bufsize = 128;
 	perf_mmap = NULL;

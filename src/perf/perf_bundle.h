@@ -43,7 +43,7 @@ public:
 	virtual ~perf_bundle() {};
 
 	virtual void release(void);
-	bool add_event(const char *system_name, const char *event_name);
+	bool add_event(const std::string &system_name, const std::string &event_name);
 
 	void start(void);
 	void stop(void);
