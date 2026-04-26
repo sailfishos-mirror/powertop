@@ -213,7 +213,7 @@ void report_devices(void)
 		wprintw(win, "%s %s %s\n",
 			power.c_str(),
 			util.c_str(),
-			all_devices[i]->human_name_s().c_str()
+			all_devices[i]->human_name().c_str()
 			);
 	}
 }
@@ -307,7 +307,7 @@ void show_report_devices(void)
 		device_data[idx]= util;
 		idx+=1;
 
-		device_data[idx]= all_devices[i]->human_name_s();
+		device_data[idx]= all_devices[i]->human_name();
 		idx+=1;
 
 		if (show_power) {

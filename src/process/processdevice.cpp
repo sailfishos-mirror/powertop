@@ -39,7 +39,7 @@ device_consumer::device_consumer(class device *dev) : power_consumer()
 
 std::string device_consumer::description(void)
 {
-	return device->human_name_s();
+	return device->human_name();
 }
 
 double device_consumer::Witts(void)

@@ -10,7 +10,7 @@ Base class for all hardware components that PowerTOP monitors for power consumpt
 * `utilization()`: Returns the utilization percentage of the device.
 * `device_name()`: Returns a string representing the device name.
 * `device_name_s()`: Returns a std::string representing the device name.
-* `human_name_s()`: Returns a std::string representing the human readable name.
+* `human_name()`: Returns a std::string representing the human readable name.
 * `power_usage(result_bundle, parameter_bundle)`: Calculates power usage based on measurement results and parameters.
 
 ### Key public variables

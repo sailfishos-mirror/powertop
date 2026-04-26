@@ -183,16 +183,10 @@ void alsa::register_power_with_devlist(struct result_bundle *results, struct par
 		register_devpower(name, power_usage(results, bundle), this);
 }
 
-std::string alsa::human_name_s(void)
+std::string alsa::human_name(void)
 {
 	if (!guilty.empty())
 		return std::format("{} ({})", humanname, guilty);
 
 	return humanname;
-}
-
-const char * alsa::human_name_cstr(void)
-{
-	pt_strcpy(temp_buf, human_name_s().c_str());
-	return temp_buf;
 }

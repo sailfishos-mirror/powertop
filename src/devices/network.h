@@ -76,8 +76,7 @@ public:
 
 	virtual const char * device_name(void) { return name.c_str(); };
 	virtual std::string device_name_s(void) { return name; };
-	virtual const char * human_name_cstr(void) { return humanname.c_str(); };
-	virtual std::string human_name_s(void) { return humanname; };
+	virtual std::string human_name(void) { return humanname; };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual int power_valid(void) { return utilization_power_valid(rindex_up) + utilization_power_valid(rindex_link_100) + utilization_power_valid(rindex_link_1000)  + utilization_power_valid(rindex_link_high);};
 	virtual int grouping_prio(void) { return 10; };

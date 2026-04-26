@@ -50,8 +50,7 @@ public:
 		return "GPU";
 	};
 	virtual std::string device_name_s(void) { return device_name(); };
-	virtual const char * human_name_cstr(void) { return "Intel GPU"; };
-	virtual std::string human_name_s(void) { return human_name_cstr(); };
+	virtual std::string human_name(void) { return "Intel GPU"; };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual bool show_in_list(void) {return false;};
 	virtual const char * util_units(void) { return " ops/s"; };

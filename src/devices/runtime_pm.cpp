@@ -124,11 +124,6 @@ double runtime_pmdevice::power_usage(struct result_bundle *result, struct parame
 	return power;
 }
 
-void runtime_pmdevice::set_human_name_cstr(const char *_name)
-{
-	set_human_name(string(_name ? _name : ""));
-}
-
 void runtime_pmdevice::set_human_name(const string &_name)
 {
 	humanname = _name;

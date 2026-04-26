@@ -47,7 +47,7 @@ const char * cpudevice::device_name(void)
 	return _cpuname.c_str();
 }
 
-std::string cpudevice::human_name_s(void)
+std::string cpudevice::human_name(void)
 {
 	if (!guilty.empty())
 		return std::format("{} ({})", _cpuname, guilty);
