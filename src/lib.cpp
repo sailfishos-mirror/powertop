@@ -24,6 +24,7 @@
  *	Peter Anvin
  */
 #include <map>
+#include <vector>
 #include <string.h>
 #include <iostream>
 #include <utility>
@@ -282,11 +283,11 @@ char *pci_id_to_name(uint16_t vendor, uint16_t device, char *buffer, int len)
 
 char *pci_id_to_name(uint16_t vendor, uint16_t device, std::string &buffer, int len)
 {
-	char buf[len];
+	std::vector<char> buf(len);
 	char *ret;
-	ret = pci_id_to_name(vendor, device, buf, len);
-	buffer = buf;
-	return ret;
+	ret = pci_id_to_name(vendor, device, buf.data(), len);
+	buffer = buf.data();
+	return buffer.data();
 }
 
 void end_pci_access(void)
@@ -468,13 +469,14 @@ void process_glob(const std::string &d_glob, callback fn)
 
 string get_user_input(unsigned sz)
 {
-	char buf[sz+1];
+	std::string buf(sz + 1, '\0');
 	fflush(stdout);
 	echo();
 	/* Upon successful completion, these functions return OK. Otherwise, they return ERR. */
-	getnstr(buf, sz);
+	getnstr(buf.data(), sz);
 	noecho();
 	fflush(stdout);
+	buf.resize(strnlen(buf.data(), sz));
 	return buf;
 }
 

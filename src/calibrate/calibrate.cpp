@@ -95,7 +95,7 @@ static void find_all_usb_callback(const char *d_name)
 	if (access(filename.c_str(), R_OK) != 0)
 		return;
 
-	filename = std::format("/sys/bus/usb/devices/{}/power/idVendor", d_name);
+	filename = std::format("/sys/bus/usb/devices/{}/idVendor", d_name);
 	file.open(filename.c_str(), ios::in);
 	if (file) {
 		std::string vendor_id;

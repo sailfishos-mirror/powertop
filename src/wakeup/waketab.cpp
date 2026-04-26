@@ -79,7 +79,7 @@ static void __wakeup_update_display(int cursor_pos)
 			wattrset(win, A_REVERSE);
 			wprintw(win, ">> ");
 		}
-		wprintw(win, "%-12s  %-103s\n", _(res.c_str()), _(desc.c_str()));
+		wprintw(win, "%-12s  %-103s\n", res.c_str(), desc.c_str());
 	}
 }
 

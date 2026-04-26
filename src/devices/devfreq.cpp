@@ -52,13 +52,11 @@ devfreq::devfreq(const string &dpath): device()
 uint64_t devfreq::parse_freq_time(const string &pchr_s)
 {
 	char *cptr, *pptr;
-	char pchr[pchr_s.length() + 1];
+	std::string pchr = pchr_s;
 	uint64_t ctime;
 
-	strcpy(pchr, pchr_s.c_str());
-	pptr = pchr;
-
-	cptr = strtok(pchr, " :");
+	pptr = pchr.data();
+	cptr = strtok(pchr.data(), " :");
 	while (cptr != NULL) {
 		cptr = strtok(NULL, " :");
 		if (cptr )
