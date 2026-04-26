@@ -51,7 +51,7 @@ interrupt::interrupt(const char *_handler, int _number) : power_consumer()
 	number = _number;
 	handler = _handler;
 	raw_count = 0;
-	desc = std::format("[{}] {}", number, pretty_print(handler.c_str(), buf, 128));
+	desc = std::format("[{}] {}", number, pretty_print(handler, buf, 128));
 }
 
 

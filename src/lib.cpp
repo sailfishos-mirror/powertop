@@ -409,23 +409,29 @@ static void init_pretty_print(void)
 }
 
 
-char *pretty_print(const char *str, char *buf, int len)
+char *pretty_print(const std::string &str, char *buf, int len)
 {
-	const char *p;
+	const char *p = NULL;
 
 	if (!pretty_print_init)
 		init_pretty_print();
 
-	p = pretty_prints[str].c_str();
+	if (pretty_prints.count(str))
+		p = pretty_prints[str].c_str();
 
-	if (strlen(p) == 0)
-		p = str;
+	if (!p || strlen(p) == 0)
+		p = str.c_str();
 
 	snprintf(buf, len,  "%s", p);
 
 	if (len)
 		buf[len - 1] = 0;
 	return buf;
+}
+
+char *pretty_print(const char *str, char *buf, int len)
+{
+	return pretty_print(std::string(str ? str : ""), buf, len);
 }
 
 int equals(double a, double b)

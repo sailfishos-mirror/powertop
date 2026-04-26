@@ -885,7 +885,7 @@ void process_update_display(void)
 			snprintf(events, sizeof(events), "%5.2f", all_power[i]->events());
 
 		align_string(events, 12, 20);
-		wprintw(win, "%s  %s %s %s %s\n", power, usage, events, name, pretty_print(all_power[i]->description().c_str(), descr, 128));
+		wprintw(win, "%s  %s %s %s %s\n", power, usage, events, name, pretty_print(all_power[i]->description(), descr, 128));
 	}
 }
 
@@ -1004,7 +1004,7 @@ void report_process_update_display(void)
 		software_data[idx]=string(name);
 		idx+=1;
 
-		software_data[idx]=pretty_print(all_power[i]->description().c_str(), descr, 128);
+		software_data[idx]=pretty_print(all_power[i]->description(), descr, 128);
 		idx+=1;
 		if (show_power) {
 			software_data[idx]=string(power);
@@ -1124,7 +1124,7 @@ void report_summary(void)
 		summary_data[idx]=string(name);
 		idx+=1;
 
-		summary_data[idx]=pretty_print(all_power[i]->description().c_str(), descr, 128);
+		summary_data[idx]=pretty_print(all_power[i]->description(), descr, 128);
 		idx+=1;
 
 		if (show_power){
