@@ -36,11 +36,11 @@
 i2c_tunable::i2c_tunable(const char *path, const char *name, bool is_adapter) : tunable("", 0.9, _("Good"), _("Bad"), _("Unknown"))
 {
 	ifstream file;
-	char filename[PATH_MAX];
+	std::string filename;
 	std::string devname;
 
-	snprintf(filename, sizeof(filename), "%s/name", path);
-	file.open(filename, ios::in);
+	filename = std::format("{}/name", path);
+	file.open(filename.c_str(), ios::in);
 	if (file) {
 		getline(file, devname);
 		file.close();
@@ -48,13 +48,13 @@ i2c_tunable::i2c_tunable(const char *path, const char *name, bool is_adapter) : 
 
 	if (is_adapter) {
 		i2c_path = std::format("{}/device/power/control", path);
-		snprintf(filename, sizeof(filename), "%s/device", path);
+		filename = std::format("{}/device", path);
 	} else {
 		i2c_path = std::format("{}/power/control", path);
-		snprintf(filename, sizeof(filename), "%s/device", path);
+		filename = std::format("{}/device", path);
 	}
 
-	if (device_has_runtime_pm(filename)) {
+	if (device_has_runtime_pm(filename.c_str())) {
 		desc = pt_format(_("Runtime PM for I2C {} {} ({})"), (is_adapter ? _("Adapter") : _("Device")), name, devname);
 	} else {
 		desc = pt_format(_("I2C {} {} has no runtime power management"), (is_adapter ? _("Adapter") : _("Device")), name);
@@ -92,22 +92,22 @@ void i2c_tunable::toggle(void)
 static void add_i2c_callback(const char *d_name)
 {
 	class i2c_tunable *i2c;
-	char filename[PATH_MAX];
+	std::string filename;
 	bool is_adapter = false;
 
-	snprintf(filename, PATH_MAX, "/sys/bus/i2c/devices/%s/new_device", d_name);
-	if (access(filename, W_OK) == 0)
+	filename = std::format("/sys/bus/i2c/devices/{}/new_device", d_name);
+	if (access(filename.c_str(), W_OK) == 0)
 		is_adapter = true;
 
-	snprintf(filename, PATH_MAX, "/sys/bus/i2c/devices/%s", d_name);
-	i2c = new class i2c_tunable(filename, d_name, is_adapter);
+	filename = std::format("/sys/bus/i2c/devices/{}", d_name);
+	i2c = new class i2c_tunable(filename.c_str(), d_name, is_adapter);
 
 	if (is_adapter)
-		snprintf(filename, PATH_MAX, "/sys/bus/i2c/devices/%s/device", d_name);
+		filename = std::format("/sys/bus/i2c/devices/{}/device", d_name);
 	else
-		snprintf(filename, PATH_MAX, "/sys/bus/i2c/devices/%s", d_name);
+		filename = std::format("/sys/bus/i2c/devices/{}", d_name);
 
-	if (device_has_runtime_pm(filename))
+	if (device_has_runtime_pm(filename.c_str()))
 		all_tunables.push_back(i2c);
 	else
 		all_untunables.push_back(i2c);

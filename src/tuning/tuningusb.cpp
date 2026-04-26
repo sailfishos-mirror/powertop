@@ -40,9 +40,8 @@
 usb_tunable::usb_tunable(const char *path, const char *name) : tunable("", 0.9, _("Good"), _("Bad"), _("Unknown"))
 {
 	ifstream file;
-	char filename[PATH_MAX];
-	char vendor[2048];
-	char product[2048];
+	std::string vendor;
+	std::string product;
 	std::string str1, str2;
 
 	usb_path = std::format("{}/power/control", path);
@@ -52,25 +51,23 @@ usb_tunable::usb_tunable(const char *path, const char *name) : tunable("", 0.9, 
 
 	desc = pt_format(_("Autosuspend for unknown USB device {} ({}:{})"), name, str1, str2);
 
-	snprintf(filename, sizeof(filename), "%s/manufacturer", path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/manufacturer", path), ios::in);
 	if (file) {
-		file.getline(vendor, 2047);
-		if (strstr(vendor, "Linux "))
-			vendor[0] = 0;
+		getline(file, vendor);
+		if (vendor.starts_with("Linux "))
+			vendor = "";
 		file.close();
 	};
-	snprintf(filename, sizeof(filename), "%s/product", path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/product", path), ios::in);
 	if (file) {
-		file.getline(product, 2040);
+		getline(file, product);
 		file.close();
 	};
-	if (strlen(vendor) && strlen(product)) {
+	if (!vendor.empty() && !product.empty()) {
 		desc = pt_format(_("Autosuspend for USB device {} [{}]"), product, vendor);
-	} else if (strlen(product)) {
+	} else if (!product.empty()) {
 		desc = pt_format(_("Autosuspend for USB device {} [{}]"), product, name);
-	} else if (strlen(vendor)) {
+	} else if (!vendor.empty()) {
 		desc = pt_format(_("Autosuspend for USB device {} [{}]"), vendor, name);
 	}
 
@@ -106,27 +103,27 @@ void usb_tunable::toggle(void)
 static void add_usb_callback(const char *d_name)
 {
 	class usb_tunable *usb;
-	char filename[PATH_MAX];
+	std::string filename;
 	DIR *dir;
 
-	snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s/power/control", d_name);
-	if (access(filename, R_OK) != 0)
+	filename = std::format("/sys/bus/usb/devices/{}/power/control", d_name);
+	if (access(filename.c_str(), R_OK) != 0)
 		return;
 
-	snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s/power/active_duration", d_name);
-	if (access(filename, R_OK)!=0)
+	filename = std::format("/sys/bus/usb/devices/{}/power/active_duration", d_name);
+	if (access(filename.c_str(), R_OK)!=0)
 		return;
 
 	/* every interface of this device should support autosuspend */
-	snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s", d_name);
-	if ((dir = opendir(filename))) {
+	filename = std::format("/sys/bus/usb/devices/{}", d_name);
+	if ((dir = opendir(filename.c_str()))) {
 		struct dirent *entry;
 		while ((entry = readdir(dir))) {
 			/* dirname: <busnum>-<devnum>...:<config num>-<interface num> */
 			if (!isdigit(entry->d_name[0]))
 				continue;
-			snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s/%s/supports_autosuspend", d_name, entry->d_name);
-			if (access(filename, R_OK) == 0 && read_sysfs(filename) == 0)
+			filename = std::format("/sys/bus/usb/devices/{}/{}/supports_autosuspend", d_name, entry->d_name);
+			if (access(filename.c_str(), R_OK) == 0 && read_sysfs(filename.c_str()) == 0)
 				break;
 		}
 		closedir(dir);
@@ -134,8 +131,8 @@ static void add_usb_callback(const char *d_name)
 			return;
 	}
 
-	snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s", d_name);
-	usb = new class usb_tunable(filename, d_name);
+	filename = std::format("/sys/bus/usb/devices/{}", d_name);
+	usb = new class usb_tunable(filename.c_str(), d_name);
 	all_tunables.push_back(usb);
 }
 

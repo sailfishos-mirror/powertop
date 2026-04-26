@@ -83,12 +83,12 @@ void add_sysfs_tunable(const char *str, const char *_sysfs_path, const char *_ta
 
 static void add_sata_callback(const char *d_name)
 {
-	char filename[PATH_MAX];
-	snprintf(filename, sizeof(filename), "/sys/class/scsi_host/%s/link_power_management_policy", d_name);
-	if (access(filename, R_OK) != 0)
+	std::string filename;
+	filename = std::format("/sys/class/scsi_host/{}/link_power_management_policy", d_name);
+	if (access(filename.c_str(), R_OK) != 0)
 		return;
 
-	add_sysfs_tunable(_("SATA link power management for host"), filename, "min_power");
+	add_sysfs_tunable(_("SATA link power management for host"), filename.c_str(), "min_power");
 }
 
 void add_sata_tunables(void)
