@@ -51,8 +51,8 @@ ethernet_wakeup::ethernet_wakeup(const char *path, const char *iface) : wakeup("
 	pt_strcpy(interf, iface);
 	desc = pt_format(_("Wake-on-lan status for device {}"), iface);
 	snprintf(eth_path, sizeof(eth_path), "/sys/class/net/%s/device/power/wakeup", iface);
-	snprintf(toggle_enable, sizeof(toggle_enable), "echo 'enabled' > '%s';", eth_path);
-	snprintf(toggle_disable, sizeof(toggle_disable), "echo 'disabled' > '%s';", eth_path);
+	toggle_enable = std::format("echo 'enabled' > '{}';", eth_path);
+	toggle_disable = std::format("echo 'disabled' > '{}';", eth_path);
 }
 
 int ethernet_wakeup::wakeup_value(void)
@@ -80,7 +80,7 @@ void ethernet_wakeup::wakeup_toggle(void)
 	write_sysfs(eth_path, "enabled");
 }
 
-const char *ethernet_wakeup::wakeup_toggle_script(void)
+std::string ethernet_wakeup::wakeup_toggle_script(void)
 {
 	int enable;
 	enable = wakeup_value();

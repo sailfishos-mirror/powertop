@@ -41,7 +41,7 @@ public:
 
 	virtual void wakeup_toggle(void);
 
-	virtual const char *wakeup_toggle_script(void);
+	virtual std::string wakeup_toggle_script(void);
 
 };
 

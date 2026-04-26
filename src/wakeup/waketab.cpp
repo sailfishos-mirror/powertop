@@ -108,13 +108,13 @@ void wakeup_window::repaint(void)
 void wakeup_window::cursor_enter(void)
 {
 	class wakeup *wake;
-	const char *wakeup_toggle_script;
+	std::string wakeup_toggle_script;
 	wake = wakeup_all[cursor_pos];
 	if (!wake)
 		return;
 	wakeup_toggle_script = wake->wakeup_toggle_script();
 	wake->wakeup_toggle();
-	ui_notify_user(">> %s\n", wakeup_toggle_script);
+	ui_notify_user(">> %s\n", wakeup_toggle_script.c_str());
 }
 
 void report_show_wakeup(void)

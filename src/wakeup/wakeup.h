@@ -40,8 +40,8 @@ class wakeup {
 	char wakeup_disable[128];
 	char wakeup_idle[128];
 protected:
-	char toggle_enable[4096];
-	char toggle_disable[4096];
+	std::string toggle_enable;
+	std::string toggle_disable;
 public:
 	std::string desc;
 	double score;
@@ -70,7 +70,7 @@ public:
 
 	virtual void wakeup_toggle(void) { };
 
-	virtual const char *wakeup_toggle_script(void) { return toggle_enable; }
+	virtual std::string wakeup_toggle_script(void) { return toggle_enable; }
 
 };
 
