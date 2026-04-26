@@ -852,40 +852,43 @@ void process_update_display(void)
 		wprintw(win, "                %s       %s    %s       %s\n", _("Usage"), _("Events/s"), _("Category"), _("Description"));
 
 	for (i = 0; i < all_power.size(); i++) {
-		char power[16];
-		char name[20];
-		char usage[20];
-		char events[20];
+		std::string power;
+		std::string name;
+		std::string usage;
+		std::string events;
 		char descr[128];
+		char p_buf[16];
 
-		format_watts(all_power[i]->Witts(), power, 10);
+		format_watts(all_power[i]->Witts(), p_buf, 10);
+		power = p_buf;
+
 		if (!show_power)
-			strcpy(power, "          ");
-		snprintf(name, sizeof(name), "%s", all_power[i]->type());
-
-		align_string(name, 14, 20);
+			power = "          ";
+		name = all_power[i]->type();
 
 		if (all_power[i]->events() == 0 && all_power[i]->usage() == 0 && all_power[i]->Witts() == 0)
 			break;
 
-		usage[0] = 0;
 		if (all_power[i]->usage_units()) {
 			if (all_power[i]->usage() < 1000)
-				snprintf(usage, sizeof(usage), "%5.1f%s", all_power[i]->usage(), all_power[i]->usage_units());
+				usage = std::format("{:5.1f}{}", all_power[i]->usage(), all_power[i]->usage_units());
 			else
-				snprintf(usage, sizeof(usage), "%5i%s", (int)all_power[i]->usage(), all_power[i]->usage_units());
+				usage = std::format("{:5d}{}", (int)all_power[i]->usage(), all_power[i]->usage_units());
 		}
 
-		align_string(usage, 14, 20);
 
-		snprintf(events, sizeof(events), "%5.1f", all_power[i]->events());
+		events = std::format("{:5.1f}", all_power[i]->events());
 		if (!all_power[i]->show_events())
-			events[0] = 0;
+			events = "";
 		else if (all_power[i]->events() <= 0.3)
-			snprintf(events, sizeof(events), "%5.2f", all_power[i]->events());
+			events = std::format("{:5.2f}", all_power[i]->events());
 
-		align_string(events, 12, 20);
-		wprintw(win, "%s  %s %s %s %s\n", power, usage, events, name, pretty_print(all_power[i]->description(), descr, 128));
+		wprintw(win, "%s  %-14s %-12s %-14s %s\n", 
+			power.c_str(), 
+			usage.c_str(), 
+			events.c_str(), 
+			name.c_str(), 
+			pretty_print(all_power[i]->description(), descr, 128));
 	}
 }
 
@@ -936,78 +939,80 @@ void report_process_update_display(void)
 
 
 	for (i = 0; i < total; i++) {
-		char power[16];
-		char name[20];
-		char usage[20];
-		char wakes[20];
-		char gpus[20];
-		char disks[20];
-		char xwakes[20];
+		std::string power, name, usage, wakes, gpus, disks, xwakes;
 		char descr[128];
-		format_watts(all_power[i]->Witts(), power, 10);
+		char p_buf[16];
+
+		format_watts(all_power[i]->Witts(), p_buf, 10);
+		power = p_buf;
 
 		if (!show_power)
-			strcpy(power, "          ");
-		snprintf(name, sizeof(name), "%s", all_power[i]->type());
+			power = "          ";
+		name = all_power[i]->type();
 
-		if (strcmp(name, "Device") == 0)
+		if (name == "Device")
 			continue;
 
 		if (all_power[i]->events() == 0 && all_power[i]->usage() == 0
 				&& all_power[i]->Witts() == 0)
 			break;
 
-		usage[0] = 0;
 		if (all_power[i]->usage_units()) {
 			if (all_power[i]->usage() < 1000)
-				snprintf(usage, sizeof(usage), "%5.1f%s", all_power[i]->usage(), all_power[i]->usage_units());
+				usage = std::format("{:5.1f}{}", all_power[i]->usage(), all_power[i]->usage_units());
 			else
-				snprintf(usage, sizeof(usage), "%5i%s", (int)all_power[i]->usage(), all_power[i]->usage_units());
+				usage = std::format("{:5d}{}", (int)all_power[i]->usage(), all_power[i]->usage_units());
 		}
-		snprintf(wakes, sizeof(wakes), "%5.1f", all_power[i]->wake_ups / measurement_time);
+
+		wakes = std::format("{:5.1f}", all_power[i]->wake_ups / measurement_time);
 		if (all_power[i]->wake_ups / measurement_time <= 0.3)
-			snprintf(wakes, sizeof(wakes), "%5.2f", all_power[i]->wake_ups / measurement_time);
-		snprintf(gpus, sizeof(gpus), "%5.1f", all_power[i]->gpu_ops / measurement_time);
-		snprintf(disks, sizeof(disks), "%5.1f (%5.1f)", all_power[i]->hard_disk_hits / measurement_time,
+			wakes = std::format("{:5.2f}", all_power[i]->wake_ups / measurement_time);
+		
+		gpus = std::format("{:5.1f}", all_power[i]->gpu_ops / measurement_time);
+		
+		disks = std::format("{:5.1f} ({:5.1f})", 
+				all_power[i]->hard_disk_hits / measurement_time,
 				all_power[i]->disk_hits / measurement_time);
-		snprintf(xwakes, sizeof(xwakes), "%5.1f", all_power[i]->xwakes / measurement_time);
+		
+		xwakes = std::format("{:5.1f}", all_power[i]->xwakes / measurement_time);
+
 		if (!all_power[i]->show_events()) {
-			wakes[0] = 0;
-			gpus[0] = 0;
-			disks[0] = 0;
+			wakes = "";
+			gpus = "";
+			disks = "";
 		}
 
 		if (all_power[i]->gpu_ops == 0)
-			gpus[0] = 0;
+			gpus = "";
 		if (all_power[i]->wake_ups == 0)
-			wakes[0] = 0;
+			wakes = "";
 		if (all_power[i]->disk_hits == 0)
-			disks[0] = 0;
+			disks = "";
 		if (all_power[i]->xwakes == 0)
-			xwakes[0] = 0;
+			xwakes = "";
 
-		software_data[idx]=string(usage);
+		software_data[idx]=usage;
 		idx+=1;
 
-		software_data[idx]=string(wakes);
+		software_data[idx]=wakes;
 		idx+=1;
 
-		software_data[idx]=string(gpus);
+		software_data[idx]=gpus;
 		idx+=1;
 
-		software_data[idx]=string(disks);
+		software_data[idx]=disks;
 		idx+=1;
 
-		software_data[idx]=string(xwakes);
+		software_data[idx]=xwakes;
 		idx+=1;
 
-		software_data[idx]=string(name);
+		software_data[idx]=name;
 		idx+=1;
 
 		software_data[idx]=pretty_print(all_power[i]->description(), descr, 128);
 		idx+=1;
 		if (show_power) {
-			software_data[idx]=string(power);
+			software_data[idx]=power;
 			idx+=1;
 		}
 	}
@@ -1082,16 +1087,16 @@ void report_summary(void)
 		summary_data[4]=__("PW Estimate");
 
 	for (i = 0; i < all_power.size(); i++) {
-		char power[16];
-		char name[20];
-		char usage[20];
-		char events[20];
+		std::string power, name, usage, events;
 		char descr[128];
-		format_watts(all_power[i]->Witts(), power, 10);
+		char p_buf[16];
+
+		format_watts(all_power[i]->Witts(), p_buf, 10);
+		power = p_buf;
 
 		if (!show_power)
-			strcpy(power, "          ");
-		snprintf(name, sizeof(name), "%s", all_power[i]->type());
+			power = "          ";
+		name = all_power[i]->type();
 
 		if (i > total)
 			break;
@@ -1100,28 +1105,28 @@ void report_summary(void)
 				all_power[i]->Witts() == 0)
 			break;
 
-		usage[0] = 0;
 		if (all_power[i]->usage_units()) {
 			if (all_power[i]->usage() < 1000)
-				snprintf(usage, sizeof(usage), "%5.1f%s", all_power[i]->usage_summary(),
+				usage = std::format("{:5.1f}{}", all_power[i]->usage_summary(),
 					all_power[i]->usage_units_summary());
 			else
-				snprintf(usage, sizeof(usage), "%5i%s", (int)all_power[i]->usage_summary(),
+				usage = std::format("{:5d}{}", (int)all_power[i]->usage_summary(),
 					all_power[i]->usage_units_summary());
 		}
-		snprintf(events, sizeof(events), "%5.1f", all_power[i]->events());
+		
+		events = std::format("{:5.1f}", all_power[i]->events());
 		if (!all_power[i]->show_events())
-			events[0] = 0;
+			events = "";
 		else if (all_power[i]->events() <= 0.3)
-			snprintf(events, sizeof(events), "%5.2f", all_power[i]->events());
+			events = std::format("{:5.2f}", all_power[i]->events());
 
-		summary_data[idx]=string(usage);
+		summary_data[idx]=usage;
 		idx+=1;
 
-		summary_data[idx]=string(events);
+		summary_data[idx]=events;
 		idx+=1;
 
-		summary_data[idx]=string(name);
+		summary_data[idx]=name;
 		idx+=1;
 
 		summary_data[idx]=pretty_print(all_power[i]->description(), descr, 128);
