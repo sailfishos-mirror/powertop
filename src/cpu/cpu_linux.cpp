@@ -101,7 +101,7 @@ void cpu_linux::parse_cstates_start(void)
 void cpu_linux::parse_pstates_start(void)
 {
 	ifstream file;
-	char filename[256];
+	std::string filename;
 	unsigned int i;
 
 	last_stamp = 0;
@@ -109,16 +109,16 @@ void cpu_linux::parse_pstates_start(void)
 		if (children[i])
 			children[i]->wiggle();
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/stats/time_in_state", first_cpu);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/stats/time_in_state", first_cpu);
 
-	file.open(filename, ios::in);
+	file.open(filename.c_str(), ios::in);
 
 	if (file) {
 		char line[1024];
 
 		while (file) {
 			uint64_t f;
-			file.getline(line, sizeof(line));
+			file.getline(line, 1024);
 			f = strtoull(line, NULL, 10);
 			account_freq(f, 0);
 		}
@@ -186,12 +186,12 @@ void cpu_linux::parse_cstates_end(void)
 
 void cpu_linux::parse_pstates_end(void)
 {
-	char filename[256];
+	std::string filename;
 	ifstream file;
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/stats/time_in_state", number);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/stats/time_in_state", number);
 
-	file.open(filename, ios::in);
+	file.open(filename.c_str(), ios::in);
 
 	if (file) {
 		char line[1024];

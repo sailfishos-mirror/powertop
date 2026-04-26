@@ -244,7 +244,7 @@ nhm_core::nhm_core(int model)
 void nhm_core::measurement_start(void)
 {
 	ifstream file;
-	char filename[PATH_MAX];
+	std::string filename;
 
 	/* the abstract function needs to be first since it clears all state */
 	abstract_cpu::measurement_start();
@@ -270,9 +270,9 @@ void nhm_core::measurement_start(void)
 	}
 
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/stats/time_in_state", first_cpu);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/stats/time_in_state", first_cpu);
 
-	file.open(filename, ios::in);
+	file.open(filename.c_str(), ios::in);
 
 	if (file) {
 		char line[1024];
@@ -649,7 +649,7 @@ void nhm_package::measurement_end(void)
 void nhm_cpu::measurement_start(void)
 {
 	ifstream file;
-	char filename[PATH_MAX];
+	std::string filename;
 
 	cpu_linux::measurement_start();
 
@@ -661,9 +661,9 @@ void nhm_cpu::measurement_start(void)
 
 	insert_cstate("active", _("C0 active"), 0, aperf_before, 1);
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/stats/time_in_state", first_cpu);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/stats/time_in_state", first_cpu);
 
-	file.open(filename, ios::in);
+	file.open(filename.c_str(), ios::in);
 
 	if (file) {
 		char line[1024];

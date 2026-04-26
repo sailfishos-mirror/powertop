@@ -93,7 +93,7 @@ void abstract_cpu::measurement_start(void)
 {
 	unsigned int i;
 	ifstream file;
-	char filename[4096];
+	std::string filename;
 
 	last_stamp = 0;
 
@@ -110,8 +110,8 @@ void abstract_cpu::measurement_start(void)
 	old_idle = true;
 
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_available_frequencies", number);
-	file.open(filename, ios::in);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_available_frequencies", number);
+	file.open(filename.c_str(), ios::in);
 	if (file) {
 		file >> max_frequency;
 		file >> max_minus_one_frequency;
@@ -451,7 +451,7 @@ void abstract_cpu::change_effective_frequency(uint64_t time, uint64_t frequency)
 
 void abstract_cpu::wiggle(void)
 {
-	char filename[PATH_MAX];
+	std::string filename;
 	ifstream ifile;
 	ofstream ofile;
 	uint64_t minf,maxf;
@@ -459,40 +459,41 @@ void abstract_cpu::wiggle(void)
 
 	/* wiggle a CPU so that we have a record of it at the start and end of the perf trace */
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_max_freq", first_cpu);
-	ifile.open(filename, ios::in);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_max_freq", first_cpu);
+	ifile.open(filename.c_str(), ios::in);
 	ifile >> maxf;
 	ifile.close();
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_min_freq", first_cpu);
-	ifile.open(filename, ios::in);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_min_freq", first_cpu);
+	ifile.open(filename.c_str(), ios::in);
 	ifile >> minf;
 	ifile.close();
 
 	/* In case of the userspace governor, remember the old setspeed setting, it will be affected by wiggle */
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_setspeed", first_cpu);
-	ifile.open(filename, ios::in);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_setspeed", first_cpu);
+	ifile.open(filename.c_str(), ios::in);
 	/* Note that non-userspace governors report "<unsupported>". In that case ifile will fail and setspeed remains 0 */
 	ifile >> setspeed;
 	ifile.close();
 
-	ofile.open(filename, ios::out);
+	ofile.open(filename.c_str(), ios::out);
 	ofile << maxf;
 	ofile.close();
-	ofile.open(filename, ios::out);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_min_freq", first_cpu);
+	ofile.open(filename.c_str(), ios::out);
 	ofile << minf;
 	ofile.close();
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_max_freq", first_cpu);
-	ofile.open(filename, ios::out);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_max_freq", first_cpu);
+	ofile.open(filename.c_str(), ios::out);
 	ofile << minf;
 	ofile.close();
-	ofile.open(filename, ios::out);
+	ofile.open(filename.c_str(), ios::out);
 	ofile << maxf;
 	ofile.close();
 
 	if (setspeed != 0) {
-		snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_setspeed", first_cpu);
-		ofile.open(filename, ios::out);
+		filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_setspeed", first_cpu);
+		ofile.open(filename.c_str(), ios::out);
 		ofile << setspeed;
 		ofile.close();
 	}
