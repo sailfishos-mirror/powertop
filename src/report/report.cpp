@@ -166,7 +166,7 @@ static void system_info(void)
 	delete [] system_data;
 }
 
-void init_report_output(char *filename_str, int iterations)
+void init_report_output(const char *filename_str, int iterations)
 {
 	size_t period;
 	string filename;
@@ -174,7 +174,7 @@ void init_report_output(char *filename_str, int iterations)
 	char datestr[200];
 
 	if (iterations == 1)
-		snprintf(reportout.filename, sizeof(reportout.filename), "%s", filename_str);
+		reportout.filename = filename_str;
 	else
 	{
 		filename = string(filename_str);
@@ -185,15 +185,15 @@ void init_report_output(char *filename_str, int iterations)
 		memset(&stamp, 0, sizeof(time_t));
 		stamp = time(NULL);
 		strftime(datestr, sizeof(datestr), "%Y%m%d-%H%M%S", localtime(&stamp));
-		snprintf(reportout.filename, sizeof(reportout.filename), "%s-%s%s",
-			filename.substr(0, period).c_str(), datestr,
-			filename.substr(period).c_str());
+		reportout.filename = std::format("{}-{}{}",
+			filename.substr(0, period), datestr,
+			filename.substr(period));
 	}
-	
-	reportout.report_file = fopen(reportout.filename, "wm");
+
+	reportout.report_file = fopen(reportout.filename.c_str(), "wm");
 	if (!reportout.report_file) {
 		fprintf(stderr, _("Cannot open output file %s (%s)\n"),
-			reportout.filename, strerror(errno));
+			reportout.filename.c_str(), strerror(errno));
 	}
 
 	report.set_type(reporttype);
@@ -208,7 +208,7 @@ void finish_report_output(void)
 	report.finish_report();
 	if (reportout.report_file)
 	{
-		fprintf(stderr, _("PowerTOP outputting using base filename %s\n"), reportout.filename);
+		fprintf(stderr, _("PowerTOP outputting using base filename %s\n"), reportout.filename.c_str());
 		fputs(report.get_result(), reportout.report_file);
 		fdatasync(fileno(reportout.report_file));
 		fclose(reportout.report_file);
