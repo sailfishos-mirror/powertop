@@ -446,7 +446,6 @@ static int get_cstates_num(void)
 
 void report_display_cpu_cstates(void)
 {
-	char tmp_num[50];
 	unsigned int package, core, cpu;
 	int line, cstates_num, title=0, core_num=0;
 	class abstract_cpu *_package, *_core = NULL, * _cpu;
@@ -566,15 +565,13 @@ void report_display_cpu_cstates(void)
 							if (strcmp(core_type, "Core") == 0 ) {
 								core_data[idx2]="";
 								idx2+=1;
-								snprintf(tmp_num, sizeof(tmp_num), __("Core %d"), _core->get_number());
-								core_data[idx2]=string(tmp_num);
+								core_data[idx2]=pt_format(__("Core {}"), _core->get_number());
 								idx2+=1;
 								core_num+=1;
 							} else {
 								core_data[idx2]="";
 								idx2+=1;
-								snprintf(tmp_num, sizeof(tmp_num), __("GPU %d"), _core->get_number());
-								core_data[idx2]=string(tmp_num);
+								core_data[idx2]=pt_format(__("GPU {}"), _core->get_number());
 								idx2+=1;
 							}
 						}
@@ -652,7 +649,6 @@ void report_display_cpu_cstates(void)
 
 void report_display_cpu_pstates(void)
 {
-	char tmp_num[50];
 	unsigned int package, core, cpu;
 	int line, title=0;
 	class abstract_cpu *_package, *_core = NULL, * _cpu;
@@ -770,8 +766,7 @@ void report_display_cpu_pstates(void)
 					if (line == LEVEL_HEADER) {
 						core_data[idx2]="";
 						idx2+=1;
-						snprintf(tmp_num, sizeof(tmp_num), __("Core %d"), _core->get_number());
-						core_data[idx2]=string(tmp_num);
+						core_data[idx2]=pt_format(__("Core {}"), _core->get_number());
 						idx2+=1;
 					} else {
 						tmp_str=_core->fill_pstate_name(line);
@@ -790,8 +785,7 @@ void report_display_cpu_pstates(void)
 						continue;
 
 					if (line == LEVEL_HEADER) {
-						snprintf(tmp_num, sizeof(tmp_num), __("CPU %d"), _cpu->get_number());
-						cpu_data[idx3] = string(tmp_num);
+						cpu_data[idx3] = pt_format(__("CPU {}"), _cpu->get_number());
 						idx3+=1;
 						continue;
 					}
