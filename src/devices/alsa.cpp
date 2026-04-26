@@ -191,7 +191,7 @@ std::string alsa::human_name_s(void)
 	return humanname;
 }
 
-const char * alsa::human_name(void)
+const char * alsa::human_name_cstr(void)
 {
 	pt_strcpy(temp_buf, human_name_s().c_str());
 	return temp_buf;

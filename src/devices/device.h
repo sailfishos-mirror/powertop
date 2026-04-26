@@ -59,8 +59,8 @@ public:
 	virtual const char * device_name(void) { return "abstract device";};
 	virtual std::string device_name_s(void) { return device_name(); };
 
-	virtual const char * human_name(void) { return device_name(); };
-	virtual std::string human_name_s(void) { return human_name(); };
+	virtual const char * human_name_cstr(void) { return device_name(); };
+	virtual std::string human_name_s(void) { return human_name_cstr(); };
 
 	virtual double power_usage(struct result_bundle *results, struct parameter_bundle *bundle) { return 0.0; };
 

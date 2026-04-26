@@ -213,7 +213,7 @@ void report_devices(void)
 		wprintw(win, "%s %s %s\n",
 			power.c_str(),
 			util.c_str(),
-			all_devices[i]->human_name()
+			all_devices[i]->human_name_s().c_str()
 			);
 	}
 }

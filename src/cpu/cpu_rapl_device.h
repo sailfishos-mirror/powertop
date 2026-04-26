@@ -47,7 +47,7 @@ public:
 	~cpu_rapl_device() { delete rapl; }
 	virtual const char * device_name(void) {return "CPU core";};
 	virtual std::string device_name_s(void) {return "CPU core";};
-	virtual std::string human_name_s(void) {return human_name();};
+	virtual std::string human_name_s(void) {return human_name_cstr();};
 	bool device_present() { return device_valid;}
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual void start_measurement(void);

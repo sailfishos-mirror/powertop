@@ -39,7 +39,7 @@ device_consumer::device_consumer(class device *dev) : power_consumer()
 
 const char * device_consumer::description(void)
 {
-	snprintf(str, sizeof(str), "%s", device->human_name());
+	snprintf(str, sizeof(str), "%s", device->human_name_s().c_str());
 	return str;
 }
 

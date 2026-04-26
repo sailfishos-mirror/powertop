@@ -124,7 +124,12 @@ double runtime_pmdevice::power_usage(struct result_bundle *result, struct parame
 	return power;
 }
 
-void runtime_pmdevice::set_human_name(const char *_name)
+void runtime_pmdevice::set_human_name_cstr(const char *_name)
+{
+	set_human_name(string(_name ? _name : ""));
+}
+
+void runtime_pmdevice::set_human_name(const string &_name)
 {
 	humanname = _name;
 }
@@ -189,7 +194,7 @@ static void do_bus(const char *bus)
 				file.close();
 			}
 
-			dev->set_human_name(pt_format(_("I2C {} ({}): {}"), (is_adapter ? _("Adapter") : _("Device")), entry->d_name, devname).c_str());
+			dev->set_human_name(pt_format(_("I2C {} ({}): {}"), (is_adapter ? _("Adapter") : _("Device")), entry->d_name, devname));
 		}
 
 		if (strcmp(bus, "pci") == 0) {
@@ -211,7 +216,7 @@ static void do_bus(const char *bus)
 
 			if (vendor && device) {
 				dev->set_human_name(pt_format(_("PCI Device: {}"),
-					pci_id_to_name(vendor, device, filename, 4095)).c_str());
+					pci_id_to_name(vendor, device, filename, 4095)));
 			}
 		}
 		all_devices.push_back(dev);
