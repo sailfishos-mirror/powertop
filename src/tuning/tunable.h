@@ -62,19 +62,7 @@ public:
 
 	virtual int good_bad(void) { return TUNE_NEUTRAL; }
 
-	virtual const char *result_string(void)
-	{
-		switch (good_bad()) {
-		case TUNE_GOOD:
-			return good_string.c_str();
-		case TUNE_BAD:
-		case TUNE_UNFIXABLE:
-			return bad_string.c_str();
-		}
-		return neutral_string.c_str();
-	}
-
-	virtual std::string result_string_s(void)
+	virtual std::string result_string(void)
 	{
 		switch (good_bad()) {
 		case TUNE_GOOD:

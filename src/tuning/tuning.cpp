@@ -110,11 +110,8 @@ static void __tuning_update_display(int cursor_pos)
 	wmove(win, 2,0);
 
 	for (i = 0; i < all_tunables.size(); i++) {
-		char res[128];
+		std::string res = all_tunables[i]->result_string();
 		std::string desc = all_tunables[i]->description();
-		pt_strcpy(res, all_tunables[i]->result_string());
-		while (strlen(res) < 12)
-			strcat(res, " ");
 
 		if ((int)i != cursor_pos) {
 			wattrset(win, A_NORMAL);
@@ -123,7 +120,7 @@ static void __tuning_update_display(int cursor_pos)
 			wattrset(win, A_REVERSE);
 			wprintw(win, ">> ");
 		}
-		wprintw(win, "%s  %-103s\n", _(res), _(desc.c_str()));
+		wprintw(win, "%-12s  %-103s\n", _(res.c_str()), _(desc.c_str()));
 	}
 }
 

@@ -99,8 +99,7 @@ Base class for power-saving settings that can be "tuned" (e.g., SATA link power 
 * `good_bad()`: Returns whether the current setting is optimal for power saving.
 * `toggle()`: Switches between "good" and "bad" settings.
 * `description()`: Returns a std::string description of the tunable setting.
-* `result_string()`: Returns a string representation of the current state (Good/Bad/Unknown).
-* `result_string_s()`: Returns a std::string representation of the current state.
+* `result_string()`: Returns a std::string representation of the current state (Good/Bad/Unknown).
 * `toggle_script()`: Returns a shell script command to toggle the setting.
 * `toggle_script_s()`: Returns a std::string shell script command to toggle the setting.
 
