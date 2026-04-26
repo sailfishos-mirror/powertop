@@ -26,14 +26,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <format>
 #include "../lib.h"
 #include "../parameters/parameters.h"
 
 
-cpudevice::cpudevice(const char *classname, const char *dev_name, class abstract_cpu *_cpu)
+cpudevice::cpudevice(const std::string &classname, const std::string &dev_name, class abstract_cpu *_cpu)
 {
-	pt_strcpy(_class, classname);
-	pt_strcpy(_cpuname, dev_name);
+	_class = classname;
+	_cpuname = dev_name;
 	cpu = _cpu;
 	wake_index = get_param_index("cpu-wakeups");;
 	consumption_index = get_param_index("cpu-consumption");;
@@ -41,12 +42,17 @@ cpudevice::cpudevice(const char *classname, const char *dev_name, class abstract
 	r_consumption_index = get_result_index("cpu-consumption");;
 }
 
-const char * cpudevice::device_name(void)
+std::string cpudevice::device_name(void)
 {
-	if (child_devices.size())
-		return "CPU misc";
-	else
-		return "CPU use";
+	return _cpuname;
+}
+
+std::string cpudevice::human_name(void)
+{
+	if (!guilty.empty())
+		return std::format("{} ({})", _cpuname, guilty);
+
+	return _cpuname;
 }
 
 double cpudevice::power_usage(struct result_bundle *result, struct parameter_bundle *bundle)

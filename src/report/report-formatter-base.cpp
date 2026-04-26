@@ -34,10 +34,10 @@
 
 /* ************************************************************************ */
 
-const char *
+std::string
 report_formatter_string_base::get_result()
 {
-	return result.c_str();
+	return result;
 }
 
 /* ************************************************************************ */
@@ -51,21 +51,17 @@ report_formatter_string_base::clear_result()
 /* ************************************************************************ */
 
 void
-report_formatter_string_base::add(const char *str)
+report_formatter_string_base::add(const string &str)
 {
-	assert(str);
-
 	result += escape_string(str);
 }
 
 /* ************************************************************************ */
 
 void
-report_formatter_string_base::add_exact(const char *str)
+report_formatter_string_base::add_exact(const string &str)
 {
-	assert(str);
-
-	result += std::string(str);
+	result += str;
 }
 
 /* ************************************************************************ */

@@ -29,7 +29,6 @@
 #include "measurement.h"
 
 class extech_power_meter: public power_meter {
-	char dev_name[256];
 	int fd;
 
 	double rate;
@@ -39,7 +38,7 @@ class extech_power_meter: public power_meter {
 	int end_thread;
 	pthread_t thread;
 public:
-	extech_power_meter(const char *_dev_name);
+	extech_power_meter(const std::string &_dev_name);
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);
 	virtual void sample(void);

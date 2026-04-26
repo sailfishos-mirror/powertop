@@ -39,15 +39,16 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <errno.h>
+#include <format>
 
 #include "../lib.h"
 #include "bluetooth.h"
 
 bt_tunable::bt_tunable(void) : tunable("", 1.0, _("Good"), _("Bad"), _("Unknown"))
 {
-	sprintf(desc, _("Bluetooth device interface status"));
-	pt_strcpy(toggle_bad, "/usr/sbin/hciconfig hci0 up &> /dev/null &");
-	pt_strcpy(toggle_good, "/usr/sbin/hciconfig hci0 down &> /dev/null");
+	desc = _("Bluetooth device interface status");
+	toggle_bad = "/usr/sbin/hciconfig hci0 up &> /dev/null &";
+	toggle_good = "/usr/sbin/hciconfig hci0 down &> /dev/null";
 }
 
 
@@ -182,17 +183,6 @@ void bt_tunable::toggle(void)
 	}
 	if(system("/usr/sbin/hciconfig hci0 down &> /dev/null"))
 		printf("System is not available\n");
-}
-
-const char *bt_tunable::toggle_script(void)
-{
-	int good;
-	good = good_bad();
-
-	if (good == TUNE_GOOD) {
-		return toggle_bad;
-	}
-	return toggle_good;
 }
 
 

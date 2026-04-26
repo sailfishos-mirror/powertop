@@ -28,6 +28,7 @@
 
 #include <vector>
 #include <limits.h>
+#include <string>
 
 struct parameter_bundle;
 struct result_bundle;
@@ -37,8 +38,8 @@ public:
 	int cached_valid;
 	bool hide;
 
-	char guilty[4096];
-	char real_path[PATH_MAX+1];
+	std::string guilty;
+	std::string real_path;
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);
@@ -47,16 +48,16 @@ public:
 
 	virtual ~device() {};
 
-	void register_sysfs_path(const char *path);
+	void register_sysfs_path(const std::string &path);
 
 	virtual double	utilization(void); /* percentage */
 
-	virtual const char * util_units(void) { return "%"; };
+	virtual std::string util_units(void) { return "%"; };
 
-	virtual const char * class_name(void) { return "abstract device";};
-	virtual const char * device_name(void) { return "abstract device";};
+	virtual std::string class_name(void) { return "abstract device";};
+	virtual std::string device_name(void) { return "abstract device";};
 
-	virtual const char * human_name(void) { return device_name(); };
+	virtual std::string human_name(void) { return device_name(); };
 
 	virtual double power_usage(struct result_bundle *results, struct parameter_bundle *bundle) { return 0.0; };
 
@@ -71,7 +72,7 @@ public:
 
 using namespace std;
 
-extern vector<class device *> all_devices;
+extern std::vector<class device *> all_devices;
 
 extern void devices_start_measurement(void);
 extern void devices_end_measurement(void);

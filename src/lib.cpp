@@ -35,6 +35,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <format>
 
 #include "lib.h"
 
@@ -81,32 +82,25 @@ double percentage(double F)
 	return F;
 }
 
-char *hz_to_human(unsigned long hz, char *buffer, int digits)
+std::string hz_to_human(unsigned long hz, int digits)
 {
-	unsigned long long Hz;
+	unsigned long long Hz = hz;
 
-	buffer[0] = 0;
-
-	Hz = hz;
-
-	/* default: just put the Number in */
-	sprintf(buffer,"%9lli", Hz);
-
-	if (Hz>1000) {
+	if (Hz > 1500000) {
 		if (digits == 2)
-			sprintf(buffer, "%4lli MHz", (Hz+500)/1000);
+			return std::format("{:4.2f} GHz", (Hz + 5000.0) / 1000000.0);
 		else
-			sprintf(buffer, "%6lli MHz", (Hz+500)/1000);
+			return std::format("{:3.1f} GHz", (Hz + 5000.0) / 1000000.0);
 	}
 
-	if (Hz>1500000) {
+	if (Hz > 1000) {
 		if (digits == 2)
-			sprintf(buffer, "%4.2f GHz", (Hz+5000.0)/1000000);
+			return std::format("{:4d} MHz", (int)((Hz + 500) / 1000));
 		else
-			sprintf(buffer, "%3.1f GHz", (Hz+5000.0)/1000000);
+			return std::format("{:6d} MHz", (int)((Hz + 500) / 1000));
 	}
 
-	return buffer;
+	return std::format("{:9d}", (int)Hz);
 }
 
 using namespace std;
@@ -213,19 +207,18 @@ int read_sysfs(const string &filename, bool *ok)
 string read_sysfs_string(const string &filename)
 {
 	ifstream file;
-	char content[4096];
-	char *c;
+	string content;
 
 	file.open(filename.c_str(), ios::in);
 	if (!file)
 		return "";
 	try
 	{
-		file.getline(content, 4096);
+		getline(file, content);
 		file.close();
-		c = strchr(content, '\n');
-		if (c)
-			*c = 0;
+		size_t pos = content.find('\n');
+		if (pos != string::npos)
+			content.erase(pos);
 	} catch (std::exception &exc) {
 		file.close();
 		return "";
@@ -233,36 +226,10 @@ string read_sysfs_string(const string &filename)
 	return content;
 }
 
-string read_sysfs_string(const char *format, const char *param)
-{
-	ifstream file;
-	char content[4096];
-	char *c;
-	char filename[PATH_MAX];
-
-
-	snprintf(filename, sizeof(filename), format, param);
-
-	file.open(filename, ios::in);
-	if (!file)
-		return "";
-	try
-	{
-		file.getline(content, 4096);
-		file.close();
-		c = strchr(content, '\n');
-		if (c)
-			*c = 0;
-	} catch (std::exception &exc) {
-		file.close();
-		return "";
-	}
-	return content;
-}
-
-void align_string(char *buffer, size_t min_sz, size_t max_sz)
+void align_string(std::string &str, size_t min_sz, size_t max_sz)
 {
 	size_t sz;
+	const char *buffer = str.c_str();
 
 	/** mbsrtowcs() allows NULL dst and zero sz,
 	 * comparing to mbstowcs(), which causes undefined
@@ -270,27 +237,28 @@ void align_string(char *buffer, size_t min_sz, size_t max_sz)
 
 	/* start with mbsrtowcs() local mbstate_t * and
 	 * NULL dst pointer*/
-	sz = mbsrtowcs(NULL, (const char **)&buffer, max_sz, NULL);
+	sz = mbsrtowcs(NULL, &buffer, max_sz, NULL);
 	if (sz == (size_t)-1) {
-		buffer[min_sz] = 0x00;
 		return;
 	}
 	while (sz < min_sz) {
-		strcat(buffer, " ");
+		str += " ";
 		sz++;
 	}
 }
 
-void format_watts(double W, char *buffer, unsigned int len)
+std::string format_watts(double W, unsigned int len)
 {
-	buffer[0] = 0;
-	char buf[32];
-	sprintf(buffer, _("%7sW"), fmt_prefix(W, buf));
+	std::string buffer;
+
+	buffer = pt_format(_("{:7s}W"), fmt_prefix(W));
 
 	if (W < 0.0001)
-		sprintf(buffer, _("    0 mW"));
+		buffer = _("    0 mW");
 
 	align_string(buffer, len, len);
+
+	return buffer;
 }
 
 #ifndef HAVE_NO_PCI
@@ -312,6 +280,15 @@ char *pci_id_to_name(uint16_t vendor, uint16_t device, char *buffer, int len)
 	return ret;
 }
 
+char *pci_id_to_name(uint16_t vendor, uint16_t device, std::string &buffer, int len)
+{
+	char buf[len];
+	char *ret;
+	ret = pci_id_to_name(vendor, device, buf, len);
+	buffer = buf;
+	return ret;
+}
+
 void end_pci_access(void)
 {
 	if (pci_access)
@@ -321,6 +298,11 @@ void end_pci_access(void)
 #else
 
 char *pci_id_to_name(uint16_t vendor, uint16_t device, char *buffer, int len)
+{
+	return NULL;
+}
+
+char *pci_id_to_name(uint16_t vendor, uint16_t device, std::string &buffer, int len)
 {
 	return NULL;
 }
@@ -336,11 +318,12 @@ int utf_ok = -1;
 
 
 /* pretty print numbers while limiting the precision */
-char *fmt_prefix(double n, char *buf)
+string fmt_prefix(double n)
 {
 	static const char prefixes[] = "yzafpnum kMGTPEZY";
 	char tmpbuf[16];
 	int omag, npfx;
+	char buf[32];
 	char *p, *q, pfx, *c;
 	int i;
 
@@ -365,8 +348,7 @@ char *fmt_prefix(double n, char *buf)
 	snprintf(tmpbuf, sizeof tmpbuf, "%.2e", n);
 	c = strchr(tmpbuf, 'e');
 	if (!c) {
-		sprintf(buf, "NaN");
-		return buf;
+		return "NaN";
 	}
 	omag = atoi(c + 1);
 
@@ -415,17 +397,18 @@ static void init_pretty_print(void)
 }
 
 
-char *pretty_print(const char *str, char *buf, int len)
+char *pretty_print(const std::string &str, char *buf, int len)
 {
-	const char *p;
+	const char *p = NULL;
 
 	if (!pretty_print_init)
 		init_pretty_print();
 
-	p = pretty_prints[str].c_str();
+	if (pretty_prints.count(str))
+		p = pretty_prints[str].c_str();
 
-	if (strlen(p) == 0)
-		p = str;
+	if (!p || strlen(p) == 0)
+		p = str.c_str();
 
 	snprintf(buf, len,  "%s", p);
 
@@ -434,16 +417,11 @@ char *pretty_print(const char *str, char *buf, int len)
 	return buf;
 }
 
-int equals(double a, double b)
-{
-	return fabs(a - b) <= std::numeric_limits<double>::epsilon();
-}
-
-void process_directory(const char *d_name, callback fn)
+void process_directory(const std::string &d_name, callback fn)
 {
 	struct dirent *entry;
 	DIR *dir;
-	dir = opendir(d_name);
+	dir = opendir(d_name.c_str());
 	if (!dir)
 		return;
 	while (1) {
@@ -457,12 +435,17 @@ void process_directory(const char *d_name, callback fn)
 	closedir(dir);
 }
 
-void process_glob(const char *d_glob, callback fn)
+int equals(double a, double b)
+{
+	return fabs(a - b) <= std::numeric_limits<double>::epsilon();
+}
+
+void process_glob(const std::string &d_glob, callback fn)
 {
 	glob_t g;
 	size_t c;
 
-	switch (glob(d_glob, GLOB_ERR | GLOB_MARK | GLOB_NOSORT, NULL, &g)) {
+	switch (glob(d_glob.c_str(), GLOB_ERR | GLOB_MARK | GLOB_NOSORT, NULL, &g)) {
 	case GLOB_NOSPACE:
 		fprintf(stderr,_("glob returned GLOB_NOSPACE\n"));
 		globfree(&g);
@@ -483,16 +466,16 @@ void process_glob(const char *d_glob, callback fn)
 	globfree(&g);
 }
 
-int get_user_input(char *buf, unsigned sz)
+string get_user_input(unsigned sz)
 {
+	char buf[sz+1];
 	fflush(stdout);
 	echo();
 	/* Upon successful completion, these functions return OK. Otherwise, they return ERR. */
-	int ret = getnstr(buf, sz);
+	getnstr(buf, sz);
 	noecho();
 	fflush(stdout);
-	/* to distinguish between getnstr error and empty line */
-	return ret || strlen(buf);
+	return buf;
 }
 
 int read_msr(int cpu, uint64_t offset, uint64_t *value)
@@ -501,14 +484,14 @@ int read_msr(int cpu, uint64_t offset, uint64_t *value)
 	ssize_t retval;
 	uint64_t msr;
 	int fd;
-	char msr_path[256];
+	std::string msr_path;
 
-	snprintf(msr_path, sizeof(msr_path), "/dev/cpu/%d/msr", cpu);
+	msr_path = std::format("/dev/cpu/{}/msr", cpu);
 
-	if (access(msr_path, R_OK) != 0){
-		snprintf(msr_path, sizeof(msr_path), "/dev/msr%d", cpu);
+	if (access(msr_path.c_str(), R_OK) != 0){
+		msr_path = std::format("/dev/msr{}", cpu);
 
-		if (access(msr_path, R_OK) != 0){
+		if (access(msr_path.c_str(), R_OK) != 0){
 			fprintf(stderr,
 			 _("Model-specific registers (MSR)\
 			 not found (try enabling CONFIG_X86_MSR).\n"));
@@ -516,7 +499,7 @@ int read_msr(int cpu, uint64_t offset, uint64_t *value)
 		}
 	}
 
-	fd = open(msr_path, O_RDONLY);
+	fd = open(msr_path.c_str(), O_RDONLY);
 	if (fd < 0)
 		return -1;
 	retval = pread(fd, &msr, sizeof msr, offset);
@@ -537,14 +520,14 @@ int write_msr(int cpu, uint64_t offset, uint64_t value)
 #if defined(__i386__) || defined(__x86_64__)
 	ssize_t retval;
 	int fd;
-	char msr_path[256];
+	std::string msr_path;
 
-	snprintf(msr_path, sizeof(msr_path), "/dev/cpu/%d/msr", cpu);
+	msr_path = std::format("/dev/cpu/{}/msr", cpu);
 
-	if (access(msr_path, R_OK) != 0){
-		snprintf(msr_path, sizeof(msr_path), "/dev/msr%d", cpu);
+	if (access(msr_path.c_str(), R_OK) != 0){
+		msr_path = std::format("/dev/msr{}", cpu);
 
-		if (access(msr_path, R_OK) != 0){
+		if (access(msr_path.c_str(), R_OK) != 0){
 			fprintf(stderr,
 			 _("Model-specific registers (MSR)\
 			 not found (try enabling CONFIG_X86_MSR).\n"));
@@ -552,7 +535,7 @@ int write_msr(int cpu, uint64_t offset, uint64_t value)
 		}
 	}
 
-	fd = open(msr_path, O_WRONLY);
+	fd = open(msr_path.c_str(), O_WRONLY);
 	if (fd < 0)
 		return -1;
 	retval = pwrite(fd, &value, sizeof value, offset);

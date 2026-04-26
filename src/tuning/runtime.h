@@ -32,15 +32,13 @@
 using namespace std;
 
 class runtime_tunable : public tunable {
-	char runtime_path[PATH_MAX];
+	std::string runtime_path;
 public:
-	runtime_tunable(const char *runtime_path, const char *bus, const char *dev, const char *port);
+	runtime_tunable(const std::string &runtime_path, const std::string &bus, const std::string &dev, const std::string &port);
 
 	virtual int good_bad(void);
 
 	virtual void toggle(void);
-
-	virtual const char *toggle_script(void);
 
 };
 

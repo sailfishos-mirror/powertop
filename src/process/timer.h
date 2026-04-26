@@ -30,9 +30,9 @@
 #include "powerconsumer.h"
 
 class timer : public power_consumer {
-	char desc[256];
+	std::string desc;
 public:
-	char		handler[32];
+	std::string	handler;
 	int		raw_count;
 	bool		deferred;
 
@@ -42,11 +42,11 @@ public:
 	uint64_t done(uint64_t time, uint64_t timer_struct);
 	bool is_deferred(void);
 
-	virtual const char * description(void);
-	virtual const char * name(void) { return "timer"; };
-	virtual const char * type(void) { return "Timer"; };
+	virtual std::string description(void);
+	virtual std::string name(void) { return "timer"; };
+	virtual std::string type(void) { return "Timer"; };
 	virtual double usage_summary(void);
-	virtual const char * usage_units_summary(void);
+	virtual std::string usage_units_summary(void);
 
 };
 

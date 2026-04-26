@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <format>
 
 #include <dirent.h>
 #include <stdlib.h>
@@ -43,15 +44,19 @@ static DIR *dir = NULL;
 
 static vector<class devfreq *> all_devfreq;
 
-devfreq::devfreq(const char* dpath): device()
+devfreq::devfreq(const string &dpath): device()
 {
-	pt_strcpy(dir_name, dpath);
+	dir_name = dpath;
 }
 
-uint64_t devfreq::parse_freq_time(char* pchr)
+uint64_t devfreq::parse_freq_time(const string &pchr_s)
 {
-	char *cptr, *pptr = pchr;
+	char *cptr, *pptr;
+	char pchr[pchr_s.length() + 1];
 	uint64_t ctime;
+
+	strcpy(pchr, pchr_s.c_str());
+	pptr = pchr;
 
 	cptr = strtok(pchr, " :");
 	while (cptr != NULL) {
@@ -73,7 +78,7 @@ void devfreq::process_time_stamps()
 			+ ((stamp_after.tv_usec - stamp_before.tv_usec) );
 
 	for (i=0; i < dstates.size()-1; i++) {
-		struct frequency *state = dstates[i];
+		class frequency *state = dstates[i];
 		state->time_after = 1000 * (state->time_after - state->time_before);
 		active_time += state->time_after;
 	}
@@ -83,27 +88,26 @@ void devfreq::process_time_stamps()
 
 void devfreq::add_devfreq_freq_state(uint64_t freq, uint64_t time)
 {
-	struct frequency *state;
+	class frequency *state;
 
-	state = new(std::nothrow) struct frequency;
+	state = new(std::nothrow) class frequency;
 	if (!state)
 		return;
 
-	memset(state, 0, sizeof(*state));
 	dstates.push_back(state);
 
 	state->freq = freq;
 	if (freq == 0)
-		strcpy(state->human_name, "Idle");
+		state->human_name = "Idle";
 	else
-		hz_to_human(freq, state->human_name);
+		state->human_name = hz_to_human(freq);
 	state->time_before = time;
 }
 
 void devfreq::update_devfreq_freq_state(uint64_t freq, uint64_t time)
 {
 	unsigned int i;
-	struct frequency *state = NULL;
+	class frequency *state = NULL;
 
 	for(i=0; i < dstates.size(); i++) {
 		if (freq == dstates[i]->freq)
@@ -118,13 +122,13 @@ void devfreq::update_devfreq_freq_state(uint64_t freq, uint64_t time)
 	state->time_after = time;
 }
 
-void devfreq::parse_devfreq_trans_stat(char *dname)
+void devfreq::parse_devfreq_trans_stat(const string &dname)
 {
 	ifstream file;
-	char filename[256];
+	std::string filename;
 
-	snprintf(filename, sizeof(filename), "/sys/class/devfreq/%s/trans_stat", dir_name);
-	file.open(filename);
+	filename = std::format("/sys/class/devfreq/{}/trans_stat", dir_name);
+	file.open(filename.c_str());
 
 	if (!file)
 		return;
@@ -185,23 +189,21 @@ double devfreq::utilization(void)
 	return 0;
 }
 
-void devfreq::fill_freq_utilization(unsigned int idx, char *buf)
+string devfreq::fill_freq_utilization(unsigned int idx)
 {
-	buf[0] = 0;
-
 	if (idx < dstates.size() && dstates[idx]) {
-		struct frequency *state = dstates[idx];
-		sprintf(buf, " %5.1f%% ", percentage(1.0 * state->time_after / sample_time));
+		class frequency *state = dstates[idx];
+		return std::format(" {:5.1f}% ", percentage(1.0 * state->time_after / sample_time));
 	}
+	return "";
 }
 
-void devfreq::fill_freq_name(unsigned int idx, char *buf)
+string devfreq::fill_freq_name(unsigned int idx)
 {
-	buf[0] = 0;
-
 	if (idx < dstates.size() && dstates[idx]) {
-		sprintf(buf, "%-15s", dstates[idx]->human_name);
+		return std::format("{:<15}", dstates[idx]->human_name);
 	}
+	return "";
 }
 
 void start_devfreq_measurement(void)
@@ -264,8 +266,6 @@ void display_devfreq_devices(void)
 {
 	unsigned int i, j;
 	WINDOW *win;
-	char fline[1024];
-	char buf[128];
 
 	win = get_ncurses_win("Device Freq stats");
         if (!win)
@@ -287,17 +287,12 @@ void display_devfreq_devices(void)
 	for (i=0; i<all_devfreq.size(); i++) {
 
 		class devfreq *df = all_devfreq[i];
-		wprintw(win, "\n%s\n", df->device_name());
+		wprintw(win, "\n%s\n", df->device_name().c_str());
 
 		for(j=0; j < df->dstates.size(); j++) {
-			memset(fline, 0, sizeof(fline));
-			strcpy(fline, "\t");
-			df->fill_freq_name(j, buf);
-			strcat(fline, buf);
-			df->fill_freq_utilization(j, buf);
-			strcat(fline, buf);
-			strcat(fline, "\n");
-			wprintw(win, "%s", fline);
+			std::string f_name = df->fill_freq_name(j);
+			std::string f_util = df->fill_freq_utilization(j);
+			wprintw(win, "\t%s%s\n", f_name.c_str(), f_util.c_str());
 		}
 		wprintw(win, "\n");
 	}

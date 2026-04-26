@@ -29,22 +29,25 @@
 
 #include "tunable.h"
 
+#include <string>
+
 using namespace std;
 
 class wifi_tunable : public tunable {
-	char iface[4096];
+	std::string iface;
 public:
-	wifi_tunable(const char *_iface);
+	wifi_tunable(const std::string &_iface);
 
 	virtual int good_bad(void);
 
 	virtual void toggle(void);
 
-	virtual const char *toggle_script(void);
-
 };
 
 extern void add_wifi_tunables(void);
+
+int get_wifi_power_saving(const std::string &iface);
+int set_wifi_power_saving(const std::string &iface, int state);
 
 
 #endif

@@ -92,7 +92,7 @@ void perf_bundle::release(void)
 	records.clear();
 }
 
-bool perf_bundle::add_event(const char *system_name, const char *event_name)
+bool perf_bundle::add_event(const string &system_name, const string &event_name)
 {
 	unsigned int i;
 	int event_added = false;

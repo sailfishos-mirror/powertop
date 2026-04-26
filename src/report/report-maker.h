@@ -118,7 +118,7 @@ public:
 	const char *get_result();
 	void clear_result();
 
-	void add(const char *str);
+	void add(const std::string &str);
 
 	/* *** Report Style *** */
 	void add_header();
@@ -126,7 +126,7 @@ public:
 	void add_logo();
 	void add_div(struct tag_attr *div_attr);
 	void end_div();
-	void add_title(struct tag_attr *att_title, const char *title);
+	void add_title(struct tag_attr *att_title, const std::string &title);
 	void add_navigation();
 	void add_summary_list(string *list, int size);
 	void add_table(string *system_data, struct table_attributes *tb_attr);

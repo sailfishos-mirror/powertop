@@ -25,6 +25,7 @@
 #include "intel_cpus.h"
 #include <iostream>
 #include <fstream>
+#include <format>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -55,18 +56,14 @@ void i965_core::measurement_start(void)
 	update_cstate("gpu rc6pp", "RC6pp", 0, rc6pp_before, 1, 3);
 }
 
-char * i965_core::fill_cstate_line(int line_nr, char *buffer, const char *separator)
+std::string i965_core::fill_cstate_line(int line_nr, const string &separator)
 {
-	buffer[0] = 0;
 	double ratio, d = -1.0, time_delta;
 
 	if (line_nr == LEVEL_HEADER) {
-		sprintf(buffer,_("  GPU "));
-		return buffer;
+		return _("  GPU ");
 	}
 
-	buffer[0] = 0;
-	
 	time_delta  = 1000000 * (after.tv_sec - before.tv_sec) + after.tv_usec - before.tv_usec;
 	ratio = 100000.0/time_delta;
 
@@ -84,7 +81,7 @@ char * i965_core::fill_cstate_line(int line_nr, char *buffer, const char *separa
 		d = ratio * (rc6pp_after - rc6pp_before);
 		break;
 	default:
-		return buffer;
+		return "";
 	}
 		
 	/* cope with rounding errors due to the measurement interval */
@@ -93,9 +90,7 @@ char * i965_core::fill_cstate_line(int line_nr, char *buffer, const char *separa
 	if (d > 100.0)
 		d = 100.0;
 	
-	sprintf(buffer,"%5.1f%%", d);
-
-	return buffer;
+	return std::format("{:5.1f}%", d);
 }
 
 
@@ -108,15 +103,13 @@ void i965_core::measurement_end(void)
 	rc6pp_after = read_sysfs("/sys/class/drm/card0/power/rc6pp_residency_ms", NULL);
 }
 
-char * i965_core::fill_pstate_line(int line_nr, char *buffer)
+std::string i965_core::fill_pstate_line(int line_nr)
 {
-	buffer[0] = 0;
-	return buffer;
+	return "";
 }
 
-char * i965_core::fill_pstate_name(int line_nr, char *buffer)
+std::string i965_core::fill_pstate_name(int line_nr)
 {
-	buffer[0] = 0;
-	return buffer;
+	return "";
 }
 

@@ -38,35 +38,33 @@ using namespace std;
 #include "../parameters/parameters.h"
 
 #include <string.h>
+#include <format>
 
 
-backlight::backlight(const char *_name, const char *path): device()
+backlight::backlight(const string &_name, const string &path): device()
 {
 	min_level = 0;
 	max_level = 0;
 	start_level = 0;
 	end_level = 0;
-	pt_strcpy(sysfs_path, path);
+	sysfs_path = path;
 	register_sysfs_path(sysfs_path);
-	snprintf(name, sizeof(name) - 1, "backlight:%s", _name);
+	name = std::format("backlight:{}", _name);
 	r_index = get_result_index(name);
 	r_index_power = 0;
 }
 
 void backlight::start_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 
-	snprintf(filename, sizeof(filename), "%s/max_brightness", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/max_brightness", sysfs_path));
 	if (file) {
 		file >> max_level;
 	}
 	file.close();
 
-	snprintf(filename, sizeof(filename), "%s/actual_brightness", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/actual_brightness", sysfs_path));
 	if (file) {
 		file >> start_level;
 		file.close();
@@ -77,8 +75,7 @@ static int dpms_screen_on(void)
 {
 	DIR *dir;
 	struct dirent *entry;
-	char filename[PATH_MAX];
-	char line[4096];
+	std::string line;
 	ifstream file;
 
 	dir = opendir("/sys/class/drm/card0");
@@ -91,21 +88,19 @@ static int dpms_screen_on(void)
 
 		if (strncmp(entry->d_name, "card", 4) != 0)
 			continue;
-		snprintf(filename, sizeof(filename), "/sys/class/drm/card0/%s/enabled", entry->d_name);
-		file.open(filename, ios::in);
+		file.open(std::format("/sys/class/drm/card0/{}/enabled", entry->d_name));
 		if (!file)
 			continue;
-		file.getline(line, sizeof(line));
+		getline(file, line);
 		file.close();
-		if (strcmp(line, "enabled") != 0)
+		if (line != "enabled")
 			continue;
-		snprintf(filename, sizeof(filename), "/sys/class/drm/card0/%s/dpms", entry->d_name);
-		file.open(filename, ios::in);
+		file.open(std::format("/sys/class/drm/card0/{}/dpms", entry->d_name));
 		if (!file)
 			continue;
-		file.getline(line, sizeof(line));
+		getline(file, line);
 		file.close();
-		if (strcmp(line, "On") == 0) {
+		if (line == "On") {
 			closedir(dir);
 			return 1;
 		}
@@ -116,14 +111,11 @@ static int dpms_screen_on(void)
 
 void backlight::end_measurement(void)
 {
-	char filename[PATH_MAX];
-	char powername[4096];
 	ifstream file;
 	double p;
 	int _backlight = 0;
 
-	snprintf(filename, sizeof(filename), "%s/actual_brightness", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/actual_brightness", sysfs_path));
 	if (file) {
 		file >> end_level;
 	}
@@ -137,8 +129,7 @@ void backlight::end_measurement(void)
 	}
 
 	report_utilization(name, p);
-	snprintf(powername, sizeof(powername), "%s-power", name);
-	report_utilization(powername, _backlight);
+	report_utilization(std::format("{}-power", name), _backlight);
 }
 
 
@@ -150,17 +141,10 @@ double backlight::utilization(void)
 	return p;
 }
 
-const char * backlight::device_name(void)
-{
-	return name;
-}
-
 static void create_all_backlights_callback(const char *d_name)
 {
 	class backlight *bl;
-	char filename[PATH_MAX];
-	snprintf(filename, sizeof(filename), "/sys/class/backlight/%s", d_name);
-	bl = new class backlight(d_name, filename);
+	bl = new class backlight(d_name, std::format("/sys/class/backlight/{}", d_name));
 	all_devices.push_back(bl);
 }
 
@@ -179,7 +163,6 @@ double backlight::power_usage(struct result_bundle *result, struct parameter_bun
 	double power;
 	double factor;
 	double _utilization;
-	char powername[4096];
 	static int bl_index = 0, blp_index = 0, bl_boost_index40 = 0, bl_boost_index80, bl_boost_index100;
 
 	if (!bl_index)
@@ -214,8 +197,7 @@ double backlight::power_usage(struct result_bundle *result, struct parameter_bun
 	factor = get_parameter_value(blp_index, bundle);
 
 	if (!r_index_power) {
-		sprintf(powername, "%s-power", name);
-		r_index_power = get_result_index(powername);
+		r_index_power = get_result_index(std::format("{}-power", name));
 	}
 	_utilization = get_result_value(r_index_power, result);
 

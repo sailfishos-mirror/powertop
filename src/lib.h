@@ -25,10 +25,20 @@
 #ifndef INCLUDE_GUARD_LIB_H
 #define INCLUDE_GUARD_LIB_H
 
+#include <format>
+#include <string_view>
+
+template<typename... Args>
+inline std::string pt_format(std::string_view fmt, Args&&... args)
+{
+	return std::vformat(fmt, std::make_format_args(args...));
+}
+
 #include <libintl.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <cstring>
+#include <string>
 
 /* Include only for Automake builds */
 #ifdef HAVE_CONFIG_H
@@ -47,7 +57,7 @@ extern int get_max_cpu(void);
 extern void set_max_cpu(int cpu);
 
 extern double percentage(double F);
-extern char *hz_to_human(unsigned long hz, char *buffer, int digits = 2);
+extern std::string hz_to_human(unsigned long hz, int digits = 2);
 
 
 extern const char *kernel_function(uint64_t address);
@@ -61,16 +71,15 @@ using namespace std;
 extern void write_sysfs(const string &filename, const string &value);
 extern int read_sysfs(const string &filename, bool *ok = NULL);
 extern string read_sysfs_string(const string &filename);
-extern string read_sysfs_string(const char *format, const char *param);
 
-extern void format_watts(double W, char *buffer, unsigned int len);
+extern std::string format_watts(double W, unsigned int len);
 
-extern char *pci_id_to_name(uint16_t vendor, uint16_t device, char *buffer, int len);
+extern char *pci_id_to_name(uint16_t vendor, uint16_t device, std::string &buffer, int len);
 extern void end_pci_access(void);
 
 
-extern char *fmt_prefix(double n, char *buf);
-extern char *pretty_print(const char *str, char *buf, int len);
+extern std::string fmt_prefix(double n);
+extern char *pretty_print(const std::string &str, char *buf, int len);
 extern int equals(double a, double b);
 
 template<size_t N> void pt_strcpy(char (&d)[N], const char *s)
@@ -80,14 +89,14 @@ template<size_t N> void pt_strcpy(char (&d)[N], const char *s)
 }
 
 typedef void (*callback)(const char*);
-extern void process_directory(const char *d_name, callback fn);
-extern void process_glob(const char *glob, callback fn);
+extern void process_directory(const std::string &d_name, callback fn);
+extern void process_glob(const std::string &glob, callback fn);
 extern int utf_ok;
-extern int get_user_input(char *buf, unsigned sz);
+extern std::string get_user_input(unsigned sz);
 extern int read_msr(int cpu, uint64_t offset, uint64_t *value);
 extern int write_msr(int cpu, uint64_t offset, uint64_t value);
 
-extern void align_string(char *buffer, size_t min_sz, size_t max_sz);
+extern void align_string(std::string &str, size_t min_sz, size_t max_sz);
 
 extern void ui_notify_user_ncurses(const char *frmt, ...);
 extern void ui_notify_user_console(const char *frmt, ...);

@@ -28,25 +28,25 @@
 #include <string.h>
 #include "../lib.h"
 
-vector<class tunable *> all_tunables;
-vector<class tunable *> all_untunables;
+std::vector<class tunable *> all_tunables;
+std::vector<class tunable *> all_untunables;
 
 
-tunable::tunable(const char *str, double _score, const char *good, const char *bad, const char *neutral)
+tunable::tunable(const string &str, double _score, const string &good, const string &bad, const string &neutral)
 {
+	desc = str;
 	score = _score;
-	pt_strcpy(desc, str);
-	pt_strcpy(good_string, good);
-	pt_strcpy(bad_string, bad);
-	pt_strcpy(neutral_string, neutral);
+	good_string = good;
+	bad_string = bad;
+	neutral_string = neutral;
 }
 
 
 tunable::tunable(void)
 {
 	score = 0;
-	desc[0] = 0;
-	pt_strcpy(good_string, _("Good"));
-	pt_strcpy(bad_string, _("Bad"));
-	pt_strcpy(neutral_string, _("Unknown"));
+	desc = "";
+	good_string = _("Good");
+	bad_string = _("Bad");
+	neutral_string = _("Unknown");
 }

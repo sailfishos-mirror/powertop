@@ -26,6 +26,7 @@
 #define _INCLUDE_GUARD_RFKILL_H
 
 #include <limits.h>
+#include <string>
 
 #include "device.h"
 #include "../parameters/parameters.h"
@@ -33,24 +34,24 @@
 class rfkill: public device {
 	int start_soft, end_soft;
 	int start_hard, end_hard;
-	char sysfs_path[PATH_MAX];
-	char name[4096];
-	char humanname[4096];
+	std::string sysfs_path;
+	std::string name;
+	std::string humanname;
 	int index;
 	int rindex;
 public:
 
-	rfkill(char *_name, char *path);
+	rfkill(const std::string &_name, const std::string &path);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);
 
 	virtual double	utilization(void); /* percentage */
 
-	virtual const char * class_name(void) { return "radio";};
+	virtual std::string class_name(void) { return "radio";};
 
-	virtual const char * device_name(void);
-	virtual const char * human_name(void) { return humanname; };
+	virtual std::string device_name(void) { return name; };
+	virtual std::string human_name(void) { return humanname; };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual int power_valid(void) { return utilization_power_valid(rindex);};
 	virtual int grouping_prio(void) { return 5; };

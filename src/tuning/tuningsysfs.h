@@ -33,17 +33,15 @@
 using namespace std;
 
 class sysfs_tunable : public tunable {
-	char sysfs_path[PATH_MAX];
-	char target_value[4096];
-	char bad_value[4096];
+	std::string sysfs_path;
+	std::string target_value;
+	std::string bad_value;
 public:
-	sysfs_tunable(const char *str, const char *sysfs_path, const char *target_content);
+	sysfs_tunable(const std::string &str, const std::string &sysfs_path, const std::string &target_content);
 
 	virtual int good_bad(void);
 
 	virtual void toggle(void);
-
-	virtual const char *toggle_script(void);
 
 };
 

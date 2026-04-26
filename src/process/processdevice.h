@@ -31,19 +31,18 @@
 #include "../devices/device.h"
 
 class device_consumer : public power_consumer {
-	char str[4096];
 public:
 	int prio;
 	double power;
 	class device *device;
 	device_consumer(class device *dev);
 
-	virtual const char * description(void);
-	virtual const char * name(void) { return "device"; };
-	virtual const char * type(void) { return "Device"; };
+	virtual std::string description(void);
+	virtual std::string name(void) { return "device"; };
+	virtual std::string type(void) { return "Device"; };
 	virtual double Witts(void);
 	virtual double usage(void) { return device->utilization();};
-	virtual const char * usage_units(void) {return device->util_units();};
+	virtual std::string usage_units(void) {return device->util_units();};
 	virtual int show_events(void) { return 0; };
 };
 

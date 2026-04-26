@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <vector>
 #include <algorithm>
+#include <string>
 
 using namespace std;
 
@@ -54,16 +55,16 @@ public:
 	virtual ~power_consumer() {};
 
 	virtual double Witts(void);
-	virtual const char * description(void) { return ""; };
+	virtual std::string description(void) { return ""; };
 
-	virtual const char * name(void) { return "abstract"; };
-	virtual const char * type(void) { return "abstract"; };
+	virtual std::string name(void) { return "abstract"; };
+	virtual std::string type(void) { return "abstract"; };
 
 	virtual double usage(void);
-	virtual const char * usage_units(void);
+	virtual std::string usage_units(void);
 
 	virtual double usage_summary(void) { return usage();};
-	virtual const char * usage_units_summary(void) { return usage_units(); };
+	virtual std::string usage_units_summary(void) { return usage_units(); };
 	virtual double events(void) { return  (wake_ups + gpu_ops + hard_disk_hits) / measurement_time;};
 	virtual int show_events(void) { return 1; };
 };

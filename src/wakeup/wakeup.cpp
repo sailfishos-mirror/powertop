@@ -31,22 +31,22 @@
 
 using namespace std;
 
-vector<class wakeup *> wakeup_all;
+std::vector<class wakeup *> wakeup_all;
 
-wakeup::wakeup(const char *str, double _score, const char *enable, const char *disable)
+wakeup::wakeup(const string &str, double _score, const string &enable, const string &disable)
 {
 	score = _score;
-        pt_strcpy(desc, str);
-        pt_strcpy(wakeup_enable, enable);
-        pt_strcpy(wakeup_disable, disable);
+        desc = str;
+        wakeup_enable = enable;
+        wakeup_disable = disable;
 }
 
 wakeup::wakeup(void)
 {
 	score = 0;
-        desc[0] = 0;
-        pt_strcpy(wakeup_enable, _("Enabled"));
-        pt_strcpy(wakeup_disable, _("Disabled"));
-	pt_strcpy(wakeup_idle, _("Unknown"));
+        desc = "";
+        wakeup_enable = _("Enabled");
+        wakeup_disable = _("Disabled");
+	wakeup_idle = _("Unknown");
 }
 

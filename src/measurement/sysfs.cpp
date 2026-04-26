@@ -29,19 +29,18 @@
 #include <stdio.h>
 #include <limits.h>
 
-sysfs_power_meter::sysfs_power_meter(const char *power_supply_name)
+sysfs_power_meter::sysfs_power_meter(const string &power_supply_name) : power_meter(power_supply_name)
 {
 	rate = 0.0;
 	capacity = 0.0;
-	pt_strcpy(name, power_supply_name);
 }
 
-bool sysfs_power_meter::get_sysfs_attr(const char *attribute, int *value)
+bool sysfs_power_meter::get_sysfs_attr(const string &attribute, int *value)
 {
-	char filename[PATH_MAX];
+	std::string filename;
 	bool ok;
 
-	snprintf(filename, sizeof(filename), "/sys/class/power_supply/%s/%s", name, attribute);
+	filename = std::format("/sys/class/power_supply/{}/{}", name, attribute);
 	*value = read_sysfs(filename, &ok);
 
 	return ok;
@@ -136,7 +135,7 @@ void sysfs_power_meter::measure()
 	if (!is_present())
 		return;
 	/** do not jump over. we may have discharging battery */
-	if (read_sysfs_string("/sys/class/power_supply/%s/status", name) == "Discharging")
+	if (read_sysfs_string(std::format("/sys/class/power_supply/{}/status", name)) == "Discharging")
 		this->set_discharging(true);
 
 	got_rate = set_rate_from_power();

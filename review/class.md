@@ -9,12 +9,14 @@ Base class for all hardware components that PowerTOP monitors for power consumpt
 * `end_measurement()`: Finalizes measurement for the device.
 * `utilization()`: Returns the utilization percentage of the device.
 * `device_name()`: Returns a string representing the device name.
+* `device_name_s()`: Returns a std::string representing the device name.
+* `human_name()`: Returns a std::string representing the human readable name.
 * `power_usage(result_bundle, parameter_bundle)`: Calculates power usage based on measurement results and parameters.
 
 ### Key public variables
 * `bool hide`: If true, the device is hidden from the UI.
-* `char guilty[4096]`: Stores information about processes responsible for this device's activity.
-* `char real_path[PATH_MAX+1]`: The sysfs path to the device.
+* `std::string guilty`: Stores information about processes responsible for this device's activity.
+* `std::string real_path`: The sysfs path to the device.
 
 ### Derived class cpudevice
 Specialized for CPU devices; serves as a base for RAPL (Running Average Power Limit) devices.
@@ -37,7 +39,7 @@ Represents any entity (process, interrupt, etc.) that consumes power.
 * `Witts()`: Returns the power consumption in Watts.
 * `usage()`: Returns a numerical value for usage (e.g., CPU time).
 * `events()`: Returns the rate of events (wakeups, ops) per second.
-* `description()`: Returns a description of the consumer.
+* `description()`: Returns a std::string description of the consumer.
 
 ### Key public variables
 * `uint64_t accumulated_runtime`: Total time the consumer was active.
@@ -96,11 +98,14 @@ Base class for power-saving settings that can be "tuned" (e.g., SATA link power 
 ### Key public methods
 * `good_bad()`: Returns whether the current setting is optimal for power saving.
 * `toggle()`: Switches between "good" and "bad" settings.
-* `description()`: Returns a description of the tunable setting.
+* `description()`: Returns a std::string description of the tunable setting.
+* `result_string()`: Returns a std::string representation of the current state (Good/Bad/Unknown).
+* `toggle_script()`: Returns a shell script command to toggle the setting.
+* `toggle_script_s()`: Returns a std::string shell script command to toggle the setting.
 
 ### Key public variables
 * `double score`: The estimated power saving impact.
-* `char desc[4096]`: Description text.
+* `std::string desc`: Description text.
 
 ### Derived class usb_tunable, ethernet_tunable, wifi_tunable, bt_tunable, etc.
 Specific implementations for different subsystems that allow power-saving toggles.
@@ -113,10 +118,10 @@ Base class for system entities that can wake the system from sleep or idle.
 ### Key public methods
 * `wakeup_value()`: Returns the current enable/disable state.
 * `wakeup_toggle()`: Toggles the wakeup capability.
-* `description()`: Returns a description of the wakeup source.
+* `description()`: Returns a std::string description of the wakeup source.
 
 ### Key public variables
-* `char desc[4096]`: Description text.
+* `std::string desc`: Description text.
 
 ### Derived class usb_wakeup, ethernet_wakeup
 Implementations for specific hardware wakeup sources.
@@ -129,7 +134,7 @@ Base class for different methods of measuring system-wide power consumption.
 ### Key public methods
 * `power()`: Returns the current power consumption in Watts.
 * `start_measurement()`: Starts a measurement interval.
-* `end_measurement()`: Ends a measurement interval.
+* `end_measurement()`: Finalizes a measurement interval.
 * `is_discharging()`: Returns true if the system is running on battery.
 
 ### Derived class acpi_power_meter

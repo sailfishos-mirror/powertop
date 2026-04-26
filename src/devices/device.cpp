@@ -30,6 +30,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <format>
 
 using namespace std;
 
@@ -58,29 +59,27 @@ device::device(void)
 {
 	cached_valid = 0;
 	hide = 0;
-
-	memset(guilty, 0, sizeof(guilty));
-	memset(real_path, 0, sizeof(real_path));
 }
 
 
-void device::register_sysfs_path(const char *path)
+void device::register_sysfs_path(const std::string &path)
 {
-	char current_path[PATH_MAX + 1];
+	std::string current_path = path;
 	int iter = 0;
-	pt_strcpy(current_path, path);
+	char resolved_path[PATH_MAX + 1];
 
 	while (iter++ < 10) {
-		char test_path[PATH_MAX + 1];
-		snprintf(test_path, sizeof(test_path), "%s/device", current_path);
-		if (access(test_path, R_OK) == 0)
-			strcpy(current_path, test_path);
+		std::string test_path = current_path + "/device";
+		if (access(test_path.c_str(), R_OK) == 0)
+			current_path = test_path;
 		else
 			break;
 	}
 
-	if (!realpath(current_path, real_path))
-		real_path[0] = 0;
+	if (realpath(current_path.c_str(), resolved_path))
+		real_path = resolved_path;
+	else
+		real_path.clear();
 }
 
 void device::start_measurement(void)
@@ -150,8 +149,7 @@ void report_devices(void)
 	int show_power;
 	double pw;
 
-	char util[128];
-	char power[128];
+	std::string util;
 
 	win = get_ncurses_win("Device stats");
         if (!win)
@@ -168,17 +166,15 @@ void report_devices(void)
 
 	pw = global_power();
 	if (pw > 0.0001) {
-		char buf[32];
 		wprintw(win, _("The battery reports a discharge rate of %sW\n"),
-				fmt_prefix(pw, buf));
+				fmt_prefix(pw).c_str());
 		wprintw(win, _("The energy consumed was %sJ\n"),
-				fmt_prefix(global_joules(), buf));
+				fmt_prefix(global_joules()).c_str());
 	}
 
 	if (show_power) {
-		char buf[32];
 		wprintw(win, _("System baseline power is estimated at %sW\n"),
-				fmt_prefix(get_parameter_value("base power"), buf));
+				fmt_prefix(get_parameter_value("base power")).c_str());
 	}
 
 	if (pw > 0.0001 || show_power)
@@ -190,29 +186,30 @@ void report_devices(void)
 
 	for (i = 0; i < all_devices.size(); i++) {
 		double P;
+		std::string power;
 
-		util[0] = 0;
+		util = "";
 
-		if (all_devices[i]->util_units()) {
+		if (!all_devices[i]->util_units().empty()) {
 			if (all_devices[i]->utilization() < 1000)
-				sprintf(util, "%5.1f%s",  all_devices[i]->utilization(),  all_devices[i]->util_units());
+				util = std::format("{:5.1f}{}",  all_devices[i]->utilization(),  all_devices[i]->util_units());
 			else
-				sprintf(util, "%5i%s",  (int)all_devices[i]->utilization(),  all_devices[i]->util_units());
+				util = std::format("{:5d}{}",  (int)all_devices[i]->utilization(),  all_devices[i]->util_units());
 		}
-		while (strlen(util) < 13) strcat(util, " ");
+		while (util.length() < 13) util.append(" ");
 
 		P = all_devices[i]->power_usage(&all_results, &all_parameters);
 
-		format_watts(P, power, 11);
+		power = format_watts(P, 11);
 
 		if (!show_power || !all_devices[i]->power_valid())
-			strcpy(power, "           ");
+			power = "           ";
 
 
 		wprintw(win, "%s %s %s\n",
-			power,
-			util,
-			all_devices[i]->human_name()
+			power.c_str(),
+			util.c_str(),
+			all_devices[i]->human_name().c_str()
 			);
 	}
 }
@@ -251,22 +248,21 @@ void show_report_devices(void)
 	int summary_size=2;
 	string *summary = new string[summary_size];
 	pw = global_power();
-	char buf[32];
 	if (pw > 0.0001) {
 		summary[0]= __("The battery reports a discharge rate of: ");
-		summary[1]=string(fmt_prefix(pw, buf));
+		summary[1]=fmt_prefix(pw);
 		summary[1].append(" W");
 		report.add_summary_list(summary, summary_size);
 
 		summary[0]= __("The energy consumed was : ");
-		summary[1]=string(fmt_prefix(global_joules(), buf));
+		summary[1]=fmt_prefix(global_joules());
 		summary[1].append(" J");
 		report.add_summary_list(summary, summary_size);
 	}
 
 	if (show_power) {
 		summary[0]=__("The system baseline power is estimated at: ");
-		summary[1]=string(fmt_prefix(get_parameter_value("base power"), buf));
+		summary[1]=fmt_prefix(get_parameter_value("base power"));
 		summary[1].append(" W");
 		report.add_summary_list(summary, summary_size);
 	}
@@ -281,35 +277,34 @@ void show_report_devices(void)
 
 	for (i = 0; i < all_devices.size(); i++) {
 		double P;
-		char util[128];
-		char power[128];
+		std::string util;
+		std::string power;
 
-		util[0] = 0;
-		if (all_devices[i]->util_units()) {
+		if (!all_devices[i]->util_units().empty()) {
 			if (all_devices[i]->utilization() < 1000)
-				sprintf(util, "%5.1f%s",
+				util = std::format("{:5.1f}{}",
 					all_devices[i]->utilization(),
 					all_devices[i]->util_units());
 			else
-				sprintf(util, "%5i%s",
+				util = std::format("{:5d}{}",
 					(int)all_devices[i]->utilization(),
 					all_devices[i]->util_units());
 		}
 
 		P = all_devices[i]->power_usage(&all_results, &all_parameters);
-		format_watts(P, power, 11);
+		power = format_watts(P, 11);
 
 		if (!show_power || !all_devices[i]->power_valid())
-			strcpy(power, "           ");
+			power = "           ";
 
-		device_data[idx]= string(util);
+		device_data[idx]= util;
 		idx+=1;
 
-		device_data[idx]= string(all_devices[i]->human_name());
+		device_data[idx]= all_devices[i]->human_name();
 		idx+=1;
 
 		if (show_power) {
-			device_data[idx]= string(power);
+			device_data[idx]= power;
 			idx+=1;
 		}
 	}

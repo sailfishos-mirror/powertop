@@ -58,15 +58,15 @@ class perf_power_bundle: public perf_bundle
 };
 
 
-static class abstract_cpu * new_package(int package, int cpu, char * vendor, int family, int model)
+static class abstract_cpu * new_package(int package, int cpu, const std::string &vendor, int family, int model)
 {
 	class abstract_cpu *ret = NULL;
 	class cpudevice *cpudev;
 	class cpu_rapl_device *cpu_rapl_dev;
 	class dram_rapl_device *dram_rapl_dev;
 
-	char packagename[128];
-	if (strcmp(vendor, "GenuineIntel") == 0)
+	std::string packagename;
+	if (vendor == "GenuineIntel")
 		if (family == 6)
 			if (is_supported_intel_cpu(model, cpu)) {
 				ret = new class nhm_package(model);
@@ -82,19 +82,19 @@ static class abstract_cpu * new_package(int package, int cpu, char * vendor, int
 	ret->set_type("Package");
 	ret->childcount = 0;
 
-	snprintf(packagename, sizeof(packagename), _("cpu package %i"), cpu);
-	cpudev = new class cpudevice(_("cpu package"), packagename, ret);
+	packagename = pt_format(_("cpu package {}"), cpu);
+	cpudev = new class cpudevice(_("cpu package"), packagename.c_str(), ret);
 	all_devices.push_back(cpudev);
 
-	snprintf(packagename, sizeof(packagename), _("package-%i"), cpu);
-	cpu_rapl_dev = new class cpu_rapl_device(cpudev, _("cpu rapl package"), packagename, ret);
+	packagename = pt_format(_("package-{}"), cpu);
+	cpu_rapl_dev = new class cpu_rapl_device(cpudev, _("cpu rapl package"), packagename.c_str(), ret);
 	if (cpu_rapl_dev->device_present())
 		all_devices.push_back(cpu_rapl_dev);
 	else
 		delete cpu_rapl_dev;
 
-	snprintf(packagename, sizeof(packagename), _("package-%i"), cpu);
-	dram_rapl_dev = new class dram_rapl_device(cpudev, _("dram rapl package"), packagename, ret);
+	packagename = pt_format(_("package-{}"), cpu);
+	dram_rapl_dev = new class dram_rapl_device(cpudev, _("dram rapl package"), packagename.c_str(), ret);
 	if (dram_rapl_dev->device_present())
 		all_devices.push_back(dram_rapl_dev);
 	else
@@ -103,11 +103,11 @@ static class abstract_cpu * new_package(int package, int cpu, char * vendor, int
 	return ret;
 }
 
-static class abstract_cpu * new_core(int core, int cpu, char * vendor, int family, int model)
+static class abstract_cpu * new_core(int core, int cpu, const std::string &vendor, int family, int model)
 {
 	class abstract_cpu *ret = NULL;
 
-	if (strcmp(vendor, "GenuineIntel") == 0)
+	if (vendor == "GenuineIntel")
 		if (family == 6)
 			if (is_supported_intel_cpu(model, cpu)) {
 				ret = new class nhm_core(model);
@@ -137,11 +137,11 @@ static class abstract_cpu * new_i965_gpu(void)
 	return ret;
 }
 
-static class abstract_cpu * new_cpu(int number, char * vendor, int family, int model)
+static class abstract_cpu * new_cpu(int number, const std::string &vendor, int family, int model)
 {
 	class abstract_cpu * ret = NULL;
 
-	if (strcmp(vendor, "GenuineIntel") == 0)
+	if (vendor == "GenuineIntel")
 		if (family == 6)
 			if (is_supported_intel_cpu(model, number)) {
 				ret = new class nhm_cpu;
@@ -162,16 +162,14 @@ static class abstract_cpu * new_cpu(int number, char * vendor, int family, int m
 
 
 
-static void handle_one_cpu(unsigned int number, char *vendor, int family, int model)
+static void handle_one_cpu(unsigned int number, const std::string &vendor, int family, int model)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 	unsigned int package_number = 0;
 	unsigned int core_number = 0;
 	class abstract_cpu *package, *core, *cpu;
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/topology/core_id", number);
-	file.open(filename, ios::in);
+	file.open(std::format("/sys/devices/system/cpu/cpu{}/topology/core_id", number), ios::in);
 	if (file) {
 		file >> core_number;
 		if (core_number == (unsigned int) -1)
@@ -179,8 +177,7 @@ static void handle_one_cpu(unsigned int number, char *vendor, int family, int mo
 		file.close();
 	}
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/topology/physical_package_id", number);
-	file.open(filename, ios::in);
+	file.open(std::format("/sys/devices/system/cpu/cpu{}/topology/physical_package_id", number), ios::in);
 	if (file) {
 		file >> package_number;
 		if (package_number == (unsigned int) -1)
@@ -200,6 +197,7 @@ static void handle_one_cpu(unsigned int number, char *vendor, int family, int mo
 	package = system_level.children[package_number];
 	package->parent = &system_level;
 
+
 	if (package->children.size() <= core_number)
 		package->children.resize(core_number + 1, NULL);
 
@@ -213,6 +211,7 @@ static void handle_one_cpu(unsigned int number, char *vendor, int family, int mo
 
 	if (core->children.size() <= number)
 		core->children.resize(number + 1, NULL);
+
 	if (!core->children[number]) {
 		core->children[number] = new_cpu(number, vendor, family, model);
 		core->childcount++;
@@ -252,7 +251,7 @@ void enumerate_cpus(void)
 	char line[4096];
 
 	int number = -1;
-	char vendor[128];
+	std::string vendor;
 	int family = 0;
 	int model = 0;
 
@@ -261,7 +260,6 @@ void enumerate_cpus(void)
 	if (!file)
 		return;
 	/* Not all /proc/cpuinfo include "vendor_id\t". */
-	vendor[0] = '\0';
 
 	while (file) {
 
@@ -273,7 +271,7 @@ void enumerate_cpus(void)
 				c++;
 				if (*c == ' ')
 					c++;
-				pt_strcpy(vendor, c);
+				vendor = c;
 			}
 		}
 		if (strncmp(line, "processor\t",10) == 0) {
@@ -369,28 +367,28 @@ static int has_state_level(class abstract_cpu *acpu, int state, int line)
 	return 0;
 }
 
-static const char * fill_state_name(class abstract_cpu *acpu, int state, int line, char *buf)
+static std::string fill_state_name(class abstract_cpu *acpu, int state, int line)
 {
 	switch (state) {
 		case PSTATE:
-			return acpu->fill_pstate_name(line, buf);
+			return acpu->fill_pstate_name(line);
 			break;
 		case CSTATE:
-			return acpu->fill_cstate_name(line, buf);
+			return acpu->fill_cstate_name(line);
 			break;
 	}
 	return "-EINVAL";
 }
 
-static const char * fill_state_line(class abstract_cpu *acpu, int state, int line,
-					char *buf, const char *sep = "")
+static std::string fill_state_line(class abstract_cpu *acpu, int state, int line,
+					const string &sep = "")
 {
 	switch (state) {
 		case PSTATE:
-			return acpu->fill_pstate_line(line, buf);
+			return acpu->fill_pstate_line(line);
 			break;
 		case CSTATE:
-			return acpu->fill_cstate_line(line, buf, sep);
+			return acpu->fill_cstate_line(line, sep);
 			break;
 	}
 	return "-EINVAL";
@@ -448,11 +446,10 @@ static int get_cstates_num(void)
 
 void report_display_cpu_cstates(void)
 {
-	char buffer[512], buffer2[512], tmp_num[50];
 	unsigned int package, core, cpu;
 	int line, cstates_num, title=0, core_num=0;
 	class abstract_cpu *_package, *_core = NULL, * _cpu;
-	const char* core_type = NULL;
+	std::string core_type;
 
 	cstates_num = get_cstates_num();
 	/* div attr css_class and css_id */
@@ -503,8 +500,8 @@ void report_display_cpu_cstates(void)
 			if (!_core)
 				continue;
 			core_type = _core->get_type();
-			if (core_type != NULL)
-				if (strcmp(core_type, "Core") == 0 )
+			if (!core_type.empty())
+				if (core_type == "Core")
 					num_cores+=1;
 
 			for (cpu = 0; cpu < _core->children.size(); cpu++) {
@@ -532,29 +529,24 @@ void report_display_cpu_cstates(void)
 				bool first_cpu = true;
 				if (!_package->has_cstate_level(line))
 				continue;
-				buffer[0] = 0;
-				buffer2[0] = 0;
 				if (line == LEVEL_HEADER) {
 					if (first_core) {
 						pkg_data[idx1]=__("Package");
 						idx1+=1;
-						sprintf(tmp_num,"%d",  _package->get_number());
-						pkg_data[idx1]= string(tmp_num);
+						pkg_data[idx1]=std::to_string(_package->get_number());
 						idx1+=1;
 					}
 				} else if (first_core) {
-					tmp_str=string(_package->fill_cstate_name(line, buffer));
+					tmp_str=_package->fill_cstate_name(line);
 					pkg_data[idx1]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 					idx1+=1;
-					tmp_str=string(_package->fill_cstate_line(line, buffer2));
+					tmp_str=_package->fill_cstate_line(line);
 					pkg_data[idx1]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 					idx1+=1;
 				}
 
 				/* *** CORE STARTS *** */
 				if (!_core->can_collapse()) {
-					buffer[0] = 0;
-					buffer2[0] = 0;
 					
 					/*
 						* Patch for compatibility with Ryzen processors
@@ -569,29 +561,26 @@ void report_display_cpu_cstates(void)
 						* for translation decision making for the reports.
 						* */
 						core_type = _core->get_type();
-						if (core_type != NULL) {
-							if (strcmp(core_type, "Core") == 0 ) {
+						if (!core_type.empty()) {
+							if (core_type == "Core") {
 								core_data[idx2]="";
 								idx2+=1;
-								snprintf(tmp_num, sizeof(tmp_num), __("Core %d"), _core->get_number());
-								core_data[idx2]=string(tmp_num);
+								core_data[idx2]=pt_format(__("Core {}"), _core->get_number());
 								idx2+=1;
-								core_num+=1;
 							} else {
 								core_data[idx2]="";
 								idx2+=1;
-								snprintf(tmp_num, sizeof(tmp_num), __("GPU %d"), _core->get_number());
-								core_data[idx2]=string(tmp_num);
+								core_data[idx2]=pt_format(__("GPU {}"), _core->get_number());
 								idx2+=1;
 							}
 						}
 					} else {
 
 						
-						tmp_str=string(_core->fill_cstate_name(line, buffer));
+						tmp_str=_core->fill_cstate_name(line);
 						core_data[idx2]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx2+=1;
-						tmp_str=string(_core->fill_cstate_line(line, buffer2));
+						tmp_str=_core->fill_cstate_line(line);
 						core_data[idx2]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx2+=1;
 					}
@@ -605,26 +594,24 @@ void report_display_cpu_cstates(void)
 					if (line == LEVEL_HEADER) {
 						cpu_data[idx3] = __("CPU");
 						idx3+=1;
-						sprintf(tmp_num,"%d",_cpu->get_number());
-						cpu_data[idx3]=string(tmp_num);
+						cpu_data[idx3]=std::to_string(_cpu->get_number());
 						idx3+=1;
 						continue;
 					}
 
 					if (first_cpu) {
 						title+=1;
-						cpu_data[idx3]=(string(_cpu->fill_cstate_name(line, buffer)));
+						cpu_data[idx3]=_cpu->fill_cstate_name(line);
 						idx3+=1;
 						first_cpu = false;
 					}
 
-					buffer[0] = 0;
-					tmp_str=string(_cpu->fill_cstate_percentage(line, buffer));
+					tmp_str=_cpu->fill_cstate_percentage(line);
 					cpu_data[idx3]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 					idx3+=1;
 
 					if (line != LEVEL_C0){
-						tmp_str=string(_cpu->fill_cstate_time(line, buffer));
+						tmp_str=_cpu->fill_cstate_time(line);
 						cpu_data[idx3]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx3+=1;
 					} else {
@@ -661,12 +648,11 @@ void report_display_cpu_cstates(void)
 
 void report_display_cpu_pstates(void)
 {
-	char buffer[512], buffer2[512], tmp_num[50];
 	unsigned int package, core, cpu;
 	int line, title=0;
 	class abstract_cpu *_package, *_core = NULL, * _cpu;
 	unsigned int i, pstates_num;
-	const char* core_type = NULL;
+	std::string core_type;
 
 	/* div attr css_class and css_id */
 	tag_attr div_attr;
@@ -725,8 +711,8 @@ void report_display_cpu_pstates(void)
 				continue;
 
 			core_type = _core->get_type();
-			if (core_type != NULL)
-				if (strcmp(core_type, "Core") == 0 )
+			if (!core_type.empty())
+				if (core_type == "Core")
 					num_cores+=1;
 
 			for (cpu = 0; cpu < _core->children.size(); cpu++) {
@@ -758,20 +744,17 @@ void report_display_cpu_pstates(void)
 				if (!_package->has_pstate_level(line))
 					continue;
 
-				buffer[0] = 0;
-				buffer2[0] = 0;
 				if (first_core) {
 					if (line == LEVEL_HEADER) {
 						pkg_data[idx1]=__("Package");
 						idx1+=1;
-						sprintf(tmp_num,"%d",  _package->get_number());
-						pkg_data[idx1]= string(tmp_num);
+						pkg_data[idx1]=std::to_string(_package->get_number());
 						idx1+=1;
 					} else {
-						tmp_str=string(_package->fill_pstate_name(line, buffer));
+						tmp_str=_package->fill_pstate_name(line);
 						pkg_data[idx1]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx1+=1;
-						tmp_str=string(_package->fill_pstate_line(line, buffer2));
+						tmp_str=_package->fill_pstate_line(line);
 						pkg_data[idx1]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx1+=1;
 					}
@@ -779,19 +762,16 @@ void report_display_cpu_pstates(void)
 
 
 				if (!_core->can_collapse()) {
-					buffer[0] = 0;
-					buffer2[0] = 0;
 					if (line == LEVEL_HEADER) {
 						core_data[idx2]="";
 						idx2+=1;
-						snprintf(tmp_num, sizeof(tmp_num), __("Core %d"), _core->get_number());
-						core_data[idx2]=string(tmp_num);
+						core_data[idx2]=pt_format(__("Core {}"), _core->get_number());
 						idx2+=1;
 					} else {
-						tmp_str=string(_core->fill_pstate_name(line, buffer));
+						tmp_str=_core->fill_pstate_name(line);
 						core_data[idx2]= (tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx2+=1;
-						tmp_str=string(_core->fill_pstate_line(line, buffer2));
+						tmp_str=_core->fill_pstate_line(line);
 						core_data[idx2]= (tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx2+=1;
 					}
@@ -799,27 +779,24 @@ void report_display_cpu_pstates(void)
 
 				/* CPU */
 				for (cpu = 0; cpu < _core->children.size(); cpu++) {
-					buffer[0] = 0;
 					_cpu = _core->children[cpu];
 					if (!_cpu)
 						continue;
 
 					if (line == LEVEL_HEADER) {
-						snprintf(tmp_num, sizeof(tmp_num), __("CPU %d"), _cpu->get_number());
-						cpu_data[idx3] = string(tmp_num);
+						cpu_data[idx3] = pt_format(__("CPU {}"), _cpu->get_number());
 						idx3+=1;
 						continue;
 					}
 
 					if (first_cpu) {
-						tmp_str=string(_cpu->fill_pstate_name(line, buffer));
+						tmp_str=_cpu->fill_pstate_name(line);
 						cpu_data[idx3]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx3+=1;
 						first_cpu = false;
 					}
 
-					buffer[0] = 0;
-					tmp_str=string(_cpu->fill_pstate_line(line, buffer));
+					tmp_str=_cpu->fill_pstate_line(line);
 					cpu_data[idx3]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 					idx3+=1;
 				}
@@ -850,7 +827,6 @@ void report_display_cpu_pstates(void)
 void impl_w_display_cpu_states(int state)
 {
 	WINDOW *win;
-	char buffer[128];
 	char linebuf[1024];
 	unsigned int package, core, cpu;
 	int line, loop, cstates_num, pstates_num;
@@ -902,11 +878,10 @@ void impl_w_display_cpu_states(int state)
 				if (!has_state_level(_package, state, line))
 					continue;
 
-				buffer[0] = 0;
 				if (first_pkg == 0) {
-					strcat(linebuf, fill_state_name(_package, state, line, buffer));
+					strcat(linebuf, fill_state_name(_package, state, line).c_str());
 					expand_string(linebuf, ctr + 10);
-					strcat(linebuf, fill_state_line(_package, state, line, buffer));
+					strcat(linebuf, fill_state_line(_package, state, line).c_str());
 				}
 				ctr += 20;
 				expand_string(linebuf, ctr);
@@ -915,10 +890,9 @@ void impl_w_display_cpu_states(int state)
 				ctr += strlen("| ");
 
 				if (!_core->can_collapse()) {
-					buffer[0] = 0;
-					strcat(linebuf, fill_state_name(_core, state, line, buffer));
+					strcat(linebuf, fill_state_name(_core, state, line).c_str());
 					expand_string(linebuf, ctr + 10);
-					strcat(linebuf, fill_state_line(_core, state, line, buffer));
+					strcat(linebuf, fill_state_line(_core, state, line).c_str());
 					ctr += 20;
 					expand_string(linebuf, ctr);
 
@@ -932,13 +906,13 @@ void impl_w_display_cpu_states(int state)
 						continue;
 
 					if (first == 1) {
-						strcat(linebuf, fill_state_name(_cpu, state, line, buffer));
+						std::string str = fill_state_name(_cpu, state, line);
+						strcat(linebuf, str.c_str());
 						expand_string(linebuf, ctr + 10);
 						first = 0;
 						ctr += 12;
 					}
-					buffer[0] = 0;
-					strcat(linebuf, fill_state_line(_cpu, state, line, buffer));
+					strcat(linebuf, fill_state_line(_cpu, state, line).c_str());
 					ctr += 10;
 					expand_string(linebuf, ctr);
 
@@ -1076,4 +1050,8 @@ void clear_all_cpus(void)
 		delete all_cpus[i];
 	}
 	all_cpus.clear();
+}
+
+frequency::frequency()
+{
 }

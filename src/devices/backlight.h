@@ -26,29 +26,30 @@
 #define _INCLUDE_GUARD_BACKLIGHT_H
 
 #include <limits.h>
+#include <string>
 
 #include "device.h"
 
 class backlight: public device {
 	int min_level, max_level;
 	int start_level, end_level;
-	char sysfs_path[PATH_MAX];
-	char name[4096];
+	std::string sysfs_path;
+	std::string name;
 	int r_index;
 	int r_index_power;
 public:
 
-	backlight(const char *_name, const char *path);
+	backlight(const std::string &_name, const std::string &path);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);
 
 	virtual double	utilization(void); /* percentage */
 
-	virtual const char * class_name(void) { return "backlight";};
+	virtual std::string class_name(void) { return "backlight";};
 
-	virtual const char * device_name(void);
-	virtual const char * human_name(void) { return "Display backlight";};
+	virtual std::string device_name(void) { return name; };
+	virtual std::string human_name(void) { return "Display backlight";};
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual int grouping_prio(void) { return 10; };
 };

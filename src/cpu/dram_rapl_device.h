@@ -43,9 +43,10 @@ class dram_rapl_device: public cpudevice {
 	bool		device_valid;
 
 public:
-	dram_rapl_device(cpudevice *parent, const char *classname = "dram_core", const char *device_name = "dram_core", class abstract_cpu *_cpu = NULL);
+	dram_rapl_device(cpudevice *parent, const std::string &classname = "dram_core", const std::string &device_name = "dram_core", class abstract_cpu *_cpu = NULL);
 	~dram_rapl_device() { delete rapl; }
-	virtual const char * device_name(void) {return "DRAM";};
+	virtual std::string device_name(void) {return "DRAM";};
+	virtual std::string human_name(void) {return "DRAM";};
 	bool device_present() { return device_valid;}
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	void start_measurement(void);

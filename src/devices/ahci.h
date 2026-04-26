@@ -37,32 +37,32 @@ class ahci: public device {
 	uint64_t start_partial, end_partial;
 	uint64_t start_slumber, end_slumber;
 	uint64_t start_devslp, end_devslp;
-	char sysfs_path[PATH_MAX];
-	char name[4096];
+	std::string sysfs_path;
+	std::string name;
 	int partial_rindex;
 	int active_rindex;
 	int slumber_rindex;
 	int devslp_rindex;
 	int partial_index;
 	int active_index;
-	char humanname[4096];
+	std::string humanname;
 public:
 
-	ahci(char *_name, char *path);
+	ahci(const std::string &_name, const std::string &path);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);
 
 	virtual double	utilization(void); /* percentage */
 
-	virtual const char * class_name(void) { return "ahci";};
+	virtual std::string class_name(void) { return "ahci";};
 
-	virtual const char * device_name(void);
-	virtual const char * human_name(void) { return humanname;};
+	virtual std::string device_name(void) { return name; };
+	virtual std::string human_name(void) { return humanname; };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual int power_valid(void) { return utilization_power_valid(partial_rindex) + utilization_power_valid(active_rindex);};
 	virtual int grouping_prio(void) { return 1; };
-	virtual void report_device_stats(string *ahci_data, int idx);
+	virtual void report_device_stats(std::string *ahci_data, int idx);
 };
 
 extern void create_all_ahcis(void);

@@ -37,10 +37,9 @@ device_consumer::device_consumer(class device *dev) : power_consumer()
 }
 
 
-const char * device_consumer::description(void)
+std::string device_consumer::description(void)
 {
-	snprintf(str, sizeof(str), "%s", device->human_name());
-	return str;
+	return device->human_name();
 }
 
 double device_consumer::Witts(void)
@@ -62,7 +61,7 @@ static void add_device(class device *device)
 	for (i = 0; i < all_proc_devices.size(); i++) {
 		class device_consumer *cdev;
 		cdev = all_proc_devices[i];
-		if (device->real_path[0] != 0 && strcmp(cdev->device->real_path, device->real_path) == 0) {
+		if (!device->real_path.empty() && cdev->device->real_path == device->real_path) {
 			/* we have a device with the same underlying object */
 
 			/* aggregate the power */

@@ -28,30 +28,32 @@
 #include<vector>
 #include <limits.h>
 
+#include <string>
+
 using namespace std;
 
 #define WAKEUP_ENABLE 1
 #define WAKEUP_DISABLE 0
 
 class wakeup {
-	char wakeup_enable[128];
-	char wakeup_disable[128];
-	char wakeup_idle[128];
+	std::string wakeup_enable;
+	std::string wakeup_disable;
+	std::string wakeup_idle;
 protected:
-	char toggle_enable[4096];
-	char toggle_disable[4096];
+	std::string toggle_enable;
+	std::string toggle_disable;
 public:
-	char desc[4096];
+	std::string desc;
 	double score;
 
-	wakeup(const char *str, double _score, const char *enable = "", const char *disable = "");
+	wakeup(const std::string &str, double _score, const std::string &enable = "", const std::string &disable = "");
 	wakeup(void);
 
 	virtual ~wakeup () {};
 
 	virtual int wakeup_value(void) { return WAKEUP_DISABLE; }
 
-	virtual char *wakeup_string(void)
+	virtual const std::string& wakeup_string(void)
 	{
 		switch (wakeup_value()) {
 		case WAKEUP_ENABLE:
@@ -63,15 +65,15 @@ public:
 	}
 
 
-	virtual const char *description(void) { return desc; };
+	virtual std::string description(void) { return desc; };
 
 	virtual void wakeup_toggle(void) { };
 
-	virtual const char *wakeup_toggle_script(void) { return toggle_enable; }
+	virtual std::string wakeup_toggle_script(void) { return toggle_enable; }
 
 };
 
-extern vector<class wakeup *> wakeup_all;
+extern std::vector<class wakeup *> wakeup_all;
 
 extern void initialize_wakeup(void);
 extern void wakeup_update_display(void);

@@ -1,0 +1,398 @@
+[
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devlist.cpp.o -MF powertop.p/src_devlist.cpp.o.d -o powertop.p/src_devlist.cpp.o -c ../src/devlist.cpp",
+    "file": "../src/devlist.cpp",
+    "output": "powertop.p/src_devlist.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_display.cpp.o -MF powertop.p/src_display.cpp.o.d -o powertop.p/src_display.cpp.o -c ../src/display.cpp",
+    "file": "../src/display.cpp",
+    "output": "powertop.p/src_display.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_lib.cpp.o -MF powertop.p/src_lib.cpp.o.d -o powertop.p/src_lib.cpp.o -c ../src/lib.cpp",
+    "file": "../src/lib.cpp",
+    "output": "powertop.p/src_lib.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_main.cpp.o -MF powertop.p/src_main.cpp.o.d -o powertop.p/src_main.cpp.o -c ../src/main.cpp",
+    "file": "../src/main.cpp",
+    "output": "powertop.p/src_main.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_calibrate_calibrate.cpp.o -MF powertop.p/src_calibrate_calibrate.cpp.o.d -o powertop.p/src_calibrate_calibrate.cpp.o -c ../src/calibrate/calibrate.cpp",
+    "file": "../src/calibrate/calibrate.cpp",
+    "output": "powertop.p/src_calibrate_calibrate.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_cpu_abstract_cpu.cpp.o -MF powertop.p/src_cpu_abstract_cpu.cpp.o.d -o powertop.p/src_cpu_abstract_cpu.cpp.o -c ../src/cpu/abstract_cpu.cpp",
+    "file": "../src/cpu/abstract_cpu.cpp",
+    "output": "powertop.p/src_cpu_abstract_cpu.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_cpu_cpu.cpp.o -MF powertop.p/src_cpu_cpu.cpp.o.d -o powertop.p/src_cpu_cpu.cpp.o -c ../src/cpu/cpu.cpp",
+    "file": "../src/cpu/cpu.cpp",
+    "output": "powertop.p/src_cpu_cpu.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_cpu_cpu_core.cpp.o -MF powertop.p/src_cpu_cpu_core.cpp.o.d -o powertop.p/src_cpu_cpu_core.cpp.o -c ../src/cpu/cpu_core.cpp",
+    "file": "../src/cpu/cpu_core.cpp",
+    "output": "powertop.p/src_cpu_cpu_core.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_cpu_cpu_linux.cpp.o -MF powertop.p/src_cpu_cpu_linux.cpp.o.d -o powertop.p/src_cpu_cpu_linux.cpp.o -c ../src/cpu/cpu_linux.cpp",
+    "file": "../src/cpu/cpu_linux.cpp",
+    "output": "powertop.p/src_cpu_cpu_linux.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_cpu_cpu_package.cpp.o -MF powertop.p/src_cpu_cpu_package.cpp.o.d -o powertop.p/src_cpu_cpu_package.cpp.o -c ../src/cpu/cpu_package.cpp",
+    "file": "../src/cpu/cpu_package.cpp",
+    "output": "powertop.p/src_cpu_cpu_package.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_cpu_cpu_rapl_device.cpp.o -MF powertop.p/src_cpu_cpu_rapl_device.cpp.o.d -o powertop.p/src_cpu_cpu_rapl_device.cpp.o -c ../src/cpu/cpu_rapl_device.cpp",
+    "file": "../src/cpu/cpu_rapl_device.cpp",
+    "output": "powertop.p/src_cpu_cpu_rapl_device.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_cpu_cpudevice.cpp.o -MF powertop.p/src_cpu_cpudevice.cpp.o.d -o powertop.p/src_cpu_cpudevice.cpp.o -c ../src/cpu/cpudevice.cpp",
+    "file": "../src/cpu/cpudevice.cpp",
+    "output": "powertop.p/src_cpu_cpudevice.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_cpu_dram_rapl_device.cpp.o -MF powertop.p/src_cpu_dram_rapl_device.cpp.o.d -o powertop.p/src_cpu_dram_rapl_device.cpp.o -c ../src/cpu/dram_rapl_device.cpp",
+    "file": "../src/cpu/dram_rapl_device.cpp",
+    "output": "powertop.p/src_cpu_dram_rapl_device.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_cpu_intel_cpus.cpp.o -MF powertop.p/src_cpu_intel_cpus.cpp.o.d -o powertop.p/src_cpu_intel_cpus.cpp.o -c ../src/cpu/intel_cpus.cpp",
+    "file": "../src/cpu/intel_cpus.cpp",
+    "output": "powertop.p/src_cpu_intel_cpus.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_cpu_intel_gpu.cpp.o -MF powertop.p/src_cpu_intel_gpu.cpp.o.d -o powertop.p/src_cpu_intel_gpu.cpp.o -c ../src/cpu/intel_gpu.cpp",
+    "file": "../src/cpu/intel_gpu.cpp",
+    "output": "powertop.p/src_cpu_intel_gpu.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_cpu_rapl_rapl_interface.cpp.o -MF powertop.p/src_cpu_rapl_rapl_interface.cpp.o.d -o powertop.p/src_cpu_rapl_rapl_interface.cpp.o -c ../src/cpu/rapl/rapl_interface.cpp",
+    "file": "../src/cpu/rapl/rapl_interface.cpp",
+    "output": "powertop.p/src_cpu_rapl_rapl_interface.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_ahci.cpp.o -MF powertop.p/src_devices_ahci.cpp.o.d -o powertop.p/src_devices_ahci.cpp.o -c ../src/devices/ahci.cpp",
+    "file": "../src/devices/ahci.cpp",
+    "output": "powertop.p/src_devices_ahci.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_alsa.cpp.o -MF powertop.p/src_devices_alsa.cpp.o.d -o powertop.p/src_devices_alsa.cpp.o -c ../src/devices/alsa.cpp",
+    "file": "../src/devices/alsa.cpp",
+    "output": "powertop.p/src_devices_alsa.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_backlight.cpp.o -MF powertop.p/src_devices_backlight.cpp.o.d -o powertop.p/src_devices_backlight.cpp.o -c ../src/devices/backlight.cpp",
+    "file": "../src/devices/backlight.cpp",
+    "output": "powertop.p/src_devices_backlight.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_devfreq.cpp.o -MF powertop.p/src_devices_devfreq.cpp.o.d -o powertop.p/src_devices_devfreq.cpp.o -c ../src/devices/devfreq.cpp",
+    "file": "../src/devices/devfreq.cpp",
+    "output": "powertop.p/src_devices_devfreq.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_device.cpp.o -MF powertop.p/src_devices_device.cpp.o.d -o powertop.p/src_devices_device.cpp.o -c ../src/devices/device.cpp",
+    "file": "../src/devices/device.cpp",
+    "output": "powertop.p/src_devices_device.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_gpu_rapl_device.cpp.o -MF powertop.p/src_devices_gpu_rapl_device.cpp.o.d -o powertop.p/src_devices_gpu_rapl_device.cpp.o -c ../src/devices/gpu_rapl_device.cpp",
+    "file": "../src/devices/gpu_rapl_device.cpp",
+    "output": "powertop.p/src_devices_gpu_rapl_device.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_i915-gpu.cpp.o -MF powertop.p/src_devices_i915-gpu.cpp.o.d -o powertop.p/src_devices_i915-gpu.cpp.o -c ../src/devices/i915-gpu.cpp",
+    "file": "../src/devices/i915-gpu.cpp",
+    "output": "powertop.p/src_devices_i915-gpu.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_network.cpp.o -MF powertop.p/src_devices_network.cpp.o.d -o powertop.p/src_devices_network.cpp.o -c ../src/devices/network.cpp",
+    "file": "../src/devices/network.cpp",
+    "output": "powertop.p/src_devices_network.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_rfkill.cpp.o -MF powertop.p/src_devices_rfkill.cpp.o.d -o powertop.p/src_devices_rfkill.cpp.o -c ../src/devices/rfkill.cpp",
+    "file": "../src/devices/rfkill.cpp",
+    "output": "powertop.p/src_devices_rfkill.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_runtime_pm.cpp.o -MF powertop.p/src_devices_runtime_pm.cpp.o.d -o powertop.p/src_devices_runtime_pm.cpp.o -c ../src/devices/runtime_pm.cpp",
+    "file": "../src/devices/runtime_pm.cpp",
+    "output": "powertop.p/src_devices_runtime_pm.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_thinkpad-fan.cpp.o -MF powertop.p/src_devices_thinkpad-fan.cpp.o.d -o powertop.p/src_devices_thinkpad-fan.cpp.o -c ../src/devices/thinkpad-fan.cpp",
+    "file": "../src/devices/thinkpad-fan.cpp",
+    "output": "powertop.p/src_devices_thinkpad-fan.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_thinkpad-light.cpp.o -MF powertop.p/src_devices_thinkpad-light.cpp.o.d -o powertop.p/src_devices_thinkpad-light.cpp.o -c ../src/devices/thinkpad-light.cpp",
+    "file": "../src/devices/thinkpad-light.cpp",
+    "output": "powertop.p/src_devices_thinkpad-light.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_devices_usb.cpp.o -MF powertop.p/src_devices_usb.cpp.o.d -o powertop.p/src_devices_usb.cpp.o -c ../src/devices/usb.cpp",
+    "file": "../src/devices/usb.cpp",
+    "output": "powertop.p/src_devices_usb.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_measurement_acpi.cpp.o -MF powertop.p/src_measurement_acpi.cpp.o.d -o powertop.p/src_measurement_acpi.cpp.o -c ../src/measurement/acpi.cpp",
+    "file": "../src/measurement/acpi.cpp",
+    "output": "powertop.p/src_measurement_acpi.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_measurement_extech.cpp.o -MF powertop.p/src_measurement_extech.cpp.o.d -o powertop.p/src_measurement_extech.cpp.o -c ../src/measurement/extech.cpp",
+    "file": "../src/measurement/extech.cpp",
+    "output": "powertop.p/src_measurement_extech.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_measurement_measurement.cpp.o -MF powertop.p/src_measurement_measurement.cpp.o.d -o powertop.p/src_measurement_measurement.cpp.o -c ../src/measurement/measurement.cpp",
+    "file": "../src/measurement/measurement.cpp",
+    "output": "powertop.p/src_measurement_measurement.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_measurement_sysfs.cpp.o -MF powertop.p/src_measurement_sysfs.cpp.o.d -o powertop.p/src_measurement_sysfs.cpp.o -c ../src/measurement/sysfs.cpp",
+    "file": "../src/measurement/sysfs.cpp",
+    "output": "powertop.p/src_measurement_sysfs.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_measurement_opal-sensors.cpp.o -MF powertop.p/src_measurement_opal-sensors.cpp.o.d -o powertop.p/src_measurement_opal-sensors.cpp.o -c ../src/measurement/opal-sensors.cpp",
+    "file": "../src/measurement/opal-sensors.cpp",
+    "output": "powertop.p/src_measurement_opal-sensors.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_parameters_learn.cpp.o -MF powertop.p/src_parameters_learn.cpp.o.d -o powertop.p/src_parameters_learn.cpp.o -c ../src/parameters/learn.cpp",
+    "file": "../src/parameters/learn.cpp",
+    "output": "powertop.p/src_parameters_learn.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_parameters_parameters.cpp.o -MF powertop.p/src_parameters_parameters.cpp.o.d -o powertop.p/src_parameters_parameters.cpp.o -c ../src/parameters/parameters.cpp",
+    "file": "../src/parameters/parameters.cpp",
+    "output": "powertop.p/src_parameters_parameters.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_parameters_persistent.cpp.o -MF powertop.p/src_parameters_persistent.cpp.o.d -o powertop.p/src_parameters_persistent.cpp.o -c ../src/parameters/persistent.cpp",
+    "file": "../src/parameters/persistent.cpp",
+    "output": "powertop.p/src_parameters_persistent.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_perf_perf.cpp.o -MF powertop.p/src_perf_perf.cpp.o.d -o powertop.p/src_perf_perf.cpp.o -c ../src/perf/perf.cpp",
+    "file": "../src/perf/perf.cpp",
+    "output": "powertop.p/src_perf_perf.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_perf_perf_bundle.cpp.o -MF powertop.p/src_perf_perf_bundle.cpp.o.d -o powertop.p/src_perf_perf_bundle.cpp.o -c ../src/perf/perf_bundle.cpp",
+    "file": "../src/perf/perf_bundle.cpp",
+    "output": "powertop.p/src_perf_perf_bundle.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_process_do_process.cpp.o -MF powertop.p/src_process_do_process.cpp.o.d -o powertop.p/src_process_do_process.cpp.o -c ../src/process/do_process.cpp",
+    "file": "../src/process/do_process.cpp",
+    "output": "powertop.p/src_process_do_process.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_process_interrupt.cpp.o -MF powertop.p/src_process_interrupt.cpp.o.d -o powertop.p/src_process_interrupt.cpp.o -c ../src/process/interrupt.cpp",
+    "file": "../src/process/interrupt.cpp",
+    "output": "powertop.p/src_process_interrupt.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_process_powerconsumer.cpp.o -MF powertop.p/src_process_powerconsumer.cpp.o.d -o powertop.p/src_process_powerconsumer.cpp.o -c ../src/process/powerconsumer.cpp",
+    "file": "../src/process/powerconsumer.cpp",
+    "output": "powertop.p/src_process_powerconsumer.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_process_process.cpp.o -MF powertop.p/src_process_process.cpp.o.d -o powertop.p/src_process_process.cpp.o -c ../src/process/process.cpp",
+    "file": "../src/process/process.cpp",
+    "output": "powertop.p/src_process_process.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_process_processdevice.cpp.o -MF powertop.p/src_process_processdevice.cpp.o.d -o powertop.p/src_process_processdevice.cpp.o -c ../src/process/processdevice.cpp",
+    "file": "../src/process/processdevice.cpp",
+    "output": "powertop.p/src_process_processdevice.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_process_timer.cpp.o -MF powertop.p/src_process_timer.cpp.o.d -o powertop.p/src_process_timer.cpp.o -c ../src/process/timer.cpp",
+    "file": "../src/process/timer.cpp",
+    "output": "powertop.p/src_process_timer.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_process_work.cpp.o -MF powertop.p/src_process_work.cpp.o.d -o powertop.p/src_process_work.cpp.o -c ../src/process/work.cpp",
+    "file": "../src/process/work.cpp",
+    "output": "powertop.p/src_process_work.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_report_report-data-html.cpp.o -MF powertop.p/src_report_report-data-html.cpp.o.d -o powertop.p/src_report_report-data-html.cpp.o -c ../src/report/report-data-html.cpp",
+    "file": "../src/report/report-data-html.cpp",
+    "output": "powertop.p/src_report_report-data-html.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_report_report-formatter-base.cpp.o -MF powertop.p/src_report_report-formatter-base.cpp.o.d -o powertop.p/src_report_report-formatter-base.cpp.o -c ../src/report/report-formatter-base.cpp",
+    "file": "../src/report/report-formatter-base.cpp",
+    "output": "powertop.p/src_report_report-formatter-base.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_report_report-formatter-csv.cpp.o -MF powertop.p/src_report_report-formatter-csv.cpp.o.d -o powertop.p/src_report_report-formatter-csv.cpp.o -c ../src/report/report-formatter-csv.cpp",
+    "file": "../src/report/report-formatter-csv.cpp",
+    "output": "powertop.p/src_report_report-formatter-csv.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_report_report-formatter-html.cpp.o -MF powertop.p/src_report_report-formatter-html.cpp.o.d -o powertop.p/src_report_report-formatter-html.cpp.o -c ../src/report/report-formatter-html.cpp",
+    "file": "../src/report/report-formatter-html.cpp",
+    "output": "powertop.p/src_report_report-formatter-html.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_report_report-maker.cpp.o -MF powertop.p/src_report_report-maker.cpp.o.d -o powertop.p/src_report_report-maker.cpp.o -c ../src/report/report-maker.cpp",
+    "file": "../src/report/report-maker.cpp",
+    "output": "powertop.p/src_report_report-maker.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_report_report.cpp.o -MF powertop.p/src_report_report.cpp.o.d -o powertop.p/src_report_report.cpp.o -c ../src/report/report.cpp",
+    "file": "../src/report/report.cpp",
+    "output": "powertop.p/src_report_report.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_tuning_bluetooth.cpp.o -MF powertop.p/src_tuning_bluetooth.cpp.o.d -o powertop.p/src_tuning_bluetooth.cpp.o -c ../src/tuning/bluetooth.cpp",
+    "file": "../src/tuning/bluetooth.cpp",
+    "output": "powertop.p/src_tuning_bluetooth.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_tuning_ethernet.cpp.o -MF powertop.p/src_tuning_ethernet.cpp.o.d -o powertop.p/src_tuning_ethernet.cpp.o -c ../src/tuning/ethernet.cpp",
+    "file": "../src/tuning/ethernet.cpp",
+    "output": "powertop.p/src_tuning_ethernet.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "cc -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -MD -MQ powertop.p/src_tuning_iw.c.o -MF powertop.p/src_tuning_iw.c.o.d -o powertop.p/src_tuning_iw.c.o -c ../src/tuning/iw.c",
+    "file": "../src/tuning/iw.c",
+    "output": "powertop.p/src_tuning_iw.c.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_tuning_runtime.cpp.o -MF powertop.p/src_tuning_runtime.cpp.o.d -o powertop.p/src_tuning_runtime.cpp.o -c ../src/tuning/runtime.cpp",
+    "file": "../src/tuning/runtime.cpp",
+    "output": "powertop.p/src_tuning_runtime.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_tuning_tunable.cpp.o -MF powertop.p/src_tuning_tunable.cpp.o.d -o powertop.p/src_tuning_tunable.cpp.o -c ../src/tuning/tunable.cpp",
+    "file": "../src/tuning/tunable.cpp",
+    "output": "powertop.p/src_tuning_tunable.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_tuning_tuning.cpp.o -MF powertop.p/src_tuning_tuning.cpp.o.d -o powertop.p/src_tuning_tuning.cpp.o -c ../src/tuning/tuning.cpp",
+    "file": "../src/tuning/tuning.cpp",
+    "output": "powertop.p/src_tuning_tuning.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_tuning_tuningsysfs.cpp.o -MF powertop.p/src_tuning_tuningsysfs.cpp.o.d -o powertop.p/src_tuning_tuningsysfs.cpp.o -c ../src/tuning/tuningsysfs.cpp",
+    "file": "../src/tuning/tuningsysfs.cpp",
+    "output": "powertop.p/src_tuning_tuningsysfs.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_tuning_tuningusb.cpp.o -MF powertop.p/src_tuning_tuningusb.cpp.o.d -o powertop.p/src_tuning_tuningusb.cpp.o -c ../src/tuning/tuningusb.cpp",
+    "file": "../src/tuning/tuningusb.cpp",
+    "output": "powertop.p/src_tuning_tuningusb.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_tuning_tuningi2c.cpp.o -MF powertop.p/src_tuning_tuningi2c.cpp.o.d -o powertop.p/src_tuning_tuningi2c.cpp.o -c ../src/tuning/tuningi2c.cpp",
+    "file": "../src/tuning/tuningi2c.cpp",
+    "output": "powertop.p/src_tuning_tuningi2c.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_tuning_wifi.cpp.o -MF powertop.p/src_tuning_wifi.cpp.o.d -o powertop.p/src_tuning_wifi.cpp.o -c ../src/tuning/wifi.cpp",
+    "file": "../src/tuning/wifi.cpp",
+    "output": "powertop.p/src_tuning_wifi.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_wakeup_wakeup.cpp.o -MF powertop.p/src_wakeup_wakeup.cpp.o.d -o powertop.p/src_wakeup_wakeup.cpp.o -c ../src/wakeup/wakeup.cpp",
+    "file": "../src/wakeup/wakeup.cpp",
+    "output": "powertop.p/src_wakeup_wakeup.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_wakeup_waketab.cpp.o -MF powertop.p/src_wakeup_waketab.cpp.o.d -o powertop.p/src_wakeup_waketab.cpp.o -c ../src/wakeup/waketab.cpp",
+    "file": "../src/wakeup/waketab.cpp",
+    "output": "powertop.p/src_wakeup_waketab.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_wakeup_wakeup_ethernet.cpp.o -MF powertop.p/src_wakeup_wakeup_ethernet.cpp.o.d -o powertop.p/src_wakeup_wakeup_ethernet.cpp.o -c ../src/wakeup/wakeup_ethernet.cpp",
+    "file": "../src/wakeup/wakeup_ethernet.cpp",
+    "output": "powertop.p/src_wakeup_wakeup_ethernet.cpp.o"
+  },
+  {
+    "directory": "/home/arjan/git/powertop/build",
+    "command": "c++ -Ipowertop.p -I. -I.. -I../src -I/usr/include/x86_64-linux-gnu -I/usr/include/tracefs -I/usr/include/traceevent -I/usr/include/libnl3 -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++20 -O2 -g -DHAVE_CONFIG_H -pthread -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Wall -Wformat -Wshadow -fno-omit-frame-pointer -fstack-protector -fpermissive -MD -MQ powertop.p/src_wakeup_wakeup_usb.cpp.o -MF powertop.p/src_wakeup_wakeup_usb.cpp.o.d -o powertop.p/src_wakeup_wakeup_usb.cpp.o -c ../src/wakeup/wakeup_usb.cpp",
+    "file": "../src/wakeup/wakeup_usb.cpp",
+    "output": "powertop.p/src_wakeup_wakeup_usb.cpp.o"
+  }
+]

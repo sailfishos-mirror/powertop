@@ -40,39 +40,34 @@ using namespace std;
 
 #include <string.h>
 #include <unistd.h>
+#include <format>
 
-rfkill::rfkill(char *_name, char *path): device()
+rfkill::rfkill(const string &_name, const string &path): device()
 {
 	char line[4096];
-	char filename[PATH_MAX];
-	char devname[128];
 	start_soft = 0;
 	start_hard = 0;
 	end_soft = 0;
 	end_hard = 0;
-	pt_strcpy(sysfs_path, path);
+	sysfs_path = path;
 	register_sysfs_path(sysfs_path);
-	snprintf(devname, sizeof(devname), "radio:%s", _name);
-	snprintf(humanname, sizeof(humanname), "radio:%s", _name);
-	pt_strcpy(name, devname);
-	register_parameter(devname);
-	index = get_param_index(devname);
+	name = std::format("radio:{}", _name);
+	humanname = std::format("radio:{}", _name);
+	register_parameter(name);
+	index = get_param_index(name);
 	rindex = get_result_index(name);
 
 	memset(line, 0, 4096);
-	snprintf(filename, sizeof(filename), "%s/device/driver", path);
-	if (readlink(filename, line, sizeof(line)) > 0) {
-		snprintf(humanname, sizeof(humanname), _("Radio device: %s"), basename(line));
+	if (readlink(std::format("{}/device/driver", path).c_str(), line, sizeof(line)) > 0) {
+		humanname = pt_format(_("Radio device: {}"), basename(line));
 	}
-	snprintf(filename, sizeof(filename), "%s/device/device/driver", path);
-	if (readlink(filename, line, sizeof(line)) > 0) {
-		snprintf(humanname, sizeof(humanname), _("Radio device: %s"), basename(line));
+	if (readlink(std::format("{}/device/device/driver", path).c_str(), line, sizeof(line)) > 0) {
+		humanname = pt_format(_("Radio device: {}"), basename(line));
 	}
 }
 
 void rfkill::start_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 
 	start_hard = 1;
@@ -80,15 +75,13 @@ void rfkill::start_measurement(void)
 	end_hard = 1;
 	end_soft = 1;
 
-	snprintf(filename, sizeof(filename), "%s/hard", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/hard", sysfs_path), ios::in);
 	if (file) {
 		file >> start_hard;
 	}
 	file.close();
 
-	snprintf(filename, sizeof(filename), "%s/soft", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/soft", sysfs_path), ios::in);
 	if (file) {
 		file >> start_soft;
 	}
@@ -97,17 +90,14 @@ void rfkill::start_measurement(void)
 
 void rfkill::end_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 
-	snprintf(filename, sizeof(filename), "%s/hard", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/hard", sysfs_path), ios::in);
 	if (file) {
 		file >> end_hard;
 	}
 	file.close();
-	snprintf(filename, sizeof(filename), "%s/soft", sysfs_path);
-	file.open(filename, ios::in);
+	file.open(std::format("{}/soft", sysfs_path), ios::in);
 	if (file) {
 		file >> end_soft;
 	}
@@ -131,28 +121,19 @@ double rfkill::utilization(void)
 	return p;
 }
 
-const char * rfkill::device_name(void)
-{
-	return name;
-}
-
 static void create_all_rfkills_callback(const char *d_name)
 {
-	char filename[PATH_MAX];
-	char name[4096] = {0};
+	std::string name(d_name);
 	class rfkill *bl;
 	ifstream file;
 
-	snprintf(filename, sizeof(filename), "/sys/class/rfkill/%s/name", d_name);
-	strncpy(name, d_name, sizeof(name) - 1);
-	file.open(filename, ios::in);
+	file.open(std::format("/sys/class/rfkill/{}/name", d_name), ios::in);
 	if (file) {
-		file.getline(name, 100);
+		getline(file, name);
 		file.close();
 	}
 
-	snprintf(filename, sizeof(filename), "/sys/class/rfkill/%s", d_name);
-	bl = new class rfkill(name, filename);
+	bl = new class rfkill(name, std::format("/sys/class/rfkill/{}", d_name));
 	all_devices.push_back(bl);
 }
 

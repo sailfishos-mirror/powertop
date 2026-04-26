@@ -29,6 +29,8 @@
 
 #include "../lib.h"
 
+#include <string>
+
 using namespace std;
 
 #define TUNE_GOOD    1
@@ -39,28 +41,28 @@ using namespace std;
 
 class tunable {
 
-	char good_string[128];
-	char bad_string[128];
-	char neutral_string[128];
+	std::string good_string;
+	std::string bad_string;
+	std::string neutral_string;
 protected:
-	char toggle_good[4096];
-	char toggle_bad[4096];
+	std::string toggle_good;
+	std::string toggle_bad;
 public:
-	char desc[4096];
+	std::string desc;
 	double score;
 
 	tunable(void);
-	tunable(const char *str, double _score, const char *good = "", const char *bad = "", const char *neutral ="");
+	tunable(const std::string &str, double _score, const std::string &good = "", const std::string &bad = "", const std::string &neutral ="");
 
 	void dump_cmd_good(FILE *fp) {
-		(void) fprintf(fp, "\n### %s\n# %s\n", desc, toggle_good);
+		(void) fprintf(fp, "\n### %s\n# %s\n", desc.c_str(), toggle_good.c_str());
 	}
 
 	virtual ~tunable() {};
 
 	virtual int good_bad(void) { return TUNE_NEUTRAL; }
 
-	virtual char *result_string(void)
+	virtual std::string result_string(void)
 	{
 		switch (good_bad()) {
 		case TUNE_GOOD:
@@ -73,14 +75,18 @@ public:
 	}
 
 
-	virtual const char *description(void) { return desc; };
+	virtual std::string description(void) { return desc; };
 
 	virtual void toggle(void) { };
 
-	virtual const char *toggle_script(void) { return NULL; }
+	virtual std::string toggle_script(void) {
+		if (good_bad() == TUNE_GOOD)
+			return toggle_bad;
+		return toggle_good;
+	}
 };
 
-extern vector<class tunable *> all_tunables;
-extern vector<class tunable *> all_untunables;
+extern std::vector<class tunable *> all_tunables;
+extern std::vector<class tunable *> all_untunables;
 
 #endif

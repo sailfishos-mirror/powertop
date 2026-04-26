@@ -1,4 +1,4 @@
-;/*
+/*
  * Copyright 2018, Intel Corporation
  *
  * This file is part of PowerTOP
@@ -38,20 +38,20 @@
 #include <net/if.h>
 #include <linux/sockios.h>
 #include <sys/ioctl.h>
+#include <format>
 
 #include <linux/ethtool.h>
 
 #include "../lib.h"
 #include "wakeup_usb.h"
 
-usb_wakeup::usb_wakeup(const char *path, const char *iface) : wakeup("", 0.5, _("Enabled"), _("Disabled"))
+usb_wakeup::usb_wakeup(const string &path, const string &iface) : wakeup("", 0.5, _("Enabled"), _("Disabled"))
 {
-	memset(interf, 0, sizeof(interf));
-	pt_strcpy(interf, iface);
-	sprintf(desc, _("Wake status for USB device %s"), iface);
-	snprintf(usb_path, sizeof(usb_path), "/sys/bus/usb/devices/%s/power/wakeup", iface);
-	snprintf(toggle_enable, sizeof(toggle_enable), "echo 'enabled' > '%s';", usb_path);
-	snprintf(toggle_disable, sizeof(toggle_disable), "echo 'disabled' > '%s';", usb_path);
+	interf = iface;
+	desc = pt_format(_("Wake status for USB device {}"), iface);
+	usb_path = std::format("/sys/bus/usb/devices/{}/power/wakeup", iface);
+	toggle_enable = std::format("echo 'enabled' > '{}';", usb_path);
+	toggle_disable = std::format("echo 'disabled' > '{}';", usb_path);
 }
 
 int usb_wakeup::wakeup_value(void)
@@ -60,7 +60,7 @@ int usb_wakeup::wakeup_value(void)
 
 	content = read_sysfs_string(usb_path);
 
-	if (strcmp(content.c_str(), "enabled") == 0)
+	if (content == "enabled")
 		return WAKEUP_ENABLE;
 
 	return WAKEUP_DISABLE;
@@ -79,7 +79,7 @@ void usb_wakeup::wakeup_toggle(void)
 	write_sysfs(usb_path, "enabled");
 }
 
-const char *usb_wakeup::wakeup_toggle_script(void)
+std::string usb_wakeup::wakeup_toggle_script(void)
 {
 	int enable;
 	enable = wakeup_value();
@@ -91,17 +91,17 @@ const char *usb_wakeup::wakeup_toggle_script(void)
 	return toggle_enable;
 }
 
-void wakeup_usb_callback(const char *d_name)
+static void wakeup_usb_callback(const char *d_name)
 {
 	class usb_wakeup *usb;
-	char filename[PATH_MAX];
+	std::string filename;
 
-	snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s/power/wakeup", d_name);
-	if (access(filename, R_OK) != 0)
+	filename = std::format("/sys/bus/usb/devices/{}/power/wakeup", d_name);
+	if (access(filename.c_str(), R_OK) != 0)
 		return;
 
-	snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s/power/wakeup", d_name);
-	usb = new class usb_wakeup(filename, d_name);
+	filename = std::format("/sys/bus/usb/devices/{}/power/wakeup", d_name);
+	usb = new class usb_wakeup(filename.c_str(), d_name);
 	wakeup_all.push_back(usb);
 }
 

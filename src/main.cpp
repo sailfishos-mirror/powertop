@@ -108,12 +108,11 @@ static void print_version()
 
 static bool set_refresh_timeout()
 {
-	static char buf[4];
+	std::string buf;
 	mvprintw(1, 0, "%s (currently %u): ", _("Set refresh time out"), time_out);
-	memset(buf, '\0', sizeof(buf));
-	get_user_input(buf, sizeof(buf) - 1);
+	buf = get_user_input(3);
 	show_tab(0);
-	unsigned time = strtoul(buf, NULL, 0);
+	unsigned time = strtoul(buf.c_str(), NULL, 0);
 	if (!time) return 0;
 	if (time > 32) time = 32;
 	time_out = time;
@@ -217,7 +216,7 @@ extern "C" {
 	}
 }
 
-void one_measurement(int seconds, int sample_interval, char *workload)
+void one_measurement(int seconds, int sample_interval, const char *workload)
 {
 	create_all_usb_devices();
 	start_power_measurement();
@@ -294,7 +293,7 @@ void out_of_memory()
 	abort();
 }
 
-void make_report(int time, char *workload, int iterations, int sample_interval, char *file)
+void make_report(int time, const std::string &workload, int iterations, int sample_interval, const std::string &file)
 {
 
 	/* one to warm up everything */
@@ -302,16 +301,16 @@ void make_report(int time, char *workload, int iterations, int sample_interval, 
 	utf_ok = 0;
 	one_measurement(1, sample_interval, NULL);
 
-	if (!workload[0])
+	if (workload.empty())
 	  fprintf(stderr, _("Taking %d measurement(s) for a duration of %d second(s) each.\n"),iterations,time);
 	else
-	   fprintf(stderr, _("Measuring workload %s.\n"), workload);
+	   fprintf(stderr, _("Measuring workload %s.\n"), workload.c_str());
 	for (int i=0; i != iterations; i++){
-		init_report_output(file, iterations);
+		init_report_output(file.c_str(), iterations);
 		initialize_tuning();
 		initialize_wakeup();
 		/* and then the real measurement */
-		one_measurement(time, sample_interval, workload);
+		one_measurement(time, sample_interval, workload.empty() ? NULL : workload.c_str());
 		report_show_tunables();
 		report_show_wakeup();
 		finish_report_output();
@@ -434,8 +433,7 @@ int main(int argc, char **argv)
 {
 	int option_index;
 	int c;
-	char filename[PATH_MAX];
-	char workload[PATH_MAX] = {0};
+	std::string filename, workload;
 	int  iterations = 1, auto_tune = 0, sample_interval = 5;
 	bool auto_tune_dump = false;
 
@@ -467,8 +465,8 @@ int main(int argc, char **argv)
 			break;
 		case 'C':		/* csv report */
 			reporttype = REPORT_CSV;
-			snprintf(filename, sizeof(filename), "%s", optarg ? optarg : "powertop.csv");
-			if (!strlen(filename))
+			filename = optarg ? optarg : "powertop.csv";
+			if (filename.empty())
 			{
 				fprintf(stderr, _("Invalid CSV filename\n"));
 				exit(1);
@@ -483,8 +481,8 @@ int main(int argc, char **argv)
 			break;
 		case 'r':		/* html report */
 			reporttype = REPORT_HTML;
-			snprintf(filename, sizeof(filename), "%s", optarg ? optarg : "powertop.html");
-			if (!strlen(filename))
+			filename = optarg ? optarg : "powertop.html";
+			if (filename.empty())
 			{
 				fprintf(stderr, _("Invalid HTML filename\n"));
 				exit(1);
@@ -504,7 +502,7 @@ int main(int argc, char **argv)
 			time_out = (optarg ? atoi(optarg) : 20);
 			break;
 		case 'w':		/* measure workload */
-			snprintf(workload, sizeof(workload), "%s", optarg ? optarg : "");
+			workload = optarg ? optarg : "";
 			break;
 		case 'V':
 			print_version();

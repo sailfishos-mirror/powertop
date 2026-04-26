@@ -34,6 +34,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <format>
 
 #include "../lib.h"
 
@@ -42,18 +43,18 @@ extern "C" {
 }
 
 
-wifi_tunable::wifi_tunable(const char *_iface) : tunable("", 1.5, _("Good"), _("Bad"), _("Unknown"))
+wifi_tunable::wifi_tunable(const string &_iface) : tunable("", 1.5, _("Good"), _("Bad"), _("Unknown"))
 {
-	pt_strcpy(iface, _iface);
-	sprintf(desc, _("Wireless Power Saving for interface %s"), iface);
+	iface = _iface;
+	desc = pt_format(_("Wireless Power Saving for interface {}"), iface);
 
-	snprintf(toggle_good, sizeof(toggle_good), "iw dev %s set power_save on", iface);
-	snprintf(toggle_bad, sizeof(toggle_bad), "iw dev %s set power_save off", iface);
+	toggle_good = std::format("iw dev {} set power_save on", iface);
+	toggle_bad = std::format("iw dev {} set power_save off", iface);
 }
 
 int wifi_tunable::good_bad(void)
 {
-	if (get_wifi_power_saving(iface))
+	if (get_wifi_power_saving(iface.c_str()))
 		return TUNE_GOOD;
 
 	return TUNE_BAD;
@@ -65,30 +66,17 @@ void wifi_tunable::toggle(void)
 	good = good_bad();
 
 	if (good == TUNE_GOOD) {
-		set_wifi_power_saving(iface, 0);
+		set_wifi_power_saving(iface.c_str(), 0);
 		return;
 	}
 
-	set_wifi_power_saving(iface, 1);
-}
-
-const char *wifi_tunable::toggle_script(void)
-{
-	int good;
-	good = good_bad();
-
-	if (good == TUNE_GOOD) {
-		return toggle_bad;
-	}
-
-	return toggle_good;
+	set_wifi_power_saving(iface.c_str(), 1);
 }
 
 void add_wifi_tunables(void)
 {
 	struct dirent *entry;
 	DIR *dir;
-	char* wlan_name;
 	class wifi_tunable *wifi;
 
 
@@ -99,9 +87,8 @@ void add_wifi_tunables(void)
 		entry = readdir(dir);
 		if (!entry)
 			break;
-		wlan_name = strstr(entry->d_name, "wlan");
-		if (wlan_name) {
-			wifi = new class wifi_tunable(wlan_name);
+		if (strstr(entry->d_name, "wlan")) {
+			wifi = new class wifi_tunable(entry->d_name);
 			all_tunables.push_back(wifi);
 		}
 	

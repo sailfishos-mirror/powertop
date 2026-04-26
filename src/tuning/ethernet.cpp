@@ -1,4 +1,4 @@
-;/*
+/*
  * Copyright 2010, Intel Corporation
  *
  * This file is part of PowerTOP
@@ -39,6 +39,7 @@
 #include <net/if.h>
 #include <linux/sockios.h>
 #include <sys/ioctl.h>
+#include <format>
 
 #include <linux/ethtool.h>
 
@@ -47,12 +48,11 @@
 
 extern void create_all_nics(callback fn);
 
-ethernet_tunable::ethernet_tunable(const char *iface) : tunable("", 0.3, _("Good"), _("Bad"), _("Unknown"))
+ethernet_tunable::ethernet_tunable(const string &iface) : tunable("", 0.3, _("Good"), _("Bad"), _("Unknown"))
 {
-	memset(interf, 0, sizeof(interf));
-	pt_strcpy(interf, iface);
-	sprintf(desc, _("Wake-on-lan status for device %s"), iface);
-	snprintf(toggle_good, sizeof(toggle_good), "ethtool -s %s wol d;", iface);
+	interf = iface;
+	desc = pt_format(_("Wake-on-lan status for device {}"), iface);
+	toggle_good = std::format("ethtool -s {} wol d;", iface);
 
 }
 
@@ -71,7 +71,7 @@ int ethernet_tunable::good_bad(void)
 	if (sock<0)
 		return result;
 
-	pt_strcpy(ifr.ifr_name, interf);
+	strncpy(ifr.ifr_name, interf.c_str(), IFNAMSIZ - 1);
 
 	/* Check if the interf is up */
 	ret = ioctl(sock, SIOCGIFFLAGS, &ifr);
@@ -107,7 +107,7 @@ void ethernet_tunable::toggle(void)
 	if (sock<0)
 		return;
 
-	pt_strcpy(ifr.ifr_name, interf);
+	strncpy(ifr.ifr_name, interf.c_str(), IFNAMSIZ - 1);
 
 	/* Check if the interface is up */
 	ret = ioctl(sock, SIOCGIFFLAGS, &ifr);
@@ -126,18 +126,6 @@ void ethernet_tunable::toggle(void)
         ioctl(sock, SIOCETHTOOL, &ifr);
 
 	close(sock);
-}
-
-const char *ethernet_tunable::toggle_script(void)
-{
-	int good;
-	good = good_bad();
-
-	if (good != TUNE_GOOD) {
-		return toggle_good;
-	}
-
-	return NULL;
 }
 
 

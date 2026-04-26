@@ -32,16 +32,16 @@
 using namespace std;
 
 class ethernet_wakeup : public wakeup {
-	char eth_path[PATH_MAX];
+	std::string eth_path;
 public:
-	char interf[4096];
-	ethernet_wakeup(const char *eth_path, const char *iface);
+	std::string interf;
+	ethernet_wakeup(const std::string &eth_path, const std::string &iface);
 
 	virtual int wakeup_value(void);
 
 	virtual void wakeup_toggle(void);
 
-	virtual const char *wakeup_toggle_script(void);
+	virtual std::string wakeup_toggle_script(void);
 
 };
 

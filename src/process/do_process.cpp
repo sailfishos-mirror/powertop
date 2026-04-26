@@ -172,17 +172,17 @@ class perf_process_bundle: public perf_bundle
 	virtual void handle_trace_point(void *trace, int cpu, uint64_t time);
 };
 
-static bool comm_is_xorg(char *comm)
+static bool comm_is_xorg(const std::string &comm)
 {
-	return strcmp(comm, "Xorg") == 0 || strcmp(comm, "X") == 0;
+	return comm == "Xorg" || comm == "X";
 }
 
 /* some processes shouldn't be blamed for the wakeup if they wake a process up... for now this is a hardcoded list */
-int dont_blame_me(char *comm)
+int dont_blame_me(const std::string &comm)
 {
 	if (comm_is_xorg(comm))
 		return 1;
-	if (strcmp(comm, "dbus-daemon") == 0)
+	if (comm == "dbus-daemon")
 		return 1;
 
 	return 0;
@@ -261,7 +261,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		if (consumer_depth(cpu) == 1)
 			old_proc = (class process *)current_consumer(cpu);
 
-		if (old_proc && strcmp(old_proc->name(), "process"))
+		if (old_proc && old_proc->name() != "process")
 			old_proc = NULL;
 
 		/* retire the old process */
@@ -309,10 +309,10 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		if ( (flags & TRACE_FLAG_HARDIRQ) || (flags & TRACE_FLAG_SOFTIRQ)) {
 			class timer *timer;
 			timer = (class timer *) current_consumer(cpu);
-			if (timer && strcmp(timer->name(), "timer")==0) {
-				if (strcmp(timer->handler, "delayed_work_timer_fn") &&
-				    strcmp(timer->handler, "hrtimer_wakeup") &&
-				    strcmp(timer->handler, "it_real_fn"))
+			if (timer && timer->name() == "timer") {
+				if (timer->handler != "delayed_work_timer_fn" &&
+				    timer->handler != "hrtimer_wakeup" &&
+				    timer->handler != "it_real_fn")
 					from = timer;
 			}
 			/* woken from interrupt */
@@ -336,7 +336,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 
 		dest_proc = find_create_process(comm, pid);
 
-		if (from && strcmp(from->name(), "process")!=0){
+		if (from && from->name() != "process"){
 			/* not a process doing the wakeup */
 			from = NULL;
 			from_proc = NULL;
@@ -377,7 +377,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 
 		irq->start_interrupt(time);
 
-		if (strstr(irq->handler, "timer") ==NULL)
+		if (irq->handler.find("timer") == string::npos)
 			change_blame(cpu, irq, LEVEL_HARDIRQ);
 
 	}
@@ -388,7 +388,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 
 		/* find interrupt (top of stack) */
 		irq = (class interrupt *)current_consumer(cpu);
-		if (!irq || strcmp(irq->name(), "interrupt"))
+		if (!irq || irq->name() != "interrupt")
 			return;
 		pop_consumer(cpu);
 		/* retire interrupt */
@@ -426,7 +426,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		uint64_t t;
 
 		irq = (class interrupt *) current_consumer(cpu);
-		if (!irq  || strcmp(irq->name(), "interrupt"))
+		if (!irq  || irq->name() != "interrupt")
 			return;
 		pop_consumer(cpu);
 		/* pop irq */
@@ -460,7 +460,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		push_consumer(cpu, timer);
 		timer->fire(time, tmr);
 
-		if (strcmp(timer->handler, "delayed_work_timer_fn"))
+		if (timer->handler != "delayed_work_timer_fn")
 			change_blame(cpu, timer, LEVEL_TIMER);
 	}
 	else if (strcmp(event->name, "timer_expire_exit") == 0) {
@@ -474,7 +474,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		tmr = (uint64_t)val;
 
 		timer = (class timer *) current_consumer(cpu);
-		if (!timer || strcmp(timer->name(), "timer")) {
+		if (!timer || timer->name() != "timer") {
 			return;
 		}
 		pop_consumer(cpu);
@@ -505,7 +505,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		push_consumer(cpu, timer);
 		timer->fire(time, tmr);
 
-		if (strcmp(timer->handler, "delayed_work_timer_fn"))
+		if (timer->handler != "delayed_work_timer_fn")
 			change_blame(cpu, timer, LEVEL_TIMER);
 	}
 	else if (strcmp(event->name, "hrtimer_expire_exit") == 0) {
@@ -514,7 +514,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		uint64_t t;
 
 		timer = (class timer *) current_consumer(cpu);
-		if (!timer || strcmp(timer->name(), "timer")) {
+		if (!timer || timer->name() != "timer") {
 			return;
 		}
 
@@ -553,7 +553,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		work->fire(time, wk);
 
 
-		if (strcmp(work->handler, "do_dbs_timer") != 0 && strcmp(work->handler, "vmstat_update") != 0)
+		if (work->handler != "do_dbs_timer" && work->handler != "vmstat_update")
 			change_blame(cpu, work, LEVEL_WORK);
 	}
 	else if (strcmp(event->name, "workqueue_execute_end") == 0) {
@@ -567,7 +567,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		wk = (uint64_t)val;
 
 		work = (class work *) current_consumer(cpu);
-		if (!work || strcmp(work->name(), "work")) {
+		if (!work || work->name() != "work") {
 			return;
 		}
 		pop_consumer(cpu);
@@ -611,7 +611,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 
 
 		/* if we are X, and someone just woke us, account the GPU op to the guy waking us */
-		if (consumer && strcmp(consumer->name(), "process")==0) {
+		if (consumer && consumer->name() == "process") {
 			class process *proc = NULL;
 			proc = (class process *) consumer;
 			if (comm_is_xorg(proc->comm) && proc->last_waker) {
@@ -638,8 +638,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 			return;
 		dev = (int)val;
 
-		if (consumer && strcmp(consumer->name(),
-			"process")==0 && dev > 0) {
+		if (consumer && consumer->name() == "process" && dev > 0) {
 
 			consumer->disk_hits++;
 
@@ -827,11 +826,10 @@ void process_update_display(void)
 	tlr = tl % 60;
 
 	if (pw > 0.0001) {
-		char buf[32];
 		wprintw(win, _("The battery reports a discharge rate of %sW\n"),
-				fmt_prefix(pw, buf));
+				fmt_prefix(pw).c_str());
 		wprintw(win, _("The energy consumed was %sJ\n"),
-				fmt_prefix(joules, buf));
+				fmt_prefix(joules).c_str());
 		need_linebreak = 1;
 	}
 	if (tl > 0 && pw > 0.0001) {
@@ -852,40 +850,44 @@ void process_update_display(void)
 		wprintw(win, "                %s       %s    %s       %s\n", _("Usage"), _("Events/s"), _("Category"), _("Description"));
 
 	for (i = 0; i < all_power.size(); i++) {
-		char power[16];
-		char name[20];
-		char usage[20];
-		char events[20];
+		std::string power;
+		std::string name;
+		std::string usage;
+		std::string events;
 		char descr[128];
+		power = format_watts(all_power[i]->Witts(), 10);
 
-		format_watts(all_power[i]->Witts(), power, 10);
 		if (!show_power)
-			strcpy(power, "          ");
-		snprintf(name, sizeof(name), "%s", all_power[i]->type());
-
-		align_string(name, 14, 20);
+			power = "          ";
+		name = all_power[i]->type();
 
 		if (all_power[i]->events() == 0 && all_power[i]->usage() == 0 && all_power[i]->Witts() == 0)
 			break;
 
-		usage[0] = 0;
-		if (all_power[i]->usage_units()) {
+		if (!all_power[i]->usage_units().empty()) {
 			if (all_power[i]->usage() < 1000)
-				snprintf(usage, sizeof(usage), "%5.1f%s", all_power[i]->usage(), all_power[i]->usage_units());
+				usage = std::format("{:5.1f}{}", all_power[i]->usage(), all_power[i]->usage_units());
 			else
-				snprintf(usage, sizeof(usage), "%5i%s", (int)all_power[i]->usage(), all_power[i]->usage_units());
+				usage = std::format("{:5d}{}", (int)all_power[i]->usage(), all_power[i]->usage_units());
 		}
 
-		align_string(usage, 14, 20);
 
-		snprintf(events, sizeof(events), "%5.1f", all_power[i]->events());
+		events = std::format("{:5.1f}", all_power[i]->events());
 		if (!all_power[i]->show_events())
-			events[0] = 0;
+			events = "";
 		else if (all_power[i]->events() <= 0.3)
-			snprintf(events, sizeof(events), "%5.2f", all_power[i]->events());
+			events = std::format("{:5.2f}", all_power[i]->events());
 
+		align_string(name, 14, 20);
+		align_string(usage, 14, 20);
 		align_string(events, 12, 20);
-		wprintw(win, "%s  %s %s %s %s\n", power, usage, events, name, pretty_print(all_power[i]->description(), descr, 128));
+
+		wprintw(win, "%s  %s %s %s %s\n", 
+			power.c_str(), 
+			usage.c_str(), 
+			events.c_str(), 
+			name.c_str(), 
+			pretty_print(all_power[i]->description(), descr, 128));
 	}
 }
 
@@ -936,78 +938,77 @@ void report_process_update_display(void)
 
 
 	for (i = 0; i < total; i++) {
-		char power[16];
-		char name[20];
-		char usage[20];
-		char wakes[20];
-		char gpus[20];
-		char disks[20];
-		char xwakes[20];
+		std::string power, name, usage, wakes, gpus, disks, xwakes;
 		char descr[128];
-		format_watts(all_power[i]->Witts(), power, 10);
+		power = format_watts(all_power[i]->Witts(), 10);
 
 		if (!show_power)
-			strcpy(power, "          ");
-		snprintf(name, sizeof(name), "%s", all_power[i]->type());
+			power = "          ";
+		name = all_power[i]->type();
 
-		if (strcmp(name, "Device") == 0)
+		if (name == "Device")
 			continue;
 
 		if (all_power[i]->events() == 0 && all_power[i]->usage() == 0
 				&& all_power[i]->Witts() == 0)
 			break;
 
-		usage[0] = 0;
-		if (all_power[i]->usage_units()) {
+		if (!all_power[i]->usage_units().empty()) {
 			if (all_power[i]->usage() < 1000)
-				snprintf(usage, sizeof(usage), "%5.1f%s", all_power[i]->usage(), all_power[i]->usage_units());
+				usage = std::format("{:5.1f}{}", all_power[i]->usage(), all_power[i]->usage_units());
 			else
-				snprintf(usage, sizeof(usage), "%5i%s", (int)all_power[i]->usage(), all_power[i]->usage_units());
+				usage = std::format("{:5d}{}", (int)all_power[i]->usage(), all_power[i]->usage_units());
 		}
-		snprintf(wakes, sizeof(wakes), "%5.1f", all_power[i]->wake_ups / measurement_time);
+
+		wakes = std::format("{:5.1f}", all_power[i]->wake_ups / measurement_time);
 		if (all_power[i]->wake_ups / measurement_time <= 0.3)
-			snprintf(wakes, sizeof(wakes), "%5.2f", all_power[i]->wake_ups / measurement_time);
-		snprintf(gpus, sizeof(gpus), "%5.1f", all_power[i]->gpu_ops / measurement_time);
-		snprintf(disks, sizeof(disks), "%5.1f (%5.1f)", all_power[i]->hard_disk_hits / measurement_time,
+			wakes = std::format("{:5.2f}", all_power[i]->wake_ups / measurement_time);
+		
+		gpus = std::format("{:5.1f}", all_power[i]->gpu_ops / measurement_time);
+		
+		disks = std::format("{:5.1f} ({:5.1f})", 
+				all_power[i]->hard_disk_hits / measurement_time,
 				all_power[i]->disk_hits / measurement_time);
-		snprintf(xwakes, sizeof(xwakes), "%5.1f", all_power[i]->xwakes / measurement_time);
+		
+		xwakes = std::format("{:5.1f}", all_power[i]->xwakes / measurement_time);
+
 		if (!all_power[i]->show_events()) {
-			wakes[0] = 0;
-			gpus[0] = 0;
-			disks[0] = 0;
+			wakes = "";
+			gpus = "";
+			disks = "";
 		}
 
 		if (all_power[i]->gpu_ops == 0)
-			gpus[0] = 0;
+			gpus = "";
 		if (all_power[i]->wake_ups == 0)
-			wakes[0] = 0;
+			wakes = "";
 		if (all_power[i]->disk_hits == 0)
-			disks[0] = 0;
+			disks = "";
 		if (all_power[i]->xwakes == 0)
-			xwakes[0] = 0;
+			xwakes = "";
 
-		software_data[idx]=string(usage);
+		software_data[idx]=usage;
 		idx+=1;
 
-		software_data[idx]=string(wakes);
+		software_data[idx]=wakes;
 		idx+=1;
 
-		software_data[idx]=string(gpus);
+		software_data[idx]=gpus;
 		idx+=1;
 
-		software_data[idx]=string(disks);
+		software_data[idx]=disks;
 		idx+=1;
 
-		software_data[idx]=string(xwakes);
+		software_data[idx]=xwakes;
 		idx+=1;
 
-		software_data[idx]=string(name);
+		software_data[idx]=name;
 		idx+=1;
 
-		software_data[idx]=string(pretty_print(all_power[i]->description(), descr, 128));
+		software_data[idx]=pretty_print(all_power[i]->description(), descr, 128);
 		idx+=1;
 		if (show_power) {
-			software_data[idx]=string(power);
+			software_data[idx]=power;
 			idx+=1;
 		}
 	}
@@ -1082,16 +1083,13 @@ void report_summary(void)
 		summary_data[4]=__("PW Estimate");
 
 	for (i = 0; i < all_power.size(); i++) {
-		char power[16];
-		char name[20];
-		char usage[20];
-		char events[20];
+		std::string power, name, usage, events;
 		char descr[128];
-		format_watts(all_power[i]->Witts(), power, 10);
+		power = format_watts(all_power[i]->Witts(), 10);
 
 		if (!show_power)
-			strcpy(power, "          ");
-		snprintf(name, sizeof(name), "%s", all_power[i]->type());
+			power = "          ";
+		name = all_power[i]->type();
 
 		if (i > total)
 			break;
@@ -1100,31 +1098,31 @@ void report_summary(void)
 				all_power[i]->Witts() == 0)
 			break;
 
-		usage[0] = 0;
-		if (all_power[i]->usage_units()) {
+		if (!all_power[i]->usage_units().empty()) {
 			if (all_power[i]->usage() < 1000)
-				snprintf(usage, sizeof(usage), "%5.1f%s", all_power[i]->usage_summary(),
+				usage = std::format("{:5.1f}{}", all_power[i]->usage_summary(),
 					all_power[i]->usage_units_summary());
 			else
-				snprintf(usage, sizeof(usage), "%5i%s", (int)all_power[i]->usage_summary(),
+				usage = std::format("{:5d}{}", (int)all_power[i]->usage_summary(),
 					all_power[i]->usage_units_summary());
 		}
-		snprintf(events, sizeof(events), "%5.1f", all_power[i]->events());
+		
+		events = std::format("{:5.1f}", all_power[i]->events());
 		if (!all_power[i]->show_events())
-			events[0] = 0;
+			events = "";
 		else if (all_power[i]->events() <= 0.3)
-			snprintf(events, sizeof(events), "%5.2f", all_power[i]->events());
+			events = std::format("{:5.2f}", all_power[i]->events());
 
-		summary_data[idx]=string(usage);
+		summary_data[idx]=usage;
 		idx+=1;
 
-		summary_data[idx]=string(events);
+		summary_data[idx]=events;
 		idx+=1;
 
-		summary_data[idx]=string(name);
+		summary_data[idx]=name;
 		idx+=1;
 
-		summary_data[idx]=string(pretty_print(all_power[i]->description(), descr, 128));
+		summary_data[idx]=pretty_print(all_power[i]->description(), descr, 128);
 		idx+=1;
 
 		if (show_power){

@@ -38,58 +38,51 @@ void cpu_package::freq_updated(uint64_t time)
 	old_idle = idle;
 }
 
-char * cpu_package::fill_cstate_line(int line_nr, char *buffer, const char *separator)
+#include <format>
+
+std::string cpu_package::fill_cstate_line(int line_nr, const string &separator)
 {
 	unsigned int i;
-	buffer[0] = 0;
 
-	if (line_nr == LEVEL_HEADER) {
-		sprintf(buffer, this->has_intel_MSR ? _(" Pkg(HW)"): _(" Pkg(OS)"));
+	if (line_nr == LEVEL_HEADER)
+		return this->has_intel_MSR ? _(" Package(HW)"): _(" Package(OS)");
+
+	for (i = 0; i < cstates.size(); i++) {
+		if (cstates[i]->line_level != line_nr)
+			continue;
+		return std::format("{:5.1f}%", percentage(cstates[i]->duration_delta / time_factor));
 	}
+
+	return "";
+}
+
+
+std::string cpu_package::fill_cstate_name(int line_nr)
+{
+	unsigned int i;
 
 	for (i = 0; i < cstates.size(); i++) {
 		if (cstates[i]->line_level != line_nr)
 			continue;
 
-		sprintf(buffer,"%5.1f%%", percentage(cstates[i]->duration_delta / time_factor));
+		return cstates[i]->human_name;
 	}
 
-	return buffer;
-}
-
-
-char * cpu_package::fill_cstate_name(int line_nr, char *buffer)
-{
-	unsigned int i;
-	buffer[0] = 0;
-
-	for (i = 0; i < cstates.size(); i++) {
-		if (cstates[i]->line_level != line_nr)
-			continue;
-
-		sprintf(buffer,"%s", cstates[i]->human_name);
-	}
-
-	return buffer;
+	return "";
 }
 
 
 
-char * cpu_package::fill_pstate_name(int line_nr, char *buffer)
+std::string cpu_package::fill_pstate_name(int line_nr)
 {
-	buffer[0] = 0;
-
 	if (line_nr >= (int)pstates.size() || line_nr < 0)
-		return buffer;
+		return "";
 
-	sprintf(buffer,"%s", pstates[line_nr]->human_name);
-
-	return buffer;
+	return pstates[line_nr]->human_name;
 }
 
-char * cpu_package::fill_pstate_line(int line_nr, char *buffer)
+std::string cpu_package::fill_pstate_line(int line_nr)
 {
-	buffer[0] = 0;
 	unsigned int i;
 
 	if (total_stamp ==0) {
@@ -99,15 +92,12 @@ char * cpu_package::fill_pstate_line(int line_nr, char *buffer)
 			total_stamp = 1;
 	}
 
-
 	if (line_nr == LEVEL_HEADER) {
-		sprintf(buffer,_("  Package"));
-		return buffer;
+		return _("Package");
 	}
 
 	if (line_nr >= (int)pstates.size() || line_nr < 0)
-		return buffer;
+		return "";
 
-	sprintf(buffer," %5.1f%% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
-	return buffer;
+	return std::format(" {:5.1f}% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
 }

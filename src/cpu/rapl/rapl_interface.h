@@ -51,7 +51,7 @@ protected:
 	double last_pp1_energy_status;
 
 public:
-	c_rapl_interface(const char *dev_name = "package-0", int cpu = 0);
+	c_rapl_interface(const std::string &dev_name = "package-0", int cpu = 0);
 
 	int get_rapl_power_unit(uint64_t *value);
 	double get_power_unit();

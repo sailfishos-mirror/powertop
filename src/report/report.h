@@ -35,13 +35,13 @@ using namespace std;
 
 struct reportstream {
 	FILE *report_file;
-	char filename[PATH_MAX];
+	std::string filename;
 };
 
 extern report_type reporttype;
 extern report_maker report;
 extern struct reportstream reportout;
-extern void init_report_output(char *filename_str, int iterations);
+extern void init_report_output(const char *filename_str, int iterations);
 extern void finish_report_output(void);
 
 #endif

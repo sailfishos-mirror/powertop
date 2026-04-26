@@ -39,62 +39,55 @@ using namespace std;
 
 #include <string.h>
 #include <unistd.h>
+#include <format>
 
-alsa::alsa(const char *_name, const char *path): device()
+alsa::alsa(const string &_name, const string &path): device()
 {
 	ifstream file;
 
-	char devname[4096];
 	char model[4096];
 	char vendor[4096];
 	end_active = 0;
 	start_active = 0;
 	end_inactive = 0;
 	start_inactive = 0;
-	pt_strcpy(sysfs_path, path);
+	sysfs_path = path;
 
-	snprintf(devname, sizeof(devname), "alsa:%s", _name);
-	snprintf(humanname, sizeof(humanname), "alsa:%s", _name);
-	pt_strcpy(name, devname);
+	name = std::format("alsa:{}", _name);
+	humanname = std::format("alsa:{}", _name);
 	rindex = get_result_index(name);
 
-	guilty[0] = 0;
 	model[0] = 0;
 	vendor[0] = 0;
-	snprintf(devname, sizeof(devname), "%s/modelname", path);
-	file.open(devname);
+	file.open(std::format("{}/modelname", path));
 	if (file) {
 		file.getline(model, sizeof(model));
 		file.close();
 	}
-	snprintf(devname, sizeof(devname), "%s/vendor_name", path);
-	file.open(devname);
+	file.open(std::format("{}/vendor_name", path));
 	if (file) {
 		file.getline(vendor, sizeof(vendor));
 		file.close();
 	}
 	if (strlen(model) && strlen(vendor))
-		snprintf(humanname, sizeof(humanname), _("Audio codec %s: %s (%s)"), name, model, vendor);
+		humanname = pt_format(_("Audio codec {}: {} ({})"), name, model, vendor);
 	else if (strlen(model))
-		snprintf(humanname, sizeof(humanname), _("Audio codec %s: %s"), _name, model);
+		humanname = pt_format(_("Audio codec {}: {}"), _name, model);
 	else if (strlen(vendor))
-		snprintf(humanname, sizeof(humanname), _("Audio codec %s: %s"), _name, vendor);
+		humanname = pt_format(_("Audio codec {}: {}"), _name, vendor);
 }
 
 void alsa::start_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 
-	snprintf(filename, sizeof(filename), "%s/power_off_acct", sysfs_path);
 	try {
-		file.open(filename, ios::in);
+		file.open(std::format("{}/power_off_acct", sysfs_path));
 		if (file) {
 			file >> start_inactive;
 		}
 		file.close();
-		snprintf(filename, sizeof(filename), "%s/power_on_acct", sysfs_path);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/power_on_acct", sysfs_path));
 
 		if (file) {
 			file >> start_active;
@@ -108,19 +101,16 @@ void alsa::start_measurement(void)
 
 void alsa::end_measurement(void)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 	double p;
 
-	snprintf(filename, sizeof(filename), "%s/power_off_acct", sysfs_path);
 	try {
-		file.open(filename, ios::in);
+		file.open(std::format("{}/power_off_acct", sysfs_path));
 		if (file) {
 			file >> end_inactive;
 		}
 		file.close();
-		snprintf(filename, sizeof(filename), "%s/power_on_acct", sysfs_path);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/power_on_acct", sysfs_path));
 
 		if (file) {
 			file >> end_active;
@@ -145,25 +135,17 @@ double alsa::utilization(void)
 	return p;
 }
 
-const char * alsa::device_name(void)
-{
-	return name;
-}
-
 static void create_all_alsa_callback(const char *d_name)
 {
-	char filename[PATH_MAX];
 	class alsa *bl;
 
 	if (strncmp(d_name, "hwC", 3) != 0)
 		return;
 
-	snprintf(filename, sizeof(filename), "/sys/class/sound/%s/power_on_acct", d_name);
-	if (access(filename, R_OK) != 0)
+	if (access(std::format("/sys/class/sound/{}/power_on_acct", d_name).c_str(), R_OK) != 0)
 		return;
 
-	snprintf(filename, sizeof(filename), "/sys/class/sound/%s", d_name);
-	bl = new class alsa(d_name, filename);
+	bl = new class alsa(d_name, std::format("/sys/class/sound/{}", d_name));
 	all_devices.push_back(bl);
 	register_parameter("alsa-codec-power", 0.5);
 }
@@ -195,13 +177,16 @@ double alsa::power_usage(struct result_bundle *result, struct parameter_bundle *
 
 void alsa::register_power_with_devlist(struct result_bundle *results, struct parameter_bundle *bundle)
 {
-	register_devpower(&name[7], power_usage(results, bundle), this);
+	if (name.length() > 7)
+		register_devpower(name.substr(7), power_usage(results, bundle), this);
+	else
+		register_devpower(name, power_usage(results, bundle), this);
 }
 
-const char * alsa::human_name(void)
+std::string alsa::human_name(void)
 {
-	pt_strcpy(temp_buf, humanname);
-	if (strlen(guilty) > 0)
-		snprintf(temp_buf, sizeof(temp_buf), "%s (%s)", humanname, guilty);
-	return temp_buf;
+	if (!guilty.empty())
+		return std::format("{} ({})", humanname, guilty);
+
+	return humanname;
 }

@@ -27,6 +27,7 @@
 
 #include <sys/time.h>
 #include <limits.h>
+#include <string>
 
 #include "device.h"
 #include "../parameters/parameters.h"
@@ -39,9 +40,9 @@ class network: public device {
 	int start_speed; /* 0 is "no link" */
 	int end_speed; /* 0 is "no link" */
 
-	char sysfs_path[PATH_MAX];
-	char name[4096];
-	char humanname[4096];
+	std::string sysfs_path;
+	std::string name;
+	std::string humanname;
 	int index_up;
 	int rindex_up;
 	int index_link_100;
@@ -63,18 +64,18 @@ public:
 	uint64_t pkts;
 	double duration;
 
-	network(const char *_name, const char *path);
+	network(const std::string &_name, const std::string &path);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);
 
 	virtual double	utilization(void);
-	virtual const char * util_units(void) { return " pkts/s"; };
+	virtual std::string util_units(void) { return " pkts/s"; };
 
-	virtual const char * class_name(void) { return "ethernet";};
+	virtual std::string class_name(void) { return "ethernet";};
 
-	virtual const char * device_name(void);
-	virtual const char * human_name(void) { return humanname; };
+	virtual std::string device_name(void) { return name; };
+	virtual std::string human_name(void) { return humanname; };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual int power_valid(void) { return utilization_power_valid(rindex_up) + utilization_power_valid(rindex_link_100) + utilization_power_valid(rindex_link_1000)  + utilization_power_valid(rindex_link_high);};
 	virtual int grouping_prio(void) { return 10; };

@@ -28,12 +28,10 @@
 #include "measurement.h"
 
 class sysfs_power_meter: public power_meter {
-	char name[256];
-
 	double capacity;
 	double rate;
 
-	bool get_sysfs_attr(const char *attribute, int *value);
+	bool get_sysfs_attr(const std::string &attribute, int *value);
 	bool is_present();
 	double get_voltage();
 
@@ -44,7 +42,7 @@ class sysfs_power_meter: public power_meter {
 
 	void measure();
 public:
-	sysfs_power_meter(const char *power_supply_name);
+	sysfs_power_meter(const std::string &power_supply_name);
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);
 

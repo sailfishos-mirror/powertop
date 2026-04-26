@@ -69,15 +69,8 @@ static void __wakeup_update_display(int cursor_pos)
 	wmove(win, 1,0);
 
 	for (i = 0; i < wakeup_all.size(); i++) {
-		char res[128];
-		char desc[4096];
-		pt_strcpy(res, wakeup_all[i]->wakeup_string());
-		pt_strcpy(desc, wakeup_all[i]->description());
-		while (strlen(res) < 12)
-			strcat(res, " ");
-
-		while (strlen(desc) < 103)
-			strcat(desc, " ");
+		std::string res = wakeup_all[i]->wakeup_string();
+		std::string desc = wakeup_all[i]->description();
 
 		if ((int)i != cursor_pos) {
 			wattrset(win, A_NORMAL);
@@ -86,7 +79,7 @@ static void __wakeup_update_display(int cursor_pos)
 			wattrset(win, A_REVERSE);
 			wprintw(win, ">> ");
 		}
-	wprintw(win, "%s  %s\n", _(res), _(desc));
+		wprintw(win, "%-12s  %-103s\n", _(res.c_str()), _(desc.c_str()));
 	}
 }
 
@@ -108,13 +101,13 @@ void wakeup_window::repaint(void)
 void wakeup_window::cursor_enter(void)
 {
 	class wakeup *wake;
-	const char *wakeup_toggle_script;
+	std::string wakeup_toggle_script;
 	wake = wakeup_all[cursor_pos];
 	if (!wake)
 		return;
 	wakeup_toggle_script = wake->wakeup_toggle_script();
 	wake->wakeup_toggle();
-	ui_notify_user(">> %s\n", wakeup_toggle_script);
+	ui_notify_user(">> %s\n", wakeup_toggle_script.c_str());
 }
 
 void report_show_wakeup(void)
@@ -160,7 +153,7 @@ void report_show_wakeup(void)
 			gb = wakeup_all[i]->wakeup_value();
 			if (gb != WAKEUP_DISABLE)
 				continue;
-			wakeup_data[idx]=string(wakeup_all[i]->description());
+			wakeup_data[idx]=wakeup_all[i]->description();
 			idx+=1;
 			wakeup_data[idx]=string(wakeup_all[i]->wakeup_toggle_script());
 			idx+=1;

@@ -26,12 +26,16 @@
 #define __INCLUDE_GUARD_MEASUREMENT_H
 
 #include <vector>
+#include <string>
 
 using namespace std;
 
 class power_meter {
 	bool discharging = false;
 public:
+	std::string name;
+	power_meter(const std::string &n) : name(n) {}
+	power_meter() : name("") {}
 	virtual ~power_meter() {};
 
 	virtual void start_measurement(void);

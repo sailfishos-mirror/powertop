@@ -63,7 +63,9 @@ report_maker::finish_report()
 const char *
 report_maker::get_result()
 {
-	return formatter->get_result();
+	static std::string result;
+	result = formatter->get_result();
+	return result.c_str();
 }
 
 /* ************************************************************************ */
@@ -112,9 +114,8 @@ report_maker::setup_report_formatter()
 /* ************************************************************************ */
 
 void
-report_maker::add(const char *str)
+report_maker::add(const string &str)
 {
-	assert(str);
 	formatter->add(str);
 }
 
@@ -150,7 +151,7 @@ report_maker::end_header()
 }
 
 void
-report_maker::add_title(struct tag_attr *att_title, const char *title)
+report_maker::add_title(struct tag_attr *att_title, const string &title)
 {
 	formatter->add_title(att_title, title);
 }

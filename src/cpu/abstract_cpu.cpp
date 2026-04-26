@@ -47,7 +47,7 @@ abstract_cpu::~abstract_cpu()
 
 void abstract_cpu::account_freq(uint64_t freq, uint64_t duration)
 {
-	struct frequency *state = NULL;
+	class frequency *state = NULL;
 	unsigned int i;
 
 	for (i = 0; i < pstates.size(); i++) {
@@ -59,21 +59,19 @@ void abstract_cpu::account_freq(uint64_t freq, uint64_t duration)
 
 
 	if (!state) {
-		state = new(std::nothrow) struct frequency;
+		state = new(std::nothrow) class frequency;
 
 		if (!state)
 			return;
 
-		memset(state, 0, sizeof(*state));
-
 		pstates.push_back(state);
 
 		state->freq = freq;
-		hz_to_human(freq, state->human_name);
+		state->human_name = hz_to_human(freq);
 		if (freq == 0)
-			pt_strcpy(state->human_name, _("Idle"));
+			state->human_name = _("Idle");
 		if (is_turbo(freq, max_frequency, max_minus_one_frequency))
-			pt_strcpy(state->human_name, _("Turbo Mode"));
+			state->human_name = _("Turbo Mode");
 
 		state->after_count = 1;
 	}
@@ -95,7 +93,7 @@ void abstract_cpu::measurement_start(void)
 {
 	unsigned int i;
 	ifstream file;
-	char filename[4096];
+	std::string filename;
 
 	last_stamp = 0;
 
@@ -112,8 +110,8 @@ void abstract_cpu::measurement_start(void)
 	old_idle = true;
 
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_available_frequencies", number);
-	file.open(filename, ios::in);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_available_frequencies", number);
+	file.open(filename.c_str(), ios::in);
 	if (file) {
 		file >> max_frequency;
 		file >> max_minus_one_frequency;
@@ -163,7 +161,7 @@ void abstract_cpu::measurement_end(void)
 				finalize_cstate(state->linux_name,                   state->usage_after,  state->duration_after,  state->after_count);
 			}
 			for (j = 0; j < children[i]->pstates.size(); j++) {
-				struct frequency *state;
+				class frequency *state;
 				state = children[i]->pstates[j];
 				if (!state)
 					continue;
@@ -187,7 +185,7 @@ void abstract_cpu::measurement_end(void)
 	}
 }
 
-void abstract_cpu::insert_cstate(const char *linux_name, const char *human_name, uint64_t usage, uint64_t duration, int count, int level)
+void abstract_cpu::insert_cstate(const string &linux_name, const string &human_name, uint64_t usage, uint64_t duration, int count, int level)
 {
 	struct idle_state *state;
 	const char *c;
@@ -197,18 +195,25 @@ void abstract_cpu::insert_cstate(const char *linux_name, const char *human_name,
 	if (!state)
 		return;
 
-	memset(state, 0, sizeof(*state));
+	state->usage_before = 0;
+	state->usage_after = 0;
+	state->usage_delta = 0;
+	state->duration_before = 0;
+	state->duration_after = 0;
+	state->duration_delta = 0;
+	state->before_count = 0;
+	state->after_count = 0;
 
 	cstates.push_back(state);
 
-	pt_strcpy(state->linux_name, linux_name);
-	pt_strcpy(state->human_name, human_name);
+	state->linux_name = linux_name;
+	state->human_name = human_name;
 
 	state->line_level = -1;
 
-	c = human_name;
+	c = human_name.c_str();
 	while (*c) {
-		if (strcmp(linux_name, "active")==0) {
+		if (state->linux_name == "active") {
 			state->line_level = LEVEL_C0;
 			break;
 		}
@@ -217,10 +222,12 @@ void abstract_cpu::insert_cstate(const char *linux_name, const char *human_name,
 			if(*(c+1) != '-'){
 				int greater_line_level = strtoull(c, NULL, 10);
 				for(unsigned int pos = 0; pos < cstates.size(); pos++){
-					if(*c == cstates[pos]->human_name[1]){
-						if(*(c+1) != cstates[pos]->human_name[2]){
-							greater_line_level = max(greater_line_level, cstates[pos]->line_level);
-							state->line_level = greater_line_level + 1;
+					if (cstates[pos]->human_name.length() > 2) {
+						if(*c == cstates[pos]->human_name[1]){
+							if(*(c+1) != cstates[pos]->human_name[2]){
+								greater_line_level = max(greater_line_level, cstates[pos]->line_level);
+								state->line_level = greater_line_level + 1;
+							}
 						}
 					}
 				}
@@ -231,7 +238,7 @@ void abstract_cpu::insert_cstate(const char *linux_name, const char *human_name,
 	}
 
 	/* some architectures (ARM) don't have good numbers in their human name.. fall back to the linux name for those */
-	c = linux_name;
+	c = linux_name.c_str();
 	while (*c && state->line_level < 0) {
 		if (*c >= '0' && *c <='9') {
 			state->line_level = strtoull(c, NULL, 10);
@@ -248,13 +255,13 @@ void abstract_cpu::insert_cstate(const char *linux_name, const char *human_name,
 	state->before_count = count;
 }
 
-void abstract_cpu::finalize_cstate(const char *linux_name, uint64_t usage, uint64_t duration, int count)
+void abstract_cpu::finalize_cstate(const string &linux_name, uint64_t usage, uint64_t duration, int count)
 {
 	unsigned int i;
 	struct idle_state *state = NULL;
 
 	for (i = 0; i < cstates.size(); i++) {
-		if (strcmp(linux_name, cstates[i]->linux_name) == 0) {
+		if (cstates[i]->linux_name == linux_name) {
 			state = cstates[i];
 			break;
 		}
@@ -270,13 +277,13 @@ void abstract_cpu::finalize_cstate(const char *linux_name, uint64_t usage, uint6
 	state->after_count += count;
 }
 
-void abstract_cpu::update_cstate(const char *linux_name, const char *human_name, uint64_t usage, uint64_t duration, int count, int level)
+void abstract_cpu::update_cstate(const string &linux_name, const string &human_name, uint64_t usage, uint64_t duration, int count, int level)
 {
 	unsigned int i;
 	struct idle_state *state = NULL;
 
 	for (i = 0; i < cstates.size(); i++) {
-		if (strcmp(linux_name, cstates[i]->linux_name) == 0) {
+		if (cstates[i]->linux_name == linux_name) {
 			state = cstates[i];
 			break;
 		}
@@ -290,7 +297,6 @@ void abstract_cpu::update_cstate(const char *linux_name, const char *human_name,
 	state->usage_before += usage;
 	state->duration_before += duration;
 	state->before_count += count;
-
 }
 
 int abstract_cpu::has_cstate_level(int level)
@@ -330,21 +336,19 @@ int abstract_cpu::has_pstate_level(int level)
 
 
 
-void abstract_cpu::insert_pstate(uint64_t freq, const char *human_name, uint64_t duration, int count)
+void abstract_cpu::insert_pstate(uint64_t freq, const string &human_name, uint64_t duration, int count)
 {
-	struct frequency *state;
+	class frequency *state;
 
-	state = new(std::nothrow) struct frequency;
+	state = new(std::nothrow) class frequency;
 
 	if (!state)
 		return;
 
-	memset(state, 0, sizeof(*state));
-
 	pstates.push_back(state);
 
 	state->freq = freq;
-	pt_strcpy(state->human_name, human_name);
+	state->human_name = human_name;
 
 
 	state->time_before = duration;
@@ -354,7 +358,7 @@ void abstract_cpu::insert_pstate(uint64_t freq, const char *human_name, uint64_t
 void abstract_cpu::finalize_pstate(uint64_t freq, uint64_t duration, int count)
 {
 	unsigned int i;
-	struct frequency *state = NULL;
+	class frequency *state = NULL;
 
 	for (i = 0; i < pstates.size(); i++) {
 		if (freq == pstates[i]->freq) {
@@ -372,10 +376,10 @@ void abstract_cpu::finalize_pstate(uint64_t freq, uint64_t duration, int count)
 
 }
 
-void abstract_cpu::update_pstate(uint64_t freq, const char *human_name, uint64_t duration, int count)
+void abstract_cpu::update_pstate(uint64_t freq, const string &human_name, uint64_t duration, int count)
 {
 	unsigned int i;
-	struct frequency *state = NULL;
+	class frequency *state = NULL;
 
 	for (i = 0; i < pstates.size(); i++) {
 		if (freq == pstates[i]->freq) {
@@ -446,7 +450,7 @@ void abstract_cpu::change_effective_frequency(uint64_t time, uint64_t frequency)
 
 void abstract_cpu::wiggle(void)
 {
-	char filename[PATH_MAX];
+	std::string filename;
 	ifstream ifile;
 	ofstream ofile;
 	uint64_t minf,maxf;
@@ -454,40 +458,41 @@ void abstract_cpu::wiggle(void)
 
 	/* wiggle a CPU so that we have a record of it at the start and end of the perf trace */
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_max_freq", first_cpu);
-	ifile.open(filename, ios::in);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_max_freq", first_cpu);
+	ifile.open(filename.c_str(), ios::in);
 	ifile >> maxf;
 	ifile.close();
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_min_freq", first_cpu);
-	ifile.open(filename, ios::in);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_min_freq", first_cpu);
+	ifile.open(filename.c_str(), ios::in);
 	ifile >> minf;
 	ifile.close();
 
 	/* In case of the userspace governor, remember the old setspeed setting, it will be affected by wiggle */
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_setspeed", first_cpu);
-	ifile.open(filename, ios::in);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_setspeed", first_cpu);
+	ifile.open(filename.c_str(), ios::in);
 	/* Note that non-userspace governors report "<unsupported>". In that case ifile will fail and setspeed remains 0 */
 	ifile >> setspeed;
 	ifile.close();
 
-	ofile.open(filename, ios::out);
+	ofile.open(filename.c_str(), ios::out);
 	ofile << maxf;
 	ofile.close();
-	ofile.open(filename, ios::out);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_min_freq", first_cpu);
+	ofile.open(filename.c_str(), ios::out);
 	ofile << minf;
 	ofile.close();
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_max_freq", first_cpu);
-	ofile.open(filename, ios::out);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_max_freq", first_cpu);
+	ofile.open(filename.c_str(), ios::out);
 	ofile << minf;
 	ofile.close();
-	ofile.open(filename, ios::out);
+	ofile.open(filename.c_str(), ios::out);
 	ofile << maxf;
 	ofile.close();
 
 	if (setspeed != 0) {
-		snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_setspeed", first_cpu);
-		ofile.open(filename, ios::out);
+		filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_setspeed", first_cpu);
+		ofile.open(filename.c_str(), ios::out);
 		ofile << setspeed;
 		ofile.close();
 	}

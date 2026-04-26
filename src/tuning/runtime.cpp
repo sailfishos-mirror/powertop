@@ -35,67 +35,74 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <limits.h>
+#include <format>
 
 #include "../lib.h"
 #include "../devices/runtime_pm.h"
 
-runtime_tunable::runtime_tunable(const char *path, const char *bus, const char *dev, const char *port) : tunable("", 0.4, _("Good"), _("Bad"), _("Unknown"))
+runtime_tunable::runtime_tunable(const string &path, const string &bus, const string &dev, const string &port) : tunable("", 0.4, _("Good"), _("Bad"), _("Unknown"))
 {
 	ifstream file;
-	sprintf(runtime_path, "%s/power/control", path);
+	runtime_path = std::format("{}/power/control", path);
 
 
-	sprintf(desc, _("Runtime PM for %s device %s"), bus, dev);
-	if (!device_has_runtime_pm(path))
-		sprintf(desc, _("%s device %s has no runtime power management"), bus, dev);
+	desc = pt_format(_("Runtime PM for {} device {}"), bus, dev);
+	if (!device_has_runtime_pm(path)) {
+		desc = pt_format(_("{} device {} has no runtime power management"), bus, dev);
+	}
 
-	if (strcmp(bus, "pci") == 0) {
-		char filename[PATH_MAX];
+	if (bus == "pci") {
+		std::string filename;
 		uint16_t vendor = 0, device = 0;
 
-		snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s/vendor", bus, dev);
+		filename = std::format("/sys/bus/{}/devices/{}/vendor", bus, dev);
 
-		file.open(filename, ios::in);
+		file.open(filename.c_str(), ios::in);
 		if (file) {
 			file >> hex >> vendor;
 			file.close();
 		}
 
 
-		snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s/device", bus, dev);
-		file.open(filename, ios::in);
+		filename = std::format("/sys/bus/{}/devices/{}/device", bus, dev);
+		file.open(filename.c_str(), ios::in);
 		if (file) {
 			file >> hex >> device;
 			file.close();
 		}
 
 		if (vendor && device) {
-			if (!device_has_runtime_pm(path))
-				sprintf(desc, _("PCI Device %s has no runtime power management"), pci_id_to_name(vendor, device, filename, 4095));
-			else
-				sprintf(desc, _("Runtime PM for PCI Device %s"), pci_id_to_name(vendor, device, filename, 4095));
+			std::string pci_name;
+			if (!device_has_runtime_pm(path)) {
+				desc = pt_format(_("PCI Device {} has no runtime power management"), pci_id_to_name(vendor, device, pci_name, 4095));
+			} else {
+				desc = pt_format(_("Runtime PM for PCI Device {}"), pci_id_to_name(vendor, device, pci_name, 4095));
+			}
 		}
 
-		if (string(path).find("ata") != string::npos)
-			sprintf(desc, _("Runtime PM for port %s of PCI device: %s"), port, pci_id_to_name(vendor, device, filename, 4095));
+		if (path.find("ata") != string::npos) {
+			std::string pci_name;
+			desc = pt_format(_("Runtime PM for port {} of PCI device: {}"), port, pci_id_to_name(vendor, device, pci_name, 4095));
+		}
 
-		if (string(path).find("block") != string::npos)
-			sprintf(desc, _("Runtime PM for disk %s"), port);
+		if (path.find("block") != string::npos) {
+			desc = pt_format(_("Runtime PM for disk {}"), port);
+		}
 
 	}
-	snprintf(toggle_good, sizeof(toggle_good), "echo 'auto' > '%s';", runtime_path);
-	snprintf(toggle_bad, sizeof(toggle_bad), "echo 'on' > '%s';", runtime_path);
+	toggle_good = std::format("echo 'auto' > '{}';", runtime_path);
+	toggle_bad = std::format("echo 'on' > '{}';", runtime_path);
 }
 
 int runtime_tunable::good_bad(void)
 {
-	string content;
+	std::string content;
 
 	content = read_sysfs_string(runtime_path);
 
-	if (strcmp(content.c_str(), "auto") == 0)
+	if (content == "auto")
 		return TUNE_GOOD;
-	if (strcmp(content.c_str(), "on") == 0)
+	if (content == "on")
 		return TUNE_GOOD;
 
 	return TUNE_BAD;
@@ -107,23 +114,11 @@ void runtime_tunable::toggle(void)
 	good = good_bad();
 
 	if (good == TUNE_GOOD) {
-		write_sysfs(runtime_path, "on");
+		write_sysfs(runtime_path.c_str(), "on");
 		return;
 	}
 
-	write_sysfs(runtime_path, "auto");
-}
-
-const char *runtime_tunable::toggle_script(void)
-{
-	int good;
-	good = good_bad();
-
-	if (good == TUNE_GOOD) {
-		return toggle_bad;
-	}
-
-	return toggle_good;
+	write_sysfs(runtime_path.c_str(), "auto");
 }
 
 
@@ -131,11 +126,11 @@ void add_runtime_tunables(const char *bus)
 {
 	struct dirent *entry;
 	DIR *dir;
-	char filename[PATH_MAX], port[PATH_MAX];
+	std::string filename, port;
 	int max_ports = 32, count=0;
 
-	snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/", bus);
-	dir = opendir(filename);
+	filename = std::format("/sys/bus/{}/devices/", bus);
+	dir = opendir(filename.c_str());
 	if (!dir)
 		return;
 	while (1) {
@@ -148,15 +143,15 @@ void add_runtime_tunables(const char *bus)
 		if (entry->d_name[0] == '.')
 			continue;
 
-		snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s/power/control", bus, entry->d_name);
+		filename = std::format("/sys/bus/{}/devices/{}/power/control", bus, entry->d_name);
 
-		if (access(filename, R_OK) != 0)
+		if (access(filename.c_str(), R_OK) != 0)
 			continue;
 
 
-		snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s", bus, entry->d_name);
+		filename = std::format("/sys/bus/{}/devices/{}", bus, entry->d_name);
 
-		runtime = new class runtime_tunable(filename, bus, entry->d_name, NULL);
+		runtime = new class runtime_tunable(filename, bus, entry->d_name, "");
 
 		if (!device_has_runtime_pm(filename))
 			all_untunables.push_back(runtime);
@@ -164,13 +159,13 @@ void add_runtime_tunables(const char *bus)
 			all_tunables.push_back(runtime);
 
 		for (int i=0; i < max_ports; i++) {
-			snprintf(port, sizeof(port), "ata%d", i);
-			snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s/%s/power/control", bus, entry->d_name, port);
+			port = std::format("ata{}", i);
+			filename = std::format("/sys/bus/{}/devices/{}/{}/power/control", bus, entry->d_name, port);
 
-			if (access(filename, R_OK) != 0)
+			if (access(filename.c_str(), R_OK) != 0)
 				continue;
 
-			snprintf(filename, sizeof(filename), "/sys/bus/%s/devices/%s/%s", bus, entry->d_name, port);
+			filename = std::format("/sys/bus/{}/devices/{}/{}", bus, entry->d_name, port);
 			runtime_ahci_port = new class runtime_tunable(filename, bus, entry->d_name, port);
 
 			if (!device_has_runtime_pm(filename))
@@ -184,13 +179,13 @@ void add_runtime_tunables(const char *bus)
 			if (count != 0)
 				break;
 
-			snprintf(filename, sizeof(filename), "/sys/block/sd%c/device/power/control", blk);
+			filename = std::format("/sys/block/sd{}/device/power/control", blk);
 
-			if (access(filename, R_OK) != 0)
+			if (access(filename.c_str(), R_OK) != 0)
 				continue;
 
-			snprintf(port, sizeof(port), "sd%c", blk);
-			snprintf(filename, sizeof(filename), "/sys/block/%s/device", port);
+			port = std::format("sd{}", blk);
+			filename = std::format("/sys/block/{}/device", port);
 			runtime_ahci_disk = new class runtime_tunable(filename, bus, entry->d_name, port);
 			if (!device_has_runtime_pm(filename))
 				all_untunables.push_back(runtime_ahci_disk);

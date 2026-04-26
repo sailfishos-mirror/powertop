@@ -33,14 +33,12 @@ using namespace std;
 
 class ethernet_tunable : public tunable {
 public:
-	char interf[4096];
-	ethernet_tunable(const char *iface);
+	std::string interf;
+	ethernet_tunable(const std::string &iface);
 
 	virtual int good_bad(void);
 
 	virtual void toggle(void);
-
-	virtual const char *toggle_script(void);
 
 };
 

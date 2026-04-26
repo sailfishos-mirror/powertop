@@ -28,15 +28,13 @@
 using namespace std;
 
 class i2c_tunable : public tunable {
-	char i2c_path[PATH_MAX];
+	std::string i2c_path;
 public:
-	i2c_tunable(const char *path, const char *name, bool is_adapter);
+	i2c_tunable(const std::string &path, const std::string &name, bool is_adapter);
 
 	virtual int good_bad(void);
 
 	virtual void toggle(void);
-
-	virtual const char *toggle_script(void);
 
 };
 

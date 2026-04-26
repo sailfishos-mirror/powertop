@@ -31,24 +31,24 @@
 
 class interrupt : public power_consumer {
 	uint64_t	running_since;
-	char		desc[256];
+	std::string	desc;
 public:
-	char		handler[32];
+	std::string	handler;
 	int		number;
 
 	int		raw_count;
 
-	interrupt(const char *_handler, int _number);
+	interrupt(const std::string &_handler, int _number);
 
 	virtual void start_interrupt(uint64_t time);
 	virtual uint64_t end_interrupt(uint64_t time);
 
-	virtual const char * description(void);
+	virtual std::string description(void);
 
-	virtual const char * name(void) { return "interrupt"; };
-	virtual const char * type(void) { return "Interrupt"; };
+	virtual std::string name(void) { return "interrupt"; };
+	virtual std::string type(void) { return "Interrupt"; };
 	virtual double usage_summary(void);
-	virtual const char * usage_units_summary(void);
+	virtual std::string usage_units_summary(void);
 };
 
 extern vector <class interrupt *> all_interrupts;

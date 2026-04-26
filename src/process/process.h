@@ -42,9 +42,9 @@ Need to collect
 class process : public power_consumer {
 	uint64_t	running_since;
 public:
-	char		desc[256];
+	std::string	desc;
 	int		tgid;
-	char		comm[16];
+	std::string	comm;
 	int		pid;
 
 
@@ -52,19 +52,19 @@ public:
 	int		running;
 	int		is_kernel; /* kernel thread */
 
-	process(const char *_comm, int _pid, int _tid = 0);
+	process(const std::string &_comm, int _pid, int _tid = 0);
 
 	virtual void schedule_thread(uint64_t time, int thread_id);
 	virtual uint64_t deschedule_thread(uint64_t time, int thread_id = 0);
 
 	virtual void account_disk_dirty(void);
 
-	virtual const char * description(void);
-	virtual const char * name(void) { return "process"; };
-	virtual const char * type(void) { return "Process"; };
+	virtual std::string description(void);
+	virtual std::string name(void) { return "process"; };
+	virtual std::string type(void) { return "Process"; };
 
 	virtual double usage_summary(void);
-	virtual const char * usage_units_summary(void);
+	virtual std::string usage_units_summary(void);
 
 };
 
@@ -81,6 +81,7 @@ extern void clear_process_data(void);
 extern void merge_processes(void);
 
 extern class process * find_create_process(const char *comm, int pid);
+extern class process * find_create_process(const std::string &comm, int pid);
 extern class process * find_create_process(char *comm, int pid);
 extern void all_processes_to_all_power(void);
 

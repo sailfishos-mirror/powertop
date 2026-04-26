@@ -32,16 +32,16 @@
 using namespace std;
 
 class usb_wakeup : public wakeup {
-	char usb_path[PATH_MAX];
+	std::string usb_path;
 public:
-	char interf[4096];
-	usb_wakeup(const char *usb_path, const char *iface);
+	std::string interf;
+	usb_wakeup(const std::string &usb_path, const std::string &iface);
 
 	virtual int wakeup_value(void);
 
 	virtual void wakeup_toggle(void);
 
-	virtual const char *wakeup_toggle_script(void);
+	virtual std::string wakeup_toggle_script(void);
 
 };
 

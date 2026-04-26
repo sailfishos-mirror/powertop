@@ -34,12 +34,11 @@
 
 using namespace std;
 
-acpi_power_meter::acpi_power_meter(const char *acpi_name)
+acpi_power_meter::acpi_power_meter(const string &acpi_name) : power_meter(acpi_name)
 {
 	rate = 0.0;
 	capacity = 0.0;
 	voltage = 0.0;
-	pt_strcpy(battery_name, acpi_name);
 }
 
 /*
@@ -53,7 +52,7 @@ present voltage:         12001 mV
 
 void acpi_power_meter::measure(void)
 {
-	char filename[PATH_MAX];
+	std::string filename;
 	char line[4096];
 	ifstream file;
 
@@ -61,21 +60,18 @@ void acpi_power_meter::measure(void)
 	double _capacity = 0;
 	double _voltage = 0;
 
-	char rate_units[16];
-	char capacity_units[16];
-	char voltage_units[16];
+	std::string rate_units;
+	std::string capacity_units;
+	std::string voltage_units;
 
-	rate_units[0] = 0;
-	capacity_units[0] = 0;
-	voltage_units[0] = 0;
 
 	rate = 0;
 	voltage = 0;
 	capacity = 0;
 
-	snprintf(filename, sizeof(filename), "/proc/acpi/battery/%s/state", battery_name);
+	filename = std::format("/proc/acpi/battery/{}/state", name);
 
-	file.open(filename, ios::in);
+	file.open(filename.c_str(), ios::in);
 	if (!file)
 		return;
 
@@ -97,10 +93,10 @@ void acpi_power_meter::measure(void)
 			c = strchr(c, ' ');
 			if (c) {
 				c++;
-				pt_strcpy(rate_units, c);
+				rate_units = c;
 			} else {
 				_rate = 0;
-				strcpy(rate_units, "Unknown");
+				rate_units = "Unknown";
 			}
 
 		}
@@ -112,10 +108,10 @@ void acpi_power_meter::measure(void)
 			c = strchr(c, ' ');
 			if (c) {
 				c++;
-				pt_strcpy(capacity_units, c);
+				capacity_units = c;
 			} else {
 				_capacity = 0;
-				strcpy(capacity_units, "Unknown");
+				capacity_units = "Unknown";
 			}
 		}
 		if (strstr(line, "present voltage:")) {
@@ -126,10 +122,10 @@ void acpi_power_meter::measure(void)
 			c = strchr(c, ' ');
 			if (c) {
 				c++;
-				pt_strcpy(voltage_units, c);
+				voltage_units = c;
 			} else {
 				_voltage = 0;
-				strcpy(voltage_units, "Unknown");
+				voltage_units = "Unknown";
 			}
 		}
 	}
@@ -137,59 +133,59 @@ void acpi_power_meter::measure(void)
 
 	/* BIOS report random crack-inspired units. Lets try to get to the Si-system units */
 
-	if (strcmp(voltage_units, "mV") == 0) {
+	if (voltage_units == "mV") {
 		_voltage = _voltage / 1000.0;
-		strcpy(voltage_units, "V");
+		voltage_units = "V";
 	}
 
-	if (strcmp(rate_units, "mW") == 0) {
+	if (rate_units == "mW") {
 		_rate = _rate / 1000.0;
-		strcpy(rate_units, "W");
+		rate_units = "W";
 	}
 
-	if (strcmp(rate_units, "mA") == 0) {
+	if (rate_units == "mA") {
 		_rate = _rate / 1000.0;
-		strcpy(rate_units, "A");
+		rate_units = "A";
 	}
 
-	if (strcmp(capacity_units, "mAh") == 0) {
+	if (capacity_units == "mAh") {
 		_capacity = _capacity / 1000.0;
-		strcpy(capacity_units, "Ah");
+		capacity_units = "Ah";
 	}
-	if (strcmp(capacity_units, "mWh") == 0) {
+	if (capacity_units == "mWh") {
 		_capacity = _capacity / 1000.0;
-		strcpy(capacity_units, "Wh");
+		capacity_units = "Wh";
 	}
-	if (strcmp(capacity_units, "Wh") == 0) {
+	if (capacity_units == "Wh") {
 		_capacity = _capacity * 3600.0;
-		strcpy(capacity_units, "J");
+		capacity_units = "J";
 	}
 
 
-	if (strcmp(capacity_units, "Ah") == 0 && strcmp(voltage_units, "V") == 0) {
+	if (capacity_units == "Ah" && voltage_units == "V") {
 		_capacity = _capacity * 3600.0 * _voltage;
-		strcpy(capacity_units, "J");
+		capacity_units = "J";
 	}
 
-	if (strcmp(rate_units, "A") == 0 && strcmp(voltage_units, "V")==0 ) {
+	if (rate_units == "A" && voltage_units == "V") {
 		_rate = _rate * _voltage;
-		strcpy(rate_units, "W");
+		rate_units = "W";
 	}
 
 
 
 
-	if (strcmp(capacity_units, "J") == 0)
+	if (capacity_units == "J")
 		capacity = _capacity;
 	else
 		capacity = 0.0;
 
-	if (strcmp(rate_units, "W")==0)
+	if (rate_units == "W")
 		rate = _rate;
 	else
 		rate = 0.0;
 
-	if (strcmp(voltage_units, "V")==0)
+	if (voltage_units == "V")
 		voltage = _voltage;
 	else
 		voltage = 0.0;

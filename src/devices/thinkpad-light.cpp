@@ -73,12 +73,12 @@ double thinkpad_light::utilization(void)
 
 void create_thinkpad_light(void)
 {
-	char filename[PATH_MAX];
+	std::string filename;
 	class thinkpad_light *light;
 
-	pt_strcpy(filename, "/sys/devices/platform/thinkpad_acpi/leds/tpacpi::thinklight/brightness");
+	filename = "/sys/devices/platform/thinkpad_acpi/leds/tpacpi::thinklight/brightness";
 
-	if (access(filename, R_OK) !=0)
+	if (access(filename.c_str(), R_OK) !=0)
 		return;
 
 	register_parameter("thinkpad-light", 10);

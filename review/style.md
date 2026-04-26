@@ -95,6 +95,10 @@ default:
 ### 4.3 Strings
 *   Prefer `std::string` over C-style strings (`char *`) or fixed-size buffers, unless interfacing with C-only libraries.
 *   Always use the fully qualified `std::string` type.
+*   **Formatting**: Use `std::format` for internal strings and `pt_format` for user-facing (translated) strings.
+    *   `pt_format(_("..."), args...)` is required for gettext-translated strings to ensure compatibility with runtime format strings in C++20.
+    *   Do not use `std::vformat` or `std::make_format_args` directly; use the `pt_format` helper instead.
+    *   Example: `humanname = pt_format(_("USB device: {}"), device_name);`
 
 ### 4.4 Includes
 *   Order: Standard library headers first, followed by project-specific headers.

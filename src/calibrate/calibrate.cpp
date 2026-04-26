@@ -88,24 +88,25 @@ static void restore_all_sysfs(void)
 
 static void find_all_usb_callback(const char *d_name)
 {
-	char filename[PATH_MAX];
+	std::string filename;
 	ifstream file;
 
-	snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s/power/active_duration", d_name);
-	if (access(filename, R_OK) != 0)
+	filename = std::format("/sys/bus/usb/devices/{}/power/active_duration", d_name);
+	if (access(filename.c_str(), R_OK) != 0)
 		return;
 
-	snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s/power/idVendor", d_name);
-	file.open(filename, ios::in);
+	filename = std::format("/sys/bus/usb/devices/{}/power/idVendor", d_name);
+	file.open(filename.c_str(), ios::in);
 	if (file) {
-		file.getline(filename, sizeof(filename));
+		std::string vendor_id;
+		getline(file, vendor_id);
 		file.close();
-		if (strcmp(filename, "1d6b") == 0)
+		if (vendor_id == "1d6b")
 			return;
 	}
 
-	snprintf(filename, sizeof(filename), "/sys/bus/usb/devices/%s/power/control", d_name);
-	save_sysfs(filename);
+	filename = std::format("/sys/bus/usb/devices/{}/power/control", d_name);
+	save_sysfs(filename.c_str());
 	usb_devices.push_back(filename);
 }
 
@@ -124,11 +125,11 @@ static void suspend_all_usb_devices(void)
 
 static void find_all_rfkill_callback(const char *d_name)
 {
-	char filename[PATH_MAX];
-	snprintf(filename, sizeof(filename), "/sys/class/rfkill/%s/soft", d_name);
-	if (access(filename, R_OK) != 0)
+	std::string filename;
+	filename = std::format("/sys/class/rfkill/{}/soft", d_name);
+	if (access(filename.c_str(), R_OK) != 0)
 		return;
-	save_sysfs(filename);
+	save_sysfs(filename.c_str());
 	rfkill_devices.push_back(filename);
 }
 
@@ -154,15 +155,15 @@ static void unrfkill_all_radios(void)
 
 static void find_backlight_callback(const char *d_name)
 {
-	char filename[PATH_MAX];
-	snprintf(filename, sizeof(filename), "/sys/class/backlight/%s/brightness", d_name);
-	if (access(filename, R_OK) != 0)
+	std::string filename;
+	filename = std::format("/sys/class/backlight/{}/brightness", d_name);
+	if (access(filename.c_str(), R_OK) != 0)
 		return;
 
-	save_sysfs(filename);
+	save_sysfs(filename.c_str());
 	backlight_devices.push_back(filename);
-	snprintf(filename, sizeof(filename), "/sys/class/backlight/%s/max_brightness", d_name);
-	blmax = read_sysfs(filename);
+	filename = std::format("/sys/class/backlight/{}/max_brightness", d_name);
+	blmax = read_sysfs(filename.c_str());
 }
 
 static void find_backlight(void)
@@ -180,12 +181,12 @@ static void lower_backlight(void)
 
 static void find_scsi_link_callback(const char *d_name)
 {
-	char filename[PATH_MAX];
-	snprintf(filename, sizeof(filename), "/sys/class/scsi_host/%s/link_power_management_policy", d_name);
-	if (access(filename, R_OK)!=0)
+	std::string filename;
+	filename = std::format("/sys/class/scsi_host/{}/link_power_management_policy", d_name);
+	if (access(filename.c_str(), R_OK)!=0)
 		return;
 
-	save_sysfs(filename);
+	save_sysfs(filename.c_str());
 	scsi_link_devices.push_back(filename);
 }
 
@@ -229,9 +230,8 @@ static void *burn_disk(void *dummy)
 {
 	int fd;
 	char buffer[64*1024];
-	char filename[256];
+	char filename[] = "/tmp/powertop.XXXXXX";
 
-	strcpy(filename ,"/tmp/powertop.XXXXXX");
 	fd = mkstemp(filename);
 
 	if (fd < 0) {
@@ -323,30 +323,29 @@ static void rfkill_calibration(void)
 	}
 	rfkill_all_radios();
 }
-
 static void backlight_calibration(void)
 {
 	unsigned int i;
 
 	printf(_("Calibrating backlight\n"));
 	for (i = 0; i < backlight_devices.size(); i++) {
-		char str[4096];
+		std::string str;
 		printf(_(".... device %s \n"), backlight_devices[i].c_str());
 		lower_backlight();
 		one_measurement(15, 15, NULL);
-		sprintf(str, "%i\n", blmax / 4);
+		str = std::format("{}\n", blmax / 4);
 		write_sysfs(backlight_devices[i], str);
 		one_measurement(15, 15, NULL);
 
-		sprintf(str, "%i\n", blmax / 2);
+		str = std::format("{}\n", blmax / 2);
 		write_sysfs(backlight_devices[i], str);
 		one_measurement(15, 15, NULL);
 
-		sprintf(str, "%i\n", 3 * blmax / 4 );
+		str = std::format("{}\n", 3 * blmax / 4 );
 		write_sysfs(backlight_devices[i], str);
 		one_measurement(15, 15, NULL);
 
-		sprintf(str, "%i\n", blmax);
+		str = std::format("{}\n", blmax);
 		write_sysfs(backlight_devices[i], str);
 		one_measurement(15, 15, NULL);
 		lower_backlight();

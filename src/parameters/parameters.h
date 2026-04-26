@@ -55,13 +55,18 @@ extern map <string, int> param_index;
 extern map <string, int> result_index;
 
 extern int get_param_index(const char *param);
+extern int get_param_index(const std::string &param);
 extern int get_result_index(const char *param);
+extern int get_result_index(const std::string &param);
 
 
 extern void register_parameter(const char *name, double default_value = 0.00, double weight = 1.0);
+extern void register_parameter(const std::string &name, double default_value = 0.00, double weight = 1.0);
 extern double get_parameter_value(const char *name, struct parameter_bundle *bundle = &all_parameters);
+extern double get_parameter_value(const std::string &name, struct parameter_bundle *bundle = &all_parameters);
 extern double get_parameter_value(unsigned int index, struct parameter_bundle *bundle = &all_parameters);
 extern void set_parameter_value(const char *name, double value, struct parameter_bundle *bundle = &all_parameters);
+extern void set_parameter_value(const std::string &name, double value, struct parameter_bundle *bundle = &all_parameters);
 
 
 struct result_bundle
@@ -75,14 +80,17 @@ extern struct result_bundle all_results;
 extern vector <struct result_bundle *> past_results;
 
 extern double get_result_value(const char *name, struct result_bundle *bundle = &all_results);
+extern double get_result_value(const std::string &name, struct result_bundle *bundle = &all_results);
 extern double get_result_value(int index, struct result_bundle *bundle = &all_results);
 
 extern void set_result_value(const char *name, double value, struct result_bundle *bundle = &all_results);
+extern void set_result_value(const std::string &name, double value, struct result_bundle *bundle = &all_results);
 
 
 extern int result_device_exists(const char *name);
 
 extern void report_utilization(const char *name, double value, struct result_bundle *bundle = &all_results);
+extern void report_utilization(const std::string &name, double value, struct result_bundle *bundle = &all_results);
 extern void report_utilization(int index, double value, struct result_bundle *bundle = &all_results);
 
 
@@ -99,7 +107,7 @@ extern struct parameter_bundle * clone_parameters(struct parameter_bundle *bundl
 
 extern void store_results(double duration);
 extern void learn_parameters(int iterations, int do_base_power);
-extern char *get_param_directory(const char *filename);
+extern std::string get_param_directory(const char *filename);
 extern void save_all_results(const char *filename = "saved_results.powertop");
 extern void close_results(void);
 extern void load_results(const char *filename);
