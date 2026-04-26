@@ -185,7 +185,7 @@ void abstract_cpu::measurement_end(void)
 	}
 }
 
-void abstract_cpu::insert_cstate(const string &linux_name, const string &human_name, uint64_t usage, uint64_t duration, int count, int level)
+void abstract_cpu::insert_cstate(const std::string &linux_name, const std::string &human_name, uint64_t usage, uint64_t duration, int count, int level)
 {
 	struct idle_state *state;
 	const char *c;

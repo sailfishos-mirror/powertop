@@ -110,8 +110,8 @@ static void __tuning_update_display(int cursor_pos)
 	wmove(win, 2,0);
 
 	for (i = 0; i < all_tunables.size(); i++) {
-		std::string res = _(all_tunables[i]->result_string().c_str());
-		std::string desc = _(all_tunables[i]->description().c_str());
+		std::string res = all_tunables[i]->result_string();
+		std::string desc = all_tunables[i]->description();
 
 		align_string(res, 12, 12);
 		align_string(desc, 103, 103);
@@ -174,7 +174,7 @@ static bool tunables_sort(class tunable * i, class tunable * j)
 	if (d > 0.0001)
 		return i->score > j->score;
 
-	return i->description() < j->description();
+	return strcasecmp(i->description().c_str(), j->description().c_str()) < 0;
 }
 
 void tuning_window::window_refresh()

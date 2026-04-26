@@ -75,6 +75,8 @@ void sysfs_tunable::toggle(void)
 
 void add_sysfs_tunable(const char *str, const char *_sysfs_path, const char *_target_content)
 {
+	if (access(_sysfs_path, R_OK) != 0)
+		return;
 	class sysfs_tunable *st;
 
 	st = new class sysfs_tunable(str, _sysfs_path, _target_content);
