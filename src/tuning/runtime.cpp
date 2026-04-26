@@ -40,11 +40,6 @@
 #include "../lib.h"
 #include "../devices/runtime_pm.h"
 
-runtime_tunable::runtime_tunable(const char *path, const char *bus, const char *dev, const char *port)
-	: runtime_tunable(string(path ? path : ""), string(bus ? bus : ""), string(dev ? dev : ""), string(port ? port : ""))
-{
-}
-
 runtime_tunable::runtime_tunable(const string &path, const string &bus, const string &dev, const string &port) : tunable("", 0.4, _("Good"), _("Bad"), _("Unknown"))
 {
 	ifstream file;

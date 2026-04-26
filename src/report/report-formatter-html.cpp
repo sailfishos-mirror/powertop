@@ -99,14 +99,12 @@ report_formatter_html::add_doc_footer()
 
 /* ************************************************************************ */
 string
-report_formatter_html::escape_string(const char *str)
+report_formatter_html::escape_string(const string &str)
 {
 	string res;
 
-	assert(str);
-
-	for (const char *i = str; *i; i++) {
-		switch (*i) {
+	for (size_t i = 0; i < str.length(); i++) {
+		switch (str[i]) {
 			case '<':
 				res += "&lt;";
 				continue;
@@ -126,7 +124,7 @@ report_formatter_html::escape_string(const char *str)
 #endif /* REPORT_HTML_ESCAPE_QUOTES */
 		}
 
-		res += *i;
+		res += str[i];
 	}
 
 	return res;
@@ -302,9 +300,9 @@ report_formatter_html::end_div()
 }
 
 void
-report_formatter_html::add_title(struct tag_attr *title_att, const char *title)
+report_formatter_html::add_title(struct tag_attr *title_att, const string &title)
 {
-	addf_exact("<h2 class=\"%s\"> %s </h2>\n", title_att->css_class, title);
+	addf_exact("<h2 class=\"%s\"> %s </h2>\n", title_att->css_class, title.c_str());
 }
 
 void

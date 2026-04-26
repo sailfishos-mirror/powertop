@@ -63,7 +63,15 @@ enum id_input {
 	II_PHY_IDX,
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int get_wifi_power_saving(const char *iface);
 int set_wifi_power_saving(const char *iface, int state);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __IW_H */

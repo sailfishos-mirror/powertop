@@ -36,11 +36,10 @@
 #include <format>
 
 #include "../lib.h"
-
-sysfs_tunable::sysfs_tunable(const char *str, const char *_sysfs_path, const char *_target_content) : tunable(str, 1.5, _("Good"), _("Bad"), _("Unknown"))
+sysfs_tunable::sysfs_tunable(const string &str, const string &_sysfs_path, const string &target_content) : tunable(str, 1.0, _("Good"), _("Bad"), _("Unknown"))
 {
 	sysfs_path = _sysfs_path;
-	target_value = _target_content;
+	target_value = target_content;
 	bad_value = read_sysfs_string(_sysfs_path);
 
 	toggle_good = std::format("echo '{}' > '{}';", target_value, sysfs_path);

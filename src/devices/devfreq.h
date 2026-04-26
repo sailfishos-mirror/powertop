@@ -37,19 +37,19 @@ class devfreq: public device {
 	struct timeval  stamp_before, stamp_after;
 	double sample_time;
 
-	uint64_t parse_freq_time(char *ptr);
+	uint64_t parse_freq_time(const std::string &ptr);
 	void add_devfreq_freq_state(uint64_t freq, uint64_t time);
 	void update_devfreq_freq_state(uint64_t freq, uint64_t time);
-	void parse_devfreq_trans_stat(const char *dname);
+	void parse_devfreq_trans_stat(const std::string &dname);
 	void process_time_stamps();
 
 public:
 
 	vector<class frequency *> dstates;
 
-	devfreq(const char *c);
-	void fill_freq_utilization(unsigned int idx, char *buf);
-	void fill_freq_name(unsigned int idx, char *buf);
+	devfreq(const std::string &c);
+	std::string fill_freq_utilization(unsigned int idx);
+	std::string fill_freq_name(unsigned int idx);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);

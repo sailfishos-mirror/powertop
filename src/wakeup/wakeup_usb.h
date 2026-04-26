@@ -35,7 +35,7 @@ class usb_wakeup : public wakeup {
 	std::string usb_path;
 public:
 	std::string interf;
-	usb_wakeup(const char *usb_path, const char *iface);
+	usb_wakeup(const std::string &usb_path, const std::string &iface);
 
 	virtual int wakeup_value(void);
 

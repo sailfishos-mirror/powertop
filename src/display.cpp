@@ -154,12 +154,15 @@ void show_tab(unsigned int tab)
 	prefresh(win->win, win->ypad_pos, win->xpad_pos, 1, 0, LINES - 3, COLS - 1);
 }
 
-WINDOW *get_ncurses_win(const char *name)
+WINDOW *get_ncurses_win(const string &name)
 {
 	class tab_window *w;
 	WINDOW *win;
 
-	w= tab_windows[name];
+	if (tab_windows.count(name) == 0)
+		return NULL;
+
+	w = tab_windows[name];
 	if (!w)
 		return NULL;
 
@@ -173,18 +176,16 @@ WINDOW *get_ncurses_win(int nr)
 	class tab_window *w;
 	WINDOW *win;
 
-	w= tab_windows[tab_names[nr]];
+	if (nr < 0 || nr >= (int)tab_names.size())
+		return NULL;
+
+	w = tab_windows[tab_names[nr]];
 	if (!w)
 		return NULL;
 
 	win = w->win;
 
 	return win;
-}
-
-WINDOW *get_ncurses_win(const string &name)
-{
-	return get_ncurses_win(name.c_str());
 }
 
 void show_prev_tab(void)

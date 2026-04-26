@@ -37,7 +37,7 @@
 
 #include "../lib.h"
 
-usb_tunable::usb_tunable(const char *path, const char *name) : tunable("", 0.9, _("Good"), _("Bad"), _("Unknown"))
+usb_tunable::usb_tunable(const string &path, const string &name) : tunable("", 0.9, _("Good"), _("Bad"), _("Unknown"))
 {
 	ifstream file;
 	std::string vendor;

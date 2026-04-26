@@ -58,14 +58,14 @@ public:
 	void end_header();
 	void add_div(struct tag_attr *div_attr);
 	void end_div();
-	void add_title(struct tag_attr *title_att, const char *title);
+	void add_title(struct tag_attr *title_att, const std::string &title);
 	void add_navigation();
 	void add_summary_list(string *list, int size);
 	void add_table(string *system_data, struct table_attributes *tb_attr);
 
 private:
 	void add_quotes();
-	string escape_string(const char *str);
+	string escape_string(const std::string &str);
 	bool csv_need_quotes;
 	size_t text_start;
 };

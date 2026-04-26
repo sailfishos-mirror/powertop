@@ -44,15 +44,19 @@ static DIR *dir = NULL;
 
 static vector<class devfreq *> all_devfreq;
 
-devfreq::devfreq(const char* dpath): device()
+devfreq::devfreq(const string &dpath): device()
 {
 	dir_name = dpath;
 }
 
-uint64_t devfreq::parse_freq_time(char* pchr)
+uint64_t devfreq::parse_freq_time(const string &pchr_s)
 {
-	char *cptr, *pptr = pchr;
+	char *cptr, *pptr;
+	char pchr[pchr_s.length() + 1];
 	uint64_t ctime;
+
+	strcpy(pchr, pchr_s.c_str());
+	pptr = pchr;
 
 	cptr = strtok(pchr, " :");
 	while (cptr != NULL) {
@@ -118,7 +122,7 @@ void devfreq::update_devfreq_freq_state(uint64_t freq, uint64_t time)
 	state->time_after = time;
 }
 
-void devfreq::parse_devfreq_trans_stat(const char *dname)
+void devfreq::parse_devfreq_trans_stat(const string &dname)
 {
 	ifstream file;
 	std::string filename;
@@ -163,14 +167,14 @@ void devfreq::start_measurement(void)
 	sample_time = 0;
 
 	gettimeofday(&stamp_before, NULL);
-	parse_devfreq_trans_stat(dir_name.c_str());
+	parse_devfreq_trans_stat(dir_name);
 	/* add device idle state */
 	update_devfreq_freq_state(0, 0);
 }
 
 void devfreq::end_measurement(void)
 {
-	parse_devfreq_trans_stat(dir_name.c_str());
+	parse_devfreq_trans_stat(dir_name);
 	gettimeofday(&stamp_after, NULL);
 	process_time_stamps();
 }
@@ -185,23 +189,21 @@ double devfreq::utilization(void)
 	return 0;
 }
 
-void devfreq::fill_freq_utilization(unsigned int idx, char *buf)
+string devfreq::fill_freq_utilization(unsigned int idx)
 {
-	buf[0] = 0;
-
 	if (idx < dstates.size() && dstates[idx]) {
 		class frequency *state = dstates[idx];
-		sprintf(buf, " %5.1f%% ", percentage(1.0 * state->time_after / sample_time));
+		return std::format(" {:5.1f}% ", percentage(1.0 * state->time_after / sample_time));
 	}
+	return "";
 }
 
-void devfreq::fill_freq_name(unsigned int idx, char *buf)
+string devfreq::fill_freq_name(unsigned int idx)
 {
-	buf[0] = 0;
-
 	if (idx < dstates.size() && dstates[idx]) {
-		sprintf(buf, "%-15s", dstates[idx]->human_name.c_str());
+		return std::format("{:<15}", dstates[idx]->human_name);
 	}
+	return "";
 }
 
 void start_devfreq_measurement(void)
@@ -264,8 +266,6 @@ void display_devfreq_devices(void)
 {
 	unsigned int i, j;
 	WINDOW *win;
-	char fline[1024];
-	char buf[128];
 
 	win = get_ncurses_win("Device Freq stats");
         if (!win)
@@ -290,14 +290,9 @@ void display_devfreq_devices(void)
 		wprintw(win, "\n%s\n", df->device_name().c_str());
 
 		for(j=0; j < df->dstates.size(); j++) {
-			memset(fline, 0, sizeof(fline));
-			strcpy(fline, "\t");
-			df->fill_freq_name(j, buf);
-			strcat(fline, buf);
-			df->fill_freq_utilization(j, buf);
-			strcat(fline, buf);
-			strcat(fline, "\n");
-			wprintw(win, "%s", fline);
+			std::string f_name = df->fill_freq_name(j);
+			std::string f_util = df->fill_freq_utilization(j);
+			wprintw(win, "\t%s%s\n", f_name.c_str(), f_util.c_str());
 		}
 		wprintw(win, "\n");
 	}

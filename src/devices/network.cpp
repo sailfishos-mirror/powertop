@@ -315,7 +315,7 @@ void network::end_measurement(void)
 	if (start_pkts > end_pkts)
 		end_pkts = start_pkts;
 
-	u_powerunsave = 100 - 100 * get_wifi_power_saving(name);
+	u_powerunsave = 100 - 100 * get_wifi_power_saving(name.c_str());
 
 	report_utilization(rindex_link_100, u_100);
 	report_utilization(rindex_link_1000, u_1000);

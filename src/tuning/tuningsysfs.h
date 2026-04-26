@@ -37,7 +37,7 @@ class sysfs_tunable : public tunable {
 	std::string target_value;
 	std::string bad_value;
 public:
-	sysfs_tunable(const char *str, const char *sysfs_path, const char *target_content);
+	sysfs_tunable(const std::string &str, const std::string &sysfs_path, const std::string &target_content);
 
 	virtual int good_bad(void);
 

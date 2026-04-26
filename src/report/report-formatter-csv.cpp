@@ -49,14 +49,12 @@ report_formatter_csv::finish_report()
 
 
 string
-report_formatter_csv::escape_string(const char *str)
+report_formatter_csv::escape_string(const string &str)
 {
 	string res;
 
-	assert(str);
-
-	for (const char *i = str; *i; i++) {
-		switch (*i) {
+	for (size_t i = 0; i < str.length(); i++) {
+		switch (str[i]) {
 			case '"':
 				res += '"';
 #ifdef REPORT_CSV_SPACE_NEED_QUOTES
@@ -68,7 +66,7 @@ report_formatter_csv::escape_string(const char *str)
 				break;
 		}
 
-		res += *i;
+		res += str[i];
 	}
 
 	return res;
@@ -110,10 +108,10 @@ report_formatter_csv::end_div()
 }
 
 void
-report_formatter_csv::add_title(struct tag_attr *title_att, const char *title)
+report_formatter_csv::add_title(struct tag_attr *title_att, const string &title)
 {
 	add_exact("____________________________________________________________________\n");
-	addf_exact(" *  *  *   %s   *  *  *\n", title);
+	addf_exact(" *  *  *   %s   *  *  *\n", title.c_str());
 }
 
 void

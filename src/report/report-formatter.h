@@ -35,10 +35,10 @@ public:
 	virtual ~report_formatter() {}
 
 	virtual void finish_report() {}
-	virtual const char *get_result() {return "Basic report_formatter::get_result() call\n";}
+	virtual std::string get_result() {return "Basic report_formatter::get_result() call\n";}
 	virtual void clear_result() {}
 
-	virtual void add(const char *str) {}
+	virtual void add(const std::string &str) {}
 	virtual void addv(const char *fmt, va_list ap) {}
 
 	/* *** Report Style *** */
@@ -47,7 +47,7 @@ public:
 	virtual void end_header() {}
 	virtual void add_div(struct tag_attr *div_attr) {}
 	virtual void end_div() {}
-	virtual void add_title(struct tag_attr *att_title, const char *title) {}
+	virtual void add_title(struct tag_attr *att_title, const std::string &title) {}
 	virtual void add_navigation() {}
 	virtual void add_summary_list(string *list, int size) {}
 	virtual void add_table(string *system_data,

@@ -39,7 +39,7 @@ using namespace std;
 /* ************************************************************************ */
 
 struct html_section {
-	const char *id;
+	std::string id;
 };
 
 /* ************************************************************************ */
@@ -56,7 +56,7 @@ public:
 	void end_header();
 	void add_div(struct tag_attr *div_attr);
 	void end_div();
-	void add_title(struct tag_attr *title_att, const char *title);
+	void add_title(struct tag_attr *title_att, const std::string &title);
 	void add_navigation();
 	void add_summary_list(string *list, int size);
 	void add_table(string *system_data, struct table_attributes *tb_attr);
@@ -66,7 +66,7 @@ private:
 	void init_markup();
 	void add_doc_header();
 	void add_doc_footer();
-	string escape_string(const char *str);
+	string escape_string(const std::string &str);
 
 };
 

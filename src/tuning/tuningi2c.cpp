@@ -33,7 +33,7 @@
 #include "../lib.h"
 #include "../devices/runtime_pm.h"
 
-i2c_tunable::i2c_tunable(const char *path, const char *name, bool is_adapter) : tunable("", 0.9, _("Good"), _("Bad"), _("Unknown"))
+i2c_tunable::i2c_tunable(const string &path, const string &name, bool is_adapter) : tunable("", 0.9, _("Good"), _("Bad"), _("Unknown"))
 {
 	ifstream file;
 	std::string filename;

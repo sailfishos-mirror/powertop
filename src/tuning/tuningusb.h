@@ -35,7 +35,7 @@ using namespace std;
 class usb_tunable : public tunable {
 	std::string usb_path;
 public:
-	usb_tunable(const char *usb_path, const char *path);
+	usb_tunable(const std::string &usb_path, const std::string &path);
 
 	virtual int good_bad(void);
 

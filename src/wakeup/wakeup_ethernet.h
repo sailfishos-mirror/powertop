@@ -35,7 +35,7 @@ class ethernet_wakeup : public wakeup {
 	std::string eth_path;
 public:
 	std::string interf;
-	ethernet_wakeup(const char *eth_path, const char *iface);
+	ethernet_wakeup(const std::string &eth_path, const std::string &iface);
 
 	virtual int wakeup_value(void);
 

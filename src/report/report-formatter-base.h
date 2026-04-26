@@ -31,20 +31,20 @@
 class report_formatter_string_base: public report_formatter
 {
 public:
-	virtual const char *get_result();
+	virtual std::string get_result();
 	virtual void clear_result();
 
-	virtual void add(const char *str);
+	virtual void add(const std::string &str);
 	virtual void addv(const char *fmt, va_list ap);
 
 protected:
-	void add_exact(const char *str);
+	void add_exact(const std::string &str);
 	void addf(const char *fmt, ...)
 				__attribute__ ((format (printf, 2, 3)));
 	void addf_exact(const char *fmt, ...)
 				__attribute__ ((format (printf, 2, 3)));
 
-	virtual std::string escape_string(const char *str) = 0;
+	virtual std::string escape_string(const std::string &str) = 0;
 
 	std::string result;
 };
