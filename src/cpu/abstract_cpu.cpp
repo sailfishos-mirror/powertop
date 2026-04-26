@@ -64,13 +64,6 @@ void abstract_cpu::account_freq(uint64_t freq, uint64_t duration)
 		if (!state)
 			return;
 
-		state->line_level = 0;
-		state->time_after = 0;
-		state->time_before = 0;
-		state->before_count = 0;
-		state->after_count = 0;
-		state->display_value = 0.0;
-
 		pstates.push_back(state);
 
 		state->freq = freq;
@@ -352,11 +345,6 @@ void abstract_cpu::insert_pstate(uint64_t freq, const char *human_name, uint64_t
 
 	if (!state)
 		return;
-
-	state->line_level = 0;
-	state->time_after = 0;
-	state->after_count = 0;
-	state->display_value = 0.0;
 
 	pstates.push_back(state);
 

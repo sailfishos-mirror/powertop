@@ -536,8 +536,7 @@ void report_display_cpu_cstates(void)
 					if (first_core) {
 						pkg_data[idx1]=__("Package");
 						idx1+=1;
-						sprintf(tmp_num,"%d",  _package->get_number());
-						pkg_data[idx1]= string(tmp_num);
+						pkg_data[idx1]=std::to_string(_package->get_number());
 						idx1+=1;
 					}
 				} else if (first_core) {
@@ -601,8 +600,7 @@ void report_display_cpu_cstates(void)
 					if (line == LEVEL_HEADER) {
 						cpu_data[idx3] = __("CPU");
 						idx3+=1;
-						sprintf(tmp_num,"%d",_cpu->get_number());
-						cpu_data[idx3]=string(tmp_num);
+						cpu_data[idx3]=std::to_string(_cpu->get_number());
 						idx3+=1;
 						continue;
 					}
@@ -757,8 +755,7 @@ void report_display_cpu_pstates(void)
 					if (line == LEVEL_HEADER) {
 						pkg_data[idx1]=__("Package");
 						idx1+=1;
-						sprintf(tmp_num,"%d",  _package->get_number());
-						pkg_data[idx1]= string(tmp_num);
+						pkg_data[idx1]=std::to_string(_package->get_number());
 						idx1+=1;
 					} else {
 						tmp_str=_package->fill_pstate_name(line);
@@ -779,10 +776,10 @@ void report_display_cpu_pstates(void)
 						core_data[idx2]=string(tmp_num);
 						idx2+=1;
 					} else {
-						tmp_str=string(_core->fill_pstate_name(line).c_str());
+						tmp_str=_core->fill_pstate_name(line);
 						core_data[idx2]= (tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx2+=1;
-						tmp_str=string(_core->fill_pstate_line(line).c_str());
+						tmp_str=_core->fill_pstate_line(line);
 						core_data[idx2]= (tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx2+=1;
 					}
@@ -802,13 +799,13 @@ void report_display_cpu_pstates(void)
 					}
 
 					if (first_cpu) {
-						tmp_str=string(_cpu->fill_pstate_name(line).c_str());
+						tmp_str=_cpu->fill_pstate_name(line);
 						cpu_data[idx3]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx3+=1;
 						first_cpu = false;
 					}
 
-					tmp_str=string(_cpu->fill_pstate_line(line).c_str());
+					tmp_str=_cpu->fill_pstate_line(line);
 					cpu_data[idx3]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 					idx3+=1;
 				}
@@ -839,7 +836,6 @@ void report_display_cpu_pstates(void)
 void impl_w_display_cpu_states(int state)
 {
 	WINDOW *win;
-	char buffer[128];
 	char linebuf[1024];
 	unsigned int package, core, cpu;
 	int line, loop, cstates_num, pstates_num;
@@ -891,7 +887,6 @@ void impl_w_display_cpu_states(int state)
 				if (!has_state_level(_package, state, line))
 					continue;
 
-				buffer[0] = 0;
 				if (first_pkg == 0) {
 					strcat(linebuf, fill_state_name(_package, state, line).c_str());
 					expand_string(linebuf, ctr + 10);
@@ -904,7 +899,6 @@ void impl_w_display_cpu_states(int state)
 				ctr += strlen("| ");
 
 				if (!_core->can_collapse()) {
-					buffer[0] = 0;
 					strcat(linebuf, fill_state_name(_core, state, line).c_str());
 					expand_string(linebuf, ctr + 10);
 					strcat(linebuf, fill_state_line(_core, state, line).c_str());
@@ -927,8 +921,7 @@ void impl_w_display_cpu_states(int state)
 						first = 0;
 						ctr += 12;
 					}
-					buffer[0] = 0;
-					strcat(linebuf, fill_state_line(_cpu, state, line, buffer).c_str());
+					strcat(linebuf, fill_state_line(_cpu, state, line).c_str());
 					ctr += 10;
 					expand_string(linebuf, ctr);
 
