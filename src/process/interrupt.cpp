@@ -49,9 +49,9 @@ interrupt::interrupt(const char *_handler, int _number) : power_consumer()
 	char buf[128];
 	running_since = 0;
 	number = _number;
-	pt_strcpy(handler, _handler);
+	handler = _handler;
 	raw_count = 0;
-	snprintf(desc, sizeof(desc), "[%i] %s", number, pretty_print(handler, buf, 128));
+	desc = std::format("[{}] {}", number, pretty_print(handler.c_str(), buf, 128));
 }
 
 
@@ -76,7 +76,7 @@ const char * interrupt::description(void)
 {
 	if (child_runtime > accumulated_runtime)
 		child_runtime = 0;
-	return desc;
+	return desc.c_str();
 }
 
 double interrupt::usage_summary(void)
@@ -94,21 +94,21 @@ const char * interrupt::usage_units_summary(void)
 
 class interrupt * find_create_interrupt(const char *_handler, int nr, int cpu)
 {
-	char handler[64];
+	std::string handler_s;
 	unsigned int i;
 	class interrupt *new_irq;
 
-	pt_strcpy(handler, _handler);
-	if (strcmp(handler, "timer")==0)
-		sprintf(handler, "timer/%i", cpu);
+	handler_s = _handler;
+	if (handler_s == "timer")
+		handler_s = std::format("timer/{}", cpu);
 
 
 	for (i = 0; i < all_interrupts.size(); i++) {
-		if (all_interrupts[i] && all_interrupts[i]->number == nr && strcmp(handler, all_interrupts[i]->handler) == 0)
+		if (all_interrupts[i] && all_interrupts[i]->number == nr && all_interrupts[i]->handler == handler_s)
 			return all_interrupts[i];
 	}
 
-	new_irq = new class interrupt(handler, nr);
+	new_irq = new class interrupt(handler_s.c_str(), nr);
 	all_interrupts.push_back(new_irq);
 	return new_irq;
 }

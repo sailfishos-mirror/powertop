@@ -81,11 +81,9 @@ static void cmdline_to_string(std::string& str)
 
 process::process(const char *_comm, int _pid, int _tid) : power_consumer()
 {
-	char line[4097];
 	ifstream file;
-	ssize_t pos;
 
-	pt_strcpy(comm, _comm);
+	comm = _comm;
 	pid = _pid;
 	is_idle = 0;
 	running = 0;
@@ -95,9 +93,9 @@ process::process(const char *_comm, int _pid, int _tid) : power_consumer()
 	tgid = _tid;
 
 	if (_tid == 0) {
-		sprintf(line, "/proc/%i/status", _pid);
-		file.open(line);
+		file.open(std::format("/proc/{}/status", _pid));
 		while (file) {
+			char line[4097];
 			file.getline(line, 4096);
 			line[4096] = '\0';
 			if (strstr(line, "Tgid")) {
@@ -113,31 +111,21 @@ process::process(const char *_comm, int _pid, int _tid) : power_consumer()
 		file.close();
 	}
 
-	if (strncmp(_comm, "kondemand/", 10) == 0)
+	if (comm.starts_with("kondemand/"))
 		is_idle = 1;
 
-	pos = snprintf(desc, sizeof(desc), "[PID %d] ", pid);
+	desc = std::format("[PID {}] {}", pid, comm);
 
-	if (pos < 0)
-		pos = 0;
-	if ((size_t)pos > sizeof(desc))
-		return;
-
-	strncpy(desc + pos, comm, sizeof(desc) - pos - 1);
-	desc[sizeof(desc) - 1] = '\0';
-
-	sprintf(line, "/proc/%i/cmdline", _pid);
-	file.open(line, ios::binary);
+	file.open(std::format("/proc/{}/cmdline", _pid), ios::binary);
 	if (file) {
 		std::string cmdline(std::istreambuf_iterator<char>(file), (std::istreambuf_iterator<char>()));
 		file.close();
 		if (cmdline.size() < 1) {
 			is_kernel = 1;
-			snprintf(desc + pos, sizeof(desc) - pos, "[%s]", comm);
+			desc = std::format("[PID {}] [{}]", pid, comm);
 		} else {
 			cmdline_to_string(cmdline);
-			strncpy(desc + pos, cmdline.c_str(), sizeof(desc) - pos - 1);
-			desc[sizeof(desc) - 1] = '\0';
+			desc = std::format("[PID {}] {}", pid, cmdline);
 		}
 	}
 }
@@ -148,7 +136,7 @@ const char * process::description(void)
 	if (child_runtime > accumulated_runtime)
 		child_runtime = 0;
 
-	return desc;
+	return desc.c_str();
 }
 
 double process::usage_summary(void)
@@ -163,17 +151,17 @@ const char * process::usage_units_summary(void)
 	return "%";
 }
 
-class process * find_create_process(const char *comm, int pid)
+class process * find_create_process(const char *_comm, int pid)
 {
 	unsigned int i;
 	class process *new_proc;
 
 	for (i = 0; i < all_processes.size(); i++) {
-		if (all_processes[i]->pid == pid && strcmp(comm, all_processes[i]->comm) == 0)
+		if (all_processes[i]->pid == pid && all_processes[i]->comm == _comm)
 			return all_processes[i];
 	}
 
-	new_proc = new class process(comm, pid);
+	new_proc = new class process(_comm, pid);
 	all_processes.push_back(new_proc);
 	return new_proc;
 }
@@ -215,7 +203,7 @@ void merge_processes(void)
 				continue;
 			}
 			/* find dupes and add up */
-			if (!strcmp(one->desc, two->desc)) {
+			if (one->desc == two->desc) {
 				merge_process(one, two);
 				delete *it2;
 				it2 = all_processes.erase(it2);

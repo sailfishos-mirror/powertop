@@ -38,9 +38,9 @@ using namespace std;
 
 work::work(unsigned long address) : power_consumer()
 {
-	pt_strcpy(handler, kernel_function(address));
+	handler = kernel_function(address);
 	raw_count = 0;
-	snprintf(desc, sizeof(desc), "%s", handler);
+	desc = handler;
 }
 
 
@@ -114,7 +114,7 @@ const char * work::description(void)
 	if (child_runtime > accumulated_runtime)
 		child_runtime = 0;
 
-	return desc;
+	return desc.c_str();
 }
 
 

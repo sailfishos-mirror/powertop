@@ -172,17 +172,17 @@ class perf_process_bundle: public perf_bundle
 	virtual void handle_trace_point(void *trace, int cpu, uint64_t time);
 };
 
-static bool comm_is_xorg(char *comm)
+static bool comm_is_xorg(const std::string &comm)
 {
-	return strcmp(comm, "Xorg") == 0 || strcmp(comm, "X") == 0;
+	return comm == "Xorg" || comm == "X";
 }
 
 /* some processes shouldn't be blamed for the wakeup if they wake a process up... for now this is a hardcoded list */
-int dont_blame_me(char *comm)
+int dont_blame_me(const std::string &comm)
 {
 	if (comm_is_xorg(comm))
 		return 1;
-	if (strcmp(comm, "dbus-daemon") == 0)
+	if (comm == "dbus-daemon")
 		return 1;
 
 	return 0;
@@ -310,9 +310,9 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 			class timer *timer;
 			timer = (class timer *) current_consumer(cpu);
 			if (timer && strcmp(timer->name(), "timer")==0) {
-				if (strcmp(timer->handler, "delayed_work_timer_fn") &&
-				    strcmp(timer->handler, "hrtimer_wakeup") &&
-				    strcmp(timer->handler, "it_real_fn"))
+				if (timer->handler != "delayed_work_timer_fn" &&
+				    timer->handler != "hrtimer_wakeup" &&
+				    timer->handler != "it_real_fn")
 					from = timer;
 			}
 			/* woken from interrupt */
@@ -377,7 +377,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 
 		irq->start_interrupt(time);
 
-		if (strstr(irq->handler, "timer") ==NULL)
+		if (irq->handler.find("timer") == string::npos)
 			change_blame(cpu, irq, LEVEL_HARDIRQ);
 
 	}
@@ -460,7 +460,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		push_consumer(cpu, timer);
 		timer->fire(time, tmr);
 
-		if (strcmp(timer->handler, "delayed_work_timer_fn"))
+		if (timer->handler != "delayed_work_timer_fn")
 			change_blame(cpu, timer, LEVEL_TIMER);
 	}
 	else if (strcmp(event->name, "timer_expire_exit") == 0) {
@@ -505,7 +505,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		push_consumer(cpu, timer);
 		timer->fire(time, tmr);
 
-		if (strcmp(timer->handler, "delayed_work_timer_fn"))
+		if (timer->handler != "delayed_work_timer_fn")
 			change_blame(cpu, timer, LEVEL_TIMER);
 	}
 	else if (strcmp(event->name, "hrtimer_expire_exit") == 0) {
@@ -553,7 +553,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		work->fire(time, wk);
 
 
-		if (strcmp(work->handler, "do_dbs_timer") != 0 && strcmp(work->handler, "vmstat_update") != 0)
+		if (work->handler != "do_dbs_timer" && work->handler != "vmstat_update")
 			change_blame(cpu, work, LEVEL_WORK);
 	}
 	else if (strcmp(event->name, "workqueue_execute_end") == 0) {

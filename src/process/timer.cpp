@@ -33,9 +33,11 @@
 #include "../lib.h"
 #include "process.h"
 
+#include <string_view>
+
 using namespace std;
 
-static bool timer_is_deferred(const char *handler)
+static bool timer_is_deferred(string_view handler)
 {
 	FILE    *file;
 	bool    ret = false;
@@ -49,7 +51,7 @@ static bool timer_is_deferred(const char *handler)
 	while (!feof(file)) {
 		if (fgets(line, 4096, file) == NULL)
 			break;
-		if (strstr(line, handler)) {
+		if (strstr(line, handler.data())) {
 			ret = (strstr(line, "D,") != NULL);
 			if (ret == true)
 				break;
@@ -61,7 +63,7 @@ static bool timer_is_deferred(const char *handler)
 
 timer::timer(unsigned long address) : power_consumer()
 {
-	pt_strcpy(handler, kernel_function(address));
+	handler = kernel_function(address);
 	raw_count = 0;
 	deferred = timer_is_deferred(handler);
 }
@@ -125,8 +127,8 @@ const char * timer::description(void)
 	if (child_runtime > accumulated_runtime)
 		child_runtime = 0;
 
-	snprintf(desc, sizeof(desc), "%s", handler);
-	return desc;
+	desc = handler;
+	return desc.c_str();
 }
 
 

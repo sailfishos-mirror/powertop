@@ -42,9 +42,9 @@ Need to collect
 class process : public power_consumer {
 	uint64_t	running_since;
 public:
-	char		desc[256];
+	std::string	desc;
 	int		tgid;
-	char		comm[16];
+	std::string	comm;
 	int		pid;
 
 
@@ -60,7 +60,7 @@ public:
 	virtual void account_disk_dirty(void);
 
 	virtual const char * description(void);
-	virtual std::string description_s(void) { return description(); };
+	virtual std::string description_s(void) { return desc; };
 	virtual const char * name(void) { return "process"; };
 	virtual const char * type(void) { return "Process"; };
 

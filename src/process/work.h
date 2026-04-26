@@ -30,9 +30,9 @@
 #include "powerconsumer.h"
 
 class work : public power_consumer {
-	char desc[256];
+	std::string desc;
 public:
-	char		handler[32];
+	std::string	handler;
 	int		raw_count;
 
 	work(unsigned long work_func);
@@ -41,7 +41,7 @@ public:
 	uint64_t done(uint64_t time, uint64_t work_struct);
 
 	virtual const char * description(void);
-	virtual std::string description_s(void) { return description(); };
+	virtual std::string description_s(void) { return desc; };
 	virtual const char * name(void) { return "work"; };
 	virtual const char * type(void) { return "kWork"; };
 	virtual double usage_summary(void);
