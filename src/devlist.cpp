@@ -224,7 +224,7 @@ int charge_device_to_openers(const char *devstring, double power, class device *
 
 	for (i = 0; i < two.size(); i++)
 		if (two[i]->device.find(devstring) != std::string::npos) {
-			proc = find_create_process(two[i]->comm.c_str(), two[i]->pid);
+			proc = find_create_process(two[i]->comm, two[i]->pid);
 			if (proc) {
 				proc->power_charge += power;
 				if (_dev->guilty.find(two[i]->comm) == std::string::npos) {

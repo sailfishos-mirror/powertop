@@ -151,19 +151,24 @@ const char * process::usage_units_summary(void)
 	return "%";
 }
 
-class process * find_create_process(const char *_comm, int pid)
+class process * find_create_process(const std::string &comm, int pid)
 {
 	unsigned int i;
 	class process *new_proc;
 
 	for (i = 0; i < all_processes.size(); i++) {
-		if (all_processes[i]->pid == pid && all_processes[i]->comm == _comm)
+		if (all_processes[i]->pid == pid && all_processes[i]->comm == comm)
 			return all_processes[i];
 	}
 
-	new_proc = new class process(_comm, pid);
+	new_proc = new class process(comm.c_str(), pid);
 	all_processes.push_back(new_proc);
 	return new_proc;
+}
+
+class process * find_create_process(const char *_comm, int pid)
+{
+	return find_create_process(string(_comm ? _comm : ""), pid);
 }
 
 class process * find_create_process(char *comm, int pid)
