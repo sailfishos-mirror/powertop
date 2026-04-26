@@ -35,6 +35,7 @@ class runtime_tunable : public tunable {
 	std::string runtime_path;
 public:
 	runtime_tunable(const char *runtime_path, const char *bus, const char *dev, const char *port);
+	runtime_tunable(const std::string &runtime_path, const std::string &bus, const std::string &dev, const std::string &port);
 
 	virtual int good_bad(void);
 
