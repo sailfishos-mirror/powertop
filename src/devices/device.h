@@ -48,18 +48,16 @@ public:
 
 	virtual ~device() {};
 
-	void register_sysfs_path(const char *path);
+	void register_sysfs_path(const std::string &path);
 
 	virtual double	utilization(void); /* percentage */
 
 	virtual const char * util_units(void) { return "%"; };
 
-	virtual const char * class_name(void) { return "abstract device";};
-	virtual std::string class_name_s(void) { return class_name(); };
-	virtual const char * device_name(void) { return "abstract device";};
-	virtual std::string device_name_s(void) { return device_name(); };
+	virtual std::string class_name(void) { return "abstract device";};
+	virtual std::string device_name(void) { return "abstract device";};
 
-	virtual std::string human_name(void) { return device_name_s(); };
+	virtual std::string human_name(void) { return device_name(); };
 
 	virtual double power_usage(struct result_bundle *results, struct parameter_bundle *bundle) { return 0.0; };
 

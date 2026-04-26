@@ -46,7 +46,7 @@ public:
 	std::string desc;
 	double score;
 
-	wakeup(const char *str, double _score, const char *enable = "", const char *disable = "");
+	wakeup(const std::string &str, double _score, const std::string &enable = "", const std::string &disable = "");
 	wakeup(void);
 
 	virtual ~wakeup () {};

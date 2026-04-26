@@ -52,10 +52,9 @@ public:
 
 	virtual double	utilization(void); /* percentage */
 
-	virtual const char * class_name(void) { return "usb";};
+	virtual std::string class_name(void) { return "usb";};
 
-	virtual const char * device_name(void) { return devname.c_str(); };
-	virtual std::string device_name_s(void) { return devname; };
+	virtual std::string device_name(void) { return devname; };
 	virtual std::string human_name(void) { return humanname; };
 	virtual void register_power_with_devlist(struct result_bundle *results, struct parameter_bundle *bundle);
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);

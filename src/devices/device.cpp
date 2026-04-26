@@ -62,7 +62,7 @@ device::device(void)
 }
 
 
-void device::register_sysfs_path(const char *path)
+void device::register_sysfs_path(const std::string &path)
 {
 	std::string current_path = path;
 	int iter = 0;

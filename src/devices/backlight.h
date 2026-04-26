@@ -46,10 +46,9 @@ public:
 
 	virtual double	utilization(void); /* percentage */
 
-	virtual const char * class_name(void) { return "backlight";};
+	virtual std::string class_name(void) { return "backlight";};
 
-	virtual const char * device_name(void) { return name.c_str(); };
-	virtual std::string device_name_s(void) { return name; };
+	virtual std::string device_name(void) { return name; };
 	virtual std::string human_name(void) { return "Display backlight";};
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual int grouping_prio(void) { return 10; };

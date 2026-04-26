@@ -195,7 +195,7 @@ int result_device_exists(const char *name)
 {
 	unsigned int i;
 	for (i = 0; i < all_devices.size(); i++) {
-		if (strcmp(all_devices[i]->device_name(), name) == 0)
+		if (all_devices[i]->device_name() == name)
 			return 1;
 	}
 	return 0;

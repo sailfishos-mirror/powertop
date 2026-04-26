@@ -52,7 +52,7 @@ public:
 	double score;
 
 	tunable(void);
-	tunable(const char *str, double _score, const char *good = "", const char *bad = "", const char *neutral ="");
+	tunable(const std::string &str, double _score, const std::string &good = "", const std::string &bad = "", const std::string &neutral ="");
 
 	void dump_cmd_good(FILE *fp) {
 		(void) fprintf(fp, "\n### %s\n# %s\n", desc.c_str(), toggle_good.c_str());
@@ -83,15 +83,6 @@ public:
 		if (good_bad() == TUNE_GOOD)
 			return toggle_bad;
 		return toggle_good;
-	}
-
-	virtual const char *toggle_script_c(void) {
-		std::string s = toggle_script();
-		if (s.empty())
-			return NULL;
-		if (good_bad() == TUNE_GOOD)
-			return toggle_bad.c_str();
-		return toggle_good.c_str();
 	}
 };
 

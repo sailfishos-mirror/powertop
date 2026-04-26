@@ -42,10 +42,9 @@ public:
 
 	virtual double	utilization(void); /* percentage */
 
-	virtual const char * class_name(void) { return "light";};
+	virtual std::string class_name(void) { return "light";};
 
-	virtual const char * device_name(void) { return "Light-1";};
-	virtual std::string device_name_s(void) { return human_name(); };
+	virtual std::string device_name(void) { return "Light-1";};
 	virtual std::string human_name(void) { return "Thinkpad light";};
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual const char * util_units(void) { return "%"; };

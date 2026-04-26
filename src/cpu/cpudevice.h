@@ -48,12 +48,10 @@ protected:
 	std::vector<device *>child_devices;
 
 public:
-	cpudevice(const char *classname = "cpu", const char *device_name = "cpu0", class abstract_cpu *_cpu = NULL);
-	virtual const char * class_name(void) { return _class.c_str(); };
-	virtual std::string class_name_s(void) { return _class; };
+	cpudevice(const std::string &classname = "cpu", const std::string &device_name = "cpu0", class abstract_cpu *_cpu = NULL);
+	virtual std::string class_name(void) { return _class; };
 
-	virtual const char * device_name(void);
-	virtual std::string device_name_s(void) { return _cpuname; };
+	virtual std::string device_name(void);
 	virtual std::string human_name(void);
 
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);

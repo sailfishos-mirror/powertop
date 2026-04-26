@@ -287,7 +287,7 @@ void display_devfreq_devices(void)
 	for (i=0; i<all_devfreq.size(); i++) {
 
 		class devfreq *df = all_devfreq[i];
-		wprintw(win, "\n%s\n", df->device_name());
+		wprintw(win, "\n%s\n", df->device_name().c_str());
 
 		for(j=0; j < df->dstates.size(); j++) {
 			memset(fline, 0, sizeof(fline));

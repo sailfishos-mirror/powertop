@@ -33,7 +33,7 @@ using namespace std;
 
 std::vector<class wakeup *> wakeup_all;
 
-wakeup::wakeup(const char *str, double _score, const char *enable, const char *disable)
+wakeup::wakeup(const string &str, double _score, const string &enable, const string &disable)
 {
 	score = _score;
         desc = str;

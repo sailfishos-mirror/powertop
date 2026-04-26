@@ -32,10 +32,10 @@ std::vector<class tunable *> all_tunables;
 std::vector<class tunable *> all_untunables;
 
 
-tunable::tunable(const char *str, double _score, const char *good, const char *bad, const char *neutral)
+tunable::tunable(const string &str, double _score, const string &good, const string &bad, const string &neutral)
 {
-	score = _score;
 	desc = str;
+	score = _score;
 	good_string = good;
 	bad_string = bad;
 	neutral_string = neutral;

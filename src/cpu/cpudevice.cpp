@@ -31,7 +31,7 @@
 #include "../parameters/parameters.h"
 
 
-cpudevice::cpudevice(const char *classname, const char *dev_name, class abstract_cpu *_cpu)
+cpudevice::cpudevice(const std::string &classname, const std::string &dev_name, class abstract_cpu *_cpu)
 {
 	_class = classname;
 	_cpuname = dev_name;
@@ -42,9 +42,9 @@ cpudevice::cpudevice(const char *classname, const char *dev_name, class abstract
 	r_consumption_index = get_result_index("cpu-consumption");;
 }
 
-const char * cpudevice::device_name(void)
+std::string cpudevice::device_name(void)
 {
-	return _cpuname.c_str();
+	return _cpuname;
 }
 
 std::string cpudevice::human_name(void)
