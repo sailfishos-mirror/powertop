@@ -86,14 +86,14 @@ static class abstract_cpu * new_package(int package, int cpu, const std::string 
 	cpudev = new class cpudevice(_("cpu package"), packagename.c_str(), ret);
 	all_devices.push_back(cpudev);
 
-	packagename = std::format("package-{}", cpu);
+	packagename = pt_format(_("package-{}"), cpu);
 	cpu_rapl_dev = new class cpu_rapl_device(cpudev, _("cpu rapl package"), packagename.c_str(), ret);
 	if (cpu_rapl_dev->device_present())
 		all_devices.push_back(cpu_rapl_dev);
 	else
 		delete cpu_rapl_dev;
 
-	packagename = std::format("package-{}", cpu);
+	packagename = pt_format(_("package-{}"), cpu);
 	dram_rapl_dev = new class dram_rapl_device(cpudev, _("dram rapl package"), packagename.c_str(), ret);
 	if (dram_rapl_dev->device_present())
 		all_devices.push_back(dram_rapl_dev);

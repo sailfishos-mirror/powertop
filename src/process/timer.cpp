@@ -51,7 +51,7 @@ static bool timer_is_deferred(string_view handler)
 	while (!feof(file)) {
 		if (fgets(line, 4096, file) == NULL)
 			break;
-		if (strstr(line, handler.data())) {
+		if (strstr(line, string(handler).c_str())) {
 			ret = (strstr(line, "D,") != NULL);
 			if (ret == true)
 				break;

@@ -351,6 +351,12 @@ static void backlight_calibration(void)
 		lower_backlight();
 		sleep(1);
 	}
+	printf(_("Calibrating idle\n"));
+	if(!system("DISPLAY=:0 /usr/bin/xset dpms force off"))
+		printf("System is not available\n");
+	one_measurement(15, 15, NULL);
+	if(!system("DISPLAY=:0 /usr/bin/xset dpms force on"))
+		printf("System is not available\n");
 }
 
 static void idle_calibration(void)

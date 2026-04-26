@@ -878,7 +878,11 @@ void process_update_display(void)
 		else if (all_power[i]->events() <= 0.3)
 			events = std::format("{:5.2f}", all_power[i]->events());
 
-		wprintw(win, "%s  %-14s %-12s %-14s %s\n", 
+		align_string(name, 14, 20);
+		align_string(usage, 14, 20);
+		align_string(events, 12, 20);
+
+		wprintw(win, "%s  %s %s %s %s\n", 
 			power.c_str(), 
 			usage.c_str(), 
 			events.c_str(), 

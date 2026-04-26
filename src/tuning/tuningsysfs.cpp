@@ -40,10 +40,8 @@ sysfs_tunable::sysfs_tunable(const string &str, const string &_sysfs_path, const
 {
 	sysfs_path = _sysfs_path;
 	target_value = target_content;
-	bad_value = read_sysfs_string(_sysfs_path);
 
 	toggle_good = std::format("echo '{}' > '{}';", target_value, sysfs_path);
-	toggle_bad = std::format("echo '{}' > '{}';", bad_value, sysfs_path);
 }
 
 int sysfs_tunable::good_bad(void)
@@ -55,6 +53,8 @@ int sysfs_tunable::good_bad(void)
 	if (content == target_value)
 		return TUNE_GOOD;
 
+	bad_value = content;
+	toggle_bad = std::format("echo '{}' > '{}';", bad_value, sysfs_path);
 	return TUNE_BAD;
 }
 
@@ -64,7 +64,8 @@ void sysfs_tunable::toggle(void)
 	good = good_bad();
 
 	if (good == TUNE_GOOD) {
-		write_sysfs(sysfs_path.c_str(), bad_value.c_str());
+		if (bad_value.length() > 0)
+			write_sysfs(sysfs_path.c_str(), bad_value.c_str());
 		return;
 	}
 
@@ -87,7 +88,7 @@ static void add_sata_callback(const char *d_name)
 	if (access(filename.c_str(), R_OK) != 0)
 		return;
 
-	add_sysfs_tunable(_("SATA link power management for host"), filename.c_str(), "min_power");
+	add_sysfs_tunable(pt_format(_("Enable SATA link power management for {}"), d_name).c_str(), filename.c_str(), "med_power_with_dipm");
 }
 
 void add_sata_tunables(void)
