@@ -1,21 +1,21 @@
 #ifndef __INCLUDE_GUARD_DEVLIST_H__
 #define __INCLUDE_GUARD_DEVLIST_H__
 
+#include <string>
+
 struct devuser {
 	unsigned int pid;
-	char comm[32];
-	char device[252];
+	std::string comm;
+	std::string device;
 };
 
 class device;
 
 struct devpower {
-	char device[252];
+	std::string device;
 	double power;
 	class device *dev;
 };
-
-#include <string>
 
 extern void clean_open_devices();
 extern void collect_open_devices(void);

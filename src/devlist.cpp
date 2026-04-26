@@ -78,15 +78,15 @@ void clean_open_devices()
 	unsigned int i=0;
 
 	for (i = 0; i < one.size(); i++) {
-		free(one[i]);
+		delete one[i];
 	}
 
 	for (i = 0; i < two.size(); i++) {
-		free(two[i]);
+		delete two[i];
 	}
 
 	for (i = 0; i < devpower.size(); i++){
-		free(devpower[i]);
+		delete devpower[i];
 	}
 }
 
@@ -94,7 +94,7 @@ void collect_open_devices(void)
 {
 	struct dirent *entry;
 	DIR *dir;
-	char filename[PATH_MAX];
+	std::string filename;
 	char link[PATH_MAX];
 	unsigned int i;
 	vector<struct devuser *> *target;
@@ -105,7 +105,7 @@ void collect_open_devices(void)
 		target = &two;
 
 	for (i = 0; i < target->size(); i++) {
-		free((*target)[i]);
+		delete (*target)[i];
 	}
 	target->resize(0);
 
@@ -125,9 +125,9 @@ void collect_open_devices(void)
 		if (strcmp(entry->d_name, "self") == 0)
 			continue;
 
-		snprintf(filename, sizeof(filename), "/proc/%s/fd/", entry->d_name);
+		filename = std::format("/proc/{}/fd/", entry->d_name);
 
-		dir2 = opendir(filename);
+		dir2 = opendir(filename.c_str());
 		if (!dir2)
 			continue;
 		while (1) {
@@ -138,9 +138,9 @@ void collect_open_devices(void)
 				break;
 			if (!isdigit(entry2->d_name[0]))
 				continue;
-			snprintf(filename, sizeof(filename), "/proc/%s/fd/%s", entry->d_name, entry2->d_name);
+			filename = std::format("/proc/{}/fd/{}", entry->d_name, entry2->d_name);
 			memset(link, 0, sizeof(link));
-			ret = readlink(filename, link, sizeof(link) - 1);
+			ret = readlink(filename.c_str(), link, sizeof(link) - 1);
 			if (ret < 0)
 				continue;
 
@@ -162,14 +162,12 @@ void collect_open_devices(void)
 				continue;
 
 			if (strncmp(link, "/dev", 4)==0) {
-				dev = (struct devuser *)malloc(sizeof(struct devuser));
+				dev = new(std::nothrow) struct devuser;
 				if (!dev)
 					continue;
 				dev->pid = strtoull(entry->d_name, NULL, 10);
-				strncpy(dev->device, link, 251);
-				dev->device[251] = '\0';
-				pt_strcpy(dev->comm, read_sysfs_string(std::format("/proc/{}/comm", entry->d_name)).c_str());
-				dev->comm[31] = '\0';
+				dev->device = link;
+				dev->comm = read_sysfs_string(std::format("/proc/{}/comm", entry->d_name));
 				target->push_back(dev);
 
 			}
@@ -194,11 +192,11 @@ int charge_device_to_openers(const char *devstring, double power, class device *
 	/* 1. count the number of openers */
 
 	for (i = 0; i < one.size(); i++) {
-		if (strstr(one[i]->device, devstring))
+		if (one[i]->device.find(devstring) != std::string::npos)
 			openers++;
 	}
 	for (i = 0; i < two.size(); i++) {
-		if (strstr(two[i]->device, devstring))
+		if (two[i]->device.find(devstring) != std::string::npos)
 			openers++;
 	}
 
@@ -213,8 +211,8 @@ int charge_device_to_openers(const char *devstring, double power, class device *
 	/* 3. for each process that has it open, add the charge */
 
 	for (i = 0; i < one.size(); i++)
-		if (strstr(one[i]->device, devstring)) {
-			proc = find_create_process(one[i]->comm, one[i]->pid);
+		if (one[i]->device.find(devstring) != std::string::npos) {
+			proc = find_create_process(one[i]->comm.c_str(), one[i]->pid);
 			if (proc) {
 				proc->power_charge += power;
 				if (_dev->guilty.find(one[i]->comm) == std::string::npos) {
@@ -225,8 +223,8 @@ int charge_device_to_openers(const char *devstring, double power, class device *
 		}
 
 	for (i = 0; i < two.size(); i++)
-		if (strstr(two[i]->device, devstring)) {
-			proc = find_create_process(two[i]->comm, two[i]->pid);
+		if (two[i]->device.find(devstring) != std::string::npos) {
+			proc = find_create_process(two[i]->comm.c_str(), two[i]->pid);
 			if (proc) {
 				proc->power_charge += power;
 				if (_dev->guilty.find(two[i]->comm) == std::string::npos) {
@@ -262,8 +260,10 @@ void register_devpower(const std::string &devstring, double power, class device 
 		}
 
 	if (!dev) {
-		dev = (struct devpower *)malloc(sizeof (struct devpower));
-		pt_strcpy(dev->device, devstring.c_str());
+		dev = new(std::nothrow) struct devpower;
+		if (!dev)
+			return;
+		dev->device = devstring;
 		dev->power = 0.0;
 		devpower.push_back(dev);
 	}
@@ -282,7 +282,7 @@ void run_devpower_list(void)
 
 	for (i = 0; i < devpower.size(); i++) {
 		int ret;
-		ret = charge_device_to_openers(devpower[i]->device, devpower[i]->power, devpower[i]->dev);
+		ret = charge_device_to_openers(devpower[i]->device.c_str(), devpower[i]->power, devpower[i]->dev);
 		if (ret)
 			devpower[i]->dev->hide = true;
 		else
@@ -297,17 +297,16 @@ static bool devlist_sort(struct devuser * i, struct devuser * j)
 	if (i->pid != j->pid)
 		return i->pid < j->pid;
 
-	return (strcmp(i->device, j->device)< 0);
+	return i->device < j->device;
 }
 
 void report_show_open_devices(void)
 {
 	vector<struct devuser *> *target;
 	unsigned int i;
-	char prev[128], proc[128];
+	std::string prev, proc;
 	int idx, cols, rows;
 
-	prev[0] = 0;
 	if (phase == 1)
 		target = &one;
 	else
@@ -336,15 +335,15 @@ void report_show_open_devices(void)
 	process_data[1]=__("Device");
 
 	for (i = 0; i < target->size(); i++) {
-		proc[0] = 0;
-		if (strcmp(prev, (*target)[i]->comm) != 0)
-			snprintf(proc, sizeof(proc), "%s", (*target)[i]->comm);
+		proc = "";
+		if (prev != (*target)[i]->comm)
+			proc = (*target)[i]->comm;
 
-		process_data[idx]=string(proc);
+		process_data[idx]=proc;
 		idx+=1;
-		process_data[idx]=string((*target)[i]->device);
+		process_data[idx]=(*target)[i]->device;
 		idx+=1;
-		snprintf(prev, sizeof(prev), "%s", (*target)[i]->comm);
+		prev = (*target)[i]->comm;
 	}
 
 	/* Report Output */
