@@ -28,8 +28,6 @@
 #include "measurement.h"
 
 class acpi_power_meter: public power_meter {
-	char battery_name[256];
-
 	double capacity;
 	double rate;
 	double voltage;

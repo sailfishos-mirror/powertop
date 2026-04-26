@@ -28,8 +28,6 @@
 #include "measurement.h"
 
 class sysfs_power_meter: public power_meter {
-	char name[256];
-
 	double capacity;
 	double rate;
 

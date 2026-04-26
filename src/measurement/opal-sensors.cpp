@@ -29,9 +29,8 @@
 #include <stdio.h>
 #include <limits.h>
 
-opal_sensors_power_meter::opal_sensors_power_meter(const char *power_supply_name)
+opal_sensors_power_meter::opal_sensors_power_meter(const char *power_supply_name) : power_meter(power_supply_name)
 {
-	strncpy(name, power_supply_name, sizeof(name));
 }
 
 double opal_sensors_power_meter::power(void)
@@ -40,7 +39,7 @@ double opal_sensors_power_meter::power(void)
 	int value;
 	double r = 0;
 
-	value = read_sysfs(name, &ok);
+	value = read_sysfs(name.c_str(), &ok);
 
 	if(ok)
 		r = value / 1000000.0;

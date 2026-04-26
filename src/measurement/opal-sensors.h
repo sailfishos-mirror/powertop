@@ -29,7 +29,6 @@
 #include <limits.h>
 
 class opal_sensors_power_meter: public power_meter {
-	char name[PATH_MAX];
 public:
 	opal_sensors_power_meter(const char *power_supply_name);
 	virtual void start_measurement(void) {};

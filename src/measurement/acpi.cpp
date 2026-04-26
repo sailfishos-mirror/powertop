@@ -34,12 +34,11 @@
 
 using namespace std;
 
-acpi_power_meter::acpi_power_meter(const char *acpi_name)
+acpi_power_meter::acpi_power_meter(const char *acpi_name) : power_meter(acpi_name)
 {
 	rate = 0.0;
 	capacity = 0.0;
 	voltage = 0.0;
-	pt_strcpy(battery_name, acpi_name);
 }
 
 /*
@@ -73,7 +72,7 @@ void acpi_power_meter::measure(void)
 	voltage = 0;
 	capacity = 0;
 
-	snprintf(filename, sizeof(filename), "/proc/acpi/battery/%s/state", battery_name);
+	snprintf(filename, sizeof(filename), "/proc/acpi/battery/%s/state", name.c_str());
 
 	file.open(filename, ios::in);
 	if (!file)

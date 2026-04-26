@@ -266,13 +266,12 @@ static double extech_read(int fd)
 	return -1000.0;
 }
 
-extech_power_meter::extech_power_meter(const char *extech_name)
+extech_power_meter::extech_power_meter(const char *extech_name) : power_meter(extech_name)
 {
 	rate = 0.0;
-	pt_strcpy(dev_name, extech_name);
 	int ret;
 
-	fd = open_device(dev_name);
+	fd = open_device(name.c_str());
 	if (fd < 0)
 		return;
 

@@ -29,7 +29,6 @@
 #include "measurement.h"
 
 class extech_power_meter: public power_meter {
-	char dev_name[256];
 	int fd;
 
 	double rate;
