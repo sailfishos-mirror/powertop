@@ -369,28 +369,28 @@ static int has_state_level(class abstract_cpu *acpu, int state, int line)
 	return 0;
 }
 
-static const char * fill_state_name(class abstract_cpu *acpu, int state, int line, char *buf)
+static std::string fill_state_name(class abstract_cpu *acpu, int state, int line)
 {
 	switch (state) {
 		case PSTATE:
-			return acpu->fill_pstate_name(line, buf);
+			return acpu->fill_pstate_name(line);
 			break;
 		case CSTATE:
-			return acpu->fill_cstate_name(line, buf);
+			return acpu->fill_cstate_name(line);
 			break;
 	}
 	return "-EINVAL";
 }
 
-static const char * fill_state_line(class abstract_cpu *acpu, int state, int line,
-					char *buf, const char *sep = "")
+static std::string fill_state_line(class abstract_cpu *acpu, int state, int line,
+					const char *sep = "")
 {
 	switch (state) {
 		case PSTATE:
-			return acpu->fill_pstate_line(line, buf);
+			return acpu->fill_pstate_line(line);
 			break;
 		case CSTATE:
-			return acpu->fill_cstate_line(line, buf, sep);
+			return acpu->fill_cstate_line(line, sep);
 			break;
 	}
 	return "-EINVAL";
@@ -448,7 +448,7 @@ static int get_cstates_num(void)
 
 void report_display_cpu_cstates(void)
 {
-	char buffer[512], buffer2[512], tmp_num[50];
+	char tmp_num[50];
 	unsigned int package, core, cpu;
 	int line, cstates_num, title=0, core_num=0;
 	class abstract_cpu *_package, *_core = NULL, * _cpu;
@@ -532,8 +532,6 @@ void report_display_cpu_cstates(void)
 				bool first_cpu = true;
 				if (!_package->has_cstate_level(line))
 				continue;
-				buffer[0] = 0;
-				buffer2[0] = 0;
 				if (line == LEVEL_HEADER) {
 					if (first_core) {
 						pkg_data[idx1]=__("Package");
@@ -543,18 +541,16 @@ void report_display_cpu_cstates(void)
 						idx1+=1;
 					}
 				} else if (first_core) {
-					tmp_str=string(_package->fill_cstate_name(line, buffer));
+					tmp_str=_package->fill_cstate_name(line);
 					pkg_data[idx1]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 					idx1+=1;
-					tmp_str=string(_package->fill_cstate_line(line, buffer2));
+					tmp_str=_package->fill_cstate_line(line);
 					pkg_data[idx1]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 					idx1+=1;
 				}
 
 				/* *** CORE STARTS *** */
 				if (!_core->can_collapse()) {
-					buffer[0] = 0;
-					buffer2[0] = 0;
 					
 					/*
 						* Patch for compatibility with Ryzen processors
@@ -588,10 +584,10 @@ void report_display_cpu_cstates(void)
 					} else {
 
 						
-						tmp_str=string(_core->fill_cstate_name(line, buffer));
+						tmp_str=_core->fill_cstate_name(line);
 						core_data[idx2]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx2+=1;
-						tmp_str=string(_core->fill_cstate_line(line, buffer2));
+						tmp_str=_core->fill_cstate_line(line);
 						core_data[idx2]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx2+=1;
 					}
@@ -613,18 +609,17 @@ void report_display_cpu_cstates(void)
 
 					if (first_cpu) {
 						title+=1;
-						cpu_data[idx3]=(string(_cpu->fill_cstate_name(line, buffer)));
+						cpu_data[idx3]=_cpu->fill_cstate_name(line);
 						idx3+=1;
 						first_cpu = false;
 					}
 
-					buffer[0] = 0;
-					tmp_str=string(_cpu->fill_cstate_percentage(line, buffer));
+					tmp_str=_cpu->fill_cstate_percentage(line);
 					cpu_data[idx3]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 					idx3+=1;
 
 					if (line != LEVEL_C0){
-						tmp_str=string(_cpu->fill_cstate_time(line, buffer));
+						tmp_str=_cpu->fill_cstate_time(line);
 						cpu_data[idx3]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx3+=1;
 					} else {
@@ -661,7 +656,7 @@ void report_display_cpu_cstates(void)
 
 void report_display_cpu_pstates(void)
 {
-	char buffer[512], buffer2[512], tmp_num[50];
+	char tmp_num[50];
 	unsigned int package, core, cpu;
 	int line, title=0;
 	class abstract_cpu *_package, *_core = NULL, * _cpu;
@@ -758,8 +753,6 @@ void report_display_cpu_pstates(void)
 				if (!_package->has_pstate_level(line))
 					continue;
 
-				buffer[0] = 0;
-				buffer2[0] = 0;
 				if (first_core) {
 					if (line == LEVEL_HEADER) {
 						pkg_data[idx1]=__("Package");
@@ -768,10 +761,10 @@ void report_display_cpu_pstates(void)
 						pkg_data[idx1]= string(tmp_num);
 						idx1+=1;
 					} else {
-						tmp_str=string(_package->fill_pstate_name(line, buffer));
+						tmp_str=_package->fill_pstate_name(line);
 						pkg_data[idx1]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx1+=1;
-						tmp_str=string(_package->fill_pstate_line(line, buffer2));
+						tmp_str=_package->fill_pstate_line(line);
 						pkg_data[idx1]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx1+=1;
 					}
@@ -779,8 +772,6 @@ void report_display_cpu_pstates(void)
 
 
 				if (!_core->can_collapse()) {
-					buffer[0] = 0;
-					buffer2[0] = 0;
 					if (line == LEVEL_HEADER) {
 						core_data[idx2]="";
 						idx2+=1;
@@ -788,10 +779,10 @@ void report_display_cpu_pstates(void)
 						core_data[idx2]=string(tmp_num);
 						idx2+=1;
 					} else {
-						tmp_str=string(_core->fill_pstate_name(line, buffer));
+						tmp_str=string(_core->fill_pstate_name(line).c_str());
 						core_data[idx2]= (tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx2+=1;
-						tmp_str=string(_core->fill_pstate_line(line, buffer2));
+						tmp_str=string(_core->fill_pstate_line(line).c_str());
 						core_data[idx2]= (tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx2+=1;
 					}
@@ -799,7 +790,6 @@ void report_display_cpu_pstates(void)
 
 				/* CPU */
 				for (cpu = 0; cpu < _core->children.size(); cpu++) {
-					buffer[0] = 0;
 					_cpu = _core->children[cpu];
 					if (!_cpu)
 						continue;
@@ -812,14 +802,13 @@ void report_display_cpu_pstates(void)
 					}
 
 					if (first_cpu) {
-						tmp_str=string(_cpu->fill_pstate_name(line, buffer));
+						tmp_str=string(_cpu->fill_pstate_name(line).c_str());
 						cpu_data[idx3]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 						idx3+=1;
 						first_cpu = false;
 					}
 
-					buffer[0] = 0;
-					tmp_str=string(_cpu->fill_pstate_line(line, buffer));
+					tmp_str=string(_cpu->fill_pstate_line(line).c_str());
 					cpu_data[idx3]=(tmp_str=="" ? "&nbsp;" : tmp_str);
 					idx3+=1;
 				}
@@ -904,9 +893,9 @@ void impl_w_display_cpu_states(int state)
 
 				buffer[0] = 0;
 				if (first_pkg == 0) {
-					strcat(linebuf, fill_state_name(_package, state, line, buffer));
+					strcat(linebuf, fill_state_name(_package, state, line).c_str());
 					expand_string(linebuf, ctr + 10);
-					strcat(linebuf, fill_state_line(_package, state, line, buffer));
+					strcat(linebuf, fill_state_line(_package, state, line).c_str());
 				}
 				ctr += 20;
 				expand_string(linebuf, ctr);
@@ -916,9 +905,9 @@ void impl_w_display_cpu_states(int state)
 
 				if (!_core->can_collapse()) {
 					buffer[0] = 0;
-					strcat(linebuf, fill_state_name(_core, state, line, buffer));
+					strcat(linebuf, fill_state_name(_core, state, line).c_str());
 					expand_string(linebuf, ctr + 10);
-					strcat(linebuf, fill_state_line(_core, state, line, buffer));
+					strcat(linebuf, fill_state_line(_core, state, line).c_str());
 					ctr += 20;
 					expand_string(linebuf, ctr);
 
@@ -932,13 +921,14 @@ void impl_w_display_cpu_states(int state)
 						continue;
 
 					if (first == 1) {
-						strcat(linebuf, fill_state_name(_cpu, state, line, buffer));
+						std::string str = fill_state_name(_cpu, state, line);
+						strcat(linebuf, str.c_str());
 						expand_string(linebuf, ctr + 10);
 						first = 0;
 						ctr += 12;
 					}
 					buffer[0] = 0;
-					strcat(linebuf, fill_state_line(_cpu, state, line, buffer));
+					strcat(linebuf, fill_state_line(_cpu, state, line, buffer).c_str());
 					ctr += 10;
 					expand_string(linebuf, ctr);
 
@@ -1076,4 +1066,8 @@ void clear_all_cpus(void)
 		delete all_cpus[i];
 	}
 	all_cpus.clear();
+}
+
+frequency::frequency()
+{
 }

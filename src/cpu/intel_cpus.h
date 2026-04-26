@@ -84,7 +84,7 @@ public:
 	virtual void	measurement_end(void);
 	virtual int     can_collapse(void) { return 0;};
 
-	virtual char *  fill_pstate_line(int line_nr, char *buffer);
+	virtual std::string  fill_pstate_line(int line_nr);
 };
 
 class nhm_core: public cpu_core, public intel_util
@@ -107,7 +107,7 @@ public:
 	virtual void	measurement_end(void);
 	virtual int     can_collapse(void) { return 0;};
 
-	virtual char *  fill_pstate_line(int line_nr, char *buffer);
+	virtual std::string  fill_pstate_line(int line_nr);
 };
 
 class nhm_cpu: public cpu_linux, public intel_util
@@ -126,8 +126,8 @@ public:
 	virtual void	measurement_end(void);
 	virtual int     can_collapse(void) { return 0;};
 
-	virtual char *  fill_pstate_name(int line_nr, char *buffer);
-	virtual char *  fill_pstate_line(int line_nr, char *buffer);
+	virtual std::string  fill_pstate_name(int line_nr);
+	virtual std::string  fill_pstate_line(int line_nr);
 	virtual int	has_pstate_level(int level);
 };
 
@@ -163,9 +163,9 @@ public:
 	virtual void	measurement_end(void);
 	virtual int     can_collapse(void) { return 0;};
 
-	virtual char *  fill_pstate_line(int line_nr, char *buffer);
-	virtual char *  fill_pstate_name(int line_nr, char *buffer);
-	virtual char *  fill_cstate_line(int line_nr, char *buffer, const char *separator);
+	virtual std::string  fill_pstate_line(int line_nr);
+	virtual std::string  fill_pstate_name(int line_nr);
+	virtual std::string  fill_cstate_line(int line_nr, const char *separator);
 	virtual int	has_pstate_level(int level) { return 0; };
 	virtual int	has_pstates(void) { return 0; };
 	virtual void	wiggle(void) { };

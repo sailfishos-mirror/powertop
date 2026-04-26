@@ -28,56 +28,51 @@
 
 #include "../parameters/parameters.h"
 
-char * cpu_core::fill_cstate_line(int line_nr, char *buffer, const char *separator)
+#include <format>
+
+std::string cpu_core::fill_cstate_line(int line_nr, const char *separator)
 {
 	unsigned int i;
-	buffer[0] = 0;
 
 	if (line_nr == LEVEL_HEADER)
-		sprintf(buffer, this->has_intel_MSR ? _(" Core(HW)"): _(" Core(OS)"));
+		return this->has_intel_MSR ? _(" Core(HW)"): _(" Core(OS)");
 
 	for (i = 0; i < cstates.size(); i++) {
 		if (cstates[i]->line_level != line_nr)
 			continue;
-		sprintf(buffer,"%5.1f%%", percentage(cstates[i]->duration_delta / time_factor));
+		return std::format("{:5.1f}%", percentage(cstates[i]->duration_delta / time_factor));
 	}
 
-	return buffer;
+	return "";
 }
 
 
-char * cpu_core::fill_cstate_name(int line_nr, char *buffer)
+std::string cpu_core::fill_cstate_name(int line_nr)
 {
 	unsigned int i;
-	buffer[0] = 0;
 
 	for (i = 0; i < cstates.size(); i++) {
 		if (cstates[i]->line_level != line_nr)
 			continue;
 
-		sprintf(buffer,"%s", cstates[i]->human_name);
+		return cstates[i]->human_name;
 	}
 
-	return buffer;
+	return "";
 }
 
 
 
-char * cpu_core::fill_pstate_name(int line_nr, char *buffer)
+std::string cpu_core::fill_pstate_name(int line_nr)
 {
-	buffer[0] = 0;
-
 	if (line_nr >= (int)pstates.size() || line_nr < 0)
-		return buffer;
+		return "";
 
-	sprintf(buffer,"%s", pstates[line_nr]->human_name);
-
-	return buffer;
+	return pstates[line_nr]->human_name;
 }
 
-char * cpu_core::fill_pstate_line(int line_nr, char *buffer)
+std::string cpu_core::fill_pstate_line(int line_nr)
 {
-	buffer[0] = 0;
 	unsigned int i;
 
 	if (total_stamp ==0) {
@@ -88,13 +83,11 @@ char * cpu_core::fill_pstate_line(int line_nr, char *buffer)
 	}
 
 	if (line_nr == LEVEL_HEADER) {
-		sprintf(buffer,_("  Core"));
-		return buffer;
+		return _("  Core");
 	}
 
 	if (line_nr >= (int)pstates.size() || line_nr < 0)
-		return buffer;
+		return "";
 
-	sprintf(buffer," %5.1f%% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
-	return buffer;
+	return std::format(" {:5.1f}% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
 }

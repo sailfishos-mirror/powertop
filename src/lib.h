@@ -29,6 +29,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <cstring>
+#include <string>
 
 /* Include only for Automake builds */
 #ifdef HAVE_CONFIG_H
@@ -48,6 +49,7 @@ extern void set_max_cpu(int cpu);
 
 extern double percentage(double F);
 extern char *hz_to_human(unsigned long hz, char *buffer, int digits = 2);
+extern std::string hz_to_human(unsigned long hz, int digits = 2);
 
 
 extern const char *kernel_function(uint64_t address);

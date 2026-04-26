@@ -47,7 +47,7 @@ abstract_cpu::~abstract_cpu()
 
 void abstract_cpu::account_freq(uint64_t freq, uint64_t duration)
 {
-	struct frequency *state = NULL;
+	class frequency *state = NULL;
 	unsigned int i;
 
 	for (i = 0; i < pstates.size(); i++) {
@@ -59,21 +59,26 @@ void abstract_cpu::account_freq(uint64_t freq, uint64_t duration)
 
 
 	if (!state) {
-		state = new(std::nothrow) struct frequency;
+		state = new(std::nothrow) class frequency;
 
 		if (!state)
 			return;
 
-		memset(state, 0, sizeof(*state));
+		state->line_level = 0;
+		state->time_after = 0;
+		state->time_before = 0;
+		state->before_count = 0;
+		state->after_count = 0;
+		state->display_value = 0.0;
 
 		pstates.push_back(state);
 
 		state->freq = freq;
-		hz_to_human(freq, state->human_name);
+		state->human_name = hz_to_human(freq);
 		if (freq == 0)
-			pt_strcpy(state->human_name, _("Idle"));
+			state->human_name = _("Idle");
 		if (is_turbo(freq, max_frequency, max_minus_one_frequency))
-			pt_strcpy(state->human_name, _("Turbo Mode"));
+			state->human_name = _("Turbo Mode");
 
 		state->after_count = 1;
 	}
@@ -159,16 +164,16 @@ void abstract_cpu::measurement_end(void)
 				if (!state)
 					continue;
 
-				update_cstate( state->linux_name, state->human_name, state->usage_before, state->duration_before, state->before_count);
-				finalize_cstate(state->linux_name,                   state->usage_after,  state->duration_after,  state->after_count);
+				update_cstate( state->linux_name.c_str(), state->human_name.c_str(), state->usage_before, state->duration_before, state->before_count);
+				finalize_cstate(state->linux_name.c_str(),                   state->usage_after,  state->duration_after,  state->after_count);
 			}
 			for (j = 0; j < children[i]->pstates.size(); j++) {
-				struct frequency *state;
+				class frequency *state;
 				state = children[i]->pstates[j];
 				if (!state)
 					continue;
 
-				update_pstate(  state->freq, state->human_name, state->time_before, state->before_count);
+				update_pstate(  state->freq, state->human_name.c_str(), state->time_before, state->before_count);
 				finalize_pstate(state->freq,                    state->time_after,  state->after_count);
 			}
 		}
@@ -197,18 +202,25 @@ void abstract_cpu::insert_cstate(const char *linux_name, const char *human_name,
 	if (!state)
 		return;
 
-	memset(state, 0, sizeof(*state));
+	state->usage_before = 0;
+	state->usage_after = 0;
+	state->usage_delta = 0;
+	state->duration_before = 0;
+	state->duration_after = 0;
+	state->duration_delta = 0;
+	state->before_count = 0;
+	state->after_count = 0;
 
 	cstates.push_back(state);
 
-	pt_strcpy(state->linux_name, linux_name);
-	pt_strcpy(state->human_name, human_name);
+	state->linux_name = linux_name;
+	state->human_name = human_name;
 
 	state->line_level = -1;
 
 	c = human_name;
 	while (*c) {
-		if (strcmp(linux_name, "active")==0) {
+		if (state->linux_name == "active") {
 			state->line_level = LEVEL_C0;
 			break;
 		}
@@ -217,10 +229,12 @@ void abstract_cpu::insert_cstate(const char *linux_name, const char *human_name,
 			if(*(c+1) != '-'){
 				int greater_line_level = strtoull(c, NULL, 10);
 				for(unsigned int pos = 0; pos < cstates.size(); pos++){
-					if(*c == cstates[pos]->human_name[1]){
-						if(*(c+1) != cstates[pos]->human_name[2]){
-							greater_line_level = max(greater_line_level, cstates[pos]->line_level);
-							state->line_level = greater_line_level + 1;
+					if (cstates[pos]->human_name.length() > 2) {
+						if(*c == cstates[pos]->human_name[1]){
+							if(*(c+1) != cstates[pos]->human_name[2]){
+								greater_line_level = max(greater_line_level, cstates[pos]->line_level);
+								state->line_level = greater_line_level + 1;
+							}
 						}
 					}
 				}
@@ -254,7 +268,7 @@ void abstract_cpu::finalize_cstate(const char *linux_name, uint64_t usage, uint6
 	struct idle_state *state = NULL;
 
 	for (i = 0; i < cstates.size(); i++) {
-		if (strcmp(linux_name, cstates[i]->linux_name) == 0) {
+		if (cstates[i]->linux_name == linux_name) {
 			state = cstates[i];
 			break;
 		}
@@ -276,7 +290,7 @@ void abstract_cpu::update_cstate(const char *linux_name, const char *human_name,
 	struct idle_state *state = NULL;
 
 	for (i = 0; i < cstates.size(); i++) {
-		if (strcmp(linux_name, cstates[i]->linux_name) == 0) {
+		if (cstates[i]->linux_name == linux_name) {
 			state = cstates[i];
 			break;
 		}
@@ -332,19 +346,22 @@ int abstract_cpu::has_pstate_level(int level)
 
 void abstract_cpu::insert_pstate(uint64_t freq, const char *human_name, uint64_t duration, int count)
 {
-	struct frequency *state;
+	class frequency *state;
 
-	state = new(std::nothrow) struct frequency;
+	state = new(std::nothrow) class frequency;
 
 	if (!state)
 		return;
 
-	memset(state, 0, sizeof(*state));
+	state->line_level = 0;
+	state->time_after = 0;
+	state->after_count = 0;
+	state->display_value = 0.0;
 
 	pstates.push_back(state);
 
 	state->freq = freq;
-	pt_strcpy(state->human_name, human_name);
+	state->human_name = human_name;
 
 
 	state->time_before = duration;
@@ -354,7 +371,7 @@ void abstract_cpu::insert_pstate(uint64_t freq, const char *human_name, uint64_t
 void abstract_cpu::finalize_pstate(uint64_t freq, uint64_t duration, int count)
 {
 	unsigned int i;
-	struct frequency *state = NULL;
+	class frequency *state = NULL;
 
 	for (i = 0; i < pstates.size(); i++) {
 		if (freq == pstates[i]->freq) {
@@ -375,7 +392,7 @@ void abstract_cpu::finalize_pstate(uint64_t freq, uint64_t duration, int count)
 void abstract_cpu::update_pstate(uint64_t freq, const char *human_name, uint64_t duration, int count)
 {
 	unsigned int i;
-	struct frequency *state = NULL;
+	class frequency *state = NULL;
 
 	for (i = 0; i < pstates.size(); i++) {
 		if (freq == pstates[i]->freq) {

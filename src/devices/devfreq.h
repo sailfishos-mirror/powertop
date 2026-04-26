@@ -30,7 +30,7 @@
 #include <sys/time.h>
 #include <string>
 
-struct frequency;
+class frequency;
 
 class devfreq: public device {
 	std::string dir_name;
@@ -45,7 +45,7 @@ class devfreq: public device {
 
 public:
 
-	vector<struct frequency *> dstates;
+	vector<class frequency *> dstates;
 
 	devfreq(const char *c);
 	void fill_freq_utilization(unsigned int idx, char *buf);

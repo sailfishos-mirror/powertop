@@ -348,7 +348,7 @@ void nhm_core::measurement_end(void)
 				if (!state)
 					continue;
 
-				update_pstate(  state->freq, state->human_name, state->time_before, state->before_count);
+				update_pstate(  state->freq, state->human_name.c_str(), state->time_before, state->before_count);
 				finalize_pstate(state->freq,                    state->time_after,  state->after_count);
 			}
 		}
@@ -356,10 +356,11 @@ void nhm_core::measurement_end(void)
 	total_stamp = 0;
 }
 
-char * nhm_core::fill_pstate_line(int line_nr, char *buffer)
+#include <format>
+
+std::string nhm_core::fill_pstate_line(int line_nr)
 {
 	const int intel_pstate = is_intel_pstate_driver_loaded();
-	buffer[0] = 0;
 	unsigned int i;
 
 	if (!intel_pstate && total_stamp ==0) {
@@ -370,16 +371,13 @@ char * nhm_core::fill_pstate_line(int line_nr, char *buffer)
 	}
 
 	if (line_nr == LEVEL_HEADER) {
-		sprintf(buffer,_("  Core"));
-		return buffer;
+		return _("  Core");
 	}
 
 	if (intel_pstate > 0 || line_nr >= (int)pstates.size() || line_nr < 0)
-		return buffer;
+		return "";
 
-	sprintf(buffer," %5.1f%% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
-
-	return buffer;
+	return std::format(" {:5.1f}% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
 }
 
 nhm_package::nhm_package(int model)
@@ -492,10 +490,9 @@ nhm_package::nhm_package(int model)
 	}
 }
 
-char * nhm_package::fill_pstate_line(int line_nr, char *buffer)
+std::string nhm_package::fill_pstate_line(int line_nr)
 {
 	const int intel_pstate = is_intel_pstate_driver_loaded();
-	buffer[0] = 0;
 	unsigned int i;
 
 	if (!intel_pstate && total_stamp ==0) {
@@ -507,16 +504,13 @@ char * nhm_package::fill_pstate_line(int line_nr, char *buffer)
 
 
 	if (line_nr == LEVEL_HEADER) {
-		sprintf(buffer,_("  Package"));
-		return buffer;
+		return _("  Package");
 	}
 
 	if (intel_pstate > 0 || line_nr >= (int)pstates.size() || line_nr < 0)
-		return buffer;
+		return "";
 
-	sprintf(buffer," %5.1f%% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
-
-	return buffer;
+	return std::format(" {:5.1f}% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
 }
 
 
@@ -644,7 +638,7 @@ void nhm_package::measurement_end(void)
 				if (!state)
 					continue;
 
-				update_pstate(  state->freq, state->human_name, state->time_before, state->before_count);
+				update_pstate(  state->freq, state->human_name.c_str(), state->time_before, state->before_count);
 				finalize_pstate(state->freq,                    state->time_after,  state->after_count);
 			}
 		}
@@ -720,16 +714,15 @@ void nhm_cpu::measurement_end(void)
 
 }
 
-char * nhm_cpu::fill_pstate_name(int line_nr, char *buffer)
+std::string nhm_cpu::fill_pstate_name(int line_nr)
 {
 	if (line_nr == LEVEL_C0) {
-		sprintf(buffer, _("Average"));
-		return buffer;
+		return _("Average");
 	}
-	return cpu_linux::fill_pstate_name(line_nr, buffer);
+	return cpu_linux::fill_pstate_name(line_nr);
 }
 
-char * nhm_cpu::fill_pstate_line(int line_nr, char *buffer)
+std::string nhm_cpu::fill_pstate_line(int line_nr)
 {
 	const int intel_pstate = is_intel_pstate_driver_loaded();
 
@@ -742,22 +735,18 @@ char * nhm_cpu::fill_pstate_line(int line_nr, char *buffer)
 	}
 
 	if (line_nr == LEVEL_HEADER) {
-		sprintf(buffer,_(" CPU %i"), number);
-		return buffer;
+		return std::format(_(" CPU {}"), number);
 	}
 
 	if (line_nr == LEVEL_C0) {
 		double F;
 		F = 1.0 * (tsc_after - tsc_before) * (aperf_after - aperf_before) / (mperf_after - mperf_before) / time_factor * 1000;
-		hz_to_human(F, buffer, 1);
-		return buffer;
+		return hz_to_human(F, 1);
 	}
 	if (intel_pstate > 0 || line_nr >= (int)pstates.size() || line_nr < 0)
-		return buffer;
+		return "";
 
-	sprintf(buffer," %5.1f%% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
-
-	return buffer;
+	return std::format(" {:5.1f}% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
 }
 
 

@@ -35,6 +35,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <format>
 
 #include "lib.h"
 
@@ -107,6 +108,27 @@ char *hz_to_human(unsigned long hz, char *buffer, int digits)
 	}
 
 	return buffer;
+}
+
+std::string hz_to_human(unsigned long hz, int digits)
+{
+	unsigned long long Hz = hz;
+
+	if (Hz > 1500000) {
+		if (digits == 2)
+			return std::format("{:4.2f} GHz", (Hz + 5000.0) / 1000000.0);
+		else
+			return std::format("{:3.1f} GHz", (Hz + 5000.0) / 1000000.0);
+	}
+
+	if (Hz > 1000) {
+		if (digits == 2)
+			return std::format("{:4d} MHz", (Hz + 500) / 1000);
+		else
+			return std::format("{:6d} MHz", (Hz + 500) / 1000);
+	}
+
+	return std::format("{:9d}", Hz);
 }
 
 using namespace std;

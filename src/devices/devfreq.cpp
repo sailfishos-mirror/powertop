@@ -74,7 +74,7 @@ void devfreq::process_time_stamps()
 			+ ((stamp_after.tv_usec - stamp_before.tv_usec) );
 
 	for (i=0; i < dstates.size()-1; i++) {
-		struct frequency *state = dstates[i];
+		class frequency *state = dstates[i];
 		state->time_after = 1000 * (state->time_after - state->time_before);
 		active_time += state->time_after;
 	}
@@ -84,27 +84,26 @@ void devfreq::process_time_stamps()
 
 void devfreq::add_devfreq_freq_state(uint64_t freq, uint64_t time)
 {
-	struct frequency *state;
+	class frequency *state;
 
-	state = new(std::nothrow) struct frequency;
+	state = new(std::nothrow) class frequency;
 	if (!state)
 		return;
 
-	memset(state, 0, sizeof(*state));
 	dstates.push_back(state);
 
 	state->freq = freq;
 	if (freq == 0)
-		strcpy(state->human_name, "Idle");
+		state->human_name = "Idle";
 	else
-		hz_to_human(freq, state->human_name);
+		state->human_name = hz_to_human(freq);
 	state->time_before = time;
 }
 
 void devfreq::update_devfreq_freq_state(uint64_t freq, uint64_t time)
 {
 	unsigned int i;
-	struct frequency *state = NULL;
+	class frequency *state = NULL;
 
 	for(i=0; i < dstates.size(); i++) {
 		if (freq == dstates[i]->freq)
@@ -191,7 +190,7 @@ void devfreq::fill_freq_utilization(unsigned int idx, char *buf)
 	buf[0] = 0;
 
 	if (idx < dstates.size() && dstates[idx]) {
-		struct frequency *state = dstates[idx];
+		class frequency *state = dstates[idx];
 		sprintf(buf, " %5.1f%% ", percentage(1.0 * state->time_after / sample_time));
 	}
 }
@@ -201,7 +200,7 @@ void devfreq::fill_freq_name(unsigned int idx, char *buf)
 	buf[0] = 0;
 
 	if (idx < dstates.size() && dstates[idx]) {
-		sprintf(buf, "%-15s", dstates[idx]->human_name);
+		sprintf(buf, "%-15s", dstates[idx]->human_name.c_str());
 	}
 }
 

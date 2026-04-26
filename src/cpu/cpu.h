@@ -43,8 +43,8 @@ class abstract_cpu;
 #define CSTATE 2
 
 struct idle_state {
-	char linux_name[16]; /* state0 etc.. cpuidle name */
-	char human_name[32];
+	std::string linux_name; /* state0 etc.. cpuidle name */
+	std::string human_name;
 
 	uint64_t usage_before;
 	uint64_t usage_after;
@@ -60,19 +60,21 @@ struct idle_state {
 	int line_level;
 };
 
-struct frequency {
-	char human_name[32];
-	int line_level;
+class frequency {
+public:
+	frequency(void);
+	std::string human_name = "";
+	int line_level = 0;
 
-	uint64_t freq;
+	uint64_t freq = 0;
 
-	uint64_t time_after;
-	uint64_t time_before;
+	uint64_t time_after = 0;
+	uint64_t time_before = 0;
 
-	int before_count;
-	int after_count;
+	int before_count = 0;
+	int after_count = 0;
 
-	double   display_value;
+	double   display_value = 0.0;
 };
 
 class abstract_cpu
@@ -127,10 +129,10 @@ public:
 
 	virtual int	has_cstate_level(int level);
 
-	virtual char *  fill_cstate_line(int line_nr, char *buffer, const char *separator="") { return buffer;};
-	virtual char *  fill_cstate_percentage(int line_nr, char *buffer) { return buffer; };
-	virtual char *  fill_cstate_time(int line_nr, char *buffer) { return buffer; };
-	virtual char *  fill_cstate_name(int line_nr, char *buffer) { return buffer;};
+	virtual std::string  fill_cstate_line(int line_nr, const char *separator="") { return "";};
+	virtual std::string  fill_cstate_percentage(int line_nr) { return ""; };
+	virtual std::string  fill_cstate_time(int line_nr) { return ""; };
+	virtual std::string  fill_cstate_name(int line_nr) { return "";};
 
 
 	/* P state related methods */
@@ -139,8 +141,8 @@ public:
 	void		finalize_pstate(uint64_t freq, uint64_t duration, int count);
 
 
-	virtual char *  fill_pstate_line(int line_nr, char *buffer) { return buffer;};
-	virtual char *  fill_pstate_name(int line_nr, char *buffer) { return buffer;};
+	virtual std::string  fill_pstate_line(int line_nr) { return "";};
+	virtual std::string  fill_pstate_name(int line_nr) { return "";};
 	virtual int	has_pstate_level(int level);
 	virtual int	has_pstates(void) { return 1; };
 
@@ -173,23 +175,23 @@ public:
 	virtual void	measurement_start(void);
 	virtual void	measurement_end(void);
 
-	virtual char *  fill_cstate_line(int line_nr, char *buffer, const char *separator="");
-	virtual char *  fill_cstate_name(int line_nr, char *buffer);
-	virtual char *  fill_cstate_percentage(int line_nr, char *buffer);
-	virtual char *  fill_cstate_time(int line_nr, char *buffer);
+	virtual std::string  fill_cstate_line(int line_nr, const char *separator="");
+	virtual std::string  fill_cstate_name(int line_nr);
+	virtual std::string  fill_cstate_percentage(int line_nr);
+	virtual std::string  fill_cstate_time(int line_nr);
 
-	virtual char *  fill_pstate_line(int line_nr, char *buffer);
-	virtual char *  fill_pstate_name(int line_nr, char *buffer);
+	virtual std::string  fill_pstate_line(int line_nr);
+	virtual std::string  fill_pstate_name(int line_nr);
 };
 
 class cpu_core: public abstract_cpu
 {
 public:
-	virtual char *  fill_cstate_line(int line_nr, char *buffer, const char *separator="");
-	virtual char *  fill_cstate_name(int line_nr, char *buffer);
+	virtual std::string  fill_cstate_line(int line_nr, const char *separator="");
+	virtual std::string  fill_cstate_name(int line_nr);
 
-	virtual char *  fill_pstate_line(int line_nr, char *buffer);
-	virtual char *  fill_pstate_name(int line_nr, char *buffer);
+	virtual std::string  fill_pstate_line(int line_nr);
+	virtual std::string  fill_pstate_name(int line_nr);
 
 	virtual int     can_collapse(void) { return childcount == 1;};
 };
@@ -199,11 +201,11 @@ class cpu_package: public abstract_cpu
 protected:
 	virtual void	freq_updated(uint64_t time);
 public:
-	virtual char *  fill_cstate_line(int line_nr, char *buffer, const char *separator="");
-	virtual char *  fill_cstate_name(int line_nr, char *buffer);
+	virtual std::string  fill_cstate_line(int line_nr, const char *separator="");
+	virtual std::string  fill_cstate_name(int line_nr);
 
-	virtual char *  fill_pstate_line(int line_nr, char *buffer);
-	virtual char *  fill_pstate_name(int line_nr, char *buffer);
+	virtual std::string  fill_pstate_line(int line_nr);
+	virtual std::string  fill_pstate_name(int line_nr);
 	virtual int     can_collapse(void) { return childcount == 1;};
 };
 

@@ -37,26 +37,26 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <format>
 
 void cpu_linux::parse_cstates_start(void)
 {
 	ifstream file;
 	DIR *dir;
 	struct dirent *entry;
-	char filename[256];
-	int len;
+	std::string filename;
 
-	len = snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpuidle", number);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpuidle", number);
 
-	dir = opendir(filename);
+	dir = opendir(filename.c_str());
 	if (!dir)
 		return;
 
 	/* For each C-state, there is a stateX directory which
 	 * contains a 'usage' and a 'time' (duration) file */
 	while ((entry = readdir(dir))) {
-		char linux_name[64];
-		char human_name[64];
+		std::string linux_name;
+		std::string human_name;
 		uint64_t usage = 0;
 		uint64_t duration = 0;
 
@@ -64,38 +64,34 @@ void cpu_linux::parse_cstates_start(void)
 		if (strlen(entry->d_name) < 3)
 			continue;
 
-		pt_strcpy(linux_name, entry->d_name);
-		pt_strcpy(human_name, linux_name);
+		linux_name = entry->d_name;
+		human_name = linux_name;
 
-		snprintf(filename + len, sizeof(filename) - len, "/%s/name", entry->d_name);
-
-		file.open(filename, ios::in);
+		file.open(std::format("{}/{}/name", filename, entry->d_name), ios::in);
 		if (file) {
-			file.getline(human_name, sizeof(human_name));
+			getline(file, human_name);
 			file.close();
 		}
 
-		if (strcmp(human_name, "C0")==0)
-			pt_strcpy(human_name, _("C0 polling"));
+		if (human_name == "C0")
+			human_name = _("C0 polling");
 
-		snprintf(filename + len, sizeof(filename) - len, "/%s/usage", entry->d_name);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/{}/usage", filename, entry->d_name), ios::in);
 		if (file) {
 			file >> usage;
 			file.close();
 		} else
 			continue;
 
-		snprintf(filename + len, sizeof(filename) - len, "/%s/time", entry->d_name);
+		file.open(std::format("{}/{}/time", filename, entry->d_name), ios::in);
 
-		file.open(filename, ios::in);
 		if (file) {
 			file >> duration;
 			file.close();
 		}
 
 
-		update_cstate(linux_name, human_name, usage, duration, 1);
+		update_cstate(linux_name.c_str(), human_name.c_str(), usage, duration, 1);
 
 	}
 	closedir(dir);
@@ -140,23 +136,22 @@ void cpu_linux::measurement_start(void)
 
 void cpu_linux::parse_cstates_end(void)
 {
+	ifstream file;
 	DIR *dir;
 	struct dirent *entry;
-	char filename[256];
-	ifstream file;
-	int len;
+	std::string filename;
 
-	len = snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/cpuidle", number);
+	filename = std::format("/sys/devices/system/cpu/cpu{}/cpuidle", number);
 
-	dir = opendir(filename);
+	dir = opendir(filename.c_str());
 	if (!dir)
 		return;
 
 	/* For each C-state, there is a stateX directory which
 	 * contains a 'usage' and a 'time' (duration) file */
 	while ((entry = readdir(dir))) {
-		char linux_name[64];
-		char human_name[64];
+		std::string linux_name;
+		std::string human_name;
 		uint64_t usage = 0;
 		uint64_t duration = 0;
 
@@ -164,28 +159,26 @@ void cpu_linux::parse_cstates_end(void)
 		if (strlen(entry->d_name) < 3)
 			continue;
 
-		pt_strcpy(linux_name, entry->d_name);
-		pt_strcpy(human_name, linux_name);
+		linux_name = entry->d_name;
+		human_name = linux_name;
 
 
-		snprintf(filename + len, sizeof(filename) - len, "/%s/usage", entry->d_name);
-		file.open(filename, ios::in);
+		file.open(std::format("{}/{}/usage", filename, entry->d_name), ios::in);
 		if (file) {
 			file >> usage;
 			file.close();
 		} else
 			continue;
 
-		snprintf(filename + len, sizeof(filename) - len, "/%s/time", entry->d_name);
+		file.open(std::format("{}/{}/time", filename, entry->d_name), ios::in);
 
-		file.open(filename, ios::in);
 		if (file) {
 			file >> duration;
 			file.close();
 		}
 
 
-		finalize_cstate(linux_name, usage, duration, 1);
+		finalize_cstate(linux_name.c_str(), usage, duration, 1);
 
 	}
 	closedir(dir);
@@ -232,15 +225,14 @@ void cpu_linux::measurement_end(void)
 	parse_pstates_end();
 	abstract_cpu::measurement_end();
 }
+#include <format>
 
-char * cpu_linux::fill_cstate_line(int line_nr, char *buffer, const char *separator)
+std::string cpu_linux::fill_cstate_line(int line_nr, const char *separator)
 {
 	unsigned int i;
-	buffer[0] = 0;
 
 	if (line_nr == LEVEL_HEADER) {
-		sprintf(buffer,_(" CPU(OS) %i"), number);
-		return buffer;
+		return std::format(_(" CPU(OS) {}"), number);
 	}
 
 	for (i = 0; i < cstates.size(); i++) {
@@ -248,87 +240,76 @@ char * cpu_linux::fill_cstate_line(int line_nr, char *buffer, const char *separa
 			continue;
 
 		if (line_nr == LEVEL_C0)
-			sprintf(buffer,"%5.1f%%", percentage(cstates[i]->duration_delta / time_factor));
+			return std::format("{:5.1f}%", percentage(cstates[i]->duration_delta / time_factor));
 		else
-			sprintf(buffer,"%5.1f%%%s %6.1f ms",
+			return std::format("{:5.1f}%{} {:6.1f} ms",
 				percentage(cstates[i]->duration_delta / time_factor),
 				separator,
 				1.0 * cstates[i]->duration_delta / (1 + cstates[i]->usage_delta) / 1000);
 	}
 
-	return buffer;
+	return "";
 }
 
-char * cpu_linux::fill_cstate_percentage(int line_nr, char *buffer)
+std::string cpu_linux::fill_cstate_percentage(int line_nr)
 {
 	unsigned int i;
-	buffer[0] = 0;
 
 	for (i = 0; i < cstates.size(); i++) {
 		if (cstates[i]->line_level != line_nr)
 			continue;
 
-		sprintf(buffer,"%5.1f%%",
+		return std::format("{:5.1f}%",
 			percentage(cstates[i]->duration_delta / time_factor));
-		break;
 	}
 
-	return buffer;
+	return "";
 }
 
-char * cpu_linux::fill_cstate_time(int line_nr, char *buffer)
+std::string cpu_linux::fill_cstate_time(int line_nr)
 {
 	unsigned int i;
-	buffer[0] = 0;
 
 	if (line_nr == LEVEL_C0)
-		return buffer;
+		return "";
 
 	for (i = 0; i < cstates.size(); i++) {
 		if (cstates[i]->line_level != line_nr)
 			continue;
 
-		sprintf(buffer,"%6.1f ms",
+		return std::format("{:6.1f} ms",
 			1.0 * cstates[i]->duration_delta /
 			(1 + cstates[i]->usage_delta) / 1000);
-		break;
 	}
 
-	return buffer;
+	return "";
 }
 
-char * cpu_linux::fill_cstate_name(int line_nr, char *buffer)
+std::string cpu_linux::fill_cstate_name(int line_nr)
 {
 	unsigned int i;
-	buffer[0] = 0;
 
 	for (i = 0; i < cstates.size(); i++) {
 		if (cstates[i]->line_level != line_nr)
 			continue;
 
-		sprintf(buffer,"%s", cstates[i]->human_name);
+		return std::format("{}", cstates[i]->human_name);
 	}
 
-	return buffer;
+	return "";
 }
 
 
-char * cpu_linux::fill_pstate_name(int line_nr, char *buffer)
+std::string cpu_linux::fill_pstate_name(int line_nr)
 {
-	buffer[0] = 0;
-
 	if (line_nr >= (int)pstates.size() || line_nr < 0)
-		return buffer;
+		return "";
 
-	sprintf(buffer,"%s", pstates[line_nr]->human_name);
-
-	return buffer;
+	return std::format("{}", pstates[line_nr]->human_name);
 }
 
-char * cpu_linux::fill_pstate_line(int line_nr, char *buffer)
+std::string cpu_linux::fill_pstate_line(int line_nr)
 {
-	buffer[0] = 0;
-
 	if (total_stamp ==0) {
 		unsigned int i;
 		for (i = 0; i < pstates.size(); i++)
@@ -338,13 +319,11 @@ char * cpu_linux::fill_pstate_line(int line_nr, char *buffer)
 	}
 
 	if (line_nr == LEVEL_HEADER) {
-		sprintf(buffer,_(" CPU %i"), number);
-		return buffer;
+		return std::format(_(" CPU {}"), number);
 	}
 
 	if (line_nr >= (int)pstates.size() || line_nr < 0)
-		return buffer;
+		return "";
 
-	sprintf(buffer," %5.1f%% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
-	return buffer;
+	return std::format(" {:5.1f}% ", percentage(1.0 * (pstates[line_nr]->time_after) / total_stamp));
 }
