@@ -32,7 +32,7 @@
 using namespace std;
 
 class usb_wakeup : public wakeup {
-	char usb_path[PATH_MAX];
+	std::string usb_path;
 public:
 	std::string interf;
 	usb_wakeup(const char *usb_path, const char *iface);

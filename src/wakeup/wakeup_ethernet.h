@@ -32,7 +32,7 @@
 using namespace std;
 
 class ethernet_wakeup : public wakeup {
-	char eth_path[PATH_MAX];
+	std::string eth_path;
 public:
 	std::string interf;
 	ethernet_wakeup(const char *eth_path, const char *iface);

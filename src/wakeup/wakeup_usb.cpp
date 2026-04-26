@@ -49,7 +49,7 @@ usb_wakeup::usb_wakeup(const char *path, const char *iface) : wakeup("", 0.5, _(
 {
 	interf = iface;
 	desc = pt_format(_("Wake status for USB device {}"), iface);
-	snprintf(usb_path, sizeof(usb_path), "/sys/bus/usb/devices/%s/power/wakeup", iface);
+	usb_path = std::format("/sys/bus/usb/devices/{}/power/wakeup", iface);
 	toggle_enable = std::format("echo 'enabled' > '{}';", usb_path);
 	toggle_disable = std::format("echo 'disabled' > '{}';", usb_path);
 }
