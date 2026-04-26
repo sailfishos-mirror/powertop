@@ -33,7 +33,7 @@ using namespace std;
 
 class ethernet_tunable : public tunable {
 public:
-	char interf[4096];
+	std::string interf;
 	ethernet_tunable(const char *iface);
 
 	virtual int good_bad(void);
