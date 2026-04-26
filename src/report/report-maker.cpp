@@ -60,12 +60,10 @@ report_maker::finish_report()
 
 /* ************************************************************************ */
 
-const char *
+std::string
 report_maker::get_result()
 {
-	static std::string result;
-	result = formatter->get_result();
-	return result.c_str();
+	return formatter->get_result();
 }
 
 /* ************************************************************************ */

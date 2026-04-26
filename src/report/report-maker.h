@@ -115,7 +115,7 @@ public:
 				__attribute__ ((format (printf, 2, 3)));
 
 	void finish_report();
-	const char *get_result();
+	std::string get_result();
 	void clear_result();
 
 	void add(const std::string &str);
