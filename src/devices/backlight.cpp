@@ -41,14 +41,14 @@ using namespace std;
 #include <format>
 
 
-backlight::backlight(const char *_name, const char *path): device()
+backlight::backlight(const string &_name, const string &path): device()
 {
 	min_level = 0;
 	max_level = 0;
 	start_level = 0;
 	end_level = 0;
 	sysfs_path = path;
-	register_sysfs_path(sysfs_path.c_str());
+	register_sysfs_path(sysfs_path);
 	name = std::format("backlight:{}", _name);
 	r_index = get_result_index(name);
 	r_index_power = 0;
@@ -144,7 +144,7 @@ double backlight::utilization(void)
 static void create_all_backlights_callback(const char *d_name)
 {
 	class backlight *bl;
-	bl = new class backlight(d_name, std::format("/sys/class/backlight/{}", d_name).c_str());
+	bl = new class backlight(d_name, std::format("/sys/class/backlight/{}", d_name));
 	all_devices.push_back(bl);
 }
 

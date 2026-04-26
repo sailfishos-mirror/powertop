@@ -78,7 +78,7 @@ double work::usage_summary(void)
 	return t;
 }
 
-const char * work::usage_units_summary(void)
+std::string work::usage_units_summary(void)
 {
 	return "%";
 }

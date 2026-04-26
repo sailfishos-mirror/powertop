@@ -41,10 +41,10 @@ public:
 	uint64_t done(uint64_t time, uint64_t work_struct);
 
 	virtual std::string description(void);
-	virtual const char * name(void) { return "work"; };
-	virtual const char * type(void) { return "kWork"; };
+	virtual std::string name(void) { return "work"; };
+	virtual std::string type(void) { return "kWork"; };
 	virtual double usage_summary(void);
-	virtual const char * usage_units_summary(void);
+	virtual std::string usage_units_summary(void);
 
 };
 

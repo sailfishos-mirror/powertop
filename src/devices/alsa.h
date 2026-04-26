@@ -42,7 +42,7 @@ class alsa: public device {
 	int rindex;
 public:
 
-	alsa(const char *_name, const char *path);
+	alsa(const std::string &_name, const std::string &path);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);

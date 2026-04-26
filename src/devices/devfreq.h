@@ -61,7 +61,7 @@ public:
 	virtual std::string device_name(void) { return dir_name; };
 	virtual std::string human_name(void) { return "devfreq";};
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
-	virtual const char * util_units(void) { return " rpm"; };
+	virtual std::string util_units(void) { return " rpm"; };
 	virtual int power_valid(void) { return 0; /*utilization_power_valid(r_index);*/};
 	virtual int grouping_prio(void) { return 1; };
 };

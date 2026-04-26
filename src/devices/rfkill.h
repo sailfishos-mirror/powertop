@@ -41,7 +41,7 @@ class rfkill: public device {
 	int rindex;
 public:
 
-	rfkill(char *_name, char *path);
+	rfkill(const std::string &_name, const std::string &path);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);

@@ -30,7 +30,7 @@
 
 #include <format>
 
-std::string cpu_core::fill_cstate_line(int line_nr, const char *separator)
+std::string cpu_core::fill_cstate_line(int line_nr, const string &separator)
 {
 	unsigned int i;
 

@@ -45,7 +45,7 @@ class usbdevice: public device {
 	int devnum;
 public:
 
-	usbdevice(const char *_name, const char *path, const char *devid);
+	usbdevice(const std::string &_name, const std::string &path, const std::string &devid);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);

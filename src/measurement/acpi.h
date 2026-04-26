@@ -33,7 +33,7 @@ class acpi_power_meter: public power_meter {
 	double voltage;
 	void measure(void);
 public:
-	acpi_power_meter(const char *_battery_name);
+	acpi_power_meter(const std::string &_battery_name);
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);
 

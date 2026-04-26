@@ -38,11 +38,11 @@ public:
 	device_consumer(class device *dev);
 
 	virtual std::string description(void);
-	virtual const char * name(void) { return "device"; };
-	virtual const char * type(void) { return "Device"; };
+	virtual std::string name(void) { return "device"; };
+	virtual std::string type(void) { return "Device"; };
 	virtual double Witts(void);
 	virtual double usage(void) { return device->utilization();};
-	virtual const char * usage_units(void) {return device->util_units();};
+	virtual std::string usage_units(void) {return device->util_units();};
 	virtual int show_events(void) { return 0; };
 };
 

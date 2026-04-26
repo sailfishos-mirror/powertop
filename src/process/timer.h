@@ -43,10 +43,10 @@ public:
 	bool is_deferred(void);
 
 	virtual std::string description(void);
-	virtual const char * name(void) { return "timer"; };
-	virtual const char * type(void) { return "Timer"; };
+	virtual std::string name(void) { return "timer"; };
+	virtual std::string type(void) { return "Timer"; };
 	virtual double usage_summary(void);
-	virtual const char * usage_units_summary(void);
+	virtual std::string usage_units_summary(void);
 
 };
 

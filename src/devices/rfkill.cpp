@@ -42,7 +42,7 @@ using namespace std;
 #include <unistd.h>
 #include <format>
 
-rfkill::rfkill(char *_name, char *path): device()
+rfkill::rfkill(const string &_name, const string &path): device()
 {
 	char line[4096];
 	start_soft = 0;
@@ -50,7 +50,7 @@ rfkill::rfkill(char *_name, char *path): device()
 	end_soft = 0;
 	end_hard = 0;
 	sysfs_path = path;
-	register_sysfs_path(sysfs_path.c_str());
+	register_sysfs_path(sysfs_path);
 	name = std::format("radio:{}", _name);
 	humanname = std::format("radio:{}", _name);
 	register_parameter(name);
@@ -133,7 +133,7 @@ static void create_all_rfkills_callback(const char *d_name)
 		file.close();
 	}
 
-	bl = new class rfkill((char *)name.c_str(), (char *)std::format("/sys/class/rfkill/{}", d_name).c_str());
+	bl = new class rfkill(name, std::format("/sys/class/rfkill/{}", d_name));
 	all_devices.push_back(bl);
 }
 

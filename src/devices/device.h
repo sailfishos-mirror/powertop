@@ -52,7 +52,7 @@ public:
 
 	virtual double	utilization(void); /* percentage */
 
-	virtual const char * util_units(void) { return "%"; };
+	virtual std::string util_units(void) { return "%"; };
 
 	virtual std::string class_name(void) { return "abstract device";};
 	virtual std::string device_name(void) { return "abstract device";};

@@ -44,7 +44,7 @@ const char* softirqs[] = {
 };
 
 
-interrupt::interrupt(const char *_handler, int _number) : power_consumer()
+interrupt::interrupt(const string &_handler, int _number) : power_consumer()
 {
 	char buf[128];
 	running_since = 0;
@@ -86,7 +86,7 @@ double interrupt::usage_summary(void)
 	return t;
 }
 
-const char * interrupt::usage_units_summary(void)
+std::string interrupt::usage_units_summary(void)
 {
 	return "%";
 }

@@ -190,7 +190,7 @@ void report_devices(void)
 
 		util = "";
 
-		if (all_devices[i]->util_units()) {
+		if (!all_devices[i]->util_units().empty()) {
 			if (all_devices[i]->utilization() < 1000)
 				util = std::format("{:5.1f}{}",  all_devices[i]->utilization(),  all_devices[i]->util_units());
 			else
@@ -280,7 +280,7 @@ void show_report_devices(void)
 		std::string util;
 		std::string power;
 
-		if (all_devices[i]->util_units()) {
+		if (!all_devices[i]->util_units().empty()) {
 			if (all_devices[i]->utilization() < 1000)
 				util = std::format("{:5.1f}{}",
 					all_devices[i]->utilization(),

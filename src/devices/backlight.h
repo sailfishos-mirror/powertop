@@ -39,7 +39,7 @@ class backlight: public device {
 	int r_index_power;
 public:
 
-	backlight(const char *_name, const char *path);
+	backlight(const std::string &_name, const std::string &path);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);

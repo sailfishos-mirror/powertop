@@ -52,7 +52,7 @@ public:
 	int		running;
 	int		is_kernel; /* kernel thread */
 
-	process(const char *_comm, int _pid, int _tid = 0);
+	process(const std::string &_comm, int _pid, int _tid = 0);
 
 	virtual void schedule_thread(uint64_t time, int thread_id);
 	virtual uint64_t deschedule_thread(uint64_t time, int thread_id = 0);
@@ -60,11 +60,11 @@ public:
 	virtual void account_disk_dirty(void);
 
 	virtual std::string description(void);
-	virtual const char * name(void) { return "process"; };
-	virtual const char * type(void) { return "Process"; };
+	virtual std::string name(void) { return "process"; };
+	virtual std::string type(void) { return "Process"; };
 
 	virtual double usage_summary(void);
-	virtual const char * usage_units_summary(void);
+	virtual std::string usage_units_summary(void);
 
 };
 

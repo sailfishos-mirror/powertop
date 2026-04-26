@@ -64,13 +64,13 @@ public:
 	uint64_t pkts;
 	double duration;
 
-	network(const char *_name, const char *path);
+	network(const std::string &_name, const std::string &path);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);
 
 	virtual double	utilization(void);
-	virtual const char * util_units(void) { return " pkts/s"; };
+	virtual std::string util_units(void) { return " pkts/s"; };
 
 	virtual std::string class_name(void) { return "ethernet";};
 

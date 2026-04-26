@@ -227,7 +227,7 @@ void cpu_linux::measurement_end(void)
 }
 #include <format>
 
-std::string cpu_linux::fill_cstate_line(int line_nr, const char *separator)
+std::string cpu_linux::fill_cstate_line(int line_nr, const string &separator)
 {
 	unsigned int i;
 
@@ -247,7 +247,6 @@ std::string cpu_linux::fill_cstate_line(int line_nr, const char *separator)
 				separator,
 				1.0 * cstates[i]->duration_delta / (1 + cstates[i]->usage_delta) / 1000);
 	}
-
 	return "";
 }
 

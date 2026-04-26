@@ -39,10 +39,10 @@
 #include <iostream>
 #include <fstream>
 
-runtime_pmdevice::runtime_pmdevice(const char *_name, const char *path) : device()
+runtime_pmdevice::runtime_pmdevice(const string &_name, const string &path) : device()
 {
 	sysfs_path = path;
-	register_sysfs_path(sysfs_path.c_str());
+	register_sysfs_path(sysfs_path);
 	name = _name;
 	humanname = std::format("runtime-{}", _name);
 
@@ -53,7 +53,6 @@ runtime_pmdevice::runtime_pmdevice(const char *_name, const char *path) : device
 	before_active_time = 0;
 	after_suspended_time = 0;
 	after_active_time = 0;
-
 	register_parameter(humanname);
 }
 
@@ -174,8 +173,7 @@ static void do_bus(const char *bus)
 		if (entry->d_name[0] == '.')
 			continue;
 
-		dev = new class runtime_pmdevice(entry->d_name, std::format("/sys/bus/{}/devices/{}", bus, entry->d_name).c_str());
-
+		dev = new class runtime_pmdevice(entry->d_name, std::format("/sys/bus/{}/devices/{}", bus, entry->d_name));
 		if (strcmp(bus, "i2c") == 0) {
 			std::string devname;
 			bool is_adapter = false;

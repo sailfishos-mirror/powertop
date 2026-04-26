@@ -38,14 +38,14 @@
 #include <iostream>
 #include <fstream>
 
-usbdevice::usbdevice(const char *_name, const char *path, const char *devid): device()
+usbdevice::usbdevice(const string &_name, const string &path, const string &devid): device()
 {
 	ifstream file;
 	char vendor[4096];
 	char product[4096];
 
 	sysfs_path = path;
-	register_sysfs_path(sysfs_path.c_str());
+	register_sysfs_path(sysfs_path);
 	name = _name;
 	devname = devid;
 	humanname = pt_format(_("USB device: {}"), pretty_print(devid, vendor, 4096));
@@ -56,7 +56,7 @@ usbdevice::usbdevice(const char *_name, const char *path, const char *devid): de
 	busnum = 0;
 	devnum = 0;
 
-	index = get_param_index(devname.c_str());
+	index = get_param_index(devname);
 	r_index = get_result_index(name);
 	rootport = 0;
 	cached_valid = 0;
@@ -215,7 +215,7 @@ static void create_all_usb_devices_callback(const char *d_name)
 	if (result_device_exists(device_name.c_str()))
 		return;
 
-	usb = new class usbdevice(device_name.c_str(), std::format("/sys/bus/usb/devices/{}", d_name).c_str(), devid_name.c_str());
+	usb = new class usbdevice(device_name, std::format("/sys/bus/usb/devices/{}", d_name), devid_name);
 	all_devices.push_back(usb);
 	register_parameter(devid_name, 0.1);
 }

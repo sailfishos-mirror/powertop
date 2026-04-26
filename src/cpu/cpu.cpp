@@ -381,7 +381,7 @@ static std::string fill_state_name(class abstract_cpu *acpu, int state, int line
 }
 
 static std::string fill_state_line(class abstract_cpu *acpu, int state, int line,
-					const char *sep = "")
+					const string &sep = "")
 {
 	switch (state) {
 		case PSTATE:
@@ -449,7 +449,7 @@ void report_display_cpu_cstates(void)
 	unsigned int package, core, cpu;
 	int line, cstates_num, title=0, core_num=0;
 	class abstract_cpu *_package, *_core = NULL, * _cpu;
-	const char* core_type = NULL;
+	std::string core_type;
 
 	cstates_num = get_cstates_num();
 	/* div attr css_class and css_id */
@@ -500,8 +500,8 @@ void report_display_cpu_cstates(void)
 			if (!_core)
 				continue;
 			core_type = _core->get_type();
-			if (core_type != NULL)
-				if (strcmp(core_type, "Core") == 0 )
+			if (!core_type.empty())
+				if (core_type == "Core")
 					num_cores+=1;
 
 			for (cpu = 0; cpu < _core->children.size(); cpu++) {
@@ -561,13 +561,12 @@ void report_display_cpu_cstates(void)
 						* for translation decision making for the reports.
 						* */
 						core_type = _core->get_type();
-						if (core_type != NULL) {
-							if (strcmp(core_type, "Core") == 0 ) {
+						if (!core_type.empty()) {
+							if (core_type == "Core") {
 								core_data[idx2]="";
 								idx2+=1;
 								core_data[idx2]=pt_format(__("Core {}"), _core->get_number());
 								idx2+=1;
-								core_num+=1;
 							} else {
 								core_data[idx2]="";
 								idx2+=1;
@@ -653,7 +652,7 @@ void report_display_cpu_pstates(void)
 	int line, title=0;
 	class abstract_cpu *_package, *_core = NULL, * _cpu;
 	unsigned int i, pstates_num;
-	const char* core_type = NULL;
+	std::string core_type;
 
 	/* div attr css_class and css_id */
 	tag_attr div_attr;
@@ -712,8 +711,8 @@ void report_display_cpu_pstates(void)
 				continue;
 
 			core_type = _core->get_type();
-			if (core_type != NULL)
-				if (strcmp(core_type, "Core") == 0 )
+			if (!core_type.empty())
+				if (core_type == "Core")
 					num_cores+=1;
 
 			for (cpu = 0; cpu < _core->children.size(); cpu++) {

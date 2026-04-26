@@ -113,7 +113,7 @@ static string model_name(char *path, char *shortname)
 	return "";
 }
 
-ahci::ahci(char *_name, char *path): device()
+ahci::ahci(const string &_name, const string &path): device()
 {
 	std::string diskname;
 
@@ -127,7 +127,7 @@ ahci::ahci(char *_name, char *path): device()
 	start_partial = 0;
 	sysfs_path = path;
 
-	register_sysfs_path(sysfs_path.c_str());
+	register_sysfs_path(sysfs_path);
 
 	name = std::format("ahci:{}", _name);
 	active_index = get_param_index("ahci-link-power-active");
@@ -138,7 +138,7 @@ ahci::ahci(char *_name, char *path): device()
 	slumber_rindex = get_result_index(std::format("{}-slumber", name));
 	devslp_rindex = get_result_index(std::format("{}-devslp", name));
 
-	diskname = model_name((char *)sysfs_path.c_str(), _name);
+	diskname = model_name((char *)sysfs_path.c_str(), (char *)_name.c_str());
 
 	if (diskname.empty())
 		humanname = pt_format(_("SATA link: {}"), _name);
@@ -288,8 +288,7 @@ void create_all_ahcis(void)
 		file << 1 ;
 		file.close();
 
-		bl = new class ahci(entry->d_name, (char *)std::format("/sys/class/scsi_host/{}", entry->d_name).c_str());
-		all_devices.push_back(bl);
+		bl = new class ahci(entry->d_name, std::format("/sys/class/scsi_host/{}", entry->d_name));		all_devices.push_back(bl);
 		register_parameter("ahci-link-power-active", 0.6);  /* active sata link takes about 0.6 W */
 		register_parameter("ahci-link-power-partial");
 		links.push_back(bl);

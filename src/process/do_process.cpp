@@ -261,7 +261,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		if (consumer_depth(cpu) == 1)
 			old_proc = (class process *)current_consumer(cpu);
 
-		if (old_proc && strcmp(old_proc->name(), "process"))
+		if (old_proc && old_proc->name() != "process")
 			old_proc = NULL;
 
 		/* retire the old process */
@@ -309,7 +309,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		if ( (flags & TRACE_FLAG_HARDIRQ) || (flags & TRACE_FLAG_SOFTIRQ)) {
 			class timer *timer;
 			timer = (class timer *) current_consumer(cpu);
-			if (timer && strcmp(timer->name(), "timer")==0) {
+			if (timer && timer->name() == "timer") {
 				if (timer->handler != "delayed_work_timer_fn" &&
 				    timer->handler != "hrtimer_wakeup" &&
 				    timer->handler != "it_real_fn")
@@ -336,7 +336,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 
 		dest_proc = find_create_process(comm, pid);
 
-		if (from && strcmp(from->name(), "process")!=0){
+		if (from && from->name() != "process"){
 			/* not a process doing the wakeup */
 			from = NULL;
 			from_proc = NULL;
@@ -388,7 +388,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 
 		/* find interrupt (top of stack) */
 		irq = (class interrupt *)current_consumer(cpu);
-		if (!irq || strcmp(irq->name(), "interrupt"))
+		if (!irq || irq->name() != "interrupt")
 			return;
 		pop_consumer(cpu);
 		/* retire interrupt */
@@ -426,7 +426,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		uint64_t t;
 
 		irq = (class interrupt *) current_consumer(cpu);
-		if (!irq  || strcmp(irq->name(), "interrupt"))
+		if (!irq  || irq->name() != "interrupt")
 			return;
 		pop_consumer(cpu);
 		/* pop irq */
@@ -474,7 +474,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		tmr = (uint64_t)val;
 
 		timer = (class timer *) current_consumer(cpu);
-		if (!timer || strcmp(timer->name(), "timer")) {
+		if (!timer || timer->name() != "timer") {
 			return;
 		}
 		pop_consumer(cpu);
@@ -514,7 +514,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		uint64_t t;
 
 		timer = (class timer *) current_consumer(cpu);
-		if (!timer || strcmp(timer->name(), "timer")) {
+		if (!timer || timer->name() != "timer") {
 			return;
 		}
 
@@ -567,7 +567,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		wk = (uint64_t)val;
 
 		work = (class work *) current_consumer(cpu);
-		if (!work || strcmp(work->name(), "work")) {
+		if (!work || work->name() != "work") {
 			return;
 		}
 		pop_consumer(cpu);
@@ -611,7 +611,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 
 
 		/* if we are X, and someone just woke us, account the GPU op to the guy waking us */
-		if (consumer && strcmp(consumer->name(), "process")==0) {
+		if (consumer && consumer->name() == "process") {
 			class process *proc = NULL;
 			proc = (class process *) consumer;
 			if (comm_is_xorg(proc->comm) && proc->last_waker) {
@@ -638,8 +638,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 			return;
 		dev = (int)val;
 
-		if (consumer && strcmp(consumer->name(),
-			"process")==0 && dev > 0) {
+		if (consumer && consumer->name() == "process" && dev > 0) {
 
 			consumer->disk_hits++;
 
@@ -865,7 +864,7 @@ void process_update_display(void)
 		if (all_power[i]->events() == 0 && all_power[i]->usage() == 0 && all_power[i]->Witts() == 0)
 			break;
 
-		if (all_power[i]->usage_units()) {
+		if (!all_power[i]->usage_units().empty()) {
 			if (all_power[i]->usage() < 1000)
 				usage = std::format("{:5.1f}{}", all_power[i]->usage(), all_power[i]->usage_units());
 			else
@@ -950,7 +949,7 @@ void report_process_update_display(void)
 				&& all_power[i]->Witts() == 0)
 			break;
 
-		if (all_power[i]->usage_units()) {
+		if (!all_power[i]->usage_units().empty()) {
 			if (all_power[i]->usage() < 1000)
 				usage = std::format("{:5.1f}{}", all_power[i]->usage(), all_power[i]->usage_units());
 			else
@@ -1095,7 +1094,7 @@ void report_summary(void)
 				all_power[i]->Witts() == 0)
 			break;
 
-		if (all_power[i]->usage_units()) {
+		if (!all_power[i]->usage_units().empty()) {
 			if (all_power[i]->usage() < 1000)
 				usage = std::format("{:5.1f}{}", all_power[i]->usage_summary(),
 					all_power[i]->usage_units_summary());

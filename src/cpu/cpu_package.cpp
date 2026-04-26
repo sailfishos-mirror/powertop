@@ -40,18 +40,16 @@ void cpu_package::freq_updated(uint64_t time)
 
 #include <format>
 
-std::string cpu_package::fill_cstate_line(int line_nr, const char *separator)
+std::string cpu_package::fill_cstate_line(int line_nr, const string &separator)
 {
 	unsigned int i;
 
-	if (line_nr == LEVEL_HEADER) {
-		return this->has_intel_MSR ? _(" Pkg(HW)"): _(" Pkg(OS)");
-	}
+	if (line_nr == LEVEL_HEADER)
+		return this->has_intel_MSR ? _(" Package(HW)"): _(" Package(OS)");
 
 	for (i = 0; i < cstates.size(); i++) {
 		if (cstates[i]->line_level != line_nr)
 			continue;
-
 		return std::format("{:5.1f}%", percentage(cstates[i]->duration_delta / time_factor));
 	}
 

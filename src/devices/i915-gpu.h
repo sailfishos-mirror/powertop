@@ -52,7 +52,7 @@ public:
 	virtual std::string human_name(void) { return "Intel GPU"; };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle);
 	virtual bool show_in_list(void) {return false;};
-	virtual const char * util_units(void) { return " ops/s"; };
+	virtual std::string util_units(void) { return " ops/s"; };
 
 	virtual void add_child(device *dev_ptr) { child_devices.push_back(dev_ptr);}
 };

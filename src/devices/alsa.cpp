@@ -41,7 +41,7 @@ using namespace std;
 #include <unistd.h>
 #include <format>
 
-alsa::alsa(const char *_name, const char *path): device()
+alsa::alsa(const string &_name, const string &path): device()
 {
 	ifstream file;
 
@@ -145,7 +145,7 @@ static void create_all_alsa_callback(const char *d_name)
 	if (access(std::format("/sys/class/sound/{}/power_on_acct", d_name).c_str(), R_OK) != 0)
 		return;
 
-	bl = new class alsa(d_name, std::format("/sys/class/sound/{}", d_name).c_str());
+	bl = new class alsa(d_name, std::format("/sys/class/sound/{}", d_name));
 	all_devices.push_back(bl);
 	register_parameter("alsa-codec-power", 0.5);
 }

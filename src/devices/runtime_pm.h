@@ -41,7 +41,7 @@ class runtime_pmdevice: public device {
 	int r_index;
 public:
 
-	runtime_pmdevice(const char *_name, const char *path);
+	runtime_pmdevice(const std::string &_name, const std::string &path);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);

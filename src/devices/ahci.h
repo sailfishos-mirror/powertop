@@ -48,7 +48,7 @@ class ahci: public device {
 	std::string humanname;
 public:
 
-	ahci(char *_name, char *path);
+	ahci(const std::string &_name, const std::string &path);
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);

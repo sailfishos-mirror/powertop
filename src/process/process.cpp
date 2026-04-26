@@ -79,7 +79,7 @@ static void cmdline_to_string(std::string& str)
 }
 
 
-process::process(const char *_comm, int _pid, int _tid) : power_consumer()
+process::process(const string &_comm, int _pid, int _tid) : power_consumer()
 {
 	ifstream file;
 
@@ -146,7 +146,7 @@ double process::usage_summary(void)
 	return t;
 }
 
-const char * process::usage_units_summary(void)
+std::string process::usage_units_summary(void)
 {
 	return "%";
 }

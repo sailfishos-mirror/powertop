@@ -126,7 +126,7 @@ static void do_proc_net_dev(void)
 }
 
 
-network::network(const char *_name, const char *path): device()
+network::network(const string &_name, const string &path): device()
 {
 	char line[4096];
 	start_up = 0;
@@ -142,7 +142,7 @@ network::network(const char *_name, const char *path): device()
 	valid_powerunsave = -1;
 
 	sysfs_path = path;
-	register_sysfs_path(sysfs_path.c_str());
+	register_sysfs_path(sysfs_path);
 	name = _name;
 	humanname = std::format("nic:{}", _name);
 
@@ -346,7 +346,7 @@ static void netdev_callback(const char *d_name)
 	register_parameter(std::format("{}-link-high", d_name));
 	register_parameter(std::format("{}-packets", d_name));
 
-	network *bl = new(std::nothrow) class network(d_name, f_name.c_str());
+	network *bl = new(std::nothrow) class network(d_name, f_name);
 	if (bl) {
 		all_devices.push_back(bl);
 		nics[d_name] = bl;

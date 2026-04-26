@@ -86,7 +86,7 @@ double power_consumer::usage(void)
 	return t;
 }
 
-const char * power_consumer::usage_units(void)
+std::string power_consumer::usage_units(void)
 {
 	double t;
 	t = (accumulated_runtime - child_runtime) / 1000000.0 / measurement_time;
