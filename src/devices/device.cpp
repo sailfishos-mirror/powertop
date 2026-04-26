@@ -64,22 +64,19 @@ device::device(void)
 
 void device::register_sysfs_path(const char *path)
 {
-	char current_path[PATH_MAX + 1];
+	std::string current_path = path;
 	int iter = 0;
 	char resolved_path[PATH_MAX + 1];
 
-	pt_strcpy(current_path, path);
-
 	while (iter++ < 10) {
-		char test_path[PATH_MAX + 1];
-		snprintf(test_path, sizeof(test_path), "%s/device", current_path);
-		if (access(test_path, R_OK) == 0)
-			strcpy(current_path, test_path);
+		std::string test_path = current_path + "/device";
+		if (access(test_path.c_str(), R_OK) == 0)
+			current_path = test_path;
 		else
 			break;
 	}
 
-	if (realpath(current_path, resolved_path))
+	if (realpath(current_path.c_str(), resolved_path))
 		real_path = resolved_path;
 	else
 		real_path.clear();
