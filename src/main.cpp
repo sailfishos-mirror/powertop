@@ -108,12 +108,11 @@ static void print_version()
 
 static bool set_refresh_timeout()
 {
-	static char buf[4];
+	std::string buf;
 	mvprintw(1, 0, "%s (currently %u): ", _("Set refresh time out"), time_out);
-	memset(buf, '\0', sizeof(buf));
-	get_user_input(buf, sizeof(buf) - 1);
+	buf = get_user_input(3);
 	show_tab(0);
-	unsigned time = strtoul(buf, NULL, 0);
+	unsigned time = strtoul(buf.c_str(), NULL, 0);
 	if (!time) return 0;
 	if (time > 32) time = 32;
 	time_out = time;

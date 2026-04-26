@@ -827,11 +827,10 @@ void process_update_display(void)
 	tlr = tl % 60;
 
 	if (pw > 0.0001) {
-		char buf[32];
 		wprintw(win, _("The battery reports a discharge rate of %sW\n"),
-				fmt_prefix(pw, buf));
+				fmt_prefix(pw).c_str());
 		wprintw(win, _("The energy consumed was %sJ\n"),
-				fmt_prefix(joules, buf));
+				fmt_prefix(joules).c_str());
 		need_linebreak = 1;
 	}
 	if (tl > 0 && pw > 0.0001) {
@@ -857,10 +856,7 @@ void process_update_display(void)
 		std::string usage;
 		std::string events;
 		char descr[128];
-		char p_buf[16];
-
-		format_watts(all_power[i]->Witts(), p_buf, 10);
-		power = p_buf;
+		power = format_watts(all_power[i]->Witts(), 10);
 
 		if (!show_power)
 			power = "          ";
@@ -941,10 +937,7 @@ void report_process_update_display(void)
 	for (i = 0; i < total; i++) {
 		std::string power, name, usage, wakes, gpus, disks, xwakes;
 		char descr[128];
-		char p_buf[16];
-
-		format_watts(all_power[i]->Witts(), p_buf, 10);
-		power = p_buf;
+		power = format_watts(all_power[i]->Witts(), 10);
 
 		if (!show_power)
 			power = "          ";
@@ -1089,10 +1082,7 @@ void report_summary(void)
 	for (i = 0; i < all_power.size(); i++) {
 		std::string power, name, usage, events;
 		char descr[128];
-		char p_buf[16];
-
-		format_watts(all_power[i]->Witts(), p_buf, 10);
-		power = p_buf;
+		power = format_watts(all_power[i]->Witts(), 10);
 
 		if (!show_power)
 			power = "          ";

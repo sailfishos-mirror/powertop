@@ -150,7 +150,6 @@ void report_devices(void)
 	double pw;
 
 	std::string util;
-	char power_buf[128];
 
 	win = get_ncurses_win("Device stats");
         if (!win)
@@ -167,17 +166,15 @@ void report_devices(void)
 
 	pw = global_power();
 	if (pw > 0.0001) {
-		char buf[32];
 		wprintw(win, _("The battery reports a discharge rate of %sW\n"),
-				fmt_prefix(pw, buf));
+				fmt_prefix(pw).c_str());
 		wprintw(win, _("The energy consumed was %sJ\n"),
-				fmt_prefix(global_joules(), buf));
+				fmt_prefix(global_joules()).c_str());
 	}
 
 	if (show_power) {
-		char buf[32];
 		wprintw(win, _("System baseline power is estimated at %sW\n"),
-				fmt_prefix(get_parameter_value("base power"), buf));
+				fmt_prefix(get_parameter_value("base power")).c_str());
 	}
 
 	if (pw > 0.0001 || show_power)
@@ -203,8 +200,7 @@ void report_devices(void)
 
 		P = all_devices[i]->power_usage(&all_results, &all_parameters);
 
-		format_watts(P, power_buf, 11);
-		power = power_buf;
+		power = format_watts(P, 11);
 
 		if (!show_power || !all_devices[i]->power_valid())
 			power = "           ";
@@ -252,22 +248,21 @@ void show_report_devices(void)
 	int summary_size=2;
 	string *summary = new string[summary_size];
 	pw = global_power();
-	char buf[32];
 	if (pw > 0.0001) {
 		summary[0]= __("The battery reports a discharge rate of: ");
-		summary[1]=string(fmt_prefix(pw, buf));
+		summary[1]=fmt_prefix(pw);
 		summary[1].append(" W");
 		report.add_summary_list(summary, summary_size);
 
 		summary[0]= __("The energy consumed was : ");
-		summary[1]=string(fmt_prefix(global_joules(), buf));
+		summary[1]=fmt_prefix(global_joules());
 		summary[1].append(" J");
 		report.add_summary_list(summary, summary_size);
 	}
 
 	if (show_power) {
 		summary[0]=__("The system baseline power is estimated at: ");
-		summary[1]=string(fmt_prefix(get_parameter_value("base power"), buf));
+		summary[1]=fmt_prefix(get_parameter_value("base power"));
 		summary[1].append(" W");
 		report.add_summary_list(summary, summary_size);
 	}
@@ -284,7 +279,6 @@ void show_report_devices(void)
 		double P;
 		std::string util;
 		std::string power;
-		char power_buf[128];
 
 		if (all_devices[i]->util_units()) {
 			if (all_devices[i]->utilization() < 1000)
@@ -298,8 +292,7 @@ void show_report_devices(void)
 		}
 
 		P = all_devices[i]->power_usage(&all_results, &all_parameters);
-		format_watts(P, power_buf, 11);
-		power = power_buf;
+		power = format_watts(P, 11);
 
 		if (!show_power || !all_devices[i]->power_valid())
 			power = "           ";
