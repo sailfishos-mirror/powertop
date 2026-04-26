@@ -75,12 +75,12 @@ double thinkpad_fan::utilization(void)
 
 void create_thinkpad_fan(void)
 {
-	char filename[PATH_MAX];
+	std::string filename;
 	class thinkpad_fan *fan;
 
-	pt_strcpy(filename, "/sys/devices/platform/thinkpad_hwmon/fan1_input");
+	filename = "/sys/devices/platform/thinkpad_hwmon/fan1_input";
 
-	if (access(filename, R_OK) !=0)
+	if (access(filename.c_str(), R_OK) !=0)
 		return;
 
 	register_parameter("thinkpad-fan", 10);

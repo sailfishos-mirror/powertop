@@ -58,15 +58,15 @@ class perf_power_bundle: public perf_bundle
 };
 
 
-static class abstract_cpu * new_package(int package, int cpu, char * vendor, int family, int model)
+static class abstract_cpu * new_package(int package, int cpu, const std::string &vendor, int family, int model)
 {
 	class abstract_cpu *ret = NULL;
 	class cpudevice *cpudev;
 	class cpu_rapl_device *cpu_rapl_dev;
 	class dram_rapl_device *dram_rapl_dev;
 
-	char packagename[128];
-	if (strcmp(vendor, "GenuineIntel") == 0)
+	std::string packagename;
+	if (vendor == "GenuineIntel")
 		if (family == 6)
 			if (is_supported_intel_cpu(model, cpu)) {
 				ret = new class nhm_package(model);
@@ -82,19 +82,19 @@ static class abstract_cpu * new_package(int package, int cpu, char * vendor, int
 	ret->set_type("Package");
 	ret->childcount = 0;
 
-	snprintf(packagename, sizeof(packagename), _("cpu package %i"), cpu);
-	cpudev = new class cpudevice(_("cpu package"), packagename, ret);
+	packagename = pt_format(_("cpu package {}"), cpu);
+	cpudev = new class cpudevice(_("cpu package"), packagename.c_str(), ret);
 	all_devices.push_back(cpudev);
 
-	snprintf(packagename, sizeof(packagename), _("package-%i"), cpu);
-	cpu_rapl_dev = new class cpu_rapl_device(cpudev, _("cpu rapl package"), packagename, ret);
+	packagename = std::format("package-{}", cpu);
+	cpu_rapl_dev = new class cpu_rapl_device(cpudev, _("cpu rapl package"), packagename.c_str(), ret);
 	if (cpu_rapl_dev->device_present())
 		all_devices.push_back(cpu_rapl_dev);
 	else
 		delete cpu_rapl_dev;
 
-	snprintf(packagename, sizeof(packagename), _("package-%i"), cpu);
-	dram_rapl_dev = new class dram_rapl_device(cpudev, _("dram rapl package"), packagename, ret);
+	packagename = std::format("package-{}", cpu);
+	dram_rapl_dev = new class dram_rapl_device(cpudev, _("dram rapl package"), packagename.c_str(), ret);
 	if (dram_rapl_dev->device_present())
 		all_devices.push_back(dram_rapl_dev);
 	else
@@ -103,11 +103,11 @@ static class abstract_cpu * new_package(int package, int cpu, char * vendor, int
 	return ret;
 }
 
-static class abstract_cpu * new_core(int core, int cpu, char * vendor, int family, int model)
+static class abstract_cpu * new_core(int core, int cpu, const std::string &vendor, int family, int model)
 {
 	class abstract_cpu *ret = NULL;
 
-	if (strcmp(vendor, "GenuineIntel") == 0)
+	if (vendor == "GenuineIntel")
 		if (family == 6)
 			if (is_supported_intel_cpu(model, cpu)) {
 				ret = new class nhm_core(model);
@@ -137,11 +137,11 @@ static class abstract_cpu * new_i965_gpu(void)
 	return ret;
 }
 
-static class abstract_cpu * new_cpu(int number, char * vendor, int family, int model)
+static class abstract_cpu * new_cpu(int number, const std::string &vendor, int family, int model)
 {
 	class abstract_cpu * ret = NULL;
 
-	if (strcmp(vendor, "GenuineIntel") == 0)
+	if (vendor == "GenuineIntel")
 		if (family == 6)
 			if (is_supported_intel_cpu(model, number)) {
 				ret = new class nhm_cpu;
@@ -162,16 +162,14 @@ static class abstract_cpu * new_cpu(int number, char * vendor, int family, int m
 
 
 
-static void handle_one_cpu(unsigned int number, char *vendor, int family, int model)
+static void handle_one_cpu(unsigned int number, const std::string &vendor, int family, int model)
 {
-	char filename[PATH_MAX];
 	ifstream file;
 	unsigned int package_number = 0;
 	unsigned int core_number = 0;
 	class abstract_cpu *package, *core, *cpu;
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/topology/core_id", number);
-	file.open(filename, ios::in);
+	file.open(std::format("/sys/devices/system/cpu/cpu{}/topology/core_id", number), ios::in);
 	if (file) {
 		file >> core_number;
 		if (core_number == (unsigned int) -1)
@@ -179,8 +177,7 @@ static void handle_one_cpu(unsigned int number, char *vendor, int family, int mo
 		file.close();
 	}
 
-	snprintf(filename, sizeof(filename), "/sys/devices/system/cpu/cpu%i/topology/physical_package_id", number);
-	file.open(filename, ios::in);
+	file.open(std::format("/sys/devices/system/cpu/cpu{}/topology/physical_package_id", number), ios::in);
 	if (file) {
 		file >> package_number;
 		if (package_number == (unsigned int) -1)
@@ -200,6 +197,7 @@ static void handle_one_cpu(unsigned int number, char *vendor, int family, int mo
 	package = system_level.children[package_number];
 	package->parent = &system_level;
 
+
 	if (package->children.size() <= core_number)
 		package->children.resize(core_number + 1, NULL);
 
@@ -213,6 +211,7 @@ static void handle_one_cpu(unsigned int number, char *vendor, int family, int mo
 
 	if (core->children.size() <= number)
 		core->children.resize(number + 1, NULL);
+
 	if (!core->children[number]) {
 		core->children[number] = new_cpu(number, vendor, family, model);
 		core->childcount++;
@@ -252,7 +251,7 @@ void enumerate_cpus(void)
 	char line[4096];
 
 	int number = -1;
-	char vendor[128];
+	std::string vendor;
 	int family = 0;
 	int model = 0;
 
@@ -261,7 +260,6 @@ void enumerate_cpus(void)
 	if (!file)
 		return;
 	/* Not all /proc/cpuinfo include "vendor_id\t". */
-	vendor[0] = '\0';
 
 	while (file) {
 
@@ -273,7 +271,7 @@ void enumerate_cpus(void)
 				c++;
 				if (*c == ' ')
 					c++;
-				pt_strcpy(vendor, c);
+				vendor = c;
 			}
 		}
 		if (strncmp(line, "processor\t",10) == 0) {
