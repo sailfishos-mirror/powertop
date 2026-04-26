@@ -62,7 +62,7 @@ public:
 
 extern void create_all_runtime_pm_devices(void);
 
-extern int device_has_runtime_pm(const char *sysfs_path);
+extern bool device_has_runtime_pm(const std::string &sysfs_path);
 
 
 #endif

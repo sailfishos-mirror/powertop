@@ -54,7 +54,7 @@ i2c_tunable::i2c_tunable(const char *path, const char *name, bool is_adapter) : 
 		filename = std::format("{}/device", path);
 	}
 
-	if (device_has_runtime_pm(filename.c_str())) {
+	if (device_has_runtime_pm(filename)) {
 		desc = pt_format(_("Runtime PM for I2C {} {} ({})"), (is_adapter ? _("Adapter") : _("Device")), name, devname);
 	} else {
 		desc = pt_format(_("I2C {} {} has no runtime power management"), (is_adapter ? _("Adapter") : _("Device")), name);
@@ -107,7 +107,7 @@ static void add_i2c_callback(const char *d_name)
 	else
 		filename = std::format("/sys/bus/i2c/devices/{}", d_name);
 
-	if (device_has_runtime_pm(filename.c_str()))
+	if (device_has_runtime_pm(filename))
 		all_tunables.push_back(i2c);
 	else
 		all_untunables.push_back(i2c);

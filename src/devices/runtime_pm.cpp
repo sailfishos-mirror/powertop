@@ -130,7 +130,7 @@ void runtime_pmdevice::set_human_name(const string &_name)
 }
 
 
-int device_has_runtime_pm(const char *sysfs_path)
+bool device_has_runtime_pm(const string &sysfs_path)
 {
 	ifstream file;
 	unsigned long value;
@@ -140,7 +140,7 @@ int device_has_runtime_pm(const char *sysfs_path)
 		file >> value;
 		file.close();
 		if (value)
-			return 1;
+			return true;
 	}
 
 	file.open(std::format("{}/power/runtime_active_time", sysfs_path), ios::in);
@@ -148,10 +148,10 @@ int device_has_runtime_pm(const char *sysfs_path)
 		file >> value;
 		file.close();
 		if (value)
-			return 1;
+			return true;
 	}
 
-	return 0;
+	return false;
 }
 
 static void do_bus(const char *bus)

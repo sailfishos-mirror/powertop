@@ -52,7 +52,7 @@ runtime_tunable::runtime_tunable(const string &path, const string &bus, const st
 
 
 	desc = pt_format(_("Runtime PM for {} device {}"), bus, dev);
-	if (!device_has_runtime_pm(path.c_str())) {
+	if (!device_has_runtime_pm(path)) {
 		desc = pt_format(_("{} device {} has no runtime power management"), bus, dev);
 	}
 
@@ -77,7 +77,7 @@ runtime_tunable::runtime_tunable(const string &path, const string &bus, const st
 		}
 
 		if (vendor && device) {
-			if (!device_has_runtime_pm(path.c_str())) {
+			if (!device_has_runtime_pm(path)) {
 				desc = pt_format(_("PCI Device {} has no runtime power management"), pci_id_to_name(vendor, device, filename, 4095));
 			} else {
 				desc = pt_format(_("Runtime PM for PCI Device {}"), pci_id_to_name(vendor, device, filename, 4095));
@@ -156,7 +156,7 @@ void add_runtime_tunables(const char *bus)
 
 		runtime = new class runtime_tunable(filename, bus, entry->d_name, "");
 
-		if (!device_has_runtime_pm(filename.c_str()))
+		if (!device_has_runtime_pm(filename))
 			all_untunables.push_back(runtime);
 		else
 			all_tunables.push_back(runtime);
@@ -171,7 +171,7 @@ void add_runtime_tunables(const char *bus)
 			filename = std::format("/sys/bus/{}/devices/{}/{}", bus, entry->d_name, port);
 			runtime_ahci_port = new class runtime_tunable(filename, bus, entry->d_name, port);
 
-			if (!device_has_runtime_pm(filename.c_str()))
+			if (!device_has_runtime_pm(filename))
 				all_untunables.push_back(runtime_ahci_port);
 			else
 				all_tunables.push_back(runtime_ahci_port);
@@ -190,7 +190,7 @@ void add_runtime_tunables(const char *bus)
 			port = std::format("sd{}", blk);
 			filename = std::format("/sys/block/{}/device", port);
 			runtime_ahci_disk = new class runtime_tunable(filename, bus, entry->d_name, port);
-			if (!device_has_runtime_pm(filename.c_str()))
+			if (!device_has_runtime_pm(filename))
 				all_untunables.push_back(runtime_ahci_disk);
 			else
 				all_tunables.push_back(runtime_ahci_disk);
