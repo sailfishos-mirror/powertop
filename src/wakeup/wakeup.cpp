@@ -37,16 +37,16 @@ wakeup::wakeup(const char *str, double _score, const char *enable, const char *d
 {
 	score = _score;
         desc = str;
-        pt_strcpy(wakeup_enable, enable);
-        pt_strcpy(wakeup_disable, disable);
+        wakeup_enable = enable;
+        wakeup_disable = disable;
 }
 
 wakeup::wakeup(void)
 {
 	score = 0;
         desc = "";
-        pt_strcpy(wakeup_enable, _("Enabled"));
-        pt_strcpy(wakeup_disable, _("Disabled"));
-	pt_strcpy(wakeup_idle, _("Unknown"));
+        wakeup_enable = _("Enabled");
+        wakeup_disable = _("Disabled");
+	wakeup_idle = _("Unknown");
 }
 

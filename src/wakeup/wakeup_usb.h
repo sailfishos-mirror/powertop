@@ -34,7 +34,7 @@ using namespace std;
 class usb_wakeup : public wakeup {
 	char usb_path[PATH_MAX];
 public:
-	char interf[4096];
+	std::string interf;
 	usb_wakeup(const char *usb_path, const char *iface);
 
 	virtual int wakeup_value(void);

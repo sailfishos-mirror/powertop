@@ -69,15 +69,8 @@ static void __wakeup_update_display(int cursor_pos)
 	wmove(win, 1,0);
 
 	for (i = 0; i < wakeup_all.size(); i++) {
-		char res[128];
-		char desc[4096];
-		pt_strcpy(res, wakeup_all[i]->wakeup_string());
-		pt_strcpy(desc, wakeup_all[i]->description());
-		while (strlen(res) < 12)
-			strcat(res, " ");
-
-		while (strlen(desc) < 103)
-			strcat(desc, " ");
+		std::string res = wakeup_all[i]->wakeup_string();
+		std::string desc = wakeup_all[i]->description();
 
 		if ((int)i != cursor_pos) {
 			wattrset(win, A_NORMAL);
@@ -86,7 +79,7 @@ static void __wakeup_update_display(int cursor_pos)
 			wattrset(win, A_REVERSE);
 			wprintw(win, ">> ");
 		}
-	wprintw(win, "%s  %s\n", _(res), _(desc));
+		wprintw(win, "%-12s  %-103s\n", _(res.c_str()), _(desc.c_str()));
 	}
 }
 

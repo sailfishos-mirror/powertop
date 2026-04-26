@@ -34,7 +34,7 @@ using namespace std;
 class ethernet_wakeup : public wakeup {
 	char eth_path[PATH_MAX];
 public:
-	char interf[4096];
+	std::string interf;
 	ethernet_wakeup(const char *eth_path, const char *iface);
 
 	virtual int wakeup_value(void);

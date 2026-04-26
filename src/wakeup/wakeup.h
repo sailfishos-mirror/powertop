@@ -36,9 +36,9 @@ using namespace std;
 #define WAKEUP_DISABLE 0
 
 class wakeup {
-	char wakeup_enable[128];
-	char wakeup_disable[128];
-	char wakeup_idle[128];
+	std::string wakeup_enable;
+	std::string wakeup_disable;
+	std::string wakeup_idle;
 protected:
 	std::string toggle_enable;
 	std::string toggle_disable;
@@ -53,7 +53,7 @@ public:
 
 	virtual int wakeup_value(void) { return WAKEUP_DISABLE; }
 
-	virtual char *wakeup_string(void)
+	virtual const std::string& wakeup_string(void)
 	{
 		switch (wakeup_value()) {
 		case WAKEUP_ENABLE:
