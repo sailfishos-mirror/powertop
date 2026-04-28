@@ -277,6 +277,14 @@ powertop_sources = [
   'src/wakeup/wakeup_usb.h',
 ]
 
+if get_option('test-framework')
+  powertop_sources += [
+    'src/test_framework.cpp',
+    'src/test_framework.h',
+  ]
+  add_project_arguments('-DENABLE_TEST_FRAMEWORK', language: 'cpp')
+endif
+
 executable('powertop',
   powertop_sources,
   include_directories: [src_inc, include_directories('.')],

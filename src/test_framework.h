@@ -1,0 +1,82 @@
+/*
+ * Copyright 2024, Intel Corporation
+ *
+ * This is part of PowerTOP
+ *
+ * This program file is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; version 2 of the License.
+ */
+
+#ifndef _INCLUDE_GUARD_TEST_FRAMEWORK_H_
+#define _INCLUDE_GUARD_TEST_FRAMEWORK_H_
+
+#include <string>
+#include <vector>
+#include <map>
+#include <deque>
+#include <stdexcept>
+
+class test_exception : public std::runtime_error {
+public:
+	test_exception(const std::string& msg) : std::runtime_error(msg) {}
+};
+
+class test_framework_manager {
+public:
+	static test_framework_manager& get();
+
+#ifdef ENABLE_TEST_FRAMEWORK
+	void set_record(const std::string& filename);
+	void set_replay(const std::string& filename);
+
+	bool is_recording() const { return recording; }
+	bool is_replaying() const { return replaying; }
+
+	void record_read(const std::string& path, const std::string& content);
+	std::string replay_read(const std::string& path);
+
+	void record_write(const std::string& path, const std::string& content);
+	void replay_write(const std::string& path, const std::string& content);
+
+	void save();
+	void load();
+#else
+	void set_record(const std::string& filename) {}
+	void set_replay(const std::string& filename) {}
+
+	bool is_recording() const { return false; }
+	bool is_replaying() const { return false; }
+
+	void record_read(const std::string& path, const std::string& content) {}
+	std::string replay_read(const std::string& path) { return ""; }
+
+	void record_write(const std::string& path, const std::string& content) {}
+	void replay_write(const std::string& path, const std::string& content) {}
+
+	void save() {}
+	void load() {}
+#endif
+
+private:
+	test_framework_manager();
+	~test_framework_manager();
+
+#ifdef ENABLE_TEST_FRAMEWORK
+	bool recording;
+	bool replaying;
+	std::string record_filename;
+	std::string replay_filename;
+
+	std::map<std::string, std::deque<std::string>> read_sequences;
+	std::vector<std::pair<std::string, std::string>> recorded_reads;
+
+	std::map<std::string, std::deque<std::string>> write_sequences;
+	std::vector<std::pair<std::string, std::string>> recorded_writes;
+
+	std::string base64_encode(const std::string& in);
+	std::string base64_decode(const std::string& in);
+#endif
+};
+
+#endif

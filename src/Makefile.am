@@ -5,6 +5,8 @@ nodist_powertop_SOURCES = css.h
 
 powertop_SOURCES = \
 	css.h \
+	test_framework.cpp \
+	test_framework.h \
 	devlist.cpp \
 	devlist.h \
 	display.cpp \

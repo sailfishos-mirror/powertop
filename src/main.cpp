@@ -46,6 +46,7 @@
 #include "perf/perf.h"
 #include "perf/perf_bundle.h"
 #include "lib.h"
+#include "test_framework.h"
 #include "../config.h"
 
 
@@ -78,7 +79,9 @@ enum {
 	OPT_AUTO_TUNE = CHAR_MAX + 1,
 	OPT_AUTO_TUNE_DUMP,
 	OPT_EXTECH,
-	OPT_DEBUG
+	OPT_DEBUG,
+	OPT_RECORD,
+	OPT_REPLAY
 };
 
 static const struct option long_options[] =
@@ -98,6 +101,10 @@ static const struct option long_options[] =
 	{"workload",	optional_argument,	NULL,		 'w'},
 	{"version",	no_argument,		NULL,		 'V'},
 	{"help",	no_argument,		NULL,		 'h'},
+#ifdef ENABLE_TEST_FRAMEWORK
+	{"record",	required_argument,	NULL,		 OPT_RECORD},
+	{"replay",	required_argument,	NULL,		 OPT_REPLAY},
+#endif
 	{NULL,		0,			NULL,		 0}
 };
 
@@ -325,6 +332,8 @@ void make_report(int time, const std::string &workload, int iterations, int samp
 }
 
 static void checkroot() {
+	if (test_framework_manager::get().is_replaying())
+		return;
 	int uid;
 	uid = geteuid();
 
@@ -358,28 +367,30 @@ static void powertop_init(int auto_tune)
 	rlmt.rlim_cur = rlmt.rlim_max = get_nr_open();
 	setrlimit (RLIMIT_NOFILE, &rlmt);
 
-	if (system("/sbin/modprobe cpufreq_stats > /dev/null 2>&1"))
-		fprintf(stderr, _("modprobe cpufreq_stats failed\n"));
+	if (!test_framework_manager::get().is_replaying()) {
+		if (system("/sbin/modprobe cpufreq_stats > /dev/null 2>&1"))
+			fprintf(stderr, _("modprobe cpufreq_stats failed\n"));
 #if defined(__i386__) || defined(__x86_64__)
-	if (system("/sbin/modprobe msr > /dev/null 2>&1"))
-		fprintf(stderr, _("modprobe msr failed\n"));
+		if (system("/sbin/modprobe msr > /dev/null 2>&1"))
+			fprintf(stderr, _("modprobe msr failed\n"));
 #endif
-	statfs("/sys/kernel/debug", &st_fs);
+		statfs("/sys/kernel/debug", &st_fs);
 
-	if (st_fs.f_type != (long) DEBUGFS_MAGIC) {
-		if (access("/bin/mount", X_OK) == 0) {
-			ret = system("/bin/mount -t debugfs debugfs /sys/kernel/debug > /dev/null 2>&1");
-		} else {
-			ret = system("mount -t debugfs debugfs /sys/kernel/debug > /dev/null 2>&1");
-		}
-		if (ret != 0) {
-			if (!auto_tune) {
-				fprintf(stderr, _("Failed to mount debugfs!\n"));
-				fprintf(stderr, _("exiting...\n"));
-				exit(EXIT_FAILURE);
+		if (st_fs.f_type != (long) DEBUGFS_MAGIC) {
+			if (access("/bin/mount", X_OK) == 0) {
+				ret = system("/bin/mount -t debugfs debugfs /sys/kernel/debug > /dev/null 2>&1");
 			} else {
-				fprintf(stderr, _("Failed to mount debugfs!\n"));
-				fprintf(stderr, _("Should still be able to auto tune...\n"));
+				ret = system("mount -t debugfs debugfs /sys/kernel/debug > /dev/null 2>&1");
+			}
+			if (ret != 0) {
+				if (!auto_tune) {
+					fprintf(stderr, _("Failed to mount debugfs!\n"));
+					fprintf(stderr, _("exiting...\n"));
+					exit(EXIT_FAILURE);
+				} else {
+					fprintf(stderr, _("Failed to mount debugfs!\n"));
+					fprintf(stderr, _("Should still be able to auto tune...\n"));
+				}
 			}
 		}
 	}
@@ -426,152 +437,165 @@ void clean_shutdown()
 
 int main(int argc, char **argv)
 {
-	int option_index;
-	int c;
-	std::string filename, workload;
-	int  iterations = 1, auto_tune = 0, sample_interval = 5;
-	bool auto_tune_dump = false;
+	try {
+		int option_index;
+		int c;
+		std::string filename, workload;
+		int  iterations = 1, auto_tune = 0, sample_interval = 5;
+		bool auto_tune_dump = false;
 
-	set_new_handler(out_of_memory);
+		set_new_handler(out_of_memory);
 
-	setlocale (LC_ALL, "");
+		setlocale (LC_ALL, "");
 
 #ifdef ENABLE_NLS
-	bindtextdomain (PACKAGE, LOCALEDIR);
-	textdomain (PACKAGE);
+		bindtextdomain (PACKAGE, LOCALEDIR);
+		textdomain (PACKAGE);
 #endif
-	ui_notify_user = ui_notify_user_ncurses;
-	while (1) { /* parse commandline options */
-		c = getopt_long(argc, argv, "cC::r::i:qt:w:Vh", long_options, &option_index);
-		/* Detect the end of the options. */
-		if (c == -1)
-			break;
-		switch (c) {
-		case OPT_AUTO_TUNE_DUMP:
-			auto_tune_dump = true; // do NOT `break;` here!
-		case OPT_AUTO_TUNE:
-			auto_tune = 1;
-			leave_powertop = 1;
-			ui_notify_user = ui_notify_user_console;
-			break;
-		case 'c':
-			powertop_init(0);
-			calibrate();
-			break;
-		case 'C':		/* csv report */
-			reporttype = REPORT_CSV;
-			filename = optarg ? optarg : "powertop.csv";
-			if (filename.empty())
-			{
-				fprintf(stderr, _("Invalid CSV filename\n"));
+		ui_notify_user = ui_notify_user_ncurses;
+		while (1) { /* parse commandline options */
+			c = getopt_long(argc, argv, "cC::r::i:qt:w:Vh", long_options, &option_index);
+			/* Detect the end of the options. */
+			if (c == -1)
+				break;
+			switch (c) {
+			case OPT_AUTO_TUNE_DUMP:
+				auto_tune_dump = true; // do NOT `break;` here!
+			case OPT_AUTO_TUNE:
+				auto_tune = 1;
+				leave_powertop = 1;
+				ui_notify_user = ui_notify_user_console;
+				break;
+			case 'c':
+				powertop_init(0);
+				calibrate();
+				break;
+			case 'C':		/* csv report */
+				reporttype = REPORT_CSV;
+				filename = optarg ? optarg : "powertop.csv";
+				if (filename.empty())
+				{
+					fprintf(stderr, _("Invalid CSV filename\n"));
+					exit(1);
+				}
+				break;
+#ifdef ENABLE_TEST_FRAMEWORK
+			case OPT_RECORD:
+				test_framework_manager::get().set_record(optarg);
+				break;
+			case OPT_REPLAY:
+				test_framework_manager::get().set_replay(optarg);
+				break;
+#endif
+			case OPT_DEBUG:
+				/* implemented using getopt_long(3) flag */
+				break;
+			case OPT_EXTECH:	/* Extech power analyzer support */
+				checkroot();
+				extech_power_meter(optarg ? optarg : "/dev/ttyUSB0");
+				break;
+			case 'r':		/* html report */
+				reporttype = REPORT_HTML;
+				filename = optarg ? optarg : "powertop.html";
+				if (filename.empty())
+				{
+					fprintf(stderr, _("Invalid HTML filename\n"));
+					exit(1);
+				}
+				break;
+			case 'i':
+				iterations = (optarg ? atoi(optarg) : 1);
+				break;
+			case 'q':
+				if (freopen("/dev/null", "a", stderr))
+					fprintf(stderr, _("Quiet mode failed!\n"));
+				break;
+			case 's':
+				sample_interval = (optarg ? atoi(optarg) : 5);
+				break;
+			case 't':
+				time_out = (optarg ? atoi(optarg) : 20);
+				break;
+			case 'w':		/* measure workload */
+				workload = optarg ? optarg : "";
+				break;
+			case 'V':
+				print_version();
+				exit(0);
+				break;
+			case 'h':
+				print_usage();
+				exit(0);
+				break;
+			case '?':		/* Unknown option */
+				/* getopt_long already printed an error message. */
 				exit(1);
+				break;
 			}
-			break;
-		case OPT_DEBUG:
-			/* implemented using getopt_long(3) flag */
-			break;
-		case OPT_EXTECH:	/* Extech power analyzer support */
-			checkroot();
-			extech_power_meter(optarg ? optarg : "/dev/ttyUSB0");
-			break;
-		case 'r':		/* html report */
-			reporttype = REPORT_HTML;
-			filename = optarg ? optarg : "powertop.html";
-			if (filename.empty())
-			{
-				fprintf(stderr, _("Invalid HTML filename\n"));
-				exit(1);
-			}
-			break;
-		case 'i':
-			iterations = (optarg ? atoi(optarg) : 1);
-			break;
-		case 'q':
-			if (freopen("/dev/null", "a", stderr))
-				fprintf(stderr, _("Quiet mode failed!\n"));
-			break;
-		case 's':
-			sample_interval = (optarg ? atoi(optarg) : 5);
-			break;
-		case 't':
-			time_out = (optarg ? atoi(optarg) : 20);
-			break;
-		case 'w':		/* measure workload */
-			workload = optarg ? optarg : "";
-			break;
-		case 'V':
-			print_version();
-			exit(0);
-			break;
-		case 'h':
-			print_usage();
-			exit(0);
-			break;
-		case '?':		/* Unknown option */
-			/* getopt_long already printed an error message. */
-			exit(1);
-			break;
 		}
-	}
 
-	powertop_init(auto_tune);
+		powertop_init(auto_tune);
 
-	if (reporttype != REPORT_OFF)
-		make_report(time_out, workload, iterations, sample_interval, filename);
+		if (reporttype != REPORT_OFF)
+			make_report(time_out, workload, iterations, sample_interval, filename);
 
-	if (debug_learning)
-		printf("Learning debugging enabled\n");
+		if (debug_learning)
+			printf("Learning debugging enabled\n");
 
-	learn_parameters(250, 0);
-	save_parameters("saved_parameters.powertop");
+		learn_parameters(250, 0);
+		save_parameters("saved_parameters.powertop");
 
 
-	if (debug_learning) {
-	        learn_parameters(1000, 1);
-		dump_parameter_bundle();
-		end_pci_access();
-		exit(0);
-	}
-	if (!auto_tune)
-		init_display();
-
-	initialize_devfreq();
-	initialize_tuning();
-	initialize_wakeup();
-	/* first one is short to not let the user wait too long */
-	one_measurement(1, sample_interval, NULL);
-
-	if (!auto_tune) {
-		tuning_update_display();
-		show_tab(0);
-	} else {
-		auto_toggle_tuning(auto_tune_dump);
-	}
-
-	while (!leave_powertop) {
+		if (debug_learning) {
+			learn_parameters(1000, 1);
+			dump_parameter_bundle();
+			end_pci_access();
+			exit(0);
+		}
 		if (!auto_tune)
-			show_cur_tab();
-		one_measurement(time_out, sample_interval, NULL);
-		learn_parameters(15, 0);
+			init_display();
+
+		initialize_devfreq();
+		initialize_tuning();
+		initialize_wakeup();
+		/* first one is short to not let the user wait too long */
+		one_measurement(1, sample_interval, NULL);
+
+		if (!auto_tune) {
+			tuning_update_display();
+			show_tab(0);
+		} else {
+			auto_toggle_tuning(auto_tune_dump);
+		}
+
+		while (!leave_powertop) {
+			if (!auto_tune)
+				show_cur_tab();
+			one_measurement(time_out, sample_interval, NULL);
+			learn_parameters(15, 0);
+		}
+		if (!auto_tune)
+			endwin();
+		fprintf(stderr, "%s\n", _("Leaving PowerTOP"));
+
+		end_process_data();
+		clear_process_data();
+		end_cpu_data();
+		clear_cpu_data();
+
+		save_all_results("saved_results.powertop");
+		save_parameters("saved_parameters.powertop");
+		learn_parameters(500, 0);
+		save_parameters("saved_parameters.powertop");
+		end_pci_access();
+		clear_tuning();
+		reset_display();
+
+		clean_shutdown();
+
+	} catch (const test_exception& e) {
+		fprintf(stderr, "%s\n", e.what());
+		return EXIT_FAILURE;
 	}
-	if (!auto_tune)
-		endwin();
-	fprintf(stderr, "%s\n", _("Leaving PowerTOP"));
-
-	end_process_data();
-	clear_process_data();
-	end_cpu_data();
-	clear_cpu_data();
-
-	save_all_results("saved_results.powertop");
-	save_parameters("saved_parameters.powertop");
-	learn_parameters(500, 0);
-	save_parameters("saved_parameters.powertop");
-	end_pci_access();
-	clear_tuning();
-	reset_display();
-
-	clean_shutdown();
-
 	return 0;
 }

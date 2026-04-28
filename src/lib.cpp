@@ -38,6 +38,8 @@
 #include <limits.h>
 #include <format>
 
+#include "test_framework.h"
+
 #include "lib.h"
 
 #ifndef HAVE_NO_PCI
@@ -171,6 +173,13 @@ void set_max_cpu(int cpu)
 
 void write_sysfs(const string &filename, const string &value)
 {
+	if (test_framework_manager::get().is_replaying()) {
+		test_framework_manager::get().replay_write(filename, value);
+		return;
+	}
+	if (test_framework_manager::get().is_recording()) {
+		test_framework_manager::get().record_write(filename, value);
+	}
 	ofstream file;
 
 	file.open(filename.c_str(), ios::out);
@@ -217,6 +226,9 @@ string read_sysfs_string(const string &filename)
 
 string read_file_content(const string &filename)
 {
+	if (test_framework_manager::get().is_replaying()) {
+		return test_framework_manager::get().replay_read(filename);
+	}
 	ifstream file;
 	string content;
 
@@ -230,6 +242,9 @@ string read_file_content(const string &filename)
 	} catch (std::exception &exc) {
 		file.close();
 		return "";
+	}
+	if (test_framework_manager::get().is_recording()) {
+		test_framework_manager::get().record_read(filename, content);
 	}
 	return content;
 }
