@@ -35,6 +35,9 @@ Perform your normal code review process, but also check coding style
 Assign a priority to each issue found: 'nit', 'low', 'medium', 'high',
 'critical'.
 
+Anything that always directly and materially impacts user functionality is `critical` severity
+(as opposed to corner case/error cases)
+
 
 ## Reporting results
 Generate a report in Markdown format. Use `review.md` as filename unless the
