@@ -263,7 +263,8 @@ void one_measurement(int seconds, int sample_interval, const std::string &worklo
 	end_power_measurement();
 
 	process_cpu_data();
-	process_process_data();
+	if (!test_framework_manager::get().is_replaying())
+		process_process_data();
 
 	/* output stats */
 	process_update_display();
