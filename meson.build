@@ -275,13 +275,11 @@ powertop_sources = [
   'src/wakeup/wakeup_ethernet.h',
   'src/wakeup/wakeup_usb.cpp',
   'src/wakeup/wakeup_usb.h',
+  'src/test_framework.cpp',
+  'src/test_framework.h',
 ]
 
 if get_option('test-framework')
-  powertop_sources += [
-    'src/test_framework.cpp',
-    'src/test_framework.h',
-  ]
   add_project_arguments('-DENABLE_TEST_FRAMEWORK', language: 'cpp')
 endif
 

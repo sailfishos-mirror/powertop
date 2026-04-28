@@ -306,7 +306,7 @@ void make_report(int time, const std::string &workload, int iterations, int samp
 	/* one to warm up everything */
 	fprintf(stderr, _("Preparing to take measurements\n"));
 	utf_ok = 0;
-	one_measurement(1, sample_interval, NULL);
+	one_measurement(1, sample_interval, "");
 
 	if (workload.empty())
 	  fprintf(stderr, _("Taking %d measurement(s) for a duration of %d second(s) each.\n"),iterations,time);
@@ -317,7 +317,7 @@ void make_report(int time, const std::string &workload, int iterations, int samp
 		initialize_tuning();
 		initialize_wakeup();
 		/* and then the real measurement */
-		one_measurement(time, sample_interval, workload.empty() ? NULL : workload.c_str());
+		one_measurement(time, sample_interval, workload);
 		report_show_tunables();
 		report_show_wakeup();
 		finish_report_output();
@@ -559,7 +559,7 @@ int main(int argc, char **argv)
 		initialize_tuning();
 		initialize_wakeup();
 		/* first one is short to not let the user wait too long */
-		one_measurement(1, sample_interval, NULL);
+		one_measurement(1, sample_interval, "");
 
 		if (!auto_tune) {
 			tuning_update_display();
@@ -571,7 +571,7 @@ int main(int argc, char **argv)
 		while (!leave_powertop) {
 			if (!auto_tune)
 				show_cur_tab();
-			one_measurement(time_out, sample_interval, NULL);
+			one_measurement(time_out, sample_interval, "");
 			learn_parameters(15, 0);
 		}
 		if (!auto_tune)
