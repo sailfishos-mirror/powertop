@@ -122,7 +122,7 @@ void abstract_cpu::measurement_start(void)
 		if (children[i])
 			children[i]->measurement_start();
 
-	gettimeofday(&stamp_before, NULL);
+	stamp_before = pt_gettime();
 
 	last_stamp = 0;
 
@@ -137,7 +137,7 @@ void abstract_cpu::measurement_end(void)
 	unsigned int i, j;
 
 	total_stamp = 0;
-	gettimeofday(&stamp_after, NULL);
+	stamp_after = pt_gettime();
 	for (i = 0; i < children.size(); i++)
 		if (children[i])
 			children[i]->wiggle();

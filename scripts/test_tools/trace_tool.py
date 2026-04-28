@@ -35,6 +35,8 @@ def parse_line(line, line_num):
         return tag, rest, None
     if tag == 'M':
         return tag, rest, None
+    if tag == 'T':
+        return tag, rest, None
     last_space = rest.rfind(' ')
     if last_space == -1: return None
     path = rest[:last_space]
@@ -46,6 +48,7 @@ def get_tag_str(tag):
     if tag == 'W': return "Write"
     if tag == 'N': return "Miss"
     if tag == 'M': return "MSR"
+    if tag == 'T': return "Time"
     return "????"
 
 def cmd_list(args):
@@ -220,7 +223,7 @@ def cmd_validate(args):
             errors += 1
             continue
         tag, path, b64 = parsed
-        if tag not in ['R', 'W', 'N', 'M']:
+        if tag not in ['R', 'W', 'N', 'M', 'T']:
             print(f"Line {i}: Invalid tag '{tag}'")
             errors += 1
         if tag == 'M':
@@ -234,6 +237,18 @@ def cmd_validate(args):
                     int(parts[2], 16)
                 except:
                     print(f"Line {i}: Invalid MSR hex value")
+                    errors += 1
+        if tag == 'T':
+            parts = path.split(' ')
+            if len(parts) != 2:
+                print(f"Line {i}: Invalid Time format (expected sec usec)")
+                errors += 1
+            else:
+                try:
+                    int(parts[0])
+                    int(parts[1])
+                except:
+                    print(f"Line {i}: Invalid Time decimal value")
                     errors += 1
         if tag in ['R', 'W'] and b64:
             try:

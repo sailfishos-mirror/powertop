@@ -282,7 +282,7 @@ void network::start_measurement(void)
 	do_proc_net_dev();
 	start_pkts = pkts;
 
-	gettimeofday(&before, NULL);
+	before = pt_gettime();
 }
 
 
@@ -290,7 +290,7 @@ void network::end_measurement(void)
 {
 	int u_100, u_1000, u_high, u_powerunsave;
 
-	gettimeofday(&after, NULL);
+	after = pt_gettime();
 
 	end_speed = iface_speed(name.c_str());
 	end_up = net_iface_up(name.c_str());

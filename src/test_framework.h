@@ -17,6 +17,7 @@
 #include <deque>
 #include <tuple>
 #include <stdexcept>
+#include <sys/time.h>
 
 class test_exception : public std::runtime_error {
 public:
@@ -44,6 +45,9 @@ public:
 	void record_msr(int cpu, uint64_t offset, uint64_t value);
 	int replay_msr(int cpu, uint64_t offset, uint64_t *value);
 
+	void record_time(struct timeval tv);
+	void replay_time(struct timeval *tv);
+
 	void save();
 	void load();
 #else
@@ -62,6 +66,9 @@ public:
 
 	void record_msr(int cpu, uint64_t offset, uint64_t value) {}
 	int replay_msr(int cpu, uint64_t offset, uint64_t *value) { return -1; }
+
+	void record_time(struct timeval tv) {}
+	void replay_time(struct timeval *tv) {}
 
 	void save() {}
 	void load() {}
@@ -85,6 +92,9 @@ private:
 
 	std::map<std::pair<int, uint64_t>, std::deque<uint64_t>> msr_sequences;
 	std::vector<std::tuple<int, uint64_t, uint64_t>> recorded_msrs;
+
+	std::deque<struct timeval> time_sequences;
+	std::vector<struct timeval> recorded_times;
 
 	std::string base64_encode(const std::string& in);
 	std::string base64_decode(const std::string& in);

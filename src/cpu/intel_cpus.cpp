@@ -298,7 +298,7 @@ void nhm_core::measurement_end(void)
 	if (this->has_c7_res)
 		finalize_cstate("core c7", 0, c7_after, 1);
 
-	gettimeofday(&stamp_after, NULL);
+	stamp_after = pt_gettime();
 
 	time_factor = 1000000.0 * (stamp_after.tv_sec - stamp_before.tv_sec) + stamp_after.tv_usec - stamp_before.tv_usec;
 
@@ -576,7 +576,7 @@ void nhm_package::measurement_end(void)
 	}
 	tsc_after   = get_msr(first_cpu, MSR_TSC);
 
-	gettimeofday(&stamp_after, NULL);
+	stamp_after = pt_gettime();
 
 	time_factor = 1000000.0 * (stamp_after.tv_sec - stamp_before.tv_sec) + stamp_after.tv_usec - stamp_before.tv_usec;
 

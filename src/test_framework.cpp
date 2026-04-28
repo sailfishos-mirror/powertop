@@ -100,6 +100,20 @@ int test_framework_manager::replay_msr(int cpu, uint64_t offset, uint64_t *value
 	return 0;
 }
 
+void test_framework_manager::record_time(struct timeval tv) {
+	if (!recording) return;
+	recorded_times.push_back(tv);
+}
+
+void test_framework_manager::replay_time(struct timeval *tv) {
+	if (!replaying) return;
+	if (time_sequences.empty()) {
+		throw test_exception("TEST FAIL: No more recorded content for time read");
+	}
+	*tv = time_sequences.front();
+	time_sequences.pop_front();
+}
+
 void test_framework_manager::save() {
 	ofstream file(record_filename);
 	if (!file) {
@@ -118,6 +132,9 @@ void test_framework_manager::save() {
 	}
 	for (const auto& m : recorded_msrs) {
 		file << "M " << std::get<0>(m) << " " << hex << std::get<1>(m) << " " << std::get<2>(m) << dec << endl;
+	}
+	for (const auto& t : recorded_times) {
+		file << "T " << t.tv_sec << " " << t.tv_usec << endl;
 	}
 }
 
@@ -149,6 +166,14 @@ void test_framework_manager::load() {
 			uint64_t offset, value;
 			msr_ss >> cpu >> hex >> offset >> value;
 			msr_sequences[make_pair(cpu, offset)].push_back(value);
+			continue;
+		}
+
+		if (type == 'T') {
+			stringstream time_ss(rest);
+			struct timeval tv;
+			time_ss >> tv.tv_sec >> tv.tv_usec;
+			time_sequences.push_back(tv);
 			continue;
 		}
 

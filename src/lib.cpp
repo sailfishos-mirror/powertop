@@ -256,6 +256,20 @@ string read_file_content(const string &filename)
 	return content;
 }
 
+struct timeval pt_gettime(void)
+{
+	struct timeval tv;
+	if (test_framework_manager::get().is_replaying()) {
+		test_framework_manager::get().replay_time(&tv);
+		return tv;
+	}
+	gettimeofday(&tv, NULL);
+	if (test_framework_manager::get().is_recording()) {
+		test_framework_manager::get().record_time(tv);
+	}
+	return tv;
+}
+
 void align_string(std::string &str, size_t min_sz, size_t max_sz)
 {
 	size_t sz;

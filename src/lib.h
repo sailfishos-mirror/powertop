@@ -66,12 +66,14 @@ extern std::string kernel_function(uint64_t address);
 
 #include <ctime>
 #include <string>
+#include <sys/time.h>
 using namespace std;
 
 extern void write_sysfs(const string &filename, const string &value);
 extern int read_sysfs(const string &filename, bool *ok = NULL);
 extern string read_sysfs_string(const string &filename);
 extern string read_file_content(const string &filename);
+extern struct timeval pt_gettime(void);
 
 extern std::string format_watts(double W, unsigned int len);
 

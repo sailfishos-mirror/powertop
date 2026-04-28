@@ -43,7 +43,7 @@
 
 void i965_core::measurement_start(void)
 {
-	gettimeofday(&before, NULL);
+	before = pt_gettime();
 	rc6_before = read_sysfs("/sys/class/drm/card0/power/rc6_residency_ms", NULL);
 	rc6p_before = read_sysfs("/sys/class/drm/card0/power/rc6p_residency_ms", NULL);
 	rc6pp_before = read_sysfs("/sys/class/drm/card0/power/rc6pp_residency_ms", NULL);
@@ -94,7 +94,7 @@ std::string i965_core::fill_cstate_line(int line_nr, const string &separator)
 
 void i965_core::measurement_end(void)
 {
-	gettimeofday(&after, NULL);
+	after = pt_gettime();
 
 	rc6_after = read_sysfs("/sys/class/drm/card0/power/rc6_residency_ms", NULL);
 	rc6p_after = read_sysfs("/sys/class/drm/card0/power/rc6p_residency_ms", NULL);

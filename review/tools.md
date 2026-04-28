@@ -10,13 +10,14 @@ This document describes the utilities available for managing the PowerTOP Test F
 ### Trace File Format Spec
 The trace file is a line-based text format. Each line represents a single I/O operation:
 `[TYPE] [PATH_OR_DATA] [CONTENT]`
-- `TYPE`: `R` (Read), `W` (Write), `N` (Miss), `M` (MSR Read).
+- `TYPE`: `R` (Read), `W` (Write), `N` (Miss), `M` (MSR Read), `T` (Time).
 - `PATH_OR_DATA`: 
     - For `R`, `W`, `N`: The absolute system path.
     - For `M`: `[CPU] [HEX_OFFSET] [HEX_VALUE]`
+    - For `T`: `[TV_SEC] [TV_USEC]`
 - `CONTENT`:
     - For `R`, `W`: Base64 encoded payload.
-    - For `N`, `M`: Omitted.
+    - For `N`, `M`, `T`: Omitted.
 
 ### Build Configuration
 To use the test framework, you must build PowerTOP with the `test-framework` option enabled.

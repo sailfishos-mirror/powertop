@@ -166,7 +166,7 @@ void devfreq::start_measurement(void)
 	dstates.resize(0);
 	sample_time = 0;
 
-	gettimeofday(&stamp_before, NULL);
+	stamp_before = pt_gettime();
 	parse_devfreq_trans_stat(dir_name);
 	/* add device idle state */
 	update_devfreq_freq_state(0, 0);
@@ -175,7 +175,7 @@ void devfreq::start_measurement(void)
 void devfreq::end_measurement(void)
 {
 	parse_devfreq_trans_stat(dir_name);
-	gettimeofday(&stamp_after, NULL);
+	stamp_after = pt_gettime();
 	process_time_stamps();
 }
 
