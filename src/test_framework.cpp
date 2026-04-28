@@ -117,7 +117,7 @@ void test_framework_manager::save() {
 		file << "W " << p.first << " " << base64_encode(p.second) << endl;
 	}
 	for (const auto& m : recorded_msrs) {
-		file << "M " << get<0>(m) << " " << hex << get<1>(m) << " " << get<2>(m) << dec << endl;
+		file << "M " << std::get<0>(m) << " " << hex << std::get<1>(m) << " " << std::get<2>(m) << dec << endl;
 	}
 }
 
