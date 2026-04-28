@@ -34,6 +34,7 @@ public:
 	bool is_replaying() const { return replaying; }
 
 	void record_read(const std::string& path, const std::string& content);
+	void record_read_fail(const std::string& path);
 	std::string replay_read(const std::string& path);
 
 	void record_write(const std::string& path, const std::string& content);
@@ -49,6 +50,7 @@ public:
 	bool is_replaying() const { return false; }
 
 	void record_read(const std::string& path, const std::string& content) {}
+	void record_read_fail(const std::string& path) {}
 	std::string replay_read(const std::string& path) { return ""; }
 
 	void record_write(const std::string& path, const std::string& content) {}

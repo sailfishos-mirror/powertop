@@ -26,12 +26,23 @@ def save_trace(trace_file, lines):
 
 def parse_line(line, line_num):
     parts = line.strip().split(' ')
-    if len(parts) < 3:
+    if len(parts) < 2:
         return None
     tag = parts[0]
+    if tag == 'N':
+        path = " ".join(parts[1:])
+        return tag, path, None
+    if len(parts) < 3:
+        return None
     b64_content = parts[-1]
     path = " ".join(parts[1:-1])
     return tag, path, b64_content
+
+def get_tag_str(tag):
+    if tag == 'R': return "Read"
+    if tag == 'W': return "Write"
+    if tag == 'N': return "Miss"
+    return "????"
 
 def cmd_list(args):
     lines = load_trace(args.trace_file)
@@ -42,8 +53,7 @@ def cmd_list(args):
         if not parsed:
             continue
         tag, path, _ = parsed
-        tag_str = "Read" if tag == 'R' else "Write"
-        print(f"{i:<6} {tag_str:<6} {path}")
+        print(f"{i:<6} {get_tag_str(tag):<6} {path}")
 
 def cmd_extract(args):
     lines = load_trace(args.trace_file)
@@ -56,7 +66,11 @@ def cmd_extract(args):
         print(f"Error: Invalid line format at line {args.line}")
         sys.exit(1)
 
-    _, _, b64_content = parsed
+    tag, path, b64_content = parsed
+    if tag == 'N':
+        print(f"Error: Line {args.line} is a 'File Not Found' (Miss) entry. No content to extract.")
+        sys.exit(1)
+
     try:
         content = base64.b64decode(b64_content)
         with open(args.output_file, 'wb') as f:
@@ -86,7 +100,9 @@ def cmd_replace(args):
         sys.exit(1)
 
     tag, path, _ = parsed
-    lines[args.line - 1] = f"{tag} {path} {b64_content}\n"
+    # If it was a 'Miss', it's now a 'Read' with content
+    new_tag = 'R' if tag == 'N' else tag
+    lines[args.line - 1] = f"{new_tag} {path} {b64_content}\n"
     save_trace(args.trace_file, lines)
     print(f"Replaced content at line {args.line} with {args.input_file}")
 
@@ -102,6 +118,10 @@ def cmd_edit(args):
         sys.exit(1)
 
     tag, path, b64_content = parsed
+    if tag == 'N':
+        print(f"Error: Line {args.line} is a 'File Not Found' (Miss) entry. No content to edit.")
+        sys.exit(1)
+
     try:
         content = base64.b64decode(b64_content)
     except Exception as e:
@@ -141,8 +161,7 @@ def cmd_search(args):
         if not parsed: continue
         tag, path, _ = parsed
         if pattern.search(path):
-            tag_str = "Read" if tag == 'R' else "Write"
-            print(f"{i:<6} {tag_str:<6} {path}")
+            print(f"{i:<6} {get_tag_str(tag):<6} {path}")
 
 def cmd_grep(args):
     lines = load_trace(args.trace_file)
@@ -153,11 +172,11 @@ def cmd_grep(args):
         parsed = parse_line(line, i)
         if not parsed: continue
         tag, path, b64 = parsed
+        if tag == 'N': continue
         try:
             content = base64.b64decode(b64)
             if search_bytes in content:
-                tag_str = "Read" if tag == 'R' else "Write"
-                print(f"{i:<6} {tag_str:<6} {path}")
+                print(f"{i:<6} {get_tag_str(tag):<6} {path}")
         except:
             continue
 
@@ -170,6 +189,7 @@ def cmd_export(args):
         parsed = parse_line(line, i)
         if not parsed: continue
         tag, path, b64 = parsed
+        if tag == 'N': continue
         
         # Sanitize path for filename
         safe_path = path.replace('/', '_').replace(' ', '_').strip('_')
@@ -183,7 +203,7 @@ def cmd_export(args):
         except Exception as e:
             print(f"Warning: Failed to export line {i}: {e}")
     
-    print(f"Exported {len(lines)} entries to {args.output_dir}")
+    print(f"Exported entries to {args.output_dir}")
 
 def cmd_validate(args):
     lines = load_trace(args.trace_file)
@@ -192,18 +212,19 @@ def cmd_validate(args):
         if not line.strip(): continue
         parsed = parse_line(line, i)
         if not parsed:
-            print(f"Line {i}: Invalid format (missing parts)")
+            print(f"Line {i}: Invalid format")
             errors += 1
             continue
         tag, path, b64 = parsed
-        if tag not in ['R', 'W']:
+        if tag not in ['R', 'W', 'N']:
             print(f"Line {i}: Invalid tag '{tag}'")
             errors += 1
-        try:
-            base64.b64decode(b64)
-        except:
-            print(f"Line {i}: Invalid base64 content")
-            errors += 1
+        if tag in ['R', 'W'] and b64:
+            try:
+                base64.b64decode(b64)
+            except:
+                print(f"Line {i}: Invalid base64 content")
+                errors += 1
     
     if errors == 0:
         print("Trace file is valid.")

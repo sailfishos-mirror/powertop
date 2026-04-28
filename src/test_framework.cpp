@@ -46,6 +46,11 @@ void test_framework_manager::record_read(const string& path, const string& conte
 	recorded_reads.push_back({path, content});
 }
 
+void test_framework_manager::record_read_fail(const string& path) {
+	if (!recording) return;
+	recorded_reads.push_back({path, "__POWERTOP_FILE_NOT_FOUND__"});
+}
+
 string test_framework_manager::replay_read(const string& path) {
 	if (!replaying) return "";
 	if (read_sequences[path].empty()) {
@@ -53,6 +58,8 @@ string test_framework_manager::replay_read(const string& path) {
 	}
 	string content = read_sequences[path].front();
 	read_sequences[path].pop_front();
+	if (content == "__POWERTOP_FILE_NOT_FOUND__")
+		return "";
 	return content;
 }
 
@@ -84,7 +91,10 @@ void test_framework_manager::save() {
 	}
 
 	for (const auto& p : recorded_reads) {
-		file << "R " << p.first << " " << base64_encode(p.second) << endl;
+		if (p.second == "__POWERTOP_FILE_NOT_FOUND__")
+			file << "N " << p.first << endl;
+		else
+			file << "R " << p.first << " " << base64_encode(p.second) << endl;
 	}
 	for (const auto& p : recorded_writes) {
 		file << "W " << p.first << " " << base64_encode(p.second) << endl;
@@ -104,7 +114,14 @@ void test_framework_manager::load() {
 		stringstream ss(line);
 		char type;
 		string path, b64_content;
-		ss >> type >> path >> b64_content;
+		ss >> type;
+		if (type == 'N') {
+			getline(ss, path);
+			path = path.substr(1); // remove leading space
+			read_sequences[path].push_back("__POWERTOP_FILE_NOT_FOUND__");
+			continue;
+		}
+		ss >> path >> b64_content;
 		if (type == 'R') {
 			read_sequences[path].push_back(base64_decode(b64_content));
 		} else if (type == 'W') {

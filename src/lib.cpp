@@ -233,14 +233,21 @@ string read_file_content(const string &filename)
 	string content;
 
 	file.open(filename.c_str(), ios::in);
-	if (!file)
+	if (!file) {
+		if (test_framework_manager::get().is_recording()) {
+			test_framework_manager::get().record_read_fail(filename);
+		}
 		return "";
+	}
 	try
 	{
 		content.assign((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 		file.close();
 	} catch (std::exception &exc) {
 		file.close();
+		if (test_framework_manager::get().is_recording()) {
+			test_framework_manager::get().record_read_fail(filename);
+		}
 		return "";
 	}
 	if (test_framework_manager::get().is_recording()) {
