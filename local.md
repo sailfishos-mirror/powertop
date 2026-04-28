@@ -20,6 +20,17 @@ The process for working on this codebase always consists for 4 steps
 Also read `review/tools.md` when you're asked to use the various
 tooling to create and manipulate test data.
 
+# Git commit notes
+
+Git commits in this repo must use `--no-gpg-sign` flag to avoid hanging due
+to GPG agent unavailability:
+```
+git commit --no-gpg-sign -F /tmp/commitmsg.txt
+```
+The repo has a global `user.signingkey` set, but the GPG agent is not running
+in the terminal session. Setting `commit.gpgsign=false` locally is not
+sufficient — `--no-gpg-sign` on the command line is required.
+
 # Prefered user style
 
 When asked to make a non-trivial change (multiple files/elements), create a
