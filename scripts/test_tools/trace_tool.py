@@ -25,18 +25,19 @@ def save_trace(trace_file, lines):
         sys.exit(1)
 
 def parse_line(line, line_num):
-    parts = line.strip().split(' ')
-    if len(parts) < 2:
-        return None
-    tag = parts[0]
+    line = line.strip()
+    if not line: return None
+    first_space = line.find(' ')
+    if first_space == -1: return None
+    tag = line[:first_space]
+    rest = line[first_space+1:]
     if tag == 'N':
-        path = " ".join(parts[1:])
-        return tag, path, None
-    if len(parts) < 3:
-        return None
-    b64_content = parts[-1]
-    path = " ".join(parts[1:-1])
-    return tag, path, b64_content
+        return tag, rest, None
+    last_space = rest.rfind(' ')
+    if last_space == -1: return None
+    path = rest[:last_space]
+    b64 = rest[last_space+1:]
+    return tag, path, b64
 
 def get_tag_str(tag):
     if tag == 'R': return "Read"

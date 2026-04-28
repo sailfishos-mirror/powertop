@@ -111,17 +111,24 @@ void test_framework_manager::load() {
 	string line;
 	while (getline(file, line)) {
 		if (line.empty()) continue;
-		stringstream ss(line);
-		char type;
-		string path, b64_content;
-		ss >> type;
+
+		size_t first_space = line.find(' ');
+		if (first_space == string::npos) continue;
+
+		char type = line[0];
+		string rest = line.substr(first_space + 1);
+
 		if (type == 'N') {
-			getline(ss, path);
-			path = path.substr(1); // remove leading space
-			read_sequences[path].push_back("__POWERTOP_FILE_NOT_FOUND__");
+			read_sequences[rest].push_back("__POWERTOP_FILE_NOT_FOUND__");
 			continue;
 		}
-		ss >> path >> b64_content;
+
+		size_t last_space = rest.rfind(' ');
+		if (last_space == string::npos) continue;
+
+		string path = rest.substr(0, last_space);
+		string b64_content = rest.substr(last_space + 1);
+
 		if (type == 'R') {
 			read_sequences[path].push_back(base64_decode(b64_content));
 		} else if (type == 'W') {
