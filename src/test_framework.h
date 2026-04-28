@@ -15,6 +15,7 @@
 #include <vector>
 #include <map>
 #include <deque>
+#include <tuple>
 #include <stdexcept>
 
 class test_exception : public std::runtime_error {
@@ -40,6 +41,9 @@ public:
 	void record_write(const std::string& path, const std::string& content);
 	void replay_write(const std::string& path, const std::string& content);
 
+	void record_msr(int cpu, uint64_t offset, uint64_t value);
+	int replay_msr(int cpu, uint64_t offset, uint64_t *value);
+
 	void save();
 	void load();
 #else
@@ -55,6 +59,9 @@ public:
 
 	void record_write(const std::string& path, const std::string& content) {}
 	void replay_write(const std::string& path, const std::string& content) {}
+
+	void record_msr(int cpu, uint64_t offset, uint64_t value) {}
+	int replay_msr(int cpu, uint64_t offset, uint64_t *value) { return -1; }
 
 	void save() {}
 	void load() {}
@@ -75,6 +82,9 @@ private:
 
 	std::map<std::string, std::deque<std::string>> write_sequences;
 	std::vector<std::pair<std::string, std::string>> recorded_writes;
+
+	std::map<std::pair<int, uint64_t>, std::deque<uint64_t>> msr_sequences;
+	std::vector<std::tuple<int, uint64_t, uint64_t>> recorded_msrs;
 
 	std::string base64_encode(const std::string& in);
 	std::string base64_decode(const std::string& in);

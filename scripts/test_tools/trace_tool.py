@@ -33,6 +33,8 @@ def parse_line(line, line_num):
     rest = line[first_space+1:]
     if tag == 'N':
         return tag, rest, None
+    if tag == 'M':
+        return tag, rest, None
     last_space = rest.rfind(' ')
     if last_space == -1: return None
     path = rest[:last_space]
@@ -43,6 +45,7 @@ def get_tag_str(tag):
     if tag == 'R': return "Read"
     if tag == 'W': return "Write"
     if tag == 'N': return "Miss"
+    if tag == 'M': return "MSR"
     return "????"
 
 def cmd_list(args):
@@ -217,9 +220,21 @@ def cmd_validate(args):
             errors += 1
             continue
         tag, path, b64 = parsed
-        if tag not in ['R', 'W', 'N']:
+        if tag not in ['R', 'W', 'N', 'M']:
             print(f"Line {i}: Invalid tag '{tag}'")
             errors += 1
+        if tag == 'M':
+            parts = path.split(' ')
+            if len(parts) != 3:
+                print(f"Line {i}: Invalid MSR format (expected cpu offset value)")
+                errors += 1
+            else:
+                try:
+                    int(parts[1], 16)
+                    int(parts[2], 16)
+                except:
+                    print(f"Line {i}: Invalid MSR hex value")
+                    errors += 1
         if tag in ['R', 'W'] and b64:
             try:
                 base64.b64decode(b64)

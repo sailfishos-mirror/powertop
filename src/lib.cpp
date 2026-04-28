@@ -486,6 +486,9 @@ string get_user_input(unsigned sz)
 
 int read_msr(int cpu, uint64_t offset, uint64_t *value)
 {
+	if (test_framework_manager::get().is_replaying()) {
+		return test_framework_manager::get().replay_msr(cpu, offset, value);
+	}
 #if defined(__i386__) || defined(__x86_64__)
 	ssize_t retval;
 	uint64_t msr;
@@ -514,6 +517,10 @@ int read_msr(int cpu, uint64_t offset, uint64_t *value)
 		return -1;
 	}
 	*value = msr;
+
+	if (test_framework_manager::get().is_recording()) {
+		test_framework_manager::get().record_msr(cpu, offset, msr);
+	}
 
 	return retval;
 #else

@@ -12,6 +12,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <format>
 #include "test_framework.h"
 
 using namespace std;
@@ -83,6 +84,22 @@ void test_framework_manager::replay_write(const string& path, const string& cont
 	}
 }
 
+void test_framework_manager::record_msr(int cpu, uint64_t offset, uint64_t value) {
+	if (!recording) return;
+	recorded_msrs.push_back({cpu, offset, value});
+}
+
+int test_framework_manager::replay_msr(int cpu, uint64_t offset, uint64_t *value) {
+	if (!replaying) return -1;
+	auto key = make_pair(cpu, offset);
+	if (msr_sequences[key].empty()) {
+		throw test_exception(std::format("TEST FAIL: No more recorded content for MSR read: cpu {} offset 0x{:x}", cpu, offset));
+	}
+	*value = msr_sequences[key].front();
+	msr_sequences[key].pop_front();
+	return 0;
+}
+
 void test_framework_manager::save() {
 	ofstream file(record_filename);
 	if (!file) {
@@ -98,6 +115,9 @@ void test_framework_manager::save() {
 	}
 	for (const auto& p : recorded_writes) {
 		file << "W " << p.first << " " << base64_encode(p.second) << endl;
+	}
+	for (const auto& m : recorded_msrs) {
+		file << "M " << get<0>(m) << " " << hex << get<1>(m) << " " << get<2>(m) << dec << endl;
 	}
 }
 
@@ -120,6 +140,15 @@ void test_framework_manager::load() {
 
 		if (type == 'N') {
 			read_sequences[rest].push_back("__POWERTOP_FILE_NOT_FOUND__");
+			continue;
+		}
+
+		if (type == 'M') {
+			stringstream msr_ss(rest);
+			int cpu;
+			uint64_t offset, value;
+			msr_ss >> cpu >> hex >> offset >> value;
+			msr_sequences[make_pair(cpu, offset)].push_back(value);
 			continue;
 		}
 
