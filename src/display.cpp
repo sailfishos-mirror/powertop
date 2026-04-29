@@ -77,6 +77,14 @@ void reset_display(void)
 	if (!display)
 		return;
 
+	for (auto const& [key, val] : tab_windows) {
+		delete val;
+	}
+	tab_windows.clear();
+	tab_names.clear();
+	tab_translations.clear();
+	bottom_lines.clear();
+
 	keypad(stdscr, FALSE);
 	echo();
 	nocbreak();
