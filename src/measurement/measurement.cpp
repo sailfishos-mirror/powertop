@@ -181,3 +181,11 @@ void extech_power_meter(const std::string &devnode)
 
 	power_meters.push_back(meter);
 }
+
+void clear_power_meters(void)
+{
+	unsigned int i;
+	for (i = 0; i < power_meters.size(); i++)
+		delete power_meters[i];
+	power_meters.clear();
+}

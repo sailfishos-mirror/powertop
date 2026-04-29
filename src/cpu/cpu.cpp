@@ -1033,9 +1033,10 @@ void clear_cpu_data(void)
 void clear_all_cpus(void)
 {
 	unsigned int i;
-	for (i = 0; i < all_cpus.size(); i++) {
-		delete all_cpus[i];
+	for (i = 0; i < system_level.children.size(); i++) {
+		delete system_level.children[i];
 	}
+	system_level.children.clear();
 	all_cpus.clear();
 }
 

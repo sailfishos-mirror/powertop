@@ -42,6 +42,11 @@ abstract_cpu::~abstract_cpu()
 		delete pstates[i];
 	}
 	pstates.clear();
+
+	for (i=0; i < children.size(); i++){
+		delete children[i];
+	}
+	children.clear();
 }
 
 void abstract_cpu::account_freq(uint64_t freq, uint64_t duration)

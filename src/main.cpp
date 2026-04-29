@@ -301,6 +301,8 @@ void out_of_memory()
 	abort();
 }
 
+void clean_shutdown();
+
 void make_report(int time, const std::string &workload, int iterations, int sample_interval, const std::string &file)
 {
 
@@ -329,6 +331,13 @@ void make_report(int time, const std::string &workload, int iterations, int samp
 	save_all_results("saved_results.powertop");
 	save_parameters("saved_parameters.powertop");
 	end_pci_access();
+
+	end_process_data();
+	clear_process_data();
+	end_cpu_data();
+	clear_cpu_data();
+	clean_shutdown();
+
 	exit(0);
 }
 
@@ -429,6 +438,8 @@ void clean_shutdown()
 	clear_all_devices();
 	clear_all_devfreq();
 	clear_all_cpus();
+	clear_power_meters();
+	clear_wakeup();
 
 	return;
 }
