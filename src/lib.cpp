@@ -268,6 +268,12 @@ struct timeval pt_gettime(void)
 	return tv;
 }
 
+/*
+ * Note: the max_sz parameter has no effect. POSIX specifies that mbsrtowcs()
+ * ignores nwc when dst is nullptr, so the full string width is always counted
+ * regardless of max_sz. Padding is applied only when the actual character
+ * count is less than min_sz.
+ */
 void align_string(std::string &str, size_t min_sz, size_t max_sz)
 {
 	size_t sz;
