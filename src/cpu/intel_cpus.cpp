@@ -330,7 +330,7 @@ void nhm_core::measurement_end(void)
 	for (i = 0; i < children.size(); i++)
 		if (children[i]) {
 			for (j = 0; j < children[i]->pstates.size(); j++) {
-				struct frequency *state;
+				class frequency *state;
 				state = children[i]->pstates[j];
 				if (!state)
 					continue;
@@ -621,7 +621,7 @@ void nhm_package::measurement_end(void)
 	for (i = 0; i < children.size(); i++)
 		if (children[i]) {
 			for (j = 0; j < children[i]->pstates.size(); j++) {
-				struct frequency *state;
+				class frequency *state;
 				state = children[i]->pstates[j];
 				if (!state)
 					continue;

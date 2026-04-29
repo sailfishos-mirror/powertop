@@ -99,7 +99,7 @@ public:
 
 	std::vector<class abstract_cpu *> children;
 	std::vector<struct idle_state *> cstates;
-	std::vector<struct frequency *> pstates;
+	std::vector<class frequency *> pstates;
 
 	virtual ~abstract_cpu();
 
