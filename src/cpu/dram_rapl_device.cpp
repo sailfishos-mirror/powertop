@@ -65,7 +65,7 @@ void dram_rapl_device::end_measurement(void)
 	}
 }
 
-double dram_rapl_device::power_usage(struct result_bundle *[[maybe_unused]] result, struct parameter_bundle *[[maybe_unused]] bundle)
+double dram_rapl_device::power_usage([[maybe_unused]] struct result_bundle *result, [[maybe_unused]] struct parameter_bundle *bundle)
 {
 	if (rapl->dram_domain_present())
 		return consumed_power;

@@ -53,7 +53,7 @@ void i965_core::measurement_start(void)
 	update_cstate("gpu rc6pp", "RC6pp", 0, rc6pp_before, 1, 3);
 }
 
-std::string i965_core::fill_cstate_line(int line_nr, const std::string &[[maybe_unused]] separator)
+std::string i965_core::fill_cstate_line(int line_nr, [[maybe_unused]] const std::string &separator)
 {
 	double ratio, d = -1.0, time_delta;
 
@@ -100,12 +100,12 @@ void i965_core::measurement_end(void)
 	rc6pp_after = read_sysfs("/sys/class/drm/card0/power/rc6pp_residency_ms", nullptr);
 }
 
-std::string i965_core::fill_pstate_line(int [[maybe_unused]] line_nr)
+std::string i965_core::fill_pstate_line([[maybe_unused]] int line_nr)
 {
 	return "";
 }
 
-std::string i965_core::fill_pstate_name(int [[maybe_unused]] line_nr)
+std::string i965_core::fill_pstate_name([[maybe_unused]] int line_nr)
 {
 	return "";
 }

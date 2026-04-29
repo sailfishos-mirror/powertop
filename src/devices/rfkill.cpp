@@ -39,7 +39,7 @@
 #include <unistd.h>
 #include <format>
 
-rfkill::rfkill(const std::string &_name, const std::string &path): device()
+rfkill::rfkill([[maybe_unused]] const std::string &_name, const std::string &path): device()
 {
 	std::error_code ec;
 	auto link = std::filesystem::read_symlink(std::format("{}/device/driver", path), ec);
