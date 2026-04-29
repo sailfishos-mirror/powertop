@@ -50,24 +50,24 @@ public:
 	void save();
 	void load();
 #else
-	void set_record(const std::string& filename) {}
-	void set_replay(const std::string& filename) {}
+	void set_record(const std::string&) {}
+	void set_replay(const std::string&) {}
 
 	bool is_recording() const { return false; }
 	bool is_replaying() const { return false; }
 
-	void record_read(const std::string& path, const std::string& content) {}
-	void record_read_fail(const std::string& path) {}
-	std::string replay_read(const std::string& path) { return ""; }
+	void record_read(const std::string&, const std::string&) {}
+	void record_read_fail(const std::string&) {}
+	std::string replay_read(const std::string&) { return ""; }
 
-	void record_write(const std::string& path, const std::string& content) {}
-	void replay_write(const std::string& path, const std::string& content) {}
+	void record_write(const std::string&, const std::string&) {}
+	void replay_write(const std::string&, const std::string&) {}
 
-	void record_msr(int cpu, uint64_t offset, uint64_t value) {}
-	int replay_msr(int cpu, uint64_t offset, uint64_t *value) { return -1; }
+	void record_msr(int, uint64_t, uint64_t) {}
+	int replay_msr(int, uint64_t, uint64_t *) { return -1; }
 
-	void record_time(struct timeval tv) {}
-	void replay_time(struct timeval *tv) {}
+	void record_time(struct timeval) {}
+	void replay_time(struct timeval *) {}
 
 	void save() {}
 	void load() {}
