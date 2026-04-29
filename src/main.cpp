@@ -396,7 +396,6 @@ static void powertop_init(int auto_tune)
 				if (!auto_tune) {
 					fprintf(stderr, _("Failed to mount debugfs!\n"));
 					fprintf(stderr, _("exiting...\n"));
-					exit(EXIT_FAILURE);
 				} else {
 					fprintf(stderr, _("Failed to mount debugfs!\n"));
 					fprintf(stderr, _("Should still be able to auto tune...\n"));
