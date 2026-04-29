@@ -14,6 +14,7 @@ The process for working on this codebase always consists of 5 steps
 1. Make the change
 2. Build the project (with meson/ninja)
 3. Run the test suite: `ninja -C <builddir> test` (requires `-Denable-tests=true` at setup time)
+   - When adding new tests, read `tests/testdesign.md` for conventions and patterns.
 4. Code review the change to make sure it strictly matches the narrow objective
 5. Git commit the change with a comprehensive git commit message (no need to
    ask permission)
