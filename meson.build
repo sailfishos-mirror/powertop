@@ -325,3 +325,7 @@ install_data('scripts/bash-completion/powertop',
 if get_option('nls')
   subdir('po')
 endif
+
+if get_option('enable-tests')
+  subdir('tests')
+endif

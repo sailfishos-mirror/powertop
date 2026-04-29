@@ -49,9 +49,11 @@ public:
 
 	void save();
 	void load();
+	void reset();
 #else
 	void set_record(const std::string&) {}
 	void set_replay(const std::string&) {}
+	void reset() {}
 
 	bool is_recording() const { return false; }
 	bool is_replaying() const { return false; }

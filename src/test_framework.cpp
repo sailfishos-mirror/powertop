@@ -112,6 +112,21 @@ void test_framework_manager::replay_time(struct timeval *tv) {
 	time_sequences.pop_front();
 }
 
+void test_framework_manager::reset() {
+	recording = false;
+	replaying = false;
+	record_filename.clear();
+	replay_filename.clear();
+	read_sequences.clear();
+	recorded_reads.clear();
+	write_sequences.clear();
+	recorded_writes.clear();
+	msr_sequences.clear();
+	recorded_msrs.clear();
+	time_sequences.clear();
+	recorded_times.clear();
+}
+
 void test_framework_manager::save() {
 	std::ofstream file(record_filename);
 	if (!file) {

@@ -10,15 +10,33 @@ includes a style guide.
 The class hiearchy is documented in `review/class.md` and this document
 needs to be kept uptodate as changes to the class hierarchy are made.
 
-The process for working on this codebase always consists for 4 steps
+The process for working on this codebase always consists of 5 steps
 1. Make the change
 2. Build the project (with meson/ninja)
-3. Code review the change to make sure it strictly matches the narrow objective
-4. Git commit the change with a comprehensive git commit message (no need to
+3. Run the test suite: `ninja -C <builddir> test` (requires `-Denable-tests=true` at setup time)
+4. Code review the change to make sure it strictly matches the narrow objective
+5. Git commit the change with a comprehensive git commit message (no need to
    ask permission)
 
 Also read `review/tools.md` when you're asked to use the various
 tooling to create and manipulate test data.
+
+# [[maybe_unused]] placement rule
+
+`[[maybe_unused]]` must appear **before** the full parameter declaration,
+not after a `*` or `&` qualifier or between type and name.
+
+Correct:   `[[maybe_unused]] struct foo *name`
+Correct:   `[[maybe_unused]] const std::string &name`
+Correct:   `[[maybe_unused]] int name`
+Wrong:     `struct foo *[[maybe_unused]] name`
+Wrong:     `const std::string &[[maybe_unused]] name`
+Wrong:     `int [[maybe_unused]] name`
+
+GCC warnings triggered by the wrong placement:
+- `'maybe_unused' on a type other than class or enumeration definition`
+- `attribute ignored`
+- `unused parameter`
 
 # Git commit notes
 

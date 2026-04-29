@@ -328,7 +328,7 @@ void end_pci_access(void)
 
 #else
 
-std::string pci_id_to_name(uint16_t vendor, uint16_t device)
+std::string pci_id_to_name([[maybe_unused]] uint16_t vendor, [[maybe_unused]] uint16_t device)
 {
 	return std::string();
 }

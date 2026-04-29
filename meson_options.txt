@@ -1,2 +1,3 @@
 option('nls', type: 'boolean', value: true, description: 'Enable Native Language Support (gettext)')
 option('test-framework', type: 'boolean', value: false, description: 'Enable test framework (record/replay)')
+option('enable-tests', type: 'boolean', value: false, description: 'Build and run the test suite')
