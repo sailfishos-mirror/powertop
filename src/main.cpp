@@ -80,6 +80,7 @@ enum {
 	OPT_AUTO_TUNE_DUMP,
 	OPT_EXTECH,
 	OPT_DEBUG,
+	OPT_ONCE,
 	OPT_RECORD,
 	OPT_REPLAY
 };
@@ -95,6 +96,7 @@ static const struct option long_options[] =
 	{"extech",	optional_argument,	nullptr,		 OPT_EXTECH},
 	{"html",	optional_argument,	nullptr,		 'r'},
 	{"iteration",	optional_argument,	nullptr,		 'i'},
+	{"once",	no_argument,		nullptr,		 OPT_ONCE},
 	{"quiet",	no_argument,		nullptr,		 'q'},
 	{"sample",	optional_argument,	nullptr,		 's'},
 	{"time",	optional_argument,	nullptr,		 't'},
@@ -137,6 +139,7 @@ static void print_usage()
 	printf("     --extech%s\t %s\n", _("[=devnode]"), _("uses an Extech Power Analyzer for measurements"));
 	printf(" -r, --html%s\t %s\n", _("[=filename]"), _("generate a html report"));
 	printf(" -i, --iteration%s\n", _("[=iterations] number of times to run each test"));
+	printf("     --once\t\t %s\n", _("run measurements only once, then exit"));
 	printf(" -q, --quiet\t\t %s\n", _("suppress stderr output"));
 	printf(" -s, --sample%s\t %s\n", _("[=seconds]"), _("interval for power consumption measurement"));
 	printf(" -t, --time%s\t %s\n", _("[=seconds]"), _("generate a report for 'x' seconds"));
@@ -451,7 +454,7 @@ int main(int argc, char **argv)
 		int c;
 		std::string filename, workload;
 		int  iterations = 1, auto_tune = 0, sample_interval = 5;
-		bool auto_tune_dump = false;
+		bool auto_tune_dump = false, run_once = false;
 
 		std::set_new_handler(out_of_memory);
 
@@ -499,6 +502,9 @@ int main(int argc, char **argv)
 #endif
 			case OPT_DEBUG:
 				/* implemented using getopt_long(3) flag */
+				break;
+			case OPT_ONCE:
+				run_once = true;
 				break;
 			case OPT_EXTECH:	/* Extech power analyzer support */
 				checkroot();
@@ -583,6 +589,8 @@ int main(int argc, char **argv)
 				show_cur_tab();
 			one_measurement(time_out, sample_interval, "");
 			learn_parameters(15, 0);
+			if (run_once)
+				leave_powertop = 1;
 		}
 		if (!auto_tune)
 			endwin();
