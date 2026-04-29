@@ -225,3 +225,15 @@ Put this at the top of the test `.cpp` file (outside any function).
   `powertop-test-lib`).
 - Meson `test()` labels follow `'<area>: <subject>'` (e.g.
   `'lib: read_file_content'`).
+
+---
+
+## Known gotchas
+
+### `align_string`: `max_sz` has no effect
+
+POSIX specifies that `mbsrtowcs()` **ignores `nwc` when `dst` is a null
+pointer**. `align_string` passes `nullptr` as `dst`, so the `max_sz` parameter
+is silently ignored and the full string width is always counted. Tests that
+assume `max_sz` limits the counted width will fail — the string is only padded
+when its actual character count is less than `min_sz`.

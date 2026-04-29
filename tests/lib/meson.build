@@ -21,3 +21,25 @@ test_lib_exe = executable(
 )
 
 test('lib: read_file_content', test_lib_exe)
+
+test_lib_misc_exe = executable(
+  'powertop-test-lib-misc',
+  [
+    '../../src/lib.cpp',
+    '../../src/test_framework.cpp',
+    'test_lib_misc.cpp',
+  ],
+  include_directories: [
+    include_directories('../..'),
+    include_directories('../../src'),
+    include_directories('..'),
+  ],
+  cpp_args: [
+    '-DENABLE_TEST_FRAMEWORK',
+    '-DHAVE_NO_PCI',
+    '-DTEST_DATA_DIR="' + meson.current_source_dir() / 'data' + '"',
+  ],
+  dependencies: [ncursesw_dep],
+)
+
+test('lib: pt_gettime and align_string', test_lib_misc_exe)
