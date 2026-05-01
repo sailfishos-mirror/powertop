@@ -71,7 +71,10 @@ The process for working on this codebase always consists of 5 steps
 2. Build the project (with meson/ninja)
    - Use `ninja -C <builddir> -t clean && ninja -C <builddir>` when the build cache seems stale
    - The build output goes through a pipe in many invocations; "no work to do" after a clean means the build already completed in the same shell pipeline
-3. Run the test suite: `ninja -C <builddir> test` (requires `-Denable-tests=true` at setup time)
+3. Run the test suite with AddressSanitizer (default): `ninja -C build_asan test`
+   - `build_asan` is configured with `-Db_sanitize=address -Denable-tests=true`
+   - One-time setup (if build_asan does not exist):
+     `meson setup build_asan -Db_sanitize=address -Denable-tests=true`
    - When adding new tests, read `tests/testdesign.md` for conventions and patterns.
 4. Code review the change to make sure it strictly matches the narrow objective
 5. Git commit the change with a comprehensive git commit message (no need to
