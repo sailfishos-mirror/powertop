@@ -47,6 +47,7 @@ public:
 	std::vector<class frequency *> dstates;
 
 	devfreq(const std::string &c);
+	~devfreq();
 	std::string fill_freq_utilization(unsigned int idx);
 	std::string fill_freq_name(unsigned int idx);
 

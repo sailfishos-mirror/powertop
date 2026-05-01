@@ -50,6 +50,12 @@ devfreq::devfreq(const std::string &dpath): device()
 	dir_name = dpath;
 }
 
+devfreq::~devfreq()
+{
+	for (auto *s : dstates)
+		delete s;
+}
+
 uint64_t devfreq::parse_freq_time(const std::string &pchr_s)
 {
 	uint64_t ctime = 0;
