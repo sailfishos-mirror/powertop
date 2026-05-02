@@ -228,6 +228,18 @@ nhm_core::nhm_core(int family, int model)
 		case IFM(6, 0xBF):	/* RPL_S */
 		case IFM(6, 0xC5):	/* ARL_H */
 		case IFM(6, 0xC6):	/* ARL_DESKTOP */
+		case IFM(6, 0x6C):	/* ICELAKE_D */
+		case IFM(6, 0xAD):	/* GRANITERAPIDS_X */
+		case IFM(6, 0xAE):	/* GRANITERAPIDS_D */
+		case IFM(6, 0xBD):	/* LUNARLAKE_M */
+		case IFM(6, 0xCC):	/* PANTHERLAKE_L */
+		case IFM(6, 0xCF):	/* EMERALDRAPIDS_X */
+		case IFM(6, 0xD5):	/* WILDCATLAKE_L */
+		case IFM(6, 0xD7):	/* BARTLETTLAKE */
+		case IFM(6, 0xDD):	/* ATOM_DARKMONT_X */
+		case IFM(18, 0x01):	/* NOVALAKE */
+		case IFM(18, 0x03):	/* NOVALAKE_L */
+		case IFM(19, 0x01):	/* DIAMONDRAPIDS_X */
 			has_c7_res = 1;
 	}
 
@@ -428,6 +440,18 @@ nhm_package::nhm_package(int family, int model)
 		case IFM(6, 0xBF):	/* RPL_S */
 		case IFM(6, 0xC5):	/* ARL_H */
 		case IFM(6, 0xC6):	/* ARL_DESKTOP */
+		case IFM(6, 0x6C):	/* ICELAKE_D */
+		case IFM(6, 0xAD):	/* GRANITERAPIDS_X */
+		case IFM(6, 0xAE):	/* GRANITERAPIDS_D */
+		case IFM(6, 0xBD):	/* LUNARLAKE_M */
+		case IFM(6, 0xCC):	/* PANTHERLAKE_L */
+		case IFM(6, 0xCF):	/* EMERALDRAPIDS_X */
+		case IFM(6, 0xD5):	/* WILDCATLAKE_L */
+		case IFM(6, 0xD7):	/* BARTLETTLAKE */
+		case IFM(6, 0xDD):	/* ATOM_DARKMONT_X */
+		case IFM(18, 0x01):	/* NOVALAKE */
+		case IFM(18, 0x03):	/* NOVALAKE_L */
+		case IFM(19, 0x01):	/* DIAMONDRAPIDS_X */
 			has_c2c6_res=1;
 			has_c7_res = 1;
 	}
