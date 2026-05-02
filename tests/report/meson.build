@@ -16,6 +16,7 @@ report_sources = [
   '../../src/report/report-maker.cpp',
   '../../src/report/report-formatter-html.cpp',
   '../../src/report/report-formatter-csv.cpp',
+  '../../src/report/report-formatter-md.cpp',
   '../../src/report/report-formatter-base.cpp',
   '../../src/report/report-data-html.cpp',
 ]
@@ -52,3 +53,13 @@ test_csv_report_exe = executable(
 test('report: html generation', test_report_exe)
 test('report: csv generation',  test_csv_report_exe)
 
+
+test_md_report_exe = executable(
+  'powertop-test-md-report',
+  report_sources + ['test_md_report.cpp'],
+  include_directories: report_incdirs,
+  cpp_args: report_cpp_args,
+  dependencies: [ncursesw_dep],
+)
+
+test('report: md generation', test_md_report_exe)

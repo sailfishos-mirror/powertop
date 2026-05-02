@@ -242,6 +242,7 @@ powertop_sources = [
   'src/report/report-formatter-base.cpp',
   'src/report/report-formatter-base.h',
   'src/report/report-formatter-csv.cpp',
+  'src/report/report-formatter-md.cpp',
   'src/report/report-formatter-csv.h',
   'src/report/report-formatter-html.cpp',
   'src/report/report-formatter-html.h',

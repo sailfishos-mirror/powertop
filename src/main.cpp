@@ -92,6 +92,7 @@ static const struct option long_options[] =
 	{"auto-tune",	no_argument,		nullptr,		 OPT_AUTO_TUNE},
 	{"auto-tune-dump",	no_argument,	nullptr,		 OPT_AUTO_TUNE_DUMP},
 	{"calibrate",	no_argument,		nullptr,		 'c'},
+	{"markdown",	optional_argument,	nullptr,		 'M'},
 	{"csv",		optional_argument,	nullptr,		 'C'},
 	{"debug",	no_argument,		&debug_learning, OPT_DEBUG},
 	{"extech",	optional_argument,	nullptr,		 OPT_EXTECH},
@@ -467,7 +468,7 @@ int main(int argc, char **argv)
 #endif
 		ui_notify_user = ui_notify_user_ncurses;
 		while (1) { /* parse commandline options */
-			c = getopt_long(argc, argv, "cC::r::i:qt:w:Vh", long_options, &option_index);
+			c = getopt_long(argc, argv, "cC::M::r::i:qt:w:Vh", long_options, &option_index);
 			/* Detect the end of the options. */
 			if (c == -1)
 				break;
@@ -484,6 +485,15 @@ int main(int argc, char **argv)
 				powertop_init(0);
 				calibrate();
 				exit(0);
+			case 'M':
+				reporttype = REPORT_MD;
+				filename = optarg ? optarg : "powertop.md";
+				if (filename.empty())
+				{
+					fprintf(stderr, _("Invalid Markdown filename\n"));
+					exit(1);
+				}
+				break;
 			case 'C':		/* csv report */
 				reporttype = REPORT_CSV;
 				filename = optarg ? optarg : "powertop.csv";
