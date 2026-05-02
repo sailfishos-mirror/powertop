@@ -1179,6 +1179,10 @@ double total_cpu_time(void)
 {
 	unsigned int i;
 	double total = 0.0;
+
+	if (first_stamp == ~0ULL)
+		return 0.0; /* since there is no measurement (yet) utilization gets reported as 0.0 */
+
 	for (i = 0; i < all_power.size() ; i++) {
 		if (all_power[i]->child_runtime > all_power[i]->accumulated_runtime)
 			all_power[i]->child_runtime = 0;
