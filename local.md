@@ -13,6 +13,17 @@ needs to be kept uptodate as changes to the class hierarchy are made.
 Also read `review/tools.md` and `tests/testdesign.md` into the context when
 working on the testsuite.
 
+
+# Global code change process
+
+1. Collect pre-change code coverage on the test suite (or reuse from context)
+2. Make the change
+3. Build the change (including the test suite) -- requirement: no new warnings
+4a. Run the test suite -- requirement: no failure
+4b. Collect post-change code coverage on the test stuite
+5. Review the change against the intent and the rultes in `review/review.md`
+6. Make a git commit with a descriptive commit message 
+
 # [[maybe_unused]] placement rule
 
 `[[maybe_unused]]` must appear **before** the full parameter declaration,
