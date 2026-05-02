@@ -102,7 +102,17 @@ static int intel_cpu_models[] = {
 	IFM(18, 0x01),	/* NOVALAKE */
 	IFM(18, 0x03),	/* NOVALAKE_L */
 	IFM(19, 0x01),	/* DIAMONDRAPIDS_X */
-	0
+		IFM(6, 0x6C),	/* ICELAKE_D */
+	IFM(6, 0xAD),	/* GRANITERAPIDS_X */
+	IFM(6, 0xAE),	/* GRANITERAPIDS_D */
+	IFM(6, 0xBD),	/* LUNARLAKE_M */
+	IFM(6, 0xCC),	/* PANTHERLAKE_L */
+	IFM(6, 0xCF),	/* EMERALDRAPIDS_X */
+	IFM(6, 0xD5),	/* WILDCATLAKE_L */
+	IFM(6, 0xD7),	/* BARTLETTLAKE */
+	IFM(6, 0xDD),	/* ATOM_DARKMONT_X */
+
+	 0
 };
 
 static int intel_pstate_driver_loaded = -1;
