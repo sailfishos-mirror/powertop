@@ -509,6 +509,12 @@ nhm_package::nhm_package(int family, int model)
 		case IFM(6, 0xBF):	/* RPL_S */
 		case IFM(6, 0xC5):	/* ARL_H */
 		case IFM(6, 0xC6):	/* ARL_DESKTOP */
+		case IFM(6, 0xBD):	/* LUNARLAKE_M */
+		case IFM(6, 0xCC):	/* PANTHERLAKE_L */
+		case IFM(6, 0xD5):	/* WILDCATLAKE_L */
+		case IFM(6, 0xD7):	/* BARTLETTLAKE */
+		case IFM(18, 0x01):	/* NOVALAKE */
+		case IFM(18, 0x03):	/* NOVALAKE_L */
 			has_c8c9c10_res = 1;
 			break;
 	}
