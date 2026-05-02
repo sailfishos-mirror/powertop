@@ -1,6 +1,22 @@
-/* Copyright (C) 2026 Intel Corporation
- * Markdown report generator header.
+/*
+ * Copyright (C) 2026 Intel Corporation
+ *
+ * This file is part of PowerTOP
+ *
+ * This program file is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
+
 #pragma once
 #include "report-formatter-base.h"
 
@@ -12,7 +28,7 @@ public:
 	virtual void add_logo() override;
 	virtual void add_header() override;
 	virtual void add_div(struct tag_attr *div_attr) override;
-	virtual void add_title(struct tag_attr *title_att, const std::string &title) override;
+	virtual void add_title(struct tag_attr *title_attr, const std::string &title) override;
 	virtual void add_summary_list(const std::vector<std::string> &list) override;
 	virtual void add_table(const std::vector<std::string> &system_data, struct table_attributes *tb_attr) override;
 
