@@ -42,6 +42,7 @@
 #include "../parameters/parameters.h"
 #include "../display.h"
 
+/* List of supported Intel CPU models, sorted by family then model */
 static int intel_cpu_models[] = {
 	IFM(6, 0x1A),	/* NEHALEM_EP */
 	IFM(6, 0x1E),	/* NEHALEM */
@@ -64,8 +65,8 @@ static int intel_cpu_models[] = {
 	IFM(6, 0x47),	/* BROADWELL_G */
 	IFM(6, 0x4C),	/* ATOM_AIRMONT */
 	IFM(6, 0x4D),	/* ATOM_SILVERMONT_D */
-	IFM(6, 0x4F),	/* BROADWELL_X */
 	IFM(6, 0x4E),	/* SKYLAKE_L */
+	IFM(6, 0x4F),	/* BROADWELL_X */
 	IFM(6, 0x55),	/* SKYLAKE_X */
 	IFM(6, 0x56),	/* BROADWELL_D */
 	IFM(6, 0x5C),	/* ATOM_GOLDMONT */
@@ -73,6 +74,7 @@ static int intel_cpu_models[] = {
 	IFM(6, 0x5F),	/* ATOM_GOLDMONT_D */
 	IFM(6, 0x66),	/* CANNONLAKE_L */
 	IFM(6, 0x6A),	/* ICELAKE_X */
+	IFM(6, 0x6C),	/* ICELAKE_D */
 	IFM(6, 0x7A),	/* ATOM_GOLDMONT_PLUS */
 	IFM(6, 0x7D),	/* ICELAKE */
 	IFM(6, 0x7E),	/* ICELAKE_L */
@@ -92,27 +94,25 @@ static int intel_cpu_models[] = {
 	IFM(6, 0xA7),	/* ROCKETLAKE */
 	IFM(6, 0xAA),	/* METEORLAKE_L */
 	IFM(6, 0xAC),	/* METEORLAKE */
+	IFM(6, 0xAD),	/* GRANITERAPIDS_X */
+	IFM(6, 0xAE),	/* GRANITERAPIDS_D */
 	IFM(6, 0xB5),	/* ARROWLAKE_U */
 	IFM(6, 0xB7),	/* RAPTORLAKE */
 	IFM(6, 0xBA),	/* RAPTORLAKE_P */
+	IFM(6, 0xBD),	/* LUNARLAKE_M */
 	IFM(6, 0xBE),	/* ATOM_GRACEMONT */
 	IFM(6, 0xBF),	/* RAPTORLAKE_S */
 	IFM(6, 0xC5),	/* ARROWLAKE_H */
 	IFM(6, 0xC6),	/* ARROWLAKE */
-	IFM(18, 0x01),	/* NOVALAKE */
-	IFM(18, 0x03),	/* NOVALAKE_L */
-	IFM(19, 0x01),	/* DIAMONDRAPIDS_X */
-		IFM(6, 0x6C),	/* ICELAKE_D */
-	IFM(6, 0xAD),	/* GRANITERAPIDS_X */
-	IFM(6, 0xAE),	/* GRANITERAPIDS_D */
-	IFM(6, 0xBD),	/* LUNARLAKE_M */
 	IFM(6, 0xCC),	/* PANTHERLAKE_L */
 	IFM(6, 0xCF),	/* EMERALDRAPIDS_X */
 	IFM(6, 0xD5),	/* WILDCATLAKE_L */
 	IFM(6, 0xD7),	/* BARTLETTLAKE */
 	IFM(6, 0xDD),	/* ATOM_DARKMONT_X */
-
-	 0
+	IFM(18, 0x01),	/* NOVALAKE */
+	IFM(18, 0x03),	/* NOVALAKE_L */
+	IFM(19, 0x01),	/* DIAMONDRAPIDS_X */
+	0
 };
 
 static int intel_pstate_driver_loaded = -1;
