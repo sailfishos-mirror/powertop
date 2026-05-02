@@ -99,7 +99,10 @@ static int intel_cpu_models[] = {
 	IFM(6, 0xBF),	/* RAPTORLAKE_S */
 	IFM(6, 0xC5),	/* ARROWLAKE_H */
 	IFM(6, 0xC6),	/* ARROWLAKE */
-	0	/* last entry must be zero */
+	IFM(18, 0x01),	/* NOVALAKE */
+	IFM(18, 0x03),	/* NOVALAKE_L */
+	IFM(19, 0x01),	/* DIAMONDRAPIDS_X */
+	0
 };
 
 static int intel_pstate_driver_loaded = -1;
