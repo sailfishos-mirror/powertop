@@ -33,48 +33,107 @@
 #include <fstream>
 #include <limits.h>
 #include <format>
+#include <filesystem>
+
 
 #include "../lib.h"
+
+static std::vector<std::string> get_matching_files(const std::string& path) {
+	std::vector<std::string> files;
+	size_t star_pos = path.find('*');
+	if (star_pos == std::string::npos) {
+		files.push_back(path);
+		return files;
+	}
+
+	size_t dir_end = path.rfind('/', star_pos);
+	if (dir_end == std::string::npos) return files;
+
+	std::string base_dir = path.substr(0, dir_end + 1);
+	std::string match_prefix = path.substr(dir_end + 1, star_pos - dir_end - 1);
+	std::string suffix = path.substr(star_pos + 1);
+
+	std::error_code ec;
+	if (!std::filesystem::exists(base_dir, ec)) return files;
+
+	for (const auto& entry : std::filesystem::directory_iterator(base_dir, ec)) {
+		std::string filename = entry.path().filename().string();
+		if (filename.starts_with(match_prefix)) {
+			std::string full_path = entry.path().string() + suffix;
+			files.push_back(full_path);
+		}
+	}
+	return files;
+}
+
 sysfs_tunable::sysfs_tunable(const std::string &str, const std::string &_sysfs_path, const std::string &target_content) : tunable(str, 1.0, _("Good"), _("Bad"), _("Unknown"))
 {
 	sysfs_path = _sysfs_path;
 	target_value = target_content;
 
-	toggle_good = std::format("echo '{}' > '{}';", target_value, sysfs_path);
+	if (sysfs_path.find('*') != std::string::npos) {
+		toggle_good = std::format("for i in {}; do echo '{}' > $i; done;", sysfs_path, target_value);
+	} else {
+		toggle_good = std::format("echo '{}' > '{}';", target_value, sysfs_path);
+	}
 }
 
 int sysfs_tunable::good_bad(void)
 {
-	std::string content;
+	std::vector<std::string> files = get_matching_files(sysfs_path);
+	if (files.empty())
+		return TUNE_BAD;
 
-	content = read_sysfs_string(sysfs_path);
+	bool all_good = true;
+	for (const auto& file : files) {
+		std::string content = read_sysfs_string(file);
+		if (content != target_value) {
+			bad_value = content;
+			all_good = false;
+		}
+	}
 
-	if (content == target_value)
+	if (all_good)
 		return TUNE_GOOD;
 
-	bad_value = content;
-	toggle_bad = std::format("echo '{}' > '{}';", bad_value, sysfs_path);
+	if (sysfs_path.find('*') != std::string::npos) {
+		toggle_bad = std::format("for i in {}; do echo '{}' > $i; done;", sysfs_path, bad_value);
+	} else {
+		toggle_bad = std::format("echo '{}' > '{}';", bad_value, sysfs_path);
+	}
+
 	return TUNE_BAD;
 }
 
 void sysfs_tunable::toggle(void)
 {
-	int good;
-	good = good_bad();
+	int good = good_bad();
+	std::vector<std::string> files = get_matching_files(sysfs_path);
 
 	if (good == TUNE_GOOD) {
-		if (!bad_value.empty())
-			write_sysfs(sysfs_path, bad_value);
+		if (!bad_value.empty()) {
+			for (const auto& file : files)
+				write_sysfs(file, bad_value);
+		}
 		return;
 	}
 
-	write_sysfs(sysfs_path, target_value);
+	for (const auto& file : files)
+		write_sysfs(file, target_value);
 }
 
 
 void add_sysfs_tunable(const std::string &str, const std::string &_sysfs_path, const std::string &_target_content)
 {
-	if (access(_sysfs_path.c_str(), R_OK) != 0)
+	std::vector<std::string> files = get_matching_files(_sysfs_path);
+	bool any_accessible = false;
+	for (const auto& file : files) {
+		if (access(file.c_str(), R_OK) == 0) {
+			any_accessible = true;
+			break;
+		}
+	}
+	if (!any_accessible)
 		return;
 	class sysfs_tunable *st;
 
