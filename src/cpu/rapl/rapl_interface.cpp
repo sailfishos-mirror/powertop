@@ -35,11 +35,12 @@
 #ifdef DEBUG
 #define RAPL_DBG_PRINT printf
 #define RAPL_ERROR_PRINT printf
+#define RAPL_INFO_PRINT(format, m) fprintf(stderr, format, m)
 #else
 #define RAPL_DBG_PRINT(...)	((void) 0)
 #define RAPL_ERROR_PRINT(...) ((void) 0)
+#define RAPL_INFO_PRINT(format, m) ((void) 0)
 #endif
-#define RAPL_INFO_PRINT(format, m) fprintf(stderr, format, m)
 
 #define MAX_TEMP_STR_SIZE	20
 
