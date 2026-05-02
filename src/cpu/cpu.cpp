@@ -67,11 +67,10 @@ static class abstract_cpu * new_package(int package, int cpu, const std::string 
 
 	std::string packagename;
 	if (vendor == "GenuineIntel")
-		if (family == 6)
-			if (is_supported_intel_cpu(model, cpu)) {
-				ret = new nhm_package(model);
-				ret->set_intel_MSR(true);
-			}
+		if (is_supported_intel_cpu(family, model, cpu)) {
+			ret = new nhm_package(family, model);
+			ret->set_intel_MSR(true);
+		}
 
 	if (!ret) {
 		ret = new cpu_package;
@@ -108,11 +107,10 @@ static class abstract_cpu * new_core(int core, int cpu, const std::string &vendo
 	class abstract_cpu *ret = nullptr;
 
 	if (vendor == "GenuineIntel")
-		if (family == 6)
-			if (is_supported_intel_cpu(model, cpu)) {
-				ret = new nhm_core(model);
-				ret->set_intel_MSR(true);
-			}
+		if (is_supported_intel_cpu(family, model, cpu)) {
+			ret = new nhm_core(family, model);
+			ret->set_intel_MSR(true);
+		}
 
 	if (!ret) {
 		ret = new cpu_core;
@@ -142,11 +140,10 @@ static class abstract_cpu * new_cpu(int number, const std::string &vendor, int f
 	class abstract_cpu * ret = nullptr;
 
 	if (vendor == "GenuineIntel")
-		if (family == 6)
-			if (is_supported_intel_cpu(model, number)) {
-				ret = new nhm_cpu;
-				ret->set_intel_MSR(true);
-			}
+		if (is_supported_intel_cpu(family, model, number)) {
+			ret = new nhm_cpu;
+			ret->set_intel_MSR(true);
+		}
 
 	if (!ret) {
 		ret = new cpu_linux;

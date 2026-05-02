@@ -43,74 +43,74 @@
 #include "../display.h"
 
 static int intel_cpu_models[] = {
-	0x1A,	/* Core i7, Xeon 5500 series */
-	0x1E,	/* Core i7 and i5 Processor - Lynnfield Jasper Forest */
-	0x1F,	/* Core i7 and i5 Processor - Nehalem */
-	0x25,	/* Westmere */
-	0x27,	/* Medfield Atom */
-	0x2A,	/* SNB */
-	0x2C,	/* Westmere */
-	0x2D,	/* SNB Xeon */
-	0x2E,	/* Nehalem-EX Xeon */
-	0x2F,	/* Westmere-EX Xeon */
-	0x37,	/* BYT-M */
-	0x3A,	/* IVB */
-	0x3C,	/* HSW */
-	0x3D,	/* BDW */
-	0x3E,	/* IVB Xeon */
-	0x3F,	/* HSX */
-	0x45,	/* HSW-ULT */
-	0x46,	/* HSW-G */
-	0x47,	/* BDW-H */
-	0x4C,	/* BSW */
-	0x4D,	/* AVN */
-	0x4F,	/* BDX */
-	0x4E,	/* SKY */
-	0x55,	/* SKY-X */
-	0x56,	/* BDX-DE */
-	0x5C,	/* BXT-P */
-	0x5E,	/* SKY */
-	0x5F,   /* DNV */
-	0x66,   /* CNL-U/Y */
-	0x6A,	/* ICL_X*/
-	0x7A,   /* GLK */
-	0x7D,	/* ICL_DESKTOP */
-	0x7E,	/* ICL_MOBILE */
-	0x8A,	/* LKF */
-	0x8C,	/* TGL_MOBILE */
-	0x8D,   /* TGL_DESKTOP */
-	0x8E,	/* KBL_MOBILE */
-	0X8F, 	/* SAPPHIRERAPIDS_X */
-	0x96,	/* EHL */
-	0x97,	/* ADL_DESKTOP */
-	0x9A,	/* ADL_MOBILE */
-	0x9C,	/* JSL */
-	0x9D,	/* ICL_NNPI */
-	0x9E,	/* KBL_DESKTOP */
-	0xA5,   /* CML_DESKTOP */
-	0xA6,   /* CML_MOBILE */
-	0xA7,	/* RKL_DESKTOP */
-	0xAA,	/* MTL_MOBILE */
-	0xAC,	/* MTL_DESKTOP */
-	0xB5,   /* ARL_U */
-	0xB7,	/* RPL_DESKTOP */
-	0xBA,	/* RPL_P */
-	0xBE,	/* ADL_N */
-	0xBF,	/* RPL_S */
-	0xC5,   /* ARL_H */
-	0xC6,   /* ARL_DESKTOP */
+	IFM(6, 0x1A),	/* Core i7, Xeon 5500 series */
+	IFM(6, 0x1E),	/* Core i7 and i5 Processor - Lynnfield Jasper Forest */
+	IFM(6, 0x1F),	/* Core i7 and i5 Processor - Nehalem */
+	IFM(6, 0x25),	/* Westmere */
+	IFM(6, 0x27),	/* Medfield Atom */
+	IFM(6, 0x2A),	/* SNB */
+	IFM(6, 0x2C),	/* Westmere */
+	IFM(6, 0x2D),	/* SNB Xeon */
+	IFM(6, 0x2E),	/* Nehalem-EX Xeon */
+	IFM(6, 0x2F),	/* Westmere-EX Xeon */
+	IFM(6, 0x37),	/* BYT-M */
+	IFM(6, 0x3A),	/* IVB */
+	IFM(6, 0x3C),	/* HSW */
+	IFM(6, 0x3D),	/* BDW */
+	IFM(6, 0x3E),	/* IVB Xeon */
+	IFM(6, 0x3F),	/* HSX */
+	IFM(6, 0x45),	/* HSW-ULT */
+	IFM(6, 0x46),	/* HSW-G */
+	IFM(6, 0x47),	/* BDW-H */
+	IFM(6, 0x4C),	/* BSW */
+	IFM(6, 0x4D),	/* AVN */
+	IFM(6, 0x4F),	/* BDX */
+	IFM(6, 0x4E),	/* SKY */
+	IFM(6, 0x55),	/* SKY-X */
+	IFM(6, 0x56),	/* BDX-DE */
+	IFM(6, 0x5C),	/* BXT-P */
+	IFM(6, 0x5E),	/* SKY */
+	IFM(6, 0x5F),   /* DNV */
+	IFM(6, 0x66),   /* CNL-U/Y */
+	IFM(6, 0x6A),	/* ICL_X*/
+	IFM(6, 0x7A),   /* GLK */
+	IFM(6, 0x7D),	/* ICL_DESKTOP */
+	IFM(6, 0x7E),	/* ICL_MOBILE */
+	IFM(6, 0x8A),	/* LKF */
+	IFM(6, 0x8C),	/* TGL_MOBILE */
+	IFM(6, 0x8D),   /* TGL_DESKTOP */
+	IFM(6, 0x8E),	/* KBL_MOBILE */
+	IFM(6, 0x8F), 	/* SAPPHIRERAPIDS_X */
+	IFM(6, 0x96),	/* EHL */
+	IFM(6, 0x97),	/* ADL_DESKTOP */
+	IFM(6, 0x9A),	/* ADL_MOBILE */
+	IFM(6, 0x9C),	/* JSL */
+	IFM(6, 0x9D),	/* ICL_NNPI */
+	IFM(6, 0x9E),	/* KBL_DESKTOP */
+	IFM(6, 0xA5),   /* CML_DESKTOP */
+	IFM(6, 0xA6),   /* CML_MOBILE */
+	IFM(6, 0xA7),	/* RKL_DESKTOP */
+	IFM(6, 0xAA),	/* MTL_MOBILE */
+	IFM(6, 0xAC),	/* MTL_DESKTOP */
+	IFM(6, 0xB5),   /* ARL_U */
+	IFM(6, 0xB7),	/* RPL_DESKTOP */
+	IFM(6, 0xBA),	/* RPL_P */
+	IFM(6, 0xBE),	/* ADL_N */
+	IFM(6, 0xBF),	/* RPL_S */
+	IFM(6, 0xC5),   /* ARL_H */
+	IFM(6, 0xC6),   /* ARL_DESKTOP */
 	0	/* last entry must be zero */
 };
 
 static int intel_pstate_driver_loaded = -1;
 
-int is_supported_intel_cpu(int model, int cpu)
+int is_supported_intel_cpu(int family, int model, int cpu)
 {
 	int i;
 	uint64_t msr;
 
 	for (i = 0; intel_cpu_models[i] != 0; i++)
-		if (model == intel_cpu_models[i])
+		if (IFM(family, model) == intel_cpu_models[i])
 			if (cpu < 0 || read_msr(cpu, MSR_APERF, &msr) >= 0)
 				return 1;
 
@@ -170,60 +170,60 @@ int intel_util::get_byt_ahci_support()
 	return byt_ahci_support;
 }
 
-nhm_core::nhm_core(int model)
+nhm_core::nhm_core(int family, int model)
 {
 	has_c7_res = 0;
 
-	switch(model) {
-		case 0x2A:	/* SNB */
-		case 0x2D:	/* SNB Xeon */
-		case 0x3A:      /* IVB */
-		case 0x3C:	/* HSW */
-		case 0x3D:	/* BDW */
-		case 0x3E:      /* IVB Xeon */
-		case 0x45:	/* HSW-ULT */
-		case 0x4E:	/* SKY */
-		case 0x55:	/* SKY-X */
-		case 0x5E:	/* SKY */
-		case 0x5F:	/* DNV */
-		case 0x5C:      /* BXT-P */
-		case 0x66:	/* CNL-U/Y */
-		case 0x6A:    	/* ICL_X*/
-		case 0x7A:	/* GLK */
-		case 0x7D:    	/* ICL_DESKTOP */
-		case 0x7E:	/* ICL_MOBILE */
-		case 0x8A:	/* LKF */
-		case 0x8C:	/* TGL_MOBILE */
-		case 0x8D:	/* TGL_DESKTOP */
-		case 0x8E:	/* KBL_MOBILE */
-		case 0x8F:	/* SAPPHIRERAPIDS_X */
-		case 0x96:	/* EHL */
-		case 0x97:	/* ADL_DESKTOP */
-		case 0x9A:	/* ADL_MOBILE */
-		case 0x9C:	/* JSL */
-		case 0x9D:	/* ICL_NNPI */
-		case 0x9E:	/* KBL_DESKTOP */
-		case 0xA5:      /* CML_DESKTOP */
-		case 0xA6:      /* CML_MOBILE */
-		case 0xA7:	/* RKL_DESKTOP */
-		case 0xAA:	/* MTL_MOBILE */
-		case 0xAC:	/* MTL_DESKTOP */
-		case 0xB5:	/* ARL_U */
-		case 0xB7:	/* RPL_DESKTOP */
-		case 0xBA:	/* RPL_P */
-		case 0xBE:	/* ADL_N */
-		case 0xBF:	/* RPL_S */
-		case 0xC5:	/* ARL_H */
-		case 0xC6:	/* ARL_DESKTOP */
+	switch(IFM(family, model)) {
+		case IFM(6, 0x2A):	/* SNB */
+		case IFM(6, 0x2D):	/* SNB Xeon */
+		case IFM(6, 0x3A):      /* IVB */
+		case IFM(6, 0x3C):	/* HSW */
+		case IFM(6, 0x3D):	/* BDW */
+		case IFM(6, 0x3E):      /* IVB Xeon */
+		case IFM(6, 0x45):	/* HSW-ULT */
+		case IFM(6, 0x4E):	/* SKY */
+		case IFM(6, 0x55):	/* SKY-X */
+		case IFM(6, 0x5E):	/* SKY */
+		case IFM(6, 0x5F):	/* DNV */
+		case IFM(6, 0x5C):      /* BXT-P */
+		case IFM(6, 0x66):	/* CNL-U/Y */
+		case IFM(6, 0x6A):    	/* ICL_X*/
+		case IFM(6, 0x7A):	/* GLK */
+		case IFM(6, 0x7D):    	/* ICL_DESKTOP */
+		case IFM(6, 0x7E):	/* ICL_MOBILE */
+		case IFM(6, 0x8A):	/* LKF */
+		case IFM(6, 0x8C):	/* TGL_MOBILE */
+		case IFM(6, 0x8D):	/* TGL_DESKTOP */
+		case IFM(6, 0x8E):	/* KBL_MOBILE */
+		case IFM(6, 0x8F):	/* SAPPHIRERAPIDS_X */
+		case IFM(6, 0x96):	/* EHL */
+		case IFM(6, 0x97):	/* ADL_DESKTOP */
+		case IFM(6, 0x9A):	/* ADL_MOBILE */
+		case IFM(6, 0x9C):	/* JSL */
+		case IFM(6, 0x9D):	/* ICL_NNPI */
+		case IFM(6, 0x9E):	/* KBL_DESKTOP */
+		case IFM(6, 0xA5):      /* CML_DESKTOP */
+		case IFM(6, 0xA6):      /* CML_MOBILE */
+		case IFM(6, 0xA7):	/* RKL_DESKTOP */
+		case IFM(6, 0xAA):	/* MTL_MOBILE */
+		case IFM(6, 0xAC):	/* MTL_DESKTOP */
+		case IFM(6, 0xB5):	/* ARL_U */
+		case IFM(6, 0xB7):	/* RPL_DESKTOP */
+		case IFM(6, 0xBA):	/* RPL_P */
+		case IFM(6, 0xBE):	/* ADL_N */
+		case IFM(6, 0xBF):	/* RPL_S */
+		case IFM(6, 0xC5):	/* ARL_H */
+		case IFM(6, 0xC6):	/* ARL_DESKTOP */
 			has_c7_res = 1;
 	}
 
 	has_c3_res = 1;
 	has_c1_res = 0;
 
-	switch (model) {
-		case 0x37:	/* BYT-M does not support C3/C4 */
-		case 0x4C:	/* BSW does not support C3 */
+	switch (IFM(family, model)) {
+		case IFM(6, 0x37):	/* BYT-M does not support C3/C4 */
+		case IFM(6, 0x4C):	/* BSW does not support C3 */
 			has_c3_res = 0;
 			has_c1_res = 1;
 	}
@@ -367,64 +367,64 @@ std::string nhm_core::fill_pstate_line(int line_nr)
 	return std::format(" {:5.1f}% ", percentage(1.0* (pstates[line_nr]->time_after) / total_stamp));
 }
 
-nhm_package::nhm_package(int model)
+nhm_package::nhm_package(int family, int model)
 {
 	has_c8c9c10_res = 0;
 	has_c2c6_res = 0;
 	has_c7_res = 0;
 	has_c6c_res = 0;
 
-	switch(model) {
-		case 0x2A:	/* SNB */
-		case 0x2D:	/* SNB Xeon */
-		case 0x3A:      /* IVB */
-		case 0x3C:	/* HSW */
-		case 0x3D:	/* BDW */
-		case 0x3E:      /* IVB Xeon */
-		case 0x45:	/* HSW-ULT */
-		case 0x4E:	/* SKY */
-		case 0x55:	/* SKY-X */
-		case 0x5C:	/* BXT-P */
-		case 0x5E:	/* SKY */
-		case 0x5F:	/* DNV */
-		case 0x66:	/* CNL-U/Y */
-		case 0x6A:  	/* ICL_X*/
-		case 0x7A:	/* GLK */
-		case 0x7D:    	/* ICL_DESKTOP */
-		case 0x7E:	/* ICL_MOBILE */
-		case 0x8A:	/* LKF */
-		case 0x8C:	/* TGL_MOBILE */
-		case 0x8D:	/* TGL_DESKTOP */
-		case 0x8E:	/* KBL_MOBILE */
-		case 0x8F:	/* SAPPHIRERAPIDS_X */
-		case 0x96:      /* EHL */
-		case 0x97:	/* ADL_DESKTOP */
-		case 0X9A:	/* ADL_MOBILE */
-		case 0x9C:	/* JSL */
-		case 0x9D:	/* ICL_NNPI */
-		case 0x9E:	/* KBL_DESKTOP */
-		case 0xA5:      /* CML_DESKTOP */
-		case 0xA6:      /* CML_MOBILE */
-		case 0xA7:	/* RKL_DESKTOP */
-		case 0xAA:	/* MTL_MOBILE */
-		case 0xAC:	/* MTL_DESKTOP */
-		case 0xB5:	/* ARL_U */
-		case 0xB7:	/* RPL_DESKTOP */
-		case 0xBA:	/* RPL_P */
-		case 0xBE:	/* ADL_N */
-		case 0xBF:	/* RPL_S */
-		case 0xC5:	/* ARL_H */
-		case 0xC6:	/* ARL_DESKTOP */
+	switch(IFM(family, model)) {
+		case IFM(6, 0x2A):	/* SNB */
+		case IFM(6, 0x2D):	/* SNB Xeon */
+		case IFM(6, 0x3A):      /* IVB */
+		case IFM(6, 0x3C):	/* HSW */
+		case IFM(6, 0x3D):	/* BDW */
+		case IFM(6, 0x3E):      /* IVB Xeon */
+		case IFM(6, 0x45):	/* HSW-ULT */
+		case IFM(6, 0x4E):	/* SKY */
+		case IFM(6, 0x55):	/* SKY-X */
+		case IFM(6, 0x5C):	/* BXT-P */
+		case IFM(6, 0x5E):	/* SKY */
+		case IFM(6, 0x5F):	/* DNV */
+		case IFM(6, 0x66):	/* CNL-U/Y */
+		case IFM(6, 0x6A):  	/* ICL_X*/
+		case IFM(6, 0x7A):	/* GLK */
+		case IFM(6, 0x7D):    	/* ICL_DESKTOP */
+		case IFM(6, 0x7E):	/* ICL_MOBILE */
+		case IFM(6, 0x8A):	/* LKF */
+		case IFM(6, 0x8C):	/* TGL_MOBILE */
+		case IFM(6, 0x8D):	/* TGL_DESKTOP */
+		case IFM(6, 0x8E):	/* KBL_MOBILE */
+		case IFM(6, 0x8F):	/* SAPPHIRERAPIDS_X */
+		case IFM(6, 0x96):      /* EHL */
+		case IFM(6, 0x97):	/* ADL_DESKTOP */
+		case IFM(6, 0x9A):	/* ADL_MOBILE */
+		case IFM(6, 0x9C):	/* JSL */
+		case IFM(6, 0x9D):	/* ICL_NNPI */
+		case IFM(6, 0x9E):	/* KBL_DESKTOP */
+		case IFM(6, 0xA5):      /* CML_DESKTOP */
+		case IFM(6, 0xA6):      /* CML_MOBILE */
+		case IFM(6, 0xA7):	/* RKL_DESKTOP */
+		case IFM(6, 0xAA):	/* MTL_MOBILE */
+		case IFM(6, 0xAC):	/* MTL_DESKTOP */
+		case IFM(6, 0xB5):	/* ARL_U */
+		case IFM(6, 0xB7):	/* RPL_DESKTOP */
+		case IFM(6, 0xBA):	/* RPL_P */
+		case IFM(6, 0xBE):	/* ADL_N */
+		case IFM(6, 0xBF):	/* RPL_S */
+		case IFM(6, 0xC5):	/* ARL_H */
+		case IFM(6, 0xC6):	/* ARL_DESKTOP */
 			has_c2c6_res=1;
 			has_c7_res = 1;
 	}
 
 	has_c3_res = 1;
 
-	switch(model) {
+	switch(IFM(family, model)) {
 		/* BYT-M doesn't have C3 or C7 */
 		/* BYT-T doesn't have C3 but it has C7 */
-		case 0x37:
+		case IFM(6, 0x37):
 			has_c2c6_res=1;
 			this->byt_has_ahci();
 			if ((this->get_byt_ahci_support()) == 0)
@@ -432,46 +432,46 @@ nhm_package::nhm_package(int model)
 			else
 				has_c7_res = 0;
 			break;
-		case 0x4C: /* BSW doesn't have C3 */
+		case IFM(6, 0x4C): /* BSW doesn't have C3 */
 			has_c3_res = 0;
 			has_c6c_res = 1; /* BSW only exposes package C6 */
 			break;
 	}
 
 	/*Has C8/9/10*/
-	switch(model) {
-		case 0x3D:	/* BDW */
-		case 0x45:	/* HSW */
-		case 0x4E:	/* SKY */
-		case 0x5C:	/* BXT-P */
-		case 0x5E:	/* SKY */
-		case 0x5F:	/* DNV */
-		case 0x66:	/* CNL-U/Y */
-		case 0x7A:	/* GLK */
-		case 0x7D:	/* ICL_DESKTOP */
-		case 0x7E:	/* ICL_MOBILE */
-		case 0x8A:	/* LKF */
-		case 0x8C:	/* TGL_MOBILE */
-		case 0x8D:	/* TGL_DESKTOP */
-		case 0x8E:	/* KBL_MOBILE */
-		case 0x96:      /* EHL */
-		case 0x97:	/* ADL_DESKTOP */
-		case 0x9A:	/* ADL_MOBILE */
-		case 0x9C:	/* JSL */
-		case 0x9D:	/* ICL_NNPI */
-		case 0x9E:	/* KBL_DESKTOP */
-		case 0xA5:      /* CML_DESKTOP */
-		case 0xA6:      /* CML_MOBILE */
-		case 0xA7:	/* RKL_DESKTOP */
-		case 0xAA:	/* MTL_MOBILE */
-		case 0xAC:	/* MTL_DESKTOP */
-		case 0xB5:	/* ARL_U */
-		case 0xB7:	/* RPL_DESKTOP */
-		case 0xBA:	/* RPL_P */
-		case 0xBE:	/* ADL_N */
-		case 0xBF:	/* RPL_S */
-		case 0xC5:	/* ARL_H */
-		case 0xC6:	/* ARL_DESKTOP */
+	switch(IFM(family, model)) {
+		case IFM(6, 0x3D):	/* BDW */
+		case IFM(6, 0x45):	/* HSW */
+		case IFM(6, 0x4E):	/* SKY */
+		case IFM(6, 0x5C):	/* BXT-P */
+		case IFM(6, 0x5E):	/* SKY */
+		case IFM(6, 0x5F):	/* DNV */
+		case IFM(6, 0x66):	/* CNL-U/Y */
+		case IFM(6, 0x7A):	/* GLK */
+		case IFM(6, 0x7D):	/* ICL_DESKTOP */
+		case IFM(6, 0x7E):	/* ICL_MOBILE */
+		case IFM(6, 0x8A):	/* LKF */
+		case IFM(6, 0x8C):	/* TGL_MOBILE */
+		case IFM(6, 0x8D):	/* TGL_DESKTOP */
+		case IFM(6, 0x8E):	/* KBL_MOBILE */
+		case IFM(6, 0x96):      /* EHL */
+		case IFM(6, 0x97):	/* ADL_DESKTOP */
+		case IFM(6, 0x9A):	/* ADL_MOBILE */
+		case IFM(6, 0x9C):	/* JSL */
+		case IFM(6, 0x9D):	/* ICL_NNPI */
+		case IFM(6, 0x9E):	/* KBL_DESKTOP */
+		case IFM(6, 0xA5):      /* CML_DESKTOP */
+		case IFM(6, 0xA6):      /* CML_MOBILE */
+		case IFM(6, 0xA7):	/* RKL_DESKTOP */
+		case IFM(6, 0xAA):	/* MTL_MOBILE */
+		case IFM(6, 0xAC):	/* MTL_DESKTOP */
+		case IFM(6, 0xB5):	/* ARL_U */
+		case IFM(6, 0xB7):	/* RPL_DESKTOP */
+		case IFM(6, 0xBA):	/* RPL_P */
+		case IFM(6, 0xBE):	/* ADL_N */
+		case IFM(6, 0xBF):	/* RPL_S */
+		case IFM(6, 0xC5):	/* ARL_H */
+		case IFM(6, 0xC6):	/* ARL_DESKTOP */
 			has_c8c9c10_res = 1;
 			break;
 	}

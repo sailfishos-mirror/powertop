@@ -30,6 +30,8 @@
 #include "cpu.h"
 #include "../lib.h"
 
+#define IFM(_fam, _model) (((_fam) << 8) | (_model))
+
 
 #define MSR_TSC				0x10
 #define MSR_NEHALEM_PLATFORM_INFO	0xCE
@@ -79,7 +81,7 @@ public:
 	int		has_c3_res = 0;
 	int		has_c6c_res = 0;		/* BSW */
 	int		has_c8c9c10_res = 0;
-	nhm_package(int model);
+	nhm_package(int family, int model);
 	virtual void	measurement_start(void) override;
 	virtual void	measurement_end(void) override;
 	virtual int     can_collapse(void) override { return 0;};
@@ -103,7 +105,7 @@ public:
 	int		has_c1_res = 0;
 	int		has_c7_res = 0;
 	int		has_c3_res = 0;
-	nhm_core(int model);
+	nhm_core(int family, int model);
 	virtual void	measurement_start(void) override;
 	virtual void	measurement_end(void) override;
 	virtual int     can_collapse(void) override { return 0;};
@@ -176,7 +178,7 @@ public:
 
 };
 
-int is_supported_intel_cpu(int model, int cpu);
+int is_supported_intel_cpu(int family, int model, int cpu);
 int byt_has_ahci();
 
 int is_intel_pstate_driver_loaded();
