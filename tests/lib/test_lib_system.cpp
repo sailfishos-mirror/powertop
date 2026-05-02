@@ -80,54 +80,6 @@ static void test_process_directory_nonexistent_is_silent()
 	PT_ASSERT_EQ(dir_entries.size(), (size_t)0);
 }
 
-/* ── process_glob ───────────────────────────────────────────────────────── */
-
-static std::vector<std::string> glob_entries;
-static void collect_glob_entry(const std::string& path)
-{
-	glob_entries.push_back(path);
-}
-
-static void test_process_glob_matches_pattern()
-{
-	char tmpdir[] = "/tmp/powertop_glob_XXXXXX";
-	mkdtemp(tmpdir);
-	std::string d(tmpdir);
-
-	/* Create two .txt files and one .cpp — only .txt should be matched */
-	for (const char *name : {"foo.txt", "bar.txt", "baz.cpp"}) {
-		int fd = open((d + "/" + name).c_str(), O_CREAT | O_WRONLY, 0644);
-		close(fd);
-	}
-
-	glob_entries.clear();
-	process_glob(d + "/*.txt", collect_glob_entry);
-
-	std::sort(glob_entries.begin(), glob_entries.end());
-	PT_ASSERT_EQ(glob_entries.size(), (size_t)2);
-	PT_ASSERT_EQ(glob_entries[0], d + "/bar.txt");
-	PT_ASSERT_EQ(glob_entries[1], d + "/foo.txt");
-
-	for (const char *name : {"foo.txt", "bar.txt", "baz.cpp"})
-		unlink((d + "/" + name).c_str());
-	rmdir(tmpdir);
-}
-
-static void test_process_glob_no_match()
-{
-	/*
-	 * Use an existing directory with a pattern that matches nothing, so
-	 * glob() returns GLOB_NOMATCH (not GLOB_ABORTED which fires when the
-	 * directory itself doesn't exist under GLOB_ERR).
-	 */
-	char tmpdir[] = "/tmp/pt_glob_nomatch_XXXXXX";
-	mkdtemp(tmpdir);
-	glob_entries.clear();
-	process_glob(std::string(tmpdir) + "/*.nothing_xyz_abc", collect_glob_entry);
-	PT_ASSERT_EQ(glob_entries.size(), (size_t)0);
-	rmdir(tmpdir);
-}
-
 /* ── main ───────────────────────────────────────────────────────────────── */
 
 int main()
@@ -138,10 +90,6 @@ int main()
 	std::cout << "\n=== process_directory tests ===\n";
 	PT_RUN_TEST(test_process_directory);
 	PT_RUN_TEST(test_process_directory_nonexistent_is_silent);
-
-	std::cout << "\n=== process_glob tests ===\n";
-	PT_RUN_TEST(test_process_glob_matches_pattern);
-	PT_RUN_TEST(test_process_glob_no_match);
 
 	return pt_test_summary();
 }

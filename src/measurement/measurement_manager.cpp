@@ -24,6 +24,8 @@
  */
 
 #include "measurement.h"
+#include <filesystem>
+#include <system_error>
 #include "acpi.h"
 #include "extech.h"
 #include "sysfs.h"
@@ -157,8 +159,25 @@ void sysfs_opal_sensors_callback(const std::string &d_name)
 void detect_power_meters(void)
 {
 	process_directory("/sys/class/power_supply", sysfs_power_meters_callback);
-	process_glob("/sys/devices/platform/opal-sensor/hwmon/hwmon*/power*",
-		     sysfs_opal_sensors_callback);
+	
+	std::error_code ec;
+	std::string hwmon_base = "/sys/devices/platform/opal-sensor/hwmon/";
+	
+	if (std::filesystem::exists(hwmon_base, ec)) {
+		for (const auto& hwmon_entry : std::filesystem::directory_iterator(hwmon_base, ec)) {
+			if (!hwmon_entry.is_directory(ec)) continue;
+			std::string hwmon_name = hwmon_entry.path().filename().string();
+			if (!hwmon_name.starts_with("hwmon")) continue;
+			
+			for (const auto& power_entry : std::filesystem::directory_iterator(hwmon_entry.path(), ec)) {
+				std::string power_name = power_entry.path().filename().string();
+				if (power_name.starts_with("power")) {
+					if (power_entry.is_directory(ec)) continue;
+					sysfs_opal_sensors_callback(power_entry.path().string());
+				}
+			}
+		}
+	}
 }
 
 void extech_power_meter(const std::string &devnode)
