@@ -16,6 +16,8 @@ public:
 	virtual void add_summary_list(const std::vector<std::string> &list) override;
 	virtual void add_table(const std::vector<std::string> &system_data, struct table_attributes *tb_attr) override;
 
+	virtual std::string get_result() override;
+
 protected:
 	virtual std::string escape_string(const std::string &str) override;
 };

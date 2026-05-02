@@ -9,12 +9,12 @@
 report_formatter_md::report_formatter_md() {}
 void report_formatter_md::finish_report() {}
 void report_formatter_md::add_logo() { add_exact("# PowerTOP Report\n\n"); }
-void report_formatter_md::add_header() { add_exact("---\n\n"); }
-void report_formatter_md::add_div(struct tag_attr *div_attr) { add_exact("\n"); }
+void report_formatter_md::add_header() { add_exact("______________________________________________________________________\n\n"); }
+void report_formatter_md::add_div(struct tag_attr *div_attr) { }
 void report_formatter_md::add_title(struct tag_attr *title_att, const std::string &title) { add_exact(std::format("## {}\n\n", title)); }
 void report_formatter_md::add_summary_list(const std::vector<std::string> &list) {
 	for (size_t i = 0; i + 1 < list.size(); i += 2) {
-		add_exact(std::format("* **{}**: {}\n", list[i], list[i + 1]));
+		add_exact(std::format("- **{}**: {}\n", list[i], list[i + 1]));
 	}
 	add_exact("\n");
 }
@@ -29,7 +29,10 @@ void report_formatter_md::add_table(const std::vector<std::string> &system_data,
 				if (val == "&nbsp;") val = " ";
 				add_exact(escape_string(val));
 			}
-			add_exact(" | ");
+			if (j < tb_attr->cols - 1)
+				add_exact(" | ");
+			else
+				add_exact(" |");
 		}
 		add_exact("\n");
 		if (i == 0) {
@@ -39,6 +42,14 @@ void report_formatter_md::add_table(const std::vector<std::string> &system_data,
 		}
 	}
 	add_exact("\n");
+}
+std::string report_formatter_md::get_result() {
+	std::string res = report_formatter_string_base::get_result();
+	while (!res.empty() && isspace(res.back())) {
+		res.pop_back();
+	}
+	if (!res.empty()) res += "\n";
+	return res;
 }
 std::string report_formatter_md::escape_string(const std::string &str) {
 	std::string res;

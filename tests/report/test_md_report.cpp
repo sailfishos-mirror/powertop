@@ -31,12 +31,17 @@ static void test_md_basic()
 	
 	report.finish_report();
 	std::string res = report.get_result();
-	std::cout << "Markdown Result:\n" << res << "\n";
+	
+	FILE *f = fopen("test.md", "w");
+	if (f) {
+		fprintf(f, "%s", res.c_str());
+		fclose(f);
+	}
 	
 	PT_ASSERT_TRUE(res.find("# PowerTOP Report") != std::string::npos);
-	PT_ASSERT_TRUE(res.find("---") != std::string::npos);
+	PT_ASSERT_TRUE(res.find("______________________________________________________________________") != std::string::npos);
 	PT_ASSERT_TRUE(res.find("## Summary") != std::string::npos);
-	PT_ASSERT_TRUE(res.find("* **Field1**: Value1") != std::string::npos);
+	PT_ASSERT_TRUE(res.find("- **Field1**: Value1") != std::string::npos);
 	PT_ASSERT_TRUE(res.find("| Header1 | Header2 |") != std::string::npos);
 	PT_ASSERT_TRUE(res.find("|---|---|") != std::string::npos);
 	PT_ASSERT_TRUE(res.find("| Row1Col1 | Row1Col2 |") != std::string::npos);
