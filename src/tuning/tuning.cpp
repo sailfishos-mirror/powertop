@@ -78,7 +78,6 @@ static void init_tuning(void)
 	add_sysfs_tunable(_("Intel P-state minimum performance"), "/sys/devices/system/cpu/intel_pstate/min_perf_pct", "50");
 	add_sysfs_tunable(_("Tuning for default qdisc"), "/proc/sys/net/core/default_qdisc", "fq");
 	add_sysfs_tunable(_("Intel ITMT (Turbo Boost Max 3.0)"), "/proc/sys/kernel/sched_itmt_enabled", "1");
-	add_sysfs_tunable(_("Intel energy performance bias"), "/sys/devices/system/cpu/cpu0/power/energy_perf_bias", "balance-performance");
 	add_sysfs_tunable(_("Intel energy performance bias"), "/sys/devices/system/cpu/cpu*/power/energy_perf_bias", "balance-performance");
 	add_sysfs_tunable(_("Intel energy performance preference"), "/sys/devices/system/cpu/cpufreq/policy*/energy_performance_preference", "balance_performance");
 	add_sysfs_tunable(_("Intel energy performance preference"), "/sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference", "balance_performance");
