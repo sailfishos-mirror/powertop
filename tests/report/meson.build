@@ -1,10 +1,26 @@
 tidy = find_program('tidy', required: false)
+mdl = find_program('mdl', required: false)
+mdformat = find_program('mdformat', required: false)
 
 tidy_args = []
 if tidy.found()
   tidy_args = [
     '-DHAVE_TIDY',
     '-DTIDY_BIN="' + tidy.full_path() + '"',
+  ]
+endif
+
+md_args = []
+if mdl.found()
+  md_args += [
+    '-DHAVE_MDL',
+    '-DMDL_BIN="' + mdl.full_path() + '"',
+  ]
+endif
+if mdformat.found()
+  md_args += [
+    '-DHAVE_MDFORMAT',
+    '-DMDFORMAT_BIN="' + mdformat.full_path() + '"',
   ]
 endif
 
@@ -58,7 +74,7 @@ test_md_report_exe = executable(
   'powertop-test-md-report',
   report_sources + ['test_md_report.cpp'],
   include_directories: report_incdirs,
-  cpp_args: report_cpp_args,
+  cpp_args: report_cpp_args + md_args,
   dependencies: [ncursesw_dep],
 )
 
