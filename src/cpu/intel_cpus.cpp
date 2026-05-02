@@ -43,62 +43,62 @@
 #include "../display.h"
 
 static int intel_cpu_models[] = {
-	IFM(6, 0x1A),	/* Core i7, Xeon 5500 series */
-	IFM(6, 0x1E),	/* Core i7 and i5 Processor - Lynnfield Jasper Forest */
-	IFM(6, 0x1F),	/* Core i7 and i5 Processor - Nehalem */
-	IFM(6, 0x25),	/* Westmere */
-	IFM(6, 0x27),	/* Medfield Atom */
-	IFM(6, 0x2A),	/* SNB */
-	IFM(6, 0x2C),	/* Westmere */
-	IFM(6, 0x2D),	/* SNB Xeon */
-	IFM(6, 0x2E),	/* Nehalem-EX Xeon */
-	IFM(6, 0x2F),	/* Westmere-EX Xeon */
-	IFM(6, 0x37),	/* BYT-M */
-	IFM(6, 0x3A),	/* IVB */
-	IFM(6, 0x3C),	/* HSW */
-	IFM(6, 0x3D),	/* BDW */
-	IFM(6, 0x3E),	/* IVB Xeon */
-	IFM(6, 0x3F),	/* HSX */
-	IFM(6, 0x45),	/* HSW-ULT */
-	IFM(6, 0x46),	/* HSW-G */
-	IFM(6, 0x47),	/* BDW-H */
-	IFM(6, 0x4C),	/* BSW */
-	IFM(6, 0x4D),	/* AVN */
-	IFM(6, 0x4F),	/* BDX */
-	IFM(6, 0x4E),	/* SKY */
-	IFM(6, 0x55),	/* SKY-X */
-	IFM(6, 0x56),	/* BDX-DE */
-	IFM(6, 0x5C),	/* BXT-P */
-	IFM(6, 0x5E),	/* SKY */
-	IFM(6, 0x5F),   /* DNV */
-	IFM(6, 0x66),   /* CNL-U/Y */
-	IFM(6, 0x6A),	/* ICL_X*/
-	IFM(6, 0x7A),   /* GLK */
-	IFM(6, 0x7D),	/* ICL_DESKTOP */
-	IFM(6, 0x7E),	/* ICL_MOBILE */
-	IFM(6, 0x8A),	/* LKF */
-	IFM(6, 0x8C),	/* TGL_MOBILE */
-	IFM(6, 0x8D),   /* TGL_DESKTOP */
-	IFM(6, 0x8E),	/* KBL_MOBILE */
-	IFM(6, 0x8F), 	/* SAPPHIRERAPIDS_X */
-	IFM(6, 0x96),	/* EHL */
-	IFM(6, 0x97),	/* ADL_DESKTOP */
-	IFM(6, 0x9A),	/* ADL_MOBILE */
-	IFM(6, 0x9C),	/* JSL */
-	IFM(6, 0x9D),	/* ICL_NNPI */
-	IFM(6, 0x9E),	/* KBL_DESKTOP */
-	IFM(6, 0xA5),   /* CML_DESKTOP */
-	IFM(6, 0xA6),   /* CML_MOBILE */
-	IFM(6, 0xA7),	/* RKL_DESKTOP */
-	IFM(6, 0xAA),	/* MTL_MOBILE */
-	IFM(6, 0xAC),	/* MTL_DESKTOP */
-	IFM(6, 0xB5),   /* ARL_U */
-	IFM(6, 0xB7),	/* RPL_DESKTOP */
-	IFM(6, 0xBA),	/* RPL_P */
-	IFM(6, 0xBE),	/* ADL_N */
-	IFM(6, 0xBF),	/* RPL_S */
-	IFM(6, 0xC5),   /* ARL_H */
-	IFM(6, 0xC6),   /* ARL_DESKTOP */
+	IFM(6, 0x1A),	/* NEHALEM_EP */
+	IFM(6, 0x1E),	/* NEHALEM */
+	IFM(6, 0x1F),	/* NEHALEM_G */
+	IFM(6, 0x25),	/* WESTMERE */
+	IFM(6, 0x27),	/* ATOM_SALTWELL_MID */
+	IFM(6, 0x2A),	/* SANDYBRIDGE */
+	IFM(6, 0x2C),	/* WESTMERE_EP */
+	IFM(6, 0x2D),	/* SANDYBRIDGE_X */
+	IFM(6, 0x2E),	/* NEHALEM_EX */
+	IFM(6, 0x2F),	/* WESTMERE_EX */
+	IFM(6, 0x37),	/* ATOM_SILVERMONT */
+	IFM(6, 0x3A),	/* IVYBRIDGE */
+	IFM(6, 0x3C),	/* HASWELL */
+	IFM(6, 0x3D),	/* BROADWELL */
+	IFM(6, 0x3E),	/* IVYBRIDGE_X */
+	IFM(6, 0x3F),	/* HASWELL_X */
+	IFM(6, 0x45),	/* HASWELL_L */
+	IFM(6, 0x46),	/* HASWELL_G */
+	IFM(6, 0x47),	/* BROADWELL_G */
+	IFM(6, 0x4C),	/* ATOM_AIRMONT */
+	IFM(6, 0x4D),	/* ATOM_SILVERMONT_D */
+	IFM(6, 0x4F),	/* BROADWELL_X */
+	IFM(6, 0x4E),	/* SKYLAKE_L */
+	IFM(6, 0x55),	/* SKYLAKE_X */
+	IFM(6, 0x56),	/* BROADWELL_D */
+	IFM(6, 0x5C),	/* ATOM_GOLDMONT */
+	IFM(6, 0x5E),	/* SKYLAKE */
+	IFM(6, 0x5F),	/* ATOM_GOLDMONT_D */
+	IFM(6, 0x66),	/* CANNONLAKE_L */
+	IFM(6, 0x6A),	/* ICELAKE_X */
+	IFM(6, 0x7A),	/* ATOM_GOLDMONT_PLUS */
+	IFM(6, 0x7D),	/* ICELAKE */
+	IFM(6, 0x7E),	/* ICELAKE_L */
+	IFM(6, 0x8A),	/* LAKEFIELD */
+	IFM(6, 0x8C),	/* TIGERLAKE_L */
+	IFM(6, 0x8D),	/* TIGERLAKE */
+	IFM(6, 0x8E),	/* KABYLAKE_L */
+	IFM(6, 0x8F),	/* SAPPHIRERAPIDS_X */
+	IFM(6, 0x96),	/* ATOM_TREMONT */
+	IFM(6, 0x97),	/* ALDERLAKE */
+	IFM(6, 0x9A),	/* ALDERLAKE_L */
+	IFM(6, 0x9C),	/* ATOM_TREMONT_L */
+	IFM(6, 0x9D),	/* ICELAKE_NNPI */
+	IFM(6, 0x9E),	/* KABYLAKE */
+	IFM(6, 0xA5),	/* COMETLAKE */
+	IFM(6, 0xA6),	/* COMETLAKE_L */
+	IFM(6, 0xA7),	/* ROCKETLAKE */
+	IFM(6, 0xAA),	/* METEORLAKE_L */
+	IFM(6, 0xAC),	/* METEORLAKE */
+	IFM(6, 0xB5),	/* ARROWLAKE_U */
+	IFM(6, 0xB7),	/* RAPTORLAKE */
+	IFM(6, 0xBA),	/* RAPTORLAKE_P */
+	IFM(6, 0xBE),	/* ATOM_GRACEMONT */
+	IFM(6, 0xBF),	/* RAPTORLAKE_S */
+	IFM(6, 0xC5),	/* ARROWLAKE_H */
+	IFM(6, 0xC6),	/* ARROWLAKE */
 	0	/* last entry must be zero */
 };
 
