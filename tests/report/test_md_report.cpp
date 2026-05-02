@@ -60,6 +60,7 @@ static void test_md_basic()
 	struct table_attributes tb_attr;
 	tb_attr.rows = 2;
 	tb_attr.cols = 2;
+	/* default is pos_table_title = T */
 	std::vector<std::string> table_data = {"Header1", "Header2", "Row1Col1", "Row1Col2"};
 	report.add_table(table_data, &tb_attr);
 	
@@ -73,6 +74,26 @@ static void test_md_basic()
 	PT_ASSERT_TRUE(res.find("| Header1 | Header2 |") != std::string::npos);
 	PT_ASSERT_TRUE(res.find("|---|---|") != std::string::npos);
 	PT_ASSERT_TRUE(res.find("| Row1Col1 | Row1Col2 |") != std::string::npos);
+}
+
+static void test_md_l_table()
+{
+	report_maker report(REPORT_MD);
+	
+	struct table_attributes tb_attr;
+	tb_attr.rows = 2;
+	tb_attr.cols = 2;
+	tb_attr.pos_table_title = L;
+	std::vector<std::string> table_data = {"Prop1", "Val1", "Prop2", "Val2"};
+	report.add_table(table_data, &tb_attr);
+	
+	report.finish_report();
+	std::string res = report.get_result();
+	
+	PT_ASSERT_TRUE(res.find("| Property | Value |") != std::string::npos);
+	PT_ASSERT_TRUE(res.find("|---|---|") != std::string::npos);
+	PT_ASSERT_TRUE(res.find("| Prop1 | Val1 |") != std::string::npos);
+	PT_ASSERT_TRUE(res.find("| Prop2 | Val2 |") != std::string::npos);
 }
 
 static void test_md_mdl()
@@ -92,7 +113,8 @@ static void test_md_mdl()
 	struct table_attributes tb_attr;
 	tb_attr.rows = 2;
 	tb_attr.cols = 2;
-	std::vector<std::string> table_data = {"Header1", "Header2", "Row1Col1", "Row1Col2"};
+	tb_attr.pos_table_title = L;
+	std::vector<std::string> table_data = {"Prop1", "Val1", "Prop2", "Val2"};
 	report.add_table(table_data, &tb_attr);
 	
 	report.finish_report();
@@ -125,7 +147,8 @@ static void test_md_mdformat()
 	struct table_attributes tb_attr;
 	tb_attr.rows = 2;
 	tb_attr.cols = 2;
-	std::vector<std::string> table_data = {"Header1", "Header2", "Row1Col1", "Row1Col2"};
+	tb_attr.pos_table_title = L;
+	std::vector<std::string> table_data = {"Prop1", "Val1", "Prop2", "Val2"};
 	report.add_table(table_data, &tb_attr);
 	
 	report.finish_report();
@@ -144,6 +167,7 @@ static void test_md_mdformat()
 int main()
 {
 	PT_RUN_TEST(test_md_basic);
+	PT_RUN_TEST(test_md_l_table);
 	PT_RUN_TEST(test_md_mdl);
 	PT_RUN_TEST(test_md_mdformat);
 	return pt_test_summary();
