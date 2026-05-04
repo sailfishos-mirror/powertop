@@ -75,8 +75,11 @@ extern std::string kernel_function(uint64_t address);
 
 
 
+#include <chrono>
 #include <ctime>
 #include <sys/time.h>
+
+extern std::string get_time_string(const std::string &fmt, std::chrono::system_clock::time_point tp);
 
 extern void write_sysfs(const std::string &filename, const std::string &value);
 extern int read_sysfs(const std::string &filename, bool *ok = nullptr);

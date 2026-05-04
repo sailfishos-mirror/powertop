@@ -95,21 +95,11 @@ static std::string read_os_release(const std::string &filename)
 	return "";
 }
 
-static std::string get_time_string(const std::string &fmt, time_t t)
-{
-	char buf[128];
-	struct tm *tm_info = localtime(&t);
-	if (!tm_info)
-		return "";
-	if (strftime(buf, sizeof(buf), fmt.c_str(), tm_info))
-		return buf;
-	return "";
-}
 
 static void system_info(void)
 {
 	std::string str;
-	time_t now = time(nullptr);
+	auto now = std::chrono::system_clock::now();
 
 	/* div attr css_class and css_id */
 	tag_attr div_attr;
@@ -169,7 +159,6 @@ static void system_info(void)
 void init_report_output(const std::string &filename_str, int iterations)
 {
 	size_t period;
-	time_t stamp;
 
 	if (iterations == 1)
 		reportout.filename = filename_str;
@@ -179,7 +168,7 @@ void init_report_output(const std::string &filename_str, int iterations)
 		if (period == std::string::npos)
 			period = filename_str.length();
 
-		stamp = time(nullptr);
+		auto stamp = std::chrono::system_clock::now();
 		reportout.filename = std::format("{}-{}{}",
 			filename_str.substr(0, period),
 			get_time_string("%Y%m%d-%H%M%S", stamp),

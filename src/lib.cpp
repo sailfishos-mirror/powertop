@@ -587,6 +587,12 @@ int write_msr(int cpu, uint64_t offset, uint64_t value)
 #endif
 }
 
+std::string get_time_string(const std::string &fmt, std::chrono::system_clock::time_point tp)
+{
+	auto zt = std::chrono::zoned_time{std::chrono::current_zone(), tp};
+	return pt_format("{:" + fmt + "}", zt);
+}
+
 #define UI_NOTIFY_BUFF_SZ 2048
 
 void ui_notify_user_ncurses(const std::string &msg)
