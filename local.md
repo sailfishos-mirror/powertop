@@ -147,3 +147,39 @@ Before/after pattern:
 `ninja coverage` is broken due to duplicate test_framework.cpp symbols;
 use the script instead (it passes `--ignore-errors inconsistent`).
 
+# NaN / division-by-zero guard patterns
+
+Two thresholds are used to guard floating-point divisions:
+
+- `measurement_time < 0.00001` (10 µs, seconds unit) — used in
+  `do_process.cpp` `total_*()` functions and `powerconsumer.cpp`.
+- `time_factor < 1.0` (1 µs, microseconds unit) — used in
+  `fill_cstate_line()` / `fill_cstate_percentage()` in
+  `cpu_core.cpp`, `cpu_linux.cpp`, `cpu_package.cpp`, and
+  `i965_core::fill_cstate_line()` in `intel_gpu.cpp`.
+- `time_delta < 1.0` (1 µs) — same as time_factor, used in
+  `intel_gpu.cpp`.
+
+`percentage()` in `lib.cpp` clamps negatives to 0 but does NOT cap
+at 100 (commented out), and does NOT trap NaN — callers must guard
+their divisors.
+
+# Coverage baseline (as of commit 8906999)
+
+Overall: 29.0% lines (2654/9140), 43.2% functions (418/967)
+
+Well-covered files (>85%, essentially done):
+- `process/powerconsumer.cpp` 98%
+- `process/interrupt.cpp` 89%
+- `report/*.cpp`, `lib.cpp`, `timer.cpp`, `measurement/sysfs.cpp` > 90%
+
+Partially covered, more tests possible but require sysfs fixtures:
+- `cpu/abstract_cpu.cpp` 43% — measurement_start/end, wiggle need sysfs
+- `cpu/cpu_linux.cpp` 30% — parse_cstates/pstates_start/end need sysfs
+- `process/process.cpp` 39%
+- `devices/runtime_pm.cpp` 32%
+- `tuning/runtime.cpp` 45%
+
+Practically untestable without hardware (0% or near):
+- `main.cpp`, `cpu.cpp`, `intel_cpus.cpp`, `do_process.cpp`,
+  `calibrate.cpp`, `perf/`, `display.cpp`, `devlist.cpp`
