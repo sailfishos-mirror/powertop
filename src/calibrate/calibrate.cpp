@@ -320,6 +320,16 @@ static void rfkill_calibration(void)
 	}
 	rfkill_all_radios();
 }
+static void try_xset_dpms(const char *state)
+{
+	/* Try to force display DPMS state via xset. Silently ignore failures:
+	 * xset is X11-only and may be absent or non-functional on Wayland,
+	 * headless systems, or NixOS-style installs without /usr/bin/xset. */
+	char cmd[64];
+	snprintf(cmd, sizeof(cmd), "DISPLAY=:0 xset dpms force %s >/dev/null 2>&1", state);
+	system(cmd);
+}
+
 static void backlight_calibration(void)
 {
 	unsigned int i;
@@ -349,21 +359,17 @@ static void backlight_calibration(void)
 		sleep(1);
 	}
 	printf(_("Calibrating idle\n"));
-	if (system("DISPLAY=:0 /usr/bin/xset dpms force off") != 0)
-		fprintf(stderr, _("System is not available\n"));
+	try_xset_dpms("off");
 	one_measurement(15, 15, "");
-	if (system("DISPLAY=:0 /usr/bin/xset dpms force on") != 0)
-		fprintf(stderr, _("System is not available\n"));
+	try_xset_dpms("on");
 }
 
 static void idle_calibration(void)
 {
 	printf(_("Calibrating idle\n"));
-	if (system("DISPLAY=:0 /usr/bin/xset dpms force off") != 0)
-		fprintf(stderr, _("System is not available\n"));
+	try_xset_dpms("off");
 	one_measurement(15, 15, "");
-	if (system("DISPLAY=:0 /usr/bin/xset dpms force on") != 0)
-		fprintf(stderr, _("System is not available\n"));
+	try_xset_dpms("on");
 }
 
 
