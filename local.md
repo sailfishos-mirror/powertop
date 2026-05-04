@@ -213,3 +213,25 @@ Partially covered, more tests possible but require sysfs fixtures:
 Practically untestable without hardware (0% or near):
 - `main.cpp`, `cpu.cpp`, `intel_cpus.cpp`, `do_process.cpp`,
   `calibrate.cpp`, `perf/`, `display.cpp`, `devlist.cpp`
+
+# New tests added (commit 681baea) — list_directory coverage
+
+- `test_cpu_linux_measurement_cycle` (tests/base/test_cpu_linux.cpp):
+  Fixture `cpu_linux_cycle.ptrecord` drives a full measurement_start/end
+  cycle, exercising parse_cstates_start/end with list_directory D records
+  and verifying fill_cstate_name/time/percentage output.
+
+- `test_dpms_screen_on_no_drm` / `test_dpms_screen_on_active` (tests/devices/test_backlight_serialize.cpp):
+  Use real `backlight` class (not the test_backlight override) with D
+  records for `/sys/class/drm/card0` to exercise dpms_screen_on().
+
+- `test_ahci_human_name_disk_model` (tests/devices/test_ahci.cpp):
+  Fixture `ahci_host0_disk.ptrecord` with nested D records for
+  target/disk entries exercises model_name() and disk_name() paths.
+
+- `test_add_wifi_tunables_filters_by_prefix` / `test_add_wifi_tunables_empty_dir`
+  (tests/base/test_wifi_tunables.cpp):
+  New test file with stub_iw.cpp, exercises add_wifi_tunables() prefix
+  filtering (wlan/wlp/wlx added, eth0 skipped) via D record replay.
+
+Test count: 44 → 45 (one new test executable for wifi_tunables).
