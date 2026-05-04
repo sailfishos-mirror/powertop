@@ -28,7 +28,6 @@
 #include <sstream>
 #include <format>
 
-#include <dirent.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
@@ -39,9 +38,9 @@
 #include "../cpu/cpu.h"
 #include "../report/report.h"
 #include "../report/report-maker.h"
+#include "../lib.h"
 
 static bool is_enabled = true;
-static DIR *dir = nullptr;
 
 static std::vector<class devfreq *> all_devfreq;
 
@@ -243,24 +242,11 @@ static void devfreq_dev_callback(const std::string &d_name)
 
 void create_all_devfreq_devices(void)
 {
-	int num = 0;
-
 	std::string p = "/sys/class/devfreq/";
-	dir = opendir(p.c_str());
-	if (dir == nullptr) {
+
+	if (list_directory(p).empty()) {
 		fprintf(stderr, "Devfreq not enabled\n");
 		is_enabled = false;
-		return;
-	}
-
-	while (readdir(dir) != nullptr)
-		num++;
-
-	if (num == 2) {
-		fprintf(stderr, "Devfreq not enabled\n");
-		is_enabled = false;
-		closedir(dir);
-		dir = nullptr;
 		return;
 	}
 
@@ -333,11 +319,6 @@ void clear_all_devfreq()
 		delete df;
 	}
 	all_devfreq.clear();
-	/* close /sys/class/devfreq */
-	if (dir != nullptr) {
-		closedir(dir);
-		dir = nullptr;
-	}
 }
 
 void devfreq::collect_json_fields(std::string &_js)

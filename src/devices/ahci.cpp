@@ -26,8 +26,6 @@
 #include <fstream>
 
 #include <stdio.h>
-#include <sys/types.h>
-#include <dirent.h>
 #include <limits.h>
 
 
@@ -36,6 +34,7 @@
 #include "report/report-maker.h"
 #include "ahci.h"
 #include "../parameters/parameters.h"
+#include "../lib.h"
 #include "report/report-data-html.h"
 #include <format>
 
@@ -43,60 +42,32 @@ std::vector <class ahci *> links;
 
 static std::string disk_name(const std::string &path, const std::string &target, [[maybe_unused]] const std::string &shortname)
 {
-
-	DIR *dir;
-	struct dirent *dirent;
 	std::string diskname = "";
-	std::string pathname;
+	std::string pathname = std::format("{}/{}", path, target);
 
-	pathname = std::format("{}/{}", path, target);
-	dir = opendir(pathname.c_str());
-	if (!dir)
-		return diskname;
-
-	while ((dirent = readdir(dir))) {
-		if (dirent->d_name[0]=='.')
+	for (const auto &entry : list_directory(pathname)) {
+		if (entry.find(':') == std::string::npos)
 			continue;
 
-		if (std::string(dirent->d_name).find(':') == std::string::npos)
-			continue;
-
-		diskname = read_sysfs_string(std::format("{}/{}/model", pathname, dirent->d_name));
+		diskname = read_sysfs_string(std::format("{}/{}/model", pathname, entry));
 		if (!diskname.empty())
 			break;
 	}
-	closedir(dir);
 
 	return diskname;
 }
 
 static std::string model_name(const std::string &path, const std::string &shortname)
 {
+	std::string pathname = std::format("{}/device", path);
 
-	DIR *dir;
-	struct dirent *dirent;
-	std::string pathname;
-
-	pathname = std::format("{}/device", path);
-
-	dir = opendir(pathname.c_str());
-	if (!dir)
-		return shortname;
-
-	while ((dirent = readdir(dir))) {
-		std::string d_name(dirent->d_name);
-		if (d_name[0]=='.')
+	for (const auto &entry : list_directory(pathname)) {
+		if (entry.find(':') == std::string::npos)
 			continue;
-
-		if (d_name.find(':') == std::string::npos)
+		if (entry.find("target") == std::string::npos)
 			continue;
-		if (d_name.find("target") == std::string::npos)
-			continue;
-		std::string result = disk_name(pathname, d_name, shortname);
-		closedir(dir);
-		return result;
+		return disk_name(pathname, entry, shortname);
 	}
-	closedir(dir);
 
 	return "";
 }
@@ -202,35 +173,22 @@ double ahci::utilization(void)
 
 void create_all_ahcis(void)
 {
-	struct dirent *entry;
-	DIR *dir;
-
-	dir = opendir("/sys/class/scsi_host/");
-	if (!dir)
-		return;
-	while (1) {
+	for (const auto &entry : list_directory("/sys/class/scsi_host/")) {
 		class ahci *bl;
-		entry = readdir(dir);
-		if (!entry)
-			break;
-		if (entry->d_name[0] == '.')
-			continue;
 
 		bool ok = false;
-		read_sysfs(std::format("/sys/class/scsi_host/{}/ahci_alpm_accounting", entry->d_name), &ok);
+		read_sysfs(std::format("/sys/class/scsi_host/{}/ahci_alpm_accounting", entry), &ok);
 		if (!ok)
 			continue;
 
-		write_sysfs(std::format("/sys/class/scsi_host/{}/ahci_alpm_accounting", entry->d_name), "1");
+		write_sysfs(std::format("/sys/class/scsi_host/{}/ahci_alpm_accounting", entry), "1");
 
-		bl = new ahci(entry->d_name, std::format("/sys/class/scsi_host/{}", entry->d_name));
+		bl = new ahci(entry, std::format("/sys/class/scsi_host/{}", entry));
 		all_devices.push_back(bl);
 		register_parameter("ahci-link-power-active", 0.6);  /* active sata link takes about 0.6 W */
 		register_parameter("ahci-link-power-partial");
 		links.push_back(bl);
 	}
-	closedir(dir);
-
 }
 
 

@@ -21,7 +21,6 @@
  *
  */
 #include <stdio.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -86,8 +85,6 @@ c_rapl_interface::c_rapl_interface(const std::string &dev_name, int cpu) :
 	uint64_t value;
 	int ret;
 	std::string package_path;
-	DIR *dir;
-	struct dirent *entry;
 
 	RAPL_INFO_PRINT("RAPL device for cpu %d\n", cpu);
 
@@ -95,48 +92,38 @@ c_rapl_interface::c_rapl_interface(const std::string &dev_name, int cpu) :
 
 	if (!dev_name.empty()) {
 		std::string base_path = "/sys/class/powercap/intel-rapl/";
-		if ((dir = opendir(base_path.c_str())) != nullptr) {
-			while ((entry = readdir(dir)) != nullptr) {
-				if (std::string_view(entry->d_name).starts_with('.'))
-					continue;
-				std::string path = base_path + entry->d_name + "/name";
-				std::string str = read_sysfs_string(path);
-				if (!str.empty()) {
-					if (str == dev_name) {
-						package_path = base_path + entry->d_name + "/";
-						powercap_sysfs_present = true;
-						rapl_domains |= PKG_DOMAIN_PRESENT;
-						break;
-					}
+		for (const auto &entry : list_directory(base_path)) {
+			std::string path = base_path + entry + "/name";
+			std::string str = read_sysfs_string(path);
+			if (!str.empty()) {
+				if (str == dev_name) {
+					package_path = base_path + entry + "/";
+					powercap_sysfs_present = true;
+					rapl_domains |= PKG_DOMAIN_PRESENT;
+					break;
 				}
 			}
-			closedir(dir);
 		}
 	}
 
 	if (powercap_sysfs_present) {
-		if ((dir = opendir(package_path.c_str())) != nullptr) {
-			while ((entry = readdir(dir)) != nullptr) {
-				if (std::string_view(entry->d_name).starts_with('.'))
-					continue;
-				std::string path = package_path + entry->d_name;
-				std::string str = read_sysfs_string(path + "/name");
-				if (!str.empty()) {
-					if (str == "core") {
-						rapl_domains |= PP0_DOMAIN_PRESENT;
-						powercap_core_path = path + "/";
-					}
-					else if (str == "dram") {
-						rapl_domains |= DRAM_DOMAIN_PRESENT;
-						powercap_dram_path = path + "/";
-					}
-					else if (str == "uncore") {
-						rapl_domains |= PP1_DOMAIN_PRESENT;
-						powercap_uncore_path = path + "/";
-					}
+		for (const auto &entry : list_directory(package_path)) {
+			std::string path = package_path + entry;
+			std::string str = read_sysfs_string(path + "/name");
+			if (!str.empty()) {
+				if (str == "core") {
+					rapl_domains |= PP0_DOMAIN_PRESENT;
+					powercap_core_path = path + "/";
+				}
+				else if (str == "dram") {
+					rapl_domains |= DRAM_DOMAIN_PRESENT;
+					powercap_dram_path = path + "/";
+				}
+				else if (str == "uncore") {
+					rapl_domains |= PP1_DOMAIN_PRESENT;
+					powercap_uncore_path = path + "/";
 				}
 			}
-			closedir(dir);
 		}
 
 		RAPL_INFO_PRINT("RAPL Using PowerCap Sysfs : Domain Mask %x\n", rapl_domains);

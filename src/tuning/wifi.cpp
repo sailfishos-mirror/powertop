@@ -30,8 +30,6 @@
 #include <iostream>
 #include <fstream>
 #include <unistd.h>
-#include <sys/types.h>
-#include <dirent.h>
 #include <format>
 
 #include "../lib.h"
@@ -73,28 +71,13 @@ void wifi_tunable::toggle(void)
 
 void add_wifi_tunables(void)
 {
-	struct dirent *entry;
-	DIR *dir;
-	class wifi_tunable *wifi;
-
-
-	dir = opendir("/sys/class/net/");
-	if (!dir)
-		return;
-	while (true) {
-		entry = readdir(dir);
-		if (!entry)
-			break;
-		std::string name(entry->d_name);
+	for (const auto &name : list_directory("/sys/class/net/")) {
 		if (name.starts_with("wlan") || name.starts_with("wlp") || name.starts_with("wlx")) {
-			wifi = new(std::nothrow) wifi_tunable(name);
+			class wifi_tunable *wifi = new(std::nothrow) wifi_tunable(name);
 			if (wifi)
 				all_tunables.push_back(wifi);
 		}
 	}
-
-	closedir(dir);
-
 }
 
 void wifi_tunable::collect_json_fields(std::string &_js)

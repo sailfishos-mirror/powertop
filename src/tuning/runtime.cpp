@@ -28,8 +28,6 @@
 #include "runtime.h"
 #include <utility>
 #include <unistd.h>
-#include <sys/types.h>
-#include <dirent.h>
 #include <format>
 
 #include "../lib.h"
@@ -116,34 +114,21 @@ void runtime_tunable::toggle(void)
 
 void add_runtime_tunables(const std::string &bus)
 {
-	struct dirent *entry;
-	DIR *dir;
 	std::string filename, port;
 	int max_ports = 32, count=0;
 
-	filename = std::format("/sys/bus/{}/devices/", bus);
-	dir = opendir(filename.c_str());
-	if (!dir)
-		return;
-	while (1) {
+	for (const auto &dev : list_directory(std::format("/sys/bus/{}/devices/", bus))) {
 		class runtime_tunable *runtime, *runtime_ahci_port, *runtime_ahci_disk;
 
-		entry = readdir(dir);
-
-		if (!entry)
-			break;
-		if (entry->d_name[0] == '.')
-			continue;
-
-		filename = std::format("/sys/bus/{}/devices/{}/power/control", bus, entry->d_name);
+		filename = std::format("/sys/bus/{}/devices/{}/power/control", bus, dev);
 
 		if (access(filename.c_str(), R_OK) != 0)
 			continue;
 
 
-		filename = std::format("/sys/bus/{}/devices/{}", bus, entry->d_name);
+		filename = std::format("/sys/bus/{}/devices/{}", bus, dev);
 
-		runtime = new runtime_tunable(filename, bus, entry->d_name, "");
+		runtime = new runtime_tunable(filename, bus, dev, "");
 
 		if (!device_has_runtime_pm(filename))
 			all_untunables.push_back(runtime);
@@ -152,13 +137,13 @@ void add_runtime_tunables(const std::string &bus)
 
 		for (int i=0; i < max_ports; i++) {
 			port = std::format("ata{}", i);
-			filename = std::format("/sys/bus/{}/devices/{}/{}/power/control", bus, entry->d_name, port);
+			filename = std::format("/sys/bus/{}/devices/{}/{}/power/control", bus, dev, port);
 
 			if (access(filename.c_str(), R_OK) != 0)
 				continue;
 
-			filename = std::format("/sys/bus/{}/devices/{}/{}", bus, entry->d_name, port);
-			runtime_ahci_port = new runtime_tunable(filename, bus, entry->d_name, port);
+			filename = std::format("/sys/bus/{}/devices/{}/{}", bus, dev, port);
+			runtime_ahci_port = new runtime_tunable(filename, bus, dev, port);
 
 			if (!device_has_runtime_pm(filename))
 				all_untunables.push_back(runtime_ahci_port);
@@ -178,7 +163,7 @@ void add_runtime_tunables(const std::string &bus)
 
 			port = std::format("sd{}", blk);
 			filename = std::format("/sys/block/{}/device", port);
-			runtime_ahci_disk = new runtime_tunable(filename, bus, entry->d_name, port);
+			runtime_ahci_disk = new runtime_tunable(filename, bus, dev, port);
 			if (!device_has_runtime_pm(filename))
 				all_untunables.push_back(runtime_ahci_disk);
 			else
@@ -187,7 +172,6 @@ void add_runtime_tunables(const std::string &bus)
 		count = 1;
 
 	}
-	closedir(dir);
 }
 
 void runtime_tunable::collect_json_fields(std::string &_js)

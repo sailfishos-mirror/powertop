@@ -34,8 +34,6 @@
 #include <vector>
 #include <algorithm>
 #include <unistd.h>
-#include <sys/types.h>
-#include <dirent.h>
 #include <cstring>
 #include <ctype.h>
 #include <limits.h>
@@ -93,9 +91,6 @@ void clean_open_devices()
 
 void collect_open_devices(void)
 {
-	struct dirent *entry;
-	DIR *dir;
-	std::string filename;
 	unsigned int i;
 	std::vector<struct devuser *> *target;
 
@@ -110,35 +105,14 @@ void collect_open_devices(void)
 	target->resize(0);
 
 
-	dir = opendir("/proc/");
-	if (!dir)
-		return;
-	while (1) {
-		struct dirent *entry2;
-		DIR *dir2;
-		entry = readdir(dir);
-
-		if (!entry)
-			break;
-		if (entry->d_name[0] == '.')
-			continue;
-		if (strcmp(entry->d_name, "self") == 0)
+	for (const auto &pid : list_directory("/proc/")) {
+		if (pid == "self")
 			continue;
 
-		filename = std::format("/proc/{}/fd/", entry->d_name);
-
-		dir2 = opendir(filename.c_str());
-		if (!dir2)
-			continue;
-		while (1) {
-			struct devuser * dev;
-			entry2 = readdir(dir2);
-			if (!entry2)
-				break;
-			if (!isdigit(entry2->d_name[0]))
+		for (const auto &fd : list_directory(std::format("/proc/{}/fd/", pid))) {
+			if (!isdigit(fd[0]))
 				continue;
-			filename = std::format("/proc/{}/fd/{}", entry->d_name, entry2->d_name);
-			std::string link = pt_readlink(filename);
+			std::string link = pt_readlink(std::format("/proc/{}/fd/{}", pid, fd));
 			if (link.empty())
 				continue;
 
@@ -160,19 +134,16 @@ void collect_open_devices(void)
 				continue;
 
 			if (link.compare(0, 4, "/dev") == 0) {
-				dev = new(std::nothrow) struct devuser;
+				struct devuser *dev = new(std::nothrow) struct devuser;
 				if (!dev)
 					continue;
-				dev->pid = strtoull(entry->d_name, nullptr, 10);
+				dev->pid = strtoull(pid.c_str(), nullptr, 10);
 				dev->device = link;
-				dev->comm = read_sysfs_string(std::format("/proc/{}/comm", entry->d_name));
+				dev->comm = read_sysfs_string(std::format("/proc/{}/comm", pid));
 				target->push_back(dev);
-
 			}
 		}
-		closedir(dir2);
 	}
-	closedir(dir);
 
 	if (phase)
 		phase = 0;

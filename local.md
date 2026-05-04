@@ -164,6 +164,26 @@ Two thresholds are used to guard floating-point divisions:
 at 100 (commented out), and does NOT trap NaN — callers must guard
 their divisors.
 
+# list_directory() test infrastructure (commit 4adae58)
+
+`list_directory(path)` in `src/lib.cpp` returns a sorted `std::vector<std::string>`
+of filenames using `std::filesystem::directory_iterator`. It is interceptable
+by the test framework via a new `D` record type in `.ptrecord` files.
+
+**D record format:** `D path base64(newline-joined-entries)`
+- Empty base64 → empty/not-found directory (returns `{}`)
+- In `trace_tool.py add`: `add FILE D /some/dir "entry1 entry2"` — entries are
+  space-separated, sorted then newline-joined before base64 encoding.
+
+**Converted callers:**
+- `process_directory()` in `lib.cpp` — now delegates to `list_directory()`
+- `parse_cstates_start()` / `parse_cstates_end()` in `cpu_linux.cpp`
+- `do_bus()` in `runtime_pm.cpp`
+
+**Remaining opendir users** (not yet converted, lower priority):
+- `src/tuning/runtime.cpp` `add_runtime_tunables()` — also uses `access()`
+- `src/devices/ahci.cpp`, `devfreq.cpp`, `backlight.cpp`, `src/tuning/wifi.cpp`
+
 # Coverage baseline (as of commit 8906999)
 
 Overall: 29.0% lines (2654/9140), 43.2% functions (418/967)

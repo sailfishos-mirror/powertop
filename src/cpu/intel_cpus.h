@@ -25,7 +25,7 @@
  */
 #include <stdint.h>
 #include <sys/time.h>
-#include <dirent.h>
+#include <filesystem>
 
 #include "cpu.h"
 #include "../lib.h"
@@ -54,7 +54,6 @@ class intel_util
 {
 protected:
 	int byt_ahci_support = 0;
-        DIR *dir = nullptr;
 public:
 	intel_util();
 	virtual void byt_has_ahci();

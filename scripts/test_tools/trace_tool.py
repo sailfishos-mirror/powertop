@@ -47,6 +47,14 @@ def parse_line(line, line_num):
         b64 = rest[:sep]
         path = rest[sep+1:]
         return tag, path, b64
+    if tag == 'D':
+        # b64 comes last (may be absent = empty/missing directory)
+        last_space = rest.rfind(' ')
+        if last_space == -1:
+            return tag, rest, ''
+        path = rest[:last_space]
+        b64 = rest[last_space+1:]
+        return tag, path, b64
     last_space = rest.rfind(' ')
     if last_space == -1: return None
     path = rest[:last_space]
@@ -371,7 +379,7 @@ def cmd_add(args):
         entries = sorted(value.split()) if value else []
         content = '\n'.join(entries)
         b64 = base64.b64encode(content.encode('utf-8')).decode('ascii')
-        record = f"D {path} {b64}\n"
+        record = f"D {path} {b64}\n" if b64 else f"D {path}\n"
     else:
         print(f"Error: Unknown record type '{record_type}'. Use R, W, N, L, T, or D.")
         sys.exit(1)

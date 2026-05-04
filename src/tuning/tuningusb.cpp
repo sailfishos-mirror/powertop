@@ -27,7 +27,6 @@
 #include "tunable.h"
 #include "unistd.h"
 #include "tuningusb.h"
-#include <dirent.h>
 #include <utility>
 #include <iostream>
 #include <fstream>
@@ -96,7 +95,6 @@ static void add_usb_callback(const std::string &d_name)
 {
 	class usb_tunable *usb;
 	std::string filename;
-	DIR *dir;
 
 	filename = std::format("/sys/bus/usb/devices/{}/power/control", d_name);
 	if (access(filename.c_str(), R_OK) != 0)
@@ -108,20 +106,18 @@ static void add_usb_callback(const std::string &d_name)
 
 	/* every interface of this device should support autosuspend */
 	filename = std::format("/sys/bus/usb/devices/{}", d_name);
-	if ((dir = opendir(filename.c_str()))) {
-		struct dirent *entry;
+	{
 		bool has_non_autosuspend = false;
-		while ((entry = readdir(dir))) {
+		for (const auto &entry : list_directory(filename)) {
 			/* dirname: <busnum>-<devnum>...:<config num>-<interface num> */
-			if (!isdigit(entry->d_name[0]))
+			if (!isdigit(entry[0]))
 				continue;
-			filename = std::format("/sys/bus/usb/devices/{}/{}/supports_autosuspend", d_name, entry->d_name);
-			if (access(filename.c_str(), R_OK) == 0 && read_sysfs(filename) == 0) {
+			std::string ctrl = std::format("/sys/bus/usb/devices/{}/{}/supports_autosuspend", d_name, entry);
+			if (access(ctrl.c_str(), R_OK) == 0 && read_sysfs(ctrl) == 0) {
 				has_non_autosuspend = true;
 				break;
 			}
 		}
-		closedir(dir);
 		if (has_non_autosuspend)
 			return;
 	}

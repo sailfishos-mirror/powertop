@@ -26,14 +26,13 @@
 #include <fstream>
 
 #include <stdio.h>
-#include <sys/types.h>
-#include <dirent.h>
 #include <limits.h>
 
 
 #include "device.h"
 #include "backlight.h"
 #include "../parameters/parameters.h"
+#include "../lib.h"
 
 #include <format>
 
@@ -59,32 +58,18 @@ void backlight::start_measurement(void)
 
 static int dpms_screen_on(void)
 {
-	DIR *dir;
-	struct dirent *entry;
-	std::string line;
-
-	dir = opendir("/sys/class/drm/card0");
-	if (!dir)
-		return 1;
-	while (1) {
-		entry = readdir(dir);
-		if (!entry)
-			break;
-
-		if (!std::string_view(entry->d_name).starts_with("card"))
+	for (const auto &entry : list_directory("/sys/class/drm/card0")) {
+		if (!entry.starts_with("card"))
 			continue;
 
-		line = read_sysfs_string(std::format("/sys/class/drm/card0/{}/enabled", entry->d_name));
+		std::string line = read_sysfs_string(std::format("/sys/class/drm/card0/{}/enabled", entry));
 		if (line != "enabled")
 			continue;
 
-		line = read_sysfs_string(std::format("/sys/class/drm/card0/{}/dpms", entry->d_name));
-		if (line == "On") {
-			closedir(dir);
+		line = read_sysfs_string(std::format("/sys/class/drm/card0/{}/dpms", entry));
+		if (line == "On")
 			return 1;
-		}
 	}
-	closedir(dir);
 	return 0;
 }
 

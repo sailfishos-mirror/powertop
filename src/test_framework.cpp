@@ -274,6 +274,15 @@ void test_framework_manager::load() {
 			continue;
 		}
 
+		if (type == 'D') {
+			/* b64 may be absent (empty directory) */
+			size_t last_space = rest.rfind(' ');
+			std::string path = (last_space != std::string::npos) ? rest.substr(0, last_space) : rest;
+			std::string b64_content = (last_space != std::string::npos) ? rest.substr(last_space + 1) : "";
+			dir_sequences[path].push_back(base64_decode(b64_content));
+			continue;
+		}
+
 		size_t last_space = rest.rfind(' ');
 		if (last_space == std::string::npos) continue;
 
@@ -284,8 +293,6 @@ void test_framework_manager::load() {
 			read_sequences[path].push_back(base64_decode(b64_content));
 		} else if (type == 'W') {
 			write_sequences[path].push_back(base64_decode(b64_content));
-		} else if (type == 'D') {
-			dir_sequences[path].push_back(base64_decode(b64_content));
 		}
 	}
 }
