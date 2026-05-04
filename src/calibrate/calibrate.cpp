@@ -25,6 +25,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <format>
 
 #include "calibrate.h"
 #include <stdlib.h>
@@ -325,9 +326,7 @@ static void try_xset_dpms(const char *state)
 	/* Try to force display DPMS state via xset. Silently ignore failures:
 	 * xset is X11-only and may be absent or non-functional on Wayland,
 	 * headless systems, or NixOS-style installs without /usr/bin/xset. */
-	char cmd[64];
-	snprintf(cmd, sizeof(cmd), "DISPLAY=:0 xset dpms force %s >/dev/null 2>&1", state);
-	system(cmd);
+	system(std::format("DISPLAY=:0 xset dpms force {} >/dev/null 2>&1", state).c_str());
 }
 
 static void backlight_calibration(void)
