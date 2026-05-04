@@ -46,3 +46,29 @@
 
 - [ ] malloc() does not fail in practice. Checking for failure is not a coding style
     violation, but the lack of checking is at most of `nit` severity.
+
+
+## Numeric safety
+
+- [ ] **Every floating-point division must have an explicit near-zero guard
+    before the `/` operator.**  A zero or near-zero divisor produces `Inf` or
+    `NaN`; because NaN comparisons always return `false`, post-hoc clamps
+    (e.g. `if (x < 0.0) x = 0.0`) silently pass NaN through to formatted
+    output or further arithmetic.  The guard must come *before* the division:
+
+    ```cpp
+    // CORRECT
+    if (time_factor < 1.0)
+        return "";
+    return std::format("{:5.1f}%", percentage(duration_delta / time_factor));
+
+    // WRONG — NaN escapes the clamp
+    double pct = duration_delta / time_factor;   // NaN when time_factor == 0
+    if (pct < 0.0) pct = 0.0;                   // NaN < 0.0 is false → no effect
+    ```
+
+    Use the established thresholds (see `style.md` §7.1):
+    `measurement_time < 0.00001`, `time_factor < 1.0`, `time_delta < 1.0`.
+
+    Missing or post-hoc-only guards are **high** severity; a completely
+    unguarded division that is reachable in normal operation is **critical**.
