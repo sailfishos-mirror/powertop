@@ -77,6 +77,9 @@ static void test_csv_table()
 	/* last column of each row should NOT have a trailing semicolon */
 	PT_ASSERT_TRUE(result.find("Freq;") == std::string::npos);
 	PT_ASSERT_TRUE(result.find("2.8GHz;") == std::string::npos);
+	/* no NaN or Inf values must appear in table output */
+	PT_ASSERT_TRUE(result.find("nan") == std::string::npos);
+	PT_ASSERT_TRUE(result.find("inf") == std::string::npos);
 }
 
 /* --------------------------------------------------------------------------

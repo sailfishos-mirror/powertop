@@ -220,6 +220,10 @@ static void test_html_tables()
 	PT_ASSERT_TRUE(result.find("<th") != std::string::npos);
 	PT_ASSERT_TRUE(result.find("<td") != std::string::npos);
 	PT_ASSERT_TRUE(result.find("no_wrap") != std::string::npos);
+	/* no NaN or Inf values must appear in table output */
+	PT_ASSERT_TRUE(result.find("nan") == std::string::npos);
+	/* note: "inf" is intentionally not checked here — the HTML output
+	 * legitimately contains "sysinfo" in CSS class names */
 
 	std::string html = make_html_tmpfile();
 	std::ofstream f(html);

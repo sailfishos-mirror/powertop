@@ -74,6 +74,9 @@ static void test_md_basic()
 	PT_ASSERT_TRUE(res.find("| Header1 | Header2 |") != std::string::npos);
 	PT_ASSERT_TRUE(res.find("|---|---|") != std::string::npos);
 	PT_ASSERT_TRUE(res.find("| Row1Col1 | Row1Col2 |") != std::string::npos);
+	/* no NaN or Inf values must appear in table output */
+	PT_ASSERT_TRUE(res.find("nan") == std::string::npos);
+	PT_ASSERT_TRUE(res.find("inf") == std::string::npos);
 }
 
 static void test_md_l_table()

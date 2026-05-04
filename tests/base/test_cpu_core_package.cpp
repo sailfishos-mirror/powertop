@@ -64,6 +64,20 @@ static void test_cpu_core_cstate_line_no_match()
 	PT_ASSERT_EQ(cpu.fill_cstate_line(99), std::string(""));
 }
 
+static void test_cpu_core_cstate_zero_time_factor()
+{
+	test_cpu_core cpu;
+	cpu.insert_cstate("C3", "C3", 0, 0, 1, 1);
+	cpu.cstates[0]->duration_delta = 0;
+	cpu.set_time_factor(0.0);   /* must not divide → return "" */
+
+	std::string s = cpu.fill_cstate_line(1);
+	PT_ASSERT_EQ(s, std::string(""));
+	/* Confirm no NaN/inf leaked into the string */
+	PT_ASSERT_TRUE(s.find("nan") == std::string::npos);
+	PT_ASSERT_TRUE(s.find("inf") == std::string::npos);
+}
+
 static void test_cpu_core_cstate_name()
 {
 	test_cpu_core cpu;
@@ -152,6 +166,19 @@ static void test_cpu_package_cstate_line_percentage()
 	PT_ASSERT_EQ(cpu.fill_cstate_line(1), std::string(" 50.0%"));
 }
 
+static void test_cpu_package_cstate_zero_time_factor()
+{
+	test_cpu_package cpu;
+	cpu.insert_cstate("PC8", "PC8", 0, 0, 1, 1);
+	cpu.cstates[0]->duration_delta = 0;
+	cpu.set_time_factor(0.0);   /* must not divide → return "" */
+
+	std::string s = cpu.fill_cstate_line(1);
+	PT_ASSERT_EQ(s, std::string(""));
+	PT_ASSERT_TRUE(s.find("nan") == std::string::npos);
+	PT_ASSERT_TRUE(s.find("inf") == std::string::npos);
+}
+
 static void test_cpu_package_cstate_name()
 {
 	test_cpu_package cpu;
@@ -192,6 +219,7 @@ int main()
 	PT_RUN_TEST(test_cpu_core_cstate_header_with_msr);
 	PT_RUN_TEST(test_cpu_core_cstate_line_percentage);
 	PT_RUN_TEST(test_cpu_core_cstate_line_no_match);
+	PT_RUN_TEST(test_cpu_core_cstate_zero_time_factor);
 	PT_RUN_TEST(test_cpu_core_cstate_name);
 	PT_RUN_TEST(test_cpu_core_cstate_name_no_match);
 
@@ -206,6 +234,7 @@ int main()
 	PT_RUN_TEST(test_cpu_package_cstate_header_no_msr);
 	PT_RUN_TEST(test_cpu_package_cstate_header_with_msr);
 	PT_RUN_TEST(test_cpu_package_cstate_line_percentage);
+	PT_RUN_TEST(test_cpu_package_cstate_zero_time_factor);
 	PT_RUN_TEST(test_cpu_package_cstate_name);
 
 	std::cout << "\n=== cpu_package: pstate tests ===\n";

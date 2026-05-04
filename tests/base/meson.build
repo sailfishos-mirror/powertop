@@ -382,6 +382,30 @@ test_cpu_core_package_exe = executable(
 
 test('base: cpu_core and cpu_package', test_cpu_core_package_exe)
 
+test_cpu_linux_exe = executable(
+  'powertop-test-cpu-linux',
+  [
+    '../../src/lib.cpp',
+    '../../src/test_framework.cpp',
+    '../../src/cpu/abstract_cpu.cpp',
+    '../../src/cpu/cpu_linux.cpp',
+    '../../src/cpu/frequency.cpp',
+    'test_cpu_linux.cpp',
+  ],
+  include_directories: [
+    include_directories('../..'),
+    include_directories('../../src'),
+    include_directories('..'),
+  ],
+  cpp_args: [
+    '-DENABLE_TEST_FRAMEWORK',
+    '-DHAVE_NO_PCI',
+  ],
+  dependencies: [ncursesw_dep],
+)
+
+test('base: cpu_linux cstate formatting', test_cpu_linux_exe)
+
 test_processdevice_exe = executable(
   'powertop-test-processdevice',
   [
