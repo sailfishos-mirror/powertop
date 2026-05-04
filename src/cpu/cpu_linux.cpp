@@ -36,35 +36,14 @@
 #include <sys/types.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <dirent.h>
 #include <format>
 
 void cpu_linux::parse_cstates_start(void)
 {
-	DIR *dir;
-	struct dirent *entry;
-	std::string filename;
+	std::string dir = std::format("/sys/devices/system/cpu/cpu{}/cpuidle", number);
 
-	filename = std::format("/sys/devices/system/cpu/cpu{}/cpuidle", number);
-
-	dir = opendir(filename.c_str());
-	if (!dir)
-		return;
-
-	/* For each C-state, there is a stateX directory which
-	 * contains a 'usage' and a 'time' (duration) file */
-	while ((entry = readdir(dir))) {
-		std::string linux_name;
-		std::string human_name;
-		uint64_t usage = 0;
-		uint64_t duration = 0;
-
-
-		if (entry->d_name[0] == '.')
-			continue;
-
-		linux_name = entry->d_name;
-		human_name = read_sysfs_string(std::format("{}/{}/name", filename, entry->d_name));
+	for (const auto &linux_name : list_directory(dir)) {
+		std::string human_name = read_sysfs_string(std::format("{}/{}/name", dir, linux_name));
 		if (human_name.empty())
 			human_name = linux_name;
 
@@ -72,17 +51,13 @@ void cpu_linux::parse_cstates_start(void)
 			human_name = _("C0 polling");
 
 		bool ok = false;
-		usage = read_sysfs(std::format("{}/{}/usage", filename, entry->d_name), &ok);
+		uint64_t usage    = read_sysfs(std::format("{}/{}/usage", dir, linux_name), &ok);
 		if (!ok)
 			continue;
-
-		duration = read_sysfs(std::format("{}/{}/time", filename, entry->d_name));
-
+		uint64_t duration = read_sysfs(std::format("{}/{}/time", dir, linux_name));
 
 		update_cstate(linux_name, human_name, usage, duration, 1);
-
 	}
-	closedir(dir);
 }
 
 
@@ -121,42 +96,17 @@ void cpu_linux::measurement_start(void)
 
 void cpu_linux::parse_cstates_end(void)
 {
-	DIR *dir;
-	struct dirent *entry;
-	std::string filename;
+	std::string dir = std::format("/sys/devices/system/cpu/cpu{}/cpuidle", number);
 
-	filename = std::format("/sys/devices/system/cpu/cpu{}/cpuidle", number);
-
-	dir = opendir(filename.c_str());
-	if (!dir)
-		return;
-
-	/* For each C-state, there is a stateX directory which
-	 * contains a 'usage' and a 'time' (duration) file */
-	while ((entry = readdir(dir))) {
-		std::string linux_name;
-		uint64_t usage = 0;
-		uint64_t duration = 0;
-
-
-		if (entry->d_name[0] == '.')
-			continue;
-
-		linux_name = entry->d_name;
-
-
+	for (const auto &linux_name : list_directory(dir)) {
 		bool ok = false;
-		usage = read_sysfs(std::format("{}/{}/usage", filename, entry->d_name), &ok);
+		uint64_t usage    = read_sysfs(std::format("{}/{}/usage", dir, linux_name), &ok);
 		if (!ok)
 			continue;
-
-		duration = read_sysfs(std::format("{}/{}/time", filename, entry->d_name));
-
+		uint64_t duration = read_sysfs(std::format("{}/{}/time", dir, linux_name));
 
 		finalize_cstate(linux_name, usage, duration, 1);
-
 	}
-	closedir(dir);
 }
 
 void cpu_linux::parse_pstates_end(void)

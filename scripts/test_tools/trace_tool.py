@@ -60,6 +60,7 @@ def get_tag_str(tag):
     if tag == 'M': return "MSR"
     if tag == 'T': return "Time"
     if tag == 'L': return "Link"
+    if tag == 'D': return "Dir"
     return "????"
 
 def decode_content(tag, b64):
@@ -284,7 +285,7 @@ def cmd_validate(args):
             errors += 1
             continue
         tag, path, b64 = parsed
-        if tag not in ['R', 'W', 'N', 'M', 'T', 'L']:
+        if tag not in ['R', 'W', 'N', 'M', 'T', 'L', 'D']:
             print(f"Line {i}: Invalid tag '{tag}'")
             errors += 1
         if tag == 'M':
@@ -322,7 +323,7 @@ def cmd_validate(args):
             if not path:
                 print(f"Line {i}: Link record missing path")
                 errors += 1
-        if tag in ['R', 'W'] and b64:
+        if tag in ['R', 'W', 'D'] and b64:
             try:
                 base64.b64decode(b64)
             except:
@@ -365,8 +366,14 @@ def cmd_add(args):
             print("Error: T record sec and usec must be integers.")
             sys.exit(1)
         record = f"T {parts[0]} {parts[1]}\n"
+    elif record_type == 'D':
+        # value is space-separated entry names (empty = not-found/empty directory)
+        entries = sorted(value.split()) if value else []
+        content = '\n'.join(entries)
+        b64 = base64.b64encode(content.encode('utf-8')).decode('ascii')
+        record = f"D {path} {b64}\n"
     else:
-        print(f"Error: Unknown record type '{record_type}'. Use R, W, N, L, or T.")
+        print(f"Error: Unknown record type '{record_type}'. Use R, W, N, L, T, or D.")
         sys.exit(1)
 
     try:
@@ -428,11 +435,11 @@ def main():
     p = subparsers.add_parser("add",
         help="Append a record to a trace file (creates file if needed)")
     p.add_argument("trace_file")
-    p.add_argument("record_type", metavar="type", choices=["R", "W", "N", "L", "T"],
-                   help="Record type: R=read, W=write, N=miss, L=symlink")
-    p.add_argument("path", help="Sysfs/proc path (for L: the symlink path)")
+    p.add_argument("record_type", metavar="type", choices=["R", "W", "N", "L", "T", "D"],
+                   help="Record type: R=read, W=write, N=miss, L=symlink, D=directory listing")
+    p.add_argument("path", help="Sysfs/proc path (for L: the symlink path; for D: the directory path)")
     p.add_argument("value", nargs="?", default="",
-                   help="Content string (for L: symlink target; omit for broken link or N)")
+                   help="Content string (for L: symlink target; for D: space-separated entry names; omit for broken link, N, or empty/missing dir)")
 
     args = parser.parse_args()
     

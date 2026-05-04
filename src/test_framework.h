@@ -53,6 +53,10 @@ public:
 	void record_readlink(const std::string& path, const std::string& target);
 	std::string replay_readlink(const std::string& path);
 
+	void record_dir(const std::string& path, const std::vector<std::string>& entries);
+	void record_dir_fail(const std::string& path);
+	std::vector<std::string> replay_dir(const std::string& path);
+
 	void save();
 	void load();
 	void reset();
@@ -85,6 +89,10 @@ public:
 	void record_readlink(const std::string&, const std::string&) {}
 	std::string replay_readlink(const std::string&) { return ""; }
 
+	void record_dir(const std::string&, const std::vector<std::string>&) {}
+	void record_dir_fail(const std::string&) {}
+	std::vector<std::string> replay_dir(const std::string&) { return {}; }
+
 	void save() {}
 	void load() {}
 #endif
@@ -114,6 +122,9 @@ private:
 
 	std::map<std::string, std::deque<std::string>> link_sequences;
 	std::vector<std::pair<std::string, std::string>> recorded_links;
+
+	std::map<std::string, std::deque<std::string>> dir_sequences;
+	std::vector<std::pair<std::string, std::string>> recorded_dirs;
 
 	std::string base64_encode(const std::string& in);
 	std::string base64_decode(const std::string& in);

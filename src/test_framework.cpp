@@ -125,6 +125,40 @@ std::string test_framework_manager::replay_readlink(const std::string& path) {
 	return target;
 }
 
+void test_framework_manager::record_dir(const std::string& path, const std::vector<std::string>& entries) {
+	if (!recording) return;
+	std::string joined;
+	for (size_t i = 0; i < entries.size(); ++i) {
+		if (i > 0) joined += '\n';
+		joined += entries[i];
+	}
+	recorded_dirs.push_back({path, joined});
+}
+
+void test_framework_manager::record_dir_fail(const std::string& path) {
+	if (!recording) return;
+	recorded_dirs.push_back({path, ""});
+}
+
+std::vector<std::string> test_framework_manager::replay_dir(const std::string& path) {
+	if (!replaying) return {};
+	if (dir_sequences[path].empty()) {
+		throw test_exception("TEST FAIL: No recorded dir listing for: " + path);
+	}
+	std::string content = dir_sequences[path].front();
+	dir_sequences[path].pop_front();
+	if (content.empty())
+		return {};
+	std::vector<std::string> result;
+	std::istringstream ss(content);
+	std::string line;
+	while (std::getline(ss, line)) {
+		if (!line.empty())
+			result.push_back(line);
+	}
+	return result;
+}
+
 void test_framework_manager::record_time(struct timeval tv) {
 	if (!recording) return;
 	recorded_times.push_back(tv);
@@ -154,6 +188,8 @@ void test_framework_manager::reset() {
 	recorded_times.clear();
 	link_sequences.clear();
 	recorded_links.clear();
+	dir_sequences.clear();
+	recorded_dirs.clear();
 	write_log.clear();
 }
 
@@ -182,6 +218,11 @@ void test_framework_manager::save() {
 	/* L base64(target) path — empty base64 means readlink failed */
 	for (const auto& p : recorded_links) {
 		file << "L " << base64_encode(p.second) << " " << p.first << std::endl;
+	}
+	/* D path base64(entries) — entries are newline-joined sorted names;
+	 * empty base64 means directory not found or empty */
+	for (const auto& p : recorded_dirs) {
+		file << "D " << p.first << " " << base64_encode(p.second) << std::endl;
 	}
 }
 
@@ -243,6 +284,8 @@ void test_framework_manager::load() {
 			read_sequences[path].push_back(base64_decode(b64_content));
 		} else if (type == 'W') {
 			write_sequences[path].push_back(base64_decode(b64_content));
+		} else if (type == 'D') {
+			dir_sequences[path].push_back(base64_decode(b64_content));
 		}
 	}
 }

@@ -196,6 +196,7 @@ inline std::string pt_json_array(const std::vector<T *> &vec)
 
 typedef void (*callback)(const std::string&);
 extern void process_directory(const std::string &d_name, callback fn);
+extern std::vector<std::string> list_directory(const std::string &path);
 extern int utf_ok;
 extern std::string get_user_input(unsigned sz);
 extern int read_msr(int cpu, uint64_t offset, uint64_t *value);

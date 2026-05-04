@@ -48,7 +48,6 @@
 #include "perf/perf_bundle.h"
 #include "lib.h"
 #include "test_framework.h"
-#include "../config.h"
 
 
 #include "devices/device.h"

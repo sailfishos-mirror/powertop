@@ -28,7 +28,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <dirent.h>
 #include <limits.h>
 #include <format>
 
@@ -117,49 +116,36 @@ bool device_has_runtime_pm(const std::string &sysfs_path)
 
 static void do_bus(const std::string &bus)
 {
-	/* /sys/bus/pci/devices/0000\:00\:1f.0/power/runtime_suspended_time */
+	std::string bus_path = std::format("/sys/bus/{}/devices/", bus);
 
-	struct dirent *entry;
-	DIR *dir;
+	for (const auto &devname : list_directory(bus_path)) {
+		std::string path = std::format("/sys/bus/{}/devices/{}", bus, devname);
+		class runtime_pmdevice *dev = new runtime_pmdevice(devname, path);
 
-	dir = opendir(std::format("/sys/bus/{}/devices/", bus).c_str());
-	if (!dir)
-		return;
-	while (1) {
-		class runtime_pmdevice *dev;
-		entry = readdir(dir);
-
-		if (!entry)
-			break;
-		if (entry->d_name[0] == '.')
-			continue;
-
-		std::string path = std::format("/sys/bus/{}/devices/{}", bus, entry->d_name);
-		dev = new runtime_pmdevice(entry->d_name, path);
 		if (bus == "i2c") {
-			std::string devname;
+			std::string devnode;
 			bool is_adapter = false;
 
-			if (access(std::format("/sys/bus/{}/devices/{}/new_device", bus, entry->d_name).c_str(), W_OK) == 0)
+			if (access(std::format("/sys/bus/{}/devices/{}/new_device", bus, devname).c_str(), W_OK) == 0)
 				is_adapter = true;
 
-			devname = read_sysfs_string(std::format("/sys/bus/{}/devices/{}/name", bus, entry->d_name));
+			devnode = read_sysfs_string(std::format("/sys/bus/{}/devices/{}/name", bus, devname));
 
-			dev->set_human_name(pt_format(_("I2C {} ({}): {}"), (is_adapter ? _("Adapter") : _("Device")), entry->d_name, devname));
+			dev->set_human_name(pt_format(_("I2C {} ({}): {}"), (is_adapter ? _("Adapter") : _("Device")), devname, devnode));
 		}
 
 		if (bus == "pci") {
 			uint16_t vendor = 0, device = 0;
 			std::string content;
 
-			content = read_sysfs_string(std::format("/sys/bus/{}/devices/{}/vendor", bus, entry->d_name));
+			content = read_sysfs_string(std::format("/sys/bus/{}/devices/{}/vendor", bus, devname));
 			if (!content.empty()) {
 				try {
 					vendor = std::stoul(content, nullptr, 16);
 				} catch (...) {}
 			}
 
-			content = read_sysfs_string(std::format("/sys/bus/{}/devices/{}/device", bus, entry->d_name));
+			content = read_sysfs_string(std::format("/sys/bus/{}/devices/{}/device", bus, devname));
 			if (!content.empty()) {
 				try {
 					device = std::stoul(content, nullptr, 16);
@@ -171,13 +157,13 @@ static void do_bus(const std::string &bus)
 					pci_id_to_name(vendor, device)));
 			}
 		}
+
 		if (!device_has_runtime_pm(path)) {
 			delete dev;
 			continue;
 		}
 		all_devices.push_back(dev);
 	}
-	closedir(dir);
 }
 
 void create_all_runtime_pm_devices(void)

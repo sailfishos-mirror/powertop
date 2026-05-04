@@ -36,6 +36,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <algorithm>
 #include <format>
 
 #include <filesystem>
@@ -461,22 +462,31 @@ std::string pretty_print(const std::string &str)
 	return str;
 }
 
+std::vector<std::string> list_directory(const std::string &path)
+{
+	if (test_framework_manager::get().is_replaying())
+		return test_framework_manager::get().replay_dir(path);
+
+	std::vector<std::string> entries;
+	std::error_code ec;
+	std::filesystem::directory_iterator it(path, ec);
+	if (ec) {
+		if (test_framework_manager::get().is_recording())
+			test_framework_manager::get().record_dir_fail(path);
+		return {};
+	}
+	for (const auto &entry : it)
+		entries.push_back(entry.path().filename().string());
+	std::sort(entries.begin(), entries.end());
+	if (test_framework_manager::get().is_recording())
+		test_framework_manager::get().record_dir(path, entries);
+	return entries;
+}
+
 void process_directory(const std::string &d_name, callback fn)
 {
-	struct dirent *entry;
-	DIR *dir;
-	dir = opendir(d_name.c_str());
-	if (!dir)
-		return;
-	while (1) {
-		entry = readdir(dir);
-		if (!entry)
-			break;
-		if (entry->d_name[0] == '.')
-			continue;
-		fn(std::string(entry->d_name));
-	}
-	closedir(dir);
+	for (const auto &name : list_directory(d_name))
+		fn(name);
 }
 
 int equals(double a, double b)
