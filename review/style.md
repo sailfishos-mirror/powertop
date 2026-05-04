@@ -112,3 +112,38 @@ default:
 
 *   Use `fprintf(stderr, ...)` for error reporting.
 *   Fatal errors that cannot be recovered from should use `abort()` or `exit(EXIT_FAILURE)` after notifying the user.
+
+## 7. Numeric Safety
+
+### 7.1 Division — mandatory zero guard
+
+Every floating-point division **must** have an explicit guard that
+prevents division by zero or near-zero before the `/` operator is
+reached.  A near-zero divisor produces `Inf` or `NaN` in IEEE 754;
+`NaN` comparisons always return `false`, so downstream clamps (e.g.
+`if (x < 0.0)`) silently pass the `NaN` through to formatted output.
+
+Use an early-return guard at the top of the function (or immediately
+before the division), not a post-hoc clamp:
+
+```cpp
+// CORRECT — guard before the division
+if (time_factor < 1.0)
+    return "";
+return std::format("{:5.1f}%", percentage(duration_delta / time_factor));
+
+// WRONG — NaN passes through the clamp silently
+double pct = duration_delta / time_factor;  // NaN if time_factor == 0
+if (pct < 0.0) pct = 0.0;                  // NaN < 0.0 is false → no clamp
+```
+
+Established thresholds in this codebase:
+
+| Variable | Unit | Threshold |
+|---|---|---|
+| `measurement_time` | seconds | `< 0.00001` (10 µs) |
+| `time_factor` | microseconds | `< 1.0` (1 µs) |
+| `time_delta` | microseconds | `< 1.0` (1 µs) |
+
+Integer division by zero is undefined behaviour and must similarly be
+guarded (a compile-time constant denominator is the only safe exception).
