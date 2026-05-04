@@ -43,9 +43,9 @@
 void i965_core::measurement_start(void)
 {
 	before = pt_gettime();
-	rc6_before = read_sysfs("/sys/class/drm/card0/power/rc6_residency_ms", nullptr);
-	rc6p_before = read_sysfs("/sys/class/drm/card0/power/rc6p_residency_ms", nullptr);
-	rc6pp_before = read_sysfs("/sys/class/drm/card0/power/rc6pp_residency_ms", nullptr);
+	rc6_before = read_sysfs(std::format("{}/power/rc6_residency_ms", find_intel_rc6_card_path()), nullptr);
+	rc6p_before = read_sysfs(std::format("{}/power/rc6p_residency_ms", find_intel_rc6_card_path()), nullptr);
+	rc6pp_before = read_sysfs(std::format("{}/power/rc6pp_residency_ms", find_intel_rc6_card_path()), nullptr);
 
 	update_cstate("gpu c0", "Powered On", 0, 0, 1, 0);
 	update_cstate("gpu rc6", "RC6", 0, rc6_before, 1, 1);
@@ -97,9 +97,9 @@ void i965_core::measurement_end(void)
 {
 	after = pt_gettime();
 
-	rc6_after = read_sysfs("/sys/class/drm/card0/power/rc6_residency_ms", nullptr);
-	rc6p_after = read_sysfs("/sys/class/drm/card0/power/rc6p_residency_ms", nullptr);
-	rc6pp_after = read_sysfs("/sys/class/drm/card0/power/rc6pp_residency_ms", nullptr);
+	rc6_after = read_sysfs(std::format("{}/power/rc6_residency_ms", find_intel_rc6_card_path()), nullptr);
+	rc6p_after = read_sysfs(std::format("{}/power/rc6p_residency_ms", find_intel_rc6_card_path()), nullptr);
+	rc6pp_after = read_sysfs(std::format("{}/power/rc6pp_residency_ms", find_intel_rc6_card_path()), nullptr);
 }
 
 std::string i965_core::fill_pstate_line([[maybe_unused]] int line_nr)
@@ -110,5 +110,26 @@ std::string i965_core::fill_pstate_line([[maybe_unused]] int line_nr)
 std::string i965_core::fill_pstate_name([[maybe_unused]] int line_nr)
 {
 	return "";
+}
+
+static std::string find_drm_card_with_rc6(void)
+{
+	for (const auto &entry : list_directory("/sys/class/drm")) {
+		if (!entry.starts_with("card"))
+			continue;
+		/* skip connector entries like card0-HDMI-A-1 */
+		if (entry.find('-') != std::string::npos)
+			continue;
+		std::string path = std::format("/sys/class/drm/{}", entry);
+		if (access(std::format("{}/power/rc6_residency_ms", path).c_str(), R_OK) == 0)
+			return path;
+	}
+	return {};
+}
+
+std::string find_intel_rc6_card_path(void)
+{
+	static std::string path = find_drm_card_with_rc6();
+	return path;
 }
 

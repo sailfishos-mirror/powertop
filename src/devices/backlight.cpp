@@ -58,17 +58,26 @@ void backlight::start_measurement(void)
 
 static int dpms_screen_on(void)
 {
-	for (const auto &entry : list_directory("/sys/class/drm/card0")) {
-		if (!entry.starts_with("card"))
+	for (const auto &card : list_directory("/sys/class/drm")) {
+		if (!card.starts_with("card"))
+			continue;
+		/* skip connector entries like card0-HDMI-A-1 */
+		if (card.find('-') != std::string::npos)
 			continue;
 
-		std::string line = read_sysfs_string(std::format("/sys/class/drm/card0/{}/enabled", entry));
-		if (line != "enabled")
-			continue;
+		std::string card_path = std::format("/sys/class/drm/{}", card);
+		for (const auto &entry : list_directory(card_path)) {
+			if (!entry.starts_with("card"))
+				continue;
 
-		line = read_sysfs_string(std::format("/sys/class/drm/card0/{}/dpms", entry));
-		if (line == "On")
-			return 1;
+			std::string line = read_sysfs_string(std::format("{}/{}/enabled", card_path, entry));
+			if (line != "enabled")
+				continue;
+
+			line = read_sysfs_string(std::format("{}/{}/dpms", card_path, entry));
+			if (line == "On")
+				return 1;
+		}
 	}
 	return 0;
 }

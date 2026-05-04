@@ -310,7 +310,7 @@ void enumerate_cpus(void)
 		}
 	}
 
-	if (access("/sys/class/drm/card0/power/rc6_residency_ms", R_OK) == 0)
+	if (!find_intel_rc6_card_path().empty())
 		handle_i965_gpu();
 
 	perf_events = new perf_power_bundle();

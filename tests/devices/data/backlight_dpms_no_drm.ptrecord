@@ -1,4 +1,4 @@
 R /sys/class/backlight/lcd/max_brightness MTAw
 R /sys/class/backlight/lcd/actual_brightness NjA=
 R /sys/class/backlight/lcd/actual_brightness ODA=
-D /sys/class/drm/card0
+D /sys/class/drm

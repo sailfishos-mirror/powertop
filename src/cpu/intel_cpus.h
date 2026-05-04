@@ -182,3 +182,5 @@ int byt_has_ahci();
 
 int is_intel_pstate_driver_loaded();
 
+std::string find_intel_rc6_card_path();
+
