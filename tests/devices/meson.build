@@ -364,3 +364,54 @@ test_rapl_devices_exe = executable(
 )
 
 test('devices: rapl_devices', test_rapl_devices_exe)
+
+test_devlist_exe = executable(
+  'powertop-test-devlist',
+  [
+    '../../src/lib.cpp',
+    '../../src/test_framework.cpp',
+    '../../src/parameters/parameters.cpp',
+    '../../src/devices/device.cpp',
+    '../../src/devlist.cpp',
+    'stub_report.cpp',
+    'stub_devlist.cpp',
+    'stub_devlist_deps.cpp',
+    'test_devlist.cpp',
+  ],
+  include_directories: [
+    include_directories('../..'),
+    include_directories('../../src'),
+    include_directories('..'),
+  ],
+  cpp_args: [
+    '-DENABLE_TEST_FRAMEWORK',
+    '-DHAVE_NO_PCI',
+    '-DTEST_DATA_DIR="' + meson.current_source_dir() / 'data' + '"',
+  ],
+  dependencies: [ncursesw_dep],
+)
+
+test('devices: devlist', test_devlist_exe)
+
+test_rapl_interface_exe = executable(
+  'powertop-test-rapl-interface',
+  [
+    '../../src/lib.cpp',
+    '../../src/test_framework.cpp',
+    '../../src/cpu/rapl/rapl_interface.cpp',
+    'test_rapl_interface.cpp',
+  ],
+  include_directories: [
+    include_directories('../..'),
+    include_directories('../../src'),
+    include_directories('..'),
+  ],
+  cpp_args: [
+    '-DENABLE_TEST_FRAMEWORK',
+    '-DHAVE_NO_PCI',
+    '-DTEST_DATA_DIR="' + meson.current_source_dir() / 'data' + '"',
+  ],
+  dependencies: [ncursesw_dep],
+)
+
+test('devices: rapl_interface', test_rapl_interface_exe)

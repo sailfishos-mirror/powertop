@@ -73,7 +73,15 @@ def get_tag_str(tag):
 
 def decode_content(tag, b64):
     """Return human-readable content for display, or None if not applicable."""
-    if tag in ('N', 'M', 'T') or b64 is None:
+    if tag == 'N' or b64 is None:
+        return None
+    if tag == 'M':
+        # b64 is actually the raw "cpu offset value" string (stored in path slot)
+        parts = b64.split()
+        if len(parts) == 3:
+            return f"cpu={parts[0]} offset=0x{parts[1]} value=0x{parts[2]}"
+        return b64
+    if tag == 'T':
         return None
     if tag == 'L':
         if not b64:
@@ -105,7 +113,8 @@ def cmd_list(args):
         if path_filter and path_filter not in path:
             continue
         if show_content:
-            content = decode_content(tag, b64) or ""
+            # For M records the decoded content lives in path, not b64
+            content = decode_content(tag, path if tag == 'M' else b64) or ""
             # Truncate long content for display
             if len(content) > 40:
                 content = content[:37] + "..."
@@ -374,6 +383,23 @@ def cmd_add(args):
             print("Error: T record sec and usec must be integers.")
             sys.exit(1)
         record = f"T {parts[0]} {parts[1]}\n"
+    elif record_type == 'M':
+        # path = "cpu hex_offset", value = hex_value (default 0)
+        parts = path.split()
+        if len(parts) != 2:
+            print("Error: M record path must be 'cpu hex_offset' (e.g. '0 611').")
+            sys.exit(1)
+        cpu = parts[0]
+        offset = parts[1].lstrip('0x').lstrip('0X') or '0'
+        hex_value = (args.value or "0").lstrip('0x').lstrip('0X') or '0'
+        try:
+            int(cpu)
+            int(offset, 16)
+            int(hex_value, 16)
+        except ValueError:
+            print("Error: M record: cpu must be decimal, offset and value must be hex.")
+            sys.exit(1)
+        record = f"M {cpu} {offset} {hex_value}\n"
     elif record_type == 'D':
         # value is space-separated entry names (empty = not-found/empty directory)
         entries = sorted(value.split()) if value else []
@@ -381,7 +407,7 @@ def cmd_add(args):
         b64 = base64.b64encode(content.encode('utf-8')).decode('ascii')
         record = f"D {path} {b64}\n" if b64 else f"D {path}\n"
     else:
-        print(f"Error: Unknown record type '{record_type}'. Use R, W, N, L, T, or D.")
+        print(f"Error: Unknown record type '{record_type}'. Use R, W, N, L, T, D, or M.")
         sys.exit(1)
 
     try:
@@ -443,11 +469,11 @@ def main():
     p = subparsers.add_parser("add",
         help="Append a record to a trace file (creates file if needed)")
     p.add_argument("trace_file")
-    p.add_argument("record_type", metavar="type", choices=["R", "W", "N", "L", "T", "D"],
-                   help="Record type: R=read, W=write, N=miss, L=symlink, D=directory listing")
-    p.add_argument("path", help="Sysfs/proc path (for L: the symlink path; for D: the directory path)")
+    p.add_argument("record_type", metavar="type", choices=["R", "W", "N", "L", "T", "D", "M"],
+                   help="Record type: R=read, W=write, N=miss, L=symlink, D=directory listing, M=MSR read")
+    p.add_argument("path", help="Sysfs/proc path (for L: the symlink path; for D: the directory path; for M: 'cpu hex_offset' e.g. '0 611')")
     p.add_argument("value", nargs="?", default="",
-                   help="Content string (for L: symlink target; for D: space-separated entry names; omit for broken link, N, or empty/missing dir)")
+                   help="Content string (for L: symlink target; for D: space-separated entry names; for M: hex MSR value e.g. 'deadbeef'; omit for broken link, N, empty/missing dir, or MSR value 0)")
 
     args = parser.parse_args()
     

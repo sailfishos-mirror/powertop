@@ -61,5 +61,17 @@ void init_std_side_table_attr(struct table_attributes *t, int rows, int cols)
 	t->cols         = cols;
 }
 
+void init_std_table_attr(struct table_attributes *t, int rows, int cols)
+{
+	t->table_class  = "emphasis";
+	t->tr_class     = "";
+	t->th_class     = "";
+	t->td_class     = "";
+	t->pos_table_title = T;
+	t->title_mod    = 0;
+	t->rows         = rows;
+	t->cols         = cols;
+}
+
 void init_report_output([[maybe_unused]] const std::string &s, [[maybe_unused]] int i) {}
 void finish_report_output(void) {}

@@ -1,0 +1,6 @@
+D /sys/class/powercap/intel-rapl/ aW50ZWwtcmFwbDow
+R /sys/class/powercap/intel-rapl/intel-rapl:0/name cGFja2FnZS0w
+D /sys/class/powercap/intel-rapl/intel-rapl:0/ aW50ZWwtcmFwbDowOjAKaW50ZWwtcmFwbDowOjE=
+R /sys/class/powercap/intel-rapl/intel-rapl:0/intel-rapl:0:0/name Y29yZQ==
+R /sys/class/powercap/intel-rapl/intel-rapl:0/intel-rapl:0:1/name ZHJhbQ==
+R /sys/class/powercap/intel-rapl/intel-rapl:0/intel-rapl:0:0/energy_uj MTIzNDU2Nzg5

@@ -1,0 +1,8 @@
+D /proc/ MTIzCjQ1NgpzZWxm
+D /proc/123/fd/ MAoxCjM=
+L L2Rldi9udWxs /proc/123/fd/0
+L L2Rldi9wdHMvMA== /proc/123/fd/1
+L L2Rldi9zZGE= /proc/123/fd/3
+R /proc/123/comm bXlwcm9jZXNz
+D /proc/456/fd/ MA==
+L L2Rldi9udWxs /proc/456/fd/0

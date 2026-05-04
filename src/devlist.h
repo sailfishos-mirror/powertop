@@ -23,5 +23,7 @@ extern void clear_devpower(void);
 extern void register_devpower(const std::string &devstring, double power, class device *dev);
 extern void run_devpower_list(void);
 
+extern int charge_device_to_openers(const std::string &devstring, double power, class device *dev);
+
 extern void report_show_open_devices(void);
 
