@@ -1,0 +1,6 @@
+R /sys/class/backlight/lcd/max_brightness MTAw
+R /sys/class/backlight/lcd/actual_brightness NjA=
+R /sys/class/backlight/lcd/actual_brightness ODA=
+D /sys/class/drm/card0 Y2FyZDAtRFAtMQ==
+R /sys/class/drm/card0/card0-DP-1/enabled ZW5hYmxlZA==
+R /sys/class/drm/card0/card0-DP-1/dpms T24=

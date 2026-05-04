@@ -400,6 +400,7 @@ test_cpu_linux_exe = executable(
   cpp_args: [
     '-DENABLE_TEST_FRAMEWORK',
     '-DHAVE_NO_PCI',
+    '-DTEST_DATA_DIR="' + meson.current_source_dir() / 'data' + '"',
   ],
   dependencies: [ncursesw_dep],
 )
@@ -481,3 +482,28 @@ test_runtime_exe = executable(
 )
 
 test('base: runtime_tunable', test_runtime_exe)
+
+test_wifi_tunables_exe = executable(
+  'powertop-test-wifi-tunables',
+  [
+    '../../src/lib.cpp',
+    '../../src/test_framework.cpp',
+    '../../src/tuning/tunable.cpp',
+    '../../src/tuning/wifi.cpp',
+    'stub_iw.cpp',
+    'test_wifi_tunables.cpp',
+  ],
+  include_directories: [
+    include_directories('../..'),
+    include_directories('../../src'),
+    include_directories('..'),
+  ],
+  cpp_args: [
+    '-DENABLE_TEST_FRAMEWORK',
+    '-DHAVE_NO_PCI',
+    '-DTEST_DATA_DIR="' + meson.current_source_dir() / 'data' + '"',
+  ],
+  dependencies: [ncursesw_dep],
+)
+
+test('base: wifi_tunables', test_wifi_tunables_exe)

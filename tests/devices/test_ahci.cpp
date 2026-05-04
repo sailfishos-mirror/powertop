@@ -106,6 +106,21 @@ static void test_ahci_human_name_fallback()
 	PT_ASSERT_TRUE(hn.find("host99") != std::string::npos);
 }
 
+/* When model_name() finds target→disk entry, humanname becomes "SATA disk: …" */
+static void test_ahci_human_name_disk_model()
+{
+	test_framework_manager::get().reset();
+	test_framework_manager::get().set_replay(DATA_DIR + "/ahci_host0_disk.ptrecord");
+
+	ahci dev("host0", "/sys/class/scsi_host/host0");
+
+	test_framework_manager::get().reset();
+
+	std::string hn = dev.human_name();
+	PT_ASSERT_TRUE(hn.find("SATA disk") != std::string::npos);
+	PT_ASSERT_TRUE(hn.find("SAMSUNG SSD") != std::string::npos);
+}
+
 int main()
 {
 	std::cout << "=== ahci tests ===\n";
@@ -113,5 +128,6 @@ int main()
 	PT_RUN_TEST(test_ahci_utilization_zero_when_no_change);
 	PT_RUN_TEST(test_ahci_serialize_fields);
 	PT_RUN_TEST(test_ahci_human_name_fallback);
+	PT_RUN_TEST(test_ahci_human_name_disk_model);
 	return pt_test_summary();
 }

@@ -77,11 +77,49 @@ double util = bl.utilization();
 PT_ASSERT_TRUE(util > 69.9 && util < 70.1);
 }
 
+/* ── dpms_screen_on() ─────────────────────────────────────────────────── */
+
+/* Empty DRM listing → dpms_screen_on() returns 0 (display off path). */
+static void test_dpms_screen_on_no_drm()
+{
+test_framework_manager::get().reset();
+test_framework_manager::get().set_replay(DATA_DIR + "/backlight_dpms_no_drm.ptrecord");
+
+backlight bl("lcd", BL_PATH);
+bl.start_measurement();
+bl.end_measurement();   /* calls display_is_on() → dpms_screen_on() → empty D */
+std::string got = bl.serialize();
+test_framework_manager::get().reset();
+
+/* end_level must still be captured */
+PT_ASSERT_TRUE(got.find("\"end_level\":80") != std::string::npos);
+}
+
+/* DRM card with enabled connector and dpms="On" → dpms_screen_on() returns 1. */
+static void test_dpms_screen_on_active()
+{
+test_framework_manager::get().reset();
+test_framework_manager::get().set_replay(DATA_DIR + "/backlight_dpms_on.ptrecord");
+
+backlight bl("lcd", BL_PATH);
+bl.start_measurement();
+bl.end_measurement();
+std::string got = bl.serialize();
+test_framework_manager::get().reset();
+
+PT_ASSERT_TRUE(got.find("\"end_level\":80") != std::string::npos);
+/* utilization still computed from levels (display_is_on affects p, not end_level) */
+double util = bl.utilization();
+PT_ASSERT_TRUE(util > 69.9 && util < 70.1);
+}
+
 int main()
 {
 std::cout << "=== backlight serialize tests ===\n";
 PT_RUN_TEST(test_constructor);
 PT_RUN_TEST(test_start_measurement);
 PT_RUN_TEST(test_measurement_cycle);
+PT_RUN_TEST(test_dpms_screen_on_no_drm);
+PT_RUN_TEST(test_dpms_screen_on_active);
 return pt_test_summary();
 }

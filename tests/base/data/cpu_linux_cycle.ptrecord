@@ -1,0 +1,12 @@
+T 1000 0
+T 1001 0
+N /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
+D /sys/devices/system/cpu/cpu0/cpuidle c3RhdGUw
+D /sys/devices/system/cpu/cpu0/cpuidle c3RhdGUw
+R /sys/devices/system/cpu/cpu0/cpuidle/state0/name QzE=
+R /sys/devices/system/cpu/cpu0/cpuidle/state0/usage MTAw
+R /sys/devices/system/cpu/cpu0/cpuidle/state0/usage MjAw
+R /sys/devices/system/cpu/cpu0/cpuidle/state0/time NTAwMDAw
+R /sys/devices/system/cpu/cpu0/cpuidle/state0/time MTAwMDAwMA==
+N /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
+N /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state

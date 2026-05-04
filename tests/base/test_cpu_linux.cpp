@@ -6,6 +6,9 @@
  * first measurement_end()) both methods must return "" rather than
  * producing NaN or Inf via 0.0/0.0 or x/0.0.
  *
+ * Also covers the measurement_start/end cycle via fixture replay to
+ * exercise parse_cstates_start/end (list_directory paths).
+ *
  * time_factor is protected in abstract_cpu, so it is exposed via a thin
  * test subclass.
  */
@@ -14,7 +17,10 @@
 
 #include "cpu/cpu.h"
 #include "cpu/frequency.h"
+#include "test_framework.h"
 #include "../test_helper.h"
+
+static const std::string DATA_DIR = TEST_DATA_DIR;
 
 class test_cpu_linux : public cpu_linux {
 public:
@@ -177,6 +183,39 @@ static void test_fill_pstate_line_out_of_range()
 	PT_ASSERT_EQ(cpu.fill_pstate_line(5), std::string(""));
 }
 
+/* ── measurement_start / measurement_end cycle ──────────────────────────── */
+
+/*
+ * Exercises parse_cstates_start/end (list_directory) via fixture replay.
+ * Fixture: cpu_linux_cycle.ptrecord
+ *   stamp_before=1000s, stamp_after=1001s → time_factor = 1 000 000 µs
+ *   cpuidle/state0 (name=C1): usage before=100, after=200 → delta=100
+ *                             time  before=500000, after=1000000 → delta=500000
+ * Expected:
+ *   fill_cstate_name(1)       → "C1"
+ *   fill_cstate_time(1)       → "   5.0 ms"  (500000/101/1000 ≈ 4.95 rounds up)
+ *   fill_cstate_percentage(1) → " 50.0%"     (500000/1000000 * 100)
+ */
+static void test_cpu_linux_measurement_cycle()
+{
+	auto &tf = test_framework_manager::get();
+	tf.reset();
+	tf.set_replay(DATA_DIR + "/cpu_linux_cycle.ptrecord");
+
+	test_cpu_linux cpu;
+	cpu.measurement_start();
+	cpu.measurement_end();
+
+	tf.reset();
+
+	PT_ASSERT_EQ(cpu.fill_cstate_name(1), std::string("C1"));
+	PT_ASSERT_TRUE(cpu.fill_cstate_time(1).find("ms") != std::string::npos);
+	PT_ASSERT_TRUE(cpu.fill_cstate_percentage(1).find("%") != std::string::npos);
+	/* No NaN or Inf in any output */
+	PT_ASSERT_TRUE(cpu.fill_cstate_time(1).find("nan") == std::string::npos);
+	PT_ASSERT_TRUE(cpu.fill_cstate_percentage(1).find("nan") == std::string::npos);
+}
+
 /* ── main ───────────────────────────────────────────────────────────────── */
 
 int main()
@@ -198,5 +237,6 @@ int main()
 	PT_RUN_TEST(test_fill_pstate_line_header);
 	PT_RUN_TEST(test_fill_pstate_line_percent);
 	PT_RUN_TEST(test_fill_pstate_line_out_of_range);
+	PT_RUN_TEST(test_cpu_linux_measurement_cycle);
 	return pt_test_summary();
 }
