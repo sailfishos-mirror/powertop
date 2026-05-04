@@ -198,6 +198,9 @@ std::string cpu_linux::fill_cstate_line(int line_nr, const std::string &separato
 		return pt_format(_(" CPU(OS) {}"), number);
 	}
 
+	if (time_factor < 1.0)
+		return "";
+
 	for (i = 0; i < cstates.size(); i++) {
 		if (cstates[i]->line_level != line_nr)
 			continue;
@@ -216,6 +219,9 @@ std::string cpu_linux::fill_cstate_line(int line_nr, const std::string &separato
 std::string cpu_linux::fill_cstate_percentage(int line_nr)
 {
 	unsigned int i;
+
+	if (time_factor < 1.0)
+		return "";
 
 	for (i = 0; i < cstates.size(); i++) {
 		if (cstates[i]->line_level != line_nr)

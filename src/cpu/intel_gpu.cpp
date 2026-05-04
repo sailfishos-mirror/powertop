@@ -62,6 +62,8 @@ std::string i965_core::fill_cstate_line(int line_nr, [[maybe_unused]] const std:
 	}
 
 	time_delta  = 1000000 * (after.tv_sec - before.tv_sec) + after.tv_usec - before.tv_usec;
+	if (time_delta < 1.0)
+		return "";
 	ratio = 100000.0/time_delta;
 
 	switch (line_nr) {

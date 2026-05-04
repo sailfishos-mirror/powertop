@@ -47,6 +47,9 @@ std::string cpu_package::fill_cstate_line(int line_nr, [[maybe_unused]] const st
 	if (line_nr == LEVEL_HEADER)
 		return this->has_intel_MSR ? _(" Package(HW)"): _(" Package(OS)");
 
+	if (time_factor < 1.0)
+		return "";
+
 	for (i = 0; i < cstates.size(); i++) {
 		if (cstates[i]->line_level != line_nr)
 			continue;
