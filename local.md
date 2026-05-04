@@ -175,14 +175,24 @@ by the test framework via a new `D` record type in `.ptrecord` files.
 - In `trace_tool.py add`: `add FILE D /some/dir "entry1 entry2"` — entries are
   space-separated, sorted then newline-joined before base64 encoding.
 
-**Converted callers:**
-- `process_directory()` in `lib.cpp` — now delegates to `list_directory()`
+**Converted callers (all callers as of commit 12883a9 — no more opendir in codebase):**
+- `process_directory()` in `lib.cpp`
 - `parse_cstates_start()` / `parse_cstates_end()` in `cpu_linux.cpp`
 - `do_bus()` in `runtime_pm.cpp`
+- `add_wifi_tunables()` in `tuning/wifi.cpp`
+- `add_runtime_tunables()` in `tuning/runtime.cpp`
+- `add_usb_callback()` in `tuning/tuningusb.cpp`
+- `disk_name()`, `model_name()`, `create_all_ahcis()` in `devices/ahci.cpp`
+- `dpms_screen_on()` in `devices/backlight.cpp`
+- `create_all_devfreq_devices()` in `devices/devfreq.cpp` (also removed `static DIR*`)
+- `rapl_device` constructor in `cpu/rapl/rapl_interface.cpp`
+- `byt_has_ahci()` in `cpu/intel_cpus.cpp` (uses `std::filesystem::exists()`)
+- `collect_open_devices()` in `devlist.cpp` (nested /proc/ and /proc/<pid>/fd/)
 
-**Remaining opendir users** (not yet converted, lower priority):
-- `src/tuning/runtime.cpp` `add_runtime_tunables()` — also uses `access()`
-- `src/devices/ahci.cpp`, `devfreq.cpp`, `backlight.cpp`, `src/tuning/wifi.cpp`
+**Note:** `byt_has_ahci()` uses `std::filesystem::exists()` rather than `list_directory()` since it only checks directory existence. The `DIR *dir` member was removed from `intel_util` class.
+
+**Empty D record format:** `D path` (no trailing b64 token) = empty/missing directory.
+`test_framework.cpp` and `trace_tool.py` both handle this correctly.
 
 # Coverage baseline (as of commit 8906999)
 
