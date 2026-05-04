@@ -96,6 +96,87 @@ static void test_cpu_linux_cstate_percentage_zero_time_factor()
 	PT_ASSERT_TRUE(s.find("inf") == std::string::npos);
 }
 
+/* ── fill_cstate_time ─────────────────────────────────────────────────────── */
+
+static void test_fill_cstate_time_c0_always_empty()
+{
+	test_cpu_linux cpu;
+	/* fill_cstate_time always returns "" for LEVEL_C0 */
+	PT_ASSERT_EQ(cpu.fill_cstate_time(LEVEL_C0), std::string(""));
+}
+
+static void test_fill_cstate_time_no_match()
+{
+	test_cpu_linux cpu;
+	PT_ASSERT_EQ(cpu.fill_cstate_time(5), std::string(""));
+}
+
+static void test_fill_cstate_time_normal()
+{
+	test_cpu_linux cpu;
+	cpu.insert_cstate("C3", "C3", 0, 0, 1, 3);
+	/* duration_delta / (1 + usage_delta) / 1000 ms
+	 * = 2000 / (1+1) / 1000 = 1.0 ms */
+	cpu.cstates[0]->duration_delta = 2000;
+	cpu.cstates[0]->usage_delta    = 1;
+	std::string s = cpu.fill_cstate_time(3);
+	PT_ASSERT_TRUE(s.find("1.0") != std::string::npos);
+	PT_ASSERT_TRUE(s.find("ms") != std::string::npos);
+}
+
+/* ── fill_cstate_name ─────────────────────────────────────────────────────── */
+
+static void test_fill_cstate_name_hit()
+{
+	test_cpu_linux cpu;
+	cpu.insert_cstate("C6", "Deep Sleep C6", 0, 0, 1, 6);
+	PT_ASSERT_EQ(cpu.fill_cstate_name(6), std::string("Deep Sleep C6"));
+}
+
+static void test_fill_cstate_name_miss()
+{
+	test_cpu_linux cpu;
+	PT_ASSERT_EQ(cpu.fill_cstate_name(99), std::string(""));
+}
+
+/* ── fill_pstate_name / fill_pstate_line ─────────────────────────────────── */
+
+static void test_fill_pstate_name_normal()
+{
+	test_cpu_linux cpu;
+	cpu.insert_pstate(1200000, "1.2 GHz", 0, 0);
+	PT_ASSERT_EQ(cpu.fill_pstate_name(0), std::string("1.2 GHz"));
+}
+
+static void test_fill_pstate_name_out_of_range()
+{
+	test_cpu_linux cpu;
+	PT_ASSERT_EQ(cpu.fill_pstate_name(0), std::string(""));
+	PT_ASSERT_EQ(cpu.fill_pstate_name(-1), std::string(""));
+}
+
+static void test_fill_pstate_line_header()
+{
+	test_cpu_linux cpu(4);
+	std::string s = cpu.fill_pstate_line(LEVEL_HEADER);
+	PT_ASSERT_TRUE(s.find("4") != std::string::npos);
+}
+
+static void test_fill_pstate_line_percent()
+{
+	test_cpu_linux cpu;
+	cpu.insert_pstate(1000000, "1.0 GHz", 0, 0);
+	cpu.pstates[0]->time_after = 1000;   /* 100% of total */
+	std::string s = cpu.fill_pstate_line(0);
+	PT_ASSERT_TRUE(s.find("100") != std::string::npos);
+}
+
+static void test_fill_pstate_line_out_of_range()
+{
+	test_cpu_linux cpu;
+	PT_ASSERT_EQ(cpu.fill_pstate_line(5), std::string(""));
+}
+
 /* ── main ───────────────────────────────────────────────────────────────── */
 
 int main()
@@ -107,5 +188,15 @@ int main()
 	PT_RUN_TEST(test_cpu_linux_cstate_line_cx_zero_time_factor);
 	PT_RUN_TEST(test_cpu_linux_cstate_percentage_normal);
 	PT_RUN_TEST(test_cpu_linux_cstate_percentage_zero_time_factor);
+	PT_RUN_TEST(test_fill_cstate_time_c0_always_empty);
+	PT_RUN_TEST(test_fill_cstate_time_no_match);
+	PT_RUN_TEST(test_fill_cstate_time_normal);
+	PT_RUN_TEST(test_fill_cstate_name_hit);
+	PT_RUN_TEST(test_fill_cstate_name_miss);
+	PT_RUN_TEST(test_fill_pstate_name_normal);
+	PT_RUN_TEST(test_fill_pstate_name_out_of_range);
+	PT_RUN_TEST(test_fill_pstate_line_header);
+	PT_RUN_TEST(test_fill_pstate_line_percent);
+	PT_RUN_TEST(test_fill_pstate_line_out_of_range);
 	return pt_test_summary();
 }
