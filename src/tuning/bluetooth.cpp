@@ -47,14 +47,16 @@
 bt_tunable::bt_tunable(void) : tunable("", 1.0, _("Good"), _("Bad"), _("Unknown"))
 {
 	desc = _("Bluetooth device interface status");
-	toggle_bad = "/usr/sbin/hciconfig hci0 up &> /dev/null &";
-	toggle_good = "/usr/sbin/hciconfig hci0 down &> /dev/null";
+	toggle_bad = "Enable Bluetooth (hci0)";
+	toggle_good = "Disable Bluetooth (hci0)";
 }
 
 
 
 /* structure definitions copied from include/net/bluetooth/hci.h from the 2.6.20 kernel */
 #define HCIGETDEVINFO   _IOR('H', 211, int)
+#define HCIDEVUP        _IOW('H', 201, int)
+#define HCIDEVDOWN      _IOW('H', 202, int)
 #define BTPROTO_HCI     1
 
 #define __u16 uint16_t
@@ -103,17 +105,13 @@ struct hci_dev_info {
 };
 
 static int previous_bytes = -1;
-static time_t last_check_time = 0;
-static int last_check_result;
 
 int bt_tunable::good_bad(void)
 {
 	struct hci_dev_info devinfo;
-	FILE *file = 0;
 	int fd;
-	int thisbytes = 0;
+	int thisbytes;
 	int ret;
-	int result = TUNE_GOOD;
 
 	fd = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
 	if (fd < 0)
@@ -122,67 +120,39 @@ int bt_tunable::good_bad(void)
 	memset(&devinfo, 0, sizeof(devinfo));
 	strcpy(devinfo.name, "hci0");
 	ret = ioctl(fd, HCIGETDEVINFO, (void *) &devinfo);
-	if (ret < 0)
-		goto out;
-
-	if ( (devinfo.flags & 1) == 0 &&
-		access("/sys/module/hci_usb",F_OK)) /* interface down already */
-		goto out;
-
-	thisbytes += devinfo.stat.byte_rx;
-	thisbytes += devinfo.stat.byte_tx;
-
-	/* device is active... so we need to leave it on */
-	if (thisbytes != previous_bytes)
-		goto out;
-
-
-	/* this check is expensive.. only do it once per minute */
-	if (time(nullptr) - last_check_time > 60) {
-		last_check_time = time(nullptr);
-		last_check_result = TUNE_BAD;
-		/* now, also check for active connections */
-		file = popen("/usr/bin/hcitool con 2> /dev/null", "r");
-		if (file) {
-			char line[2048];
-			/* first line is standard header */
-			if (fgets(line, sizeof(line), file) == nullptr)
-				goto out;
-			memset(line, 0, sizeof(line));
-			if (fgets(line, sizeof(line), file) == nullptr) {
-				result = last_check_result = TUNE_GOOD;
-				goto out;
-			}
-
-			if (strlen(line) > 0) {
-				result = last_check_result = TUNE_GOOD;
-				goto out;
-			}
-		}
-	};
-
-	result = last_check_result;
-
-out:
-	previous_bytes = thisbytes;
-	if (file)
-		pclose(file);
 	close(fd);
-	return result;
+	if (ret < 0)
+		return TUNE_GOOD;
+
+	/* Interface already down — already in a good power state */
+	if ((devinfo.flags & 1) == 0)
+		return TUNE_GOOD;
+
+	thisbytes = devinfo.stat.byte_rx + devinfo.stat.byte_tx;
+
+	/* Bytes changed since last check: BT is actively in use, leave it alone */
+	if (thisbytes != previous_bytes) {
+		previous_bytes = thisbytes;
+		return TUNE_GOOD;
+	}
+
+	previous_bytes = thisbytes;
+
+	/* No byte activity: BT is idle and should be turned off */
+	return TUNE_BAD;
 }
 
 void bt_tunable::toggle(void)
 {
-	int good;
-	good = good_bad();
+	int good = good_bad();
+	int dev_id = 0; /* hci0 */
 
-	if (good == TUNE_GOOD) {
-		if (system("/usr/sbin/hciconfig hci0 up &> /dev/null &"))
-			printf("System is not available\n");
+	int fd = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
+	if (fd < 0)
 		return;
-	}
-	if (system("/usr/sbin/hciconfig hci0 down &> /dev/null"))
-		printf("System is not available\n");
+
+	ioctl(fd, good == TUNE_BAD ? HCIDEVDOWN : HCIDEVUP, dev_id);
+	close(fd);
 }
 
 
