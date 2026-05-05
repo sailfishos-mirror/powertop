@@ -104,7 +104,19 @@ struct hci_dev_info {
 	struct hci_dev_stats stat;
 };
 
-static int previous_bytes = -1;
+/*
+ * Two-level byte-counter snapshots.  snap_bytes[0]/snap_time[0] is the
+ * most-recent snapshot; snap_bytes[1]/snap_time[1] is the previous one.
+ * snap_bytes[N] == -1 means the slot has not been populated yet.
+ *
+ * Slot 0 is refreshed at most once per minute.  Each refresh promotes the
+ * current slot 0 into slot 1 first, so slot 1 is always 1–2 minutes older
+ * than the current reading.  We only declare BT idle when the byte count
+ * matches the slot-1 value, giving a guaranteed minimum observation window
+ * of one full minute and avoiding false positives from momentary quiet.
+ */
+static int    snap_bytes[2] = { -1, -1 };
+static time_t snap_time[2]  = {  0,  0 };
 
 int bt_tunable::good_bad(void)
 {
@@ -112,6 +124,7 @@ int bt_tunable::good_bad(void)
 	int fd;
 	int thisbytes;
 	int ret;
+	time_t now;
 
 	fd = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
 	if (fd < 0)
@@ -129,16 +142,32 @@ int bt_tunable::good_bad(void)
 		return TUNE_GOOD;
 
 	thisbytes = devinfo.stat.byte_rx + devinfo.stat.byte_tx;
+	now = time(nullptr);
 
-	/* Bytes changed since last check: BT is actively in use, leave it alone */
-	if (thisbytes != previous_bytes) {
-		previous_bytes = thisbytes;
+	/* Initialise slot 0 on first call */
+	if (snap_bytes[0] < 0) {
+		snap_bytes[0] = thisbytes;
+		snap_time[0]  = now;
 		return TUNE_GOOD;
 	}
 
-	previous_bytes = thisbytes;
+	/* Advance snapshots once per minute */
+	if (now - snap_time[0] >= 60) {
+		snap_bytes[1] = snap_bytes[0];
+		snap_time[1]  = snap_time[0];
+		snap_bytes[0] = thisbytes;
+		snap_time[0]  = now;
+	}
 
-	/* No byte activity: BT is idle and should be turned off */
+	/* Need the older slot populated before we can make a reliable call */
+	if (snap_bytes[1] < 0)
+		return TUNE_GOOD;
+
+	/* Bytes changed versus the 1–2 minute old reference: BT is active */
+	if (thisbytes != snap_bytes[1])
+		return TUNE_GOOD;
+
+	/* No byte activity over the observation window: BT is idle */
 	return TUNE_BAD;
 }
 
