@@ -1,0 +1,34 @@
+name: Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y \
+            meson ninja-build pkg-config \
+            libpci-dev \
+            libnl-3-dev libnl-genl-3-dev \
+            libncursesw5-dev \
+            libtracefs-dev libtraceevent-dev \
+            gettext
+
+      - name: Configure
+        run: meson setup -Denable-tests=true build
+
+      - name: Build
+        run: ninja -C build
+
+      - name: Test
+        run: ninja -C build test
