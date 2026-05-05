@@ -62,9 +62,6 @@ properly. As of Linux 3.13, these are (the list may be incomplete):
     CONFIG_POWERCAP
     CONFIG_INTEL_RAPL
 
-The patches in the `patches/` subdirectory are optional but enable full
-PowerTOP functionality.
-
 
 ## Outputting a report
 
