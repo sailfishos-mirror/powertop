@@ -42,6 +42,9 @@
 /* Stub: add_ethernet_tunable() calls create_all_nics(); not used in tests */
 void create_all_nics(void (*)(const std::string &)) {}
 
+/* ethtunable_callback is not in the header — forward-declare to test it */
+void ethtunable_callback(const std::string &d_name);
+
 /* ------------------------------------------------------------------ */
 /* fake_eth: controllable stand-in for the real ethernet_tunable       */
 /* ------------------------------------------------------------------ */
@@ -123,6 +126,36 @@ static void test_toggle_disables_wol()
 }
 
 /* ------------------------------------------------------------------ */
+/* collect_json_fields() / ethtunable_callback() tests                 */
+/* ------------------------------------------------------------------ */
+
+static void test_collect_json_fields_includes_iface()
+{
+	fake_eth eth;  /* constructed with interf = "eth_test" */
+
+	std::string js = eth.serialize();
+	PT_ASSERT_TRUE(js.find("\"interf\":\"eth_test\"") != std::string::npos);
+}
+
+static void test_callback_skips_lo()
+{
+	size_t before = all_tunables.size();
+	ethtunable_callback("lo");
+	PT_ASSERT_EQ(all_tunables.size(), before);
+}
+
+static void test_callback_creates_tunable()
+{
+	size_t before = all_tunables.size();
+	ethtunable_callback("cbtest0");
+	PT_ASSERT_EQ(all_tunables.size(), before + 1);
+
+	/* Check the created tunable serialises the correct interface name */
+	std::string js = all_tunables.back()->serialize();
+	PT_ASSERT_TRUE(js.find("\"interf\":\"cbtest0\"") != std::string::npos);
+}
+
+/* ------------------------------------------------------------------ */
 /* main                                                                */
 /* ------------------------------------------------------------------ */
 
@@ -135,6 +168,9 @@ int main()
 	PT_RUN_TEST(test_good_bad_wol_enabled);
 	PT_RUN_TEST(test_toggle_no_hardware_does_nothing);
 	PT_RUN_TEST(test_toggle_disables_wol);
+	PT_RUN_TEST(test_collect_json_fields_includes_iface);
+	PT_RUN_TEST(test_callback_skips_lo);
+	PT_RUN_TEST(test_callback_creates_tunable);
 
 	return pt_test_summary();
 }
