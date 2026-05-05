@@ -38,6 +38,11 @@ public:
 
 	void collect_json_fields(std::string &_js) override;
 
+	/* Virtual hardware helpers — override in tests to inject fake data */
+	virtual int  hci_get_dev_info(unsigned int &flags,
+	                              unsigned int &byte_rx,
+	                              unsigned int &byte_tx);
+	virtual void hci_set_power(bool up);
 };
 
 extern void add_bt_tunable(void);

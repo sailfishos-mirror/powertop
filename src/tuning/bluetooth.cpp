@@ -115,33 +115,57 @@ struct hci_dev_info {
  * matches the slot-1 value, giving a guaranteed minimum observation window
  * of one full minute and avoiding false positives from momentary quiet.
  */
+int bt_tunable::hci_get_dev_info(unsigned int &flags,
+                                  unsigned int &byte_rx,
+                                  unsigned int &byte_tx)
+{
+	struct hci_dev_info devinfo;
+
+	int fd = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
+	if (fd < 0)
+		return -1;
+
+	memset(&devinfo, 0, sizeof(devinfo));
+	strcpy(devinfo.name, "hci0");
+	int ret = ioctl(fd, HCIGETDEVINFO, (void *) &devinfo);
+	close(fd);
+	if (ret < 0)
+		return -1;
+
+	flags   = devinfo.flags;
+	byte_rx = devinfo.stat.byte_rx;
+	byte_tx = devinfo.stat.byte_tx;
+	return 0;
+}
+
+void bt_tunable::hci_set_power(bool up)
+{
+	int dev_id = 0; /* hci0 */
+	int fd = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
+	if (fd < 0)
+		return;
+	ioctl(fd, up ? HCIDEVUP : HCIDEVDOWN, dev_id);
+	close(fd);
+}
+
+
 static int    snap_bytes[2] = { -1, -1 };
 static time_t snap_time[2]  = {  0,  0 };
 
 int bt_tunable::good_bad(void)
 {
-	struct hci_dev_info devinfo;
-	int fd;
+	unsigned int flags, byte_rx, byte_tx;
 	int thisbytes;
-	int ret;
 	time_t now;
 
-	fd = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
-	if (fd < 0)
-		return TUNE_GOOD;
-
-	memset(&devinfo, 0, sizeof(devinfo));
-	strcpy(devinfo.name, "hci0");
-	ret = ioctl(fd, HCIGETDEVINFO, (void *) &devinfo);
-	close(fd);
-	if (ret < 0)
+	if (hci_get_dev_info(flags, byte_rx, byte_tx) < 0)
 		return TUNE_GOOD;
 
 	/* Interface already down — already in a good power state */
-	if ((devinfo.flags & 1) == 0)
+	if ((flags & 1) == 0)
 		return TUNE_GOOD;
 
-	thisbytes = devinfo.stat.byte_rx + devinfo.stat.byte_tx;
+	thisbytes = byte_rx + byte_tx;
 	now = time(nullptr);
 
 	/* Initialise slot 0 on first call */
@@ -173,46 +197,26 @@ int bt_tunable::good_bad(void)
 
 void bt_tunable::toggle(void)
 {
-	int good = good_bad();
-	int dev_id = 0; /* hci0 */
-
-	int fd = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
-	if (fd < 0)
-		return;
-
-	ioctl(fd, good == TUNE_BAD ? HCIDEVDOWN : HCIDEVUP, dev_id);
-	close(fd);
+	hci_set_power(good_bad() != TUNE_BAD);
 }
 
 
 void add_bt_tunable(void)
 {
-	struct hci_dev_info devinfo;
-	class bt_tunable *bt;
-	int fd;
-	int ret;
-
 	/* first check if /sys/modules/bluetooth exists, if not, don't probe bluetooth because
 	   it would trigger an autoload */
 
 //	if (access("/sys/module/bluetooth",F_OK))
 //		return;
 
-
-	/* check if hci0 exists */
-	fd = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
-	if (fd < 0)
+	/* check if hci0 exists and responds; discard the values here */
+	auto *bt = new bt_tunable();
+	unsigned int flags, byte_rx, byte_tx;
+	if (bt->hci_get_dev_info(flags, byte_rx, byte_tx) < 0) {
+		delete bt;
 		return;
+	}
 
-	memset(&devinfo, 0, sizeof(devinfo));
-	strcpy(devinfo.name, "hci0");
-	ret = ioctl(fd, HCIGETDEVINFO, (void *) &devinfo);
-	close(fd);
-	if (ret < 0)
-		return;
-
-
-	bt = new bt_tunable();
 	all_tunables.push_back(bt);
 }
 
