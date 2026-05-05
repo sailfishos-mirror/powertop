@@ -20,7 +20,7 @@ PowerTOP is written in C++ and targets Linux. It requires the
 Example packages to install on Ubuntu:
 
     sudo apt install meson ninja-build libpci-dev libnl-3-dev libnl-genl-3-dev \
-    libncursesw5-dev libtracefs-dev gettext pkg-config
+    libncursesw5-dev libtracefs-dev libtraceevent-dev gettext pkg-config
 
 
 ## Building PowerTOP
@@ -81,6 +81,13 @@ For an HTML report, run:
     powertop --html=report.html
 
 This creates a static `report.html` file, suitable for sharing.
+
+For a Markdown report, run:
+
+    powertop --markdown=report.md
+
+This creates a `report.md` file (defaults to `powertop.md` if no filename
+is given), suitable for viewing in any Markdown renderer.
 
 For a CSV report, run:
 
