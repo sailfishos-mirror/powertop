@@ -241,3 +241,39 @@ Call sites use `std::chrono::system_clock::now()` instead of `time(nullptr)`.
 First create a testcase for the issue when possible at all; this test case will fail at
 first (to show that the issue is real). After the issue is fixed, the test
 should then pass.
+
+# bluetooth.cpp — HCI ioctl patterns
+
+- `HCIGETDEVINFO = _IOR('H', 211, int)`: read device info into `hci_dev_info` struct
+- `HCIDEVUP      = _IOW('H', 201, int)`: bring hci0 up (enable)
+- `HCIDEVDOWN    = _IOW('H', 202, int)`: bring hci0 down (disable)
+- All use `socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI)` (BTPROTO_HCI = 1)
+- `devinfo.flags & 1`: non-zero = interface UP; zero = interface DOWN
+- `devinfo.stat.byte_rx + devinfo.stat.byte_tx`: cumulative byte counter; if unchanged between calls, BT is idle
+- `hcitool` and `hciconfig` are deprecated — avoid; use ioctls directly or rfkill
+
+TUNE_GOOD/BAD semantics for BT tunable:
+- TUNE_GOOD: current state is power-efficient (BT off, or BT on and actively in use — leave it alone)
+- TUNE_BAD: BT is on but idle — should be turned off to save power
+
+# Virtual hardware helper pattern (bluetooth testability)
+
+To make hardware-touching code unit-testable, extract ioctl calls into small
+`public virtual` methods on the class. Test subclasses override them with fakes.
+Key constraints:
+- Helpers must be `public` if called by free functions (not just methods)
+- Snapshot state (previously file-statics) should be `protected` class members
+  so each instance gets its own state and tests are isolated
+- Add `virtual time_t current_time()` wrapper around `time(nullptr)` to allow
+  fake clock injection in tests
+- Test subclass exposes a `get_snap_bytes(int i)` accessor to verify internal
+  state from free test functions (since `protected` blocks external access)
+
+Coverage baseline → after writing bt tests:
+- bluetooth.cpp lines:     0.0% → 48.3% (29/60)
+- bluetooth.cpp functions: 0.0% → 87.5% (7/8)
+- Overall lines:          34.7% → 35.0%
+- Overall functions:      47.2% → 47.5%
+
+The one uncovered function is `hci_get_dev_info()` (real hardware required).
+

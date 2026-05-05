@@ -25,6 +25,7 @@
 #pragma once
 
 #include <vector>
+#include <ctime>
 
 #include "tunable.h"
 
@@ -43,6 +44,11 @@ public:
 	                              unsigned int &byte_rx,
 	                              unsigned int &byte_tx);
 	virtual void hci_set_power(bool up);
+	virtual time_t current_time();
+
+protected:
+	int    snap_bytes[2];
+	time_t snap_time[2];
 };
 
 extern void add_bt_tunable(void);

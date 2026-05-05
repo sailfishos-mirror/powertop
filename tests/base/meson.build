@@ -556,3 +556,25 @@ test_learn_parameters_exe = executable(
 )
 
 test('base: learn_parameters', test_learn_parameters_exe)
+
+test_bt_tunable_exe = executable(
+  'powertop-test-bt-tunable',
+  [
+    '../../src/test_framework.cpp',
+    '../../src/tuning/tunable.cpp',
+    '../../src/tuning/bluetooth.cpp',
+    'test_bt_tunable.cpp',
+  ],
+  include_directories: [
+    include_directories('../..'),
+    include_directories('../../src'),
+    include_directories('..'),
+  ],
+  cpp_args: [
+    '-DENABLE_TEST_FRAMEWORK',
+    '-DHAVE_NO_PCI',
+  ],
+  dependencies: [ncursesw_dep],
+)
+
+test('base: bt_tunable', test_bt_tunable_exe)

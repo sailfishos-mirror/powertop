@@ -49,6 +49,8 @@ bt_tunable::bt_tunable(void) : tunable("", 1.0, _("Good"), _("Bad"), _("Unknown"
 	desc = _("Bluetooth device interface status");
 	toggle_bad = "Enable Bluetooth (hci0)";
 	toggle_good = "Disable Bluetooth (hci0)";
+	snap_bytes[0] = snap_bytes[1] = -1;
+	snap_time[0]  = snap_time[1]  =  0;
 }
 
 
@@ -148,9 +150,10 @@ void bt_tunable::hci_set_power(bool up)
 	close(fd);
 }
 
-
-static int    snap_bytes[2] = { -1, -1 };
-static time_t snap_time[2]  = {  0,  0 };
+time_t bt_tunable::current_time()
+{
+	return time(nullptr);
+}
 
 int bt_tunable::good_bad(void)
 {
@@ -166,7 +169,7 @@ int bt_tunable::good_bad(void)
 		return TUNE_GOOD;
 
 	thisbytes = byte_rx + byte_tx;
-	now = time(nullptr);
+	now = current_time();
 
 	/* Initialise slot 0 on first call */
 	if (snap_bytes[0] < 0) {
