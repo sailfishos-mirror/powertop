@@ -79,6 +79,10 @@ public:
 	virtual bool power_valid(void) override { return utilization_power_valid(rindex_up) || utilization_power_valid(rindex_link_100) || utilization_power_valid(rindex_link_1000) || utilization_power_valid(rindex_link_high);};
 	virtual int grouping_prio(void) override { return 10; };
 	void collect_json_fields(std::string &_js) override;
+
+	/* Virtual hardware helpers — override in tests to inject fake data */
+	virtual int get_iface_up();
+	virtual int get_iface_speed();
 };
 
 extern void create_all_nics(callback fn = nullptr);

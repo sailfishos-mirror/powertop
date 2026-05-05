@@ -578,3 +578,49 @@ test_bt_tunable_exe = executable(
 )
 
 test('base: bt_tunable', test_bt_tunable_exe)
+
+test_eth_tunable_exe = executable(
+  'powertop-test-eth-tunable',
+  [
+    '../../src/test_framework.cpp',
+    '../../src/tuning/tunable.cpp',
+    '../../src/tuning/ethernet.cpp',
+    'test_eth_tunable.cpp',
+  ],
+  include_directories: [
+    include_directories('../..'),
+    include_directories('../../src'),
+    include_directories('..'),
+  ],
+  cpp_args: [
+    '-DENABLE_TEST_FRAMEWORK',
+    '-DHAVE_NO_PCI',
+  ],
+  dependencies: [ncursesw_dep],
+)
+
+test('base: eth_tunable', test_eth_tunable_exe)
+
+test_network_exe = executable(
+  'powertop-test-network',
+  [
+    '../../src/test_framework.cpp',
+    '../../src/lib.cpp',
+    '../../src/devices/device.cpp',
+    '../../src/devices/network.cpp',
+    '../../src/parameters/parameters.cpp',
+    'test_network.cpp',
+  ],
+  include_directories: [
+    include_directories('../..'),
+    include_directories('../../src'),
+    include_directories('..'),
+  ],
+  cpp_args: [
+    '-DENABLE_TEST_FRAMEWORK',
+    '-DHAVE_NO_PCI',
+  ],
+  dependencies: [ncursesw_dep],
+)
+
+test('base: network', test_network_exe)

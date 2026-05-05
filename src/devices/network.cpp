@@ -169,38 +169,28 @@ network::network(const std::string &_name, const std::string &path): device()
 		humanname = pt_format(_("Network interface: {} ({})"), _name, link.substr(link.rfind('/') + 1));
 }
 
-static int net_iface_up(const std::string &iface)
+int network::get_iface_up()
 {
-	int sock;
 	struct ifreq ifr;
-	int ret;
 
 	memset(&ifr, 0, sizeof(struct ifreq));
 
-	sock = socket(AF_INET, SOCK_DGRAM, 0);
-	if (sock<0)
+	int sock = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sock < 0)
 		return 0;
 
-	pt_strcpy(ifr.ifr_name, iface.c_str());
+	pt_strcpy(ifr.ifr_name, name.c_str());
 
-	/* Check if the interface is up */
-	ret = ioctl(sock, SIOCGIFFLAGS, &ifr);
-	if (ret<0) {
-		close(sock);
-		return 0;
-	}
-
-	if (ifr.ifr_flags & (IFF_UP | IFF_RUNNING)) {
-		close(sock);
-		return 1;
-	}
-
+	int ret = ioctl(sock, SIOCGIFFLAGS, &ifr);
 	close(sock);
 
-	return 0;
+	if (ret < 0)
+		return 0;
+
+	return (ifr.ifr_flags & (IFF_UP | IFF_RUNNING)) ? 1 : 0;
 }
 
-static int iface_link(const std::string &name)
+static int iface_link(const std::string &ifname)
 {
 	int sock;
 	struct ifreq ifr;
@@ -210,16 +200,16 @@ static int iface_link(const std::string &name)
 	memset(&ifr, 0, sizeof(struct ifreq));
 
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
-	if (sock<0)
+	if (sock < 0)
 		return 0;
 
-	pt_strcpy(ifr.ifr_name, name.c_str());
+	pt_strcpy(ifr.ifr_name, ifname.c_str());
 
 	memset(&cmd, 0, sizeof(cmd));
 
 	cmd.cmd = ETHTOOL_GLINK;
 	ifr.ifr_data = (caddr_t)&cmd;
-        ioctl(sock, SIOCETHTOOL, &ifr);
+	ioctl(sock, SIOCETHTOOL, &ifr);
 	close(sock);
 
 	link = cmd.data;
@@ -227,18 +217,15 @@ static int iface_link(const std::string &name)
 	return link;
 }
 
-
-static int iface_speed(const std::string &name)
+int network::get_iface_speed()
 {
-	int sock;
 	struct ifreq ifr;
 	struct ethtool_cmd cmd;
-	int speed;
 
 	memset(&ifr, 0, sizeof(struct ifreq));
 
-	sock = socket(AF_INET, SOCK_DGRAM, 0);
-	if (sock<0)
+	int sock = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sock < 0)
 		return 0;
 
 	pt_strcpy(ifr.ifr_name, name.c_str());
@@ -247,11 +234,10 @@ static int iface_speed(const std::string &name)
 
 	cmd.cmd = ETHTOOL_GSET;
 	ifr.ifr_data = (caddr_t)&cmd;
-        ioctl(sock, SIOCETHTOOL, &ifr);
+	ioctl(sock, SIOCETHTOOL, &ifr);
 	close(sock);
 
-	speed = ethtool_cmd_speed(&cmd);
-
+	int speed = ethtool_cmd_speed(&cmd);
 
 	if (speed > 0 && speed <= 100)
 		speed = 100;
@@ -270,9 +256,9 @@ void network::start_measurement(void)
 	end_up = 1;
 	end_speed = 0;
 
-	start_speed = iface_speed(name.c_str());
+	start_speed = get_iface_speed();
 
-	start_up = net_iface_up(name.c_str());
+	start_up = get_iface_up();
 
 	do_proc_net_dev();
 	start_pkts = pkts;
@@ -287,8 +273,8 @@ void network::end_measurement(void)
 
 	after = pt_gettime();
 
-	end_speed = iface_speed(name.c_str());
-	end_up = net_iface_up(name.c_str());
+	end_speed = get_iface_speed();
+	end_up = get_iface_up();
 	do_proc_net_dev();
 	end_pkts = pkts;
 

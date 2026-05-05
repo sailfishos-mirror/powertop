@@ -25,6 +25,7 @@
 #pragma once
 
 #include <vector>
+#include <cstdint>
 
 #include "tunable.h"
 
@@ -39,6 +40,9 @@ public:
 
 	void collect_json_fields(std::string &_js) override;
 
+	/* Virtual hardware helpers — override in tests to inject fake data */
+	virtual int  get_wol(uint32_t &wolopts);
+	virtual void set_wol(uint32_t wolopts);
 };
 
 extern void add_ethernet_tunable(void);
