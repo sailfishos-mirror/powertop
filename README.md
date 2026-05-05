@@ -14,6 +14,7 @@ PowerTOP is written in C++ and targets Linux. It requires the
 * `ncurses` (required)
 * `libnl-3` (required)
 * `libtracefs` (required)
+* `libtraceevent` (required)
 * `libpci` (optional — only needed if the system has PCI devices)
 * `gettext` (optional — for translated messages)
 
@@ -38,88 +39,122 @@ To run the test suite:
 
 # Running PowerTOP
 
-The following sections go over basic operation of PowerTOP. This includes
-kernel configuration options (or kernel patches) needed for full functionality.
+PowerTOP must be run as root. When invoked without arguments it starts in
+interactive mode, which resembles `top`. Use the Tab and Shift-Tab keys to
+navigate between the Overview, Idle stats, Frequency stats, Device stats,
+Tunables, and WakeUp tabs.
+
 Run `powertop --help` to see all options.
 
 
-## Kernel parameters
+## Kernel configuration
 
-PowerTOP needs some kernel configuration options enabled to function
-properly. As of Linux 3.13, these are (the list may be incomplete):
+PowerTOP needs some kernel configuration options enabled to function properly.
+Modern distribution kernels typically have all of these enabled already. If you
+are running a minimal or custom kernel, check for:
 
     CONFIG_NO_HZ
     CONFIG_HIGH_RES_TIMERS
-    CONFIG_HPET_TIMER
     CONFIG_CPU_FREQ_GOV_ONDEMAND
-    CONFIG_USB_SUSPEND
-    CONFIG_SND_AC97_POWER_SAVE
     CONFIG_PERF_EVENTS
     CONFIG_TRACEPOINTS
     CONFIG_TRACING
-    CONFIG_X86_MSR
     CONFIG_DEBUG_FS
     CONFIG_POWERCAP
-    CONFIG_INTEL_RAPL
+    CONFIG_INTEL_RAPL    # Intel systems only
 
 
-## Outputting a report
+## Generating reports
 
-When PowerTOP is executed as root and without arguments, it runs in
-interactive mode. In this mode, PowerTOP most resembles `top`.
+PowerTOP supports three report formats. All report modes take one measurement
+cycle (controlled by `--time`) and then write the report and exit.
 
-For generating reports, or for filing functional bug reports, there are two
-output modes: CSV and HTML. You can set sample times, the number of iterations,
-a workload over which to run PowerTOP, and whether to include
-`debug`-level output.
+**HTML** — rich report suitable for sharing:
 
-For an HTML report, run:
+    powertop --html                       # writes powertop.html
+    powertop --html=myreport.html         # writes myreport.html
 
-    powertop --html=report.html
+**Markdown** — plain-text report suitable for viewing in any Markdown renderer:
 
-This creates a static `report.html` file, suitable for sharing.
+    powertop --markdown                   # writes powertop.md
+    powertop --markdown=myreport.md       # writes myreport.md
 
-For a Markdown report, run:
+**CSV** — machine-readable report:
 
-    powertop --markdown=report.md
+    powertop --csv                        # writes powertop.csv
+    powertop --csv=myreport.csv           # writes myreport.csv
 
-This creates a `report.md` file (defaults to `powertop.md` if no filename
-is given), suitable for viewing in any Markdown renderer.
+Control how long PowerTOP measures before writing the report:
 
-For a CSV report, run:
+    powertop --html --time=60             # measure for 60 seconds, then report
 
-    powertop --csv=report.csv
+Run multiple measurement iterations (useful for averaging):
 
-This creates a `report.csv` file, also suitable for sharing.
+    powertop --html --iteration=5 --time=20   # 5 iterations × 20 s each
 
-If you want to file a functional bug report, generate a `--debug` HTML report
-and share it:
+Run a workload while measuring:
 
-    powertop --debug --html=report.html
+    powertop --html --workload=/path/to/script.sh
 
 **Important:** Because PowerTOP is intended for privileged (`root`) use, reports
 — especially those generated with `--debug` — will contain verbose system
 information. PowerTOP **does not** sanitize or anonymize its reports. Be mindful
 of this when sharing them.
 
-**Developers:** If you make changes to the HTML reporting code, validate the
-output using the W3C Markup Validation Service and the W3C CSS Validation
-Service:
-* https://validator.w3.org/#validate_by_upload
-* https://jigsaw.w3.org/css-validator/#validate_by_upload
+
+## Filing a bug report
+
+Generate and share a `--debug` HTML report:
+
+    powertop --debug --html=bugreport.html
+
+Then file the issue at: https://github.com/fenrus75/powertop/issues
 
 
-## Calibrating and power numbers
+## Automated tuning
 
-PowerTOP, when running on battery, tracks power consumption and activity on
-the system. Once there are sufficient measurements, PowerTOP can start to
-report power estimates for various activities. You can improve the accuracy
-of these estimates by running a calibration cycle at least once:
+PowerTOP can apply all recommended power-saving settings in one shot without
+entering interactive mode:
+
+    sudo powertop --auto-tune
+
+To preview what changes would be made without actually applying them:
+
+    sudo powertop --auto-tune-dump
+
+The output of `--auto-tune-dump` is a list of shell commands. You can redirect
+it to a script to apply selectively or at boot time:
+
+    sudo powertop --auto-tune-dump > tune.sh
+    # review tune.sh, then:
+    sudo bash tune.sh
+
+
+## Calibrating power estimates
+
+PowerTOP, when running on battery, tracks power consumption and activity to
+build up per-device power estimates. You can improve the accuracy of these
+estimates by running a calibration cycle at least once:
 
     powertop --calibrate
 
-Calibration cycles through various display brightness levels (including
-"off"), USB device activities, and other workloads.
+Calibration cycles through various display brightness levels (including "off"),
+USB device activities, and other workloads. Run it on battery with no other
+active workload for best results.
+
+
+## Other useful options
+
+| Option | Description |
+|--------|-------------|
+| `--time=N` | Collect data for N seconds per iteration (default: 20) |
+| `--iteration=N` | Run N measurement iterations (default: 1) |
+| `--sample=N` | Power consumption sampling interval in seconds (default: 5) |
+| `--workload=FILE` | Execute FILE as a workload during measurement |
+| `--once` | Run one measurement cycle and exit (non-interactive) |
+| `--quiet` | Suppress stderr output |
+| `--debug` | Enable debug-level output |
+| `--version` | Print version information |
 
 
 ## Extech Power Analyzer / Datalogger support
@@ -130,6 +165,13 @@ serial connection. Pass the device node on the command line:
     powertop --extech=/dev/ttyUSB0
 
 (where `ttyUSB0` is the device node of the serial-to-USB adapter)
+
+
+## HTML/CSS validation
+
+If you make changes to the HTML reporting code, validate the output using:
+* https://validator.w3.org/#validate_by_upload
+* https://jigsaw.w3.org/css-validator/#validate_by_upload
 
 
 # Contributing to PowerTOP and getting support
@@ -155,7 +197,7 @@ nl80211 userspace tool - Copyright 2007, 2008	Johannes Berg <johannes@sipsolutio
 # Copyright and License
 
     PowerTOP
-    Copyright (C) 2020  Intel Corporation
+    Copyright (C) 2024  Intel Corporation
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
