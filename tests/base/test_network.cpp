@@ -140,6 +140,43 @@ static void test_speed_recorded()
 }
 
 /* ------------------------------------------------------------------ */
+/* power_usage() tests                                                 */
+/* ------------------------------------------------------------------ */
+
+static void test_power_usage_with_interface_up()
+{
+	/* Use a unique NIC name to avoid global parameter state collisions */
+	fake_net dev("pwr_testnic");
+	dev.fake_up    = 1;
+	dev.fake_speed = 0; /* no link → no link-speed power term */
+
+	dev.start_measurement();
+	dev.end_measurement();
+
+	/* util_up = (start_up + end_up) / 2 = (1 + 1) / 2 = 1.0
+	 * Set the "up" parameter to 2.0W; expected power = 1.0 * 2.0 = 2.0W
+	 * (link-speed and powerunsave branches are not valid without past_results) */
+	set_parameter_value("pwr_testnic-up", 2.0);
+
+	double power = dev.power_usage(&all_results, &all_parameters);
+	PT_ASSERT_TRUE(power >= 1.9 && power <= 2.1);
+}
+
+static void test_power_usage_zero_when_interface_down()
+{
+	fake_net dev("pwr_down_testnic");
+	dev.fake_up = 0;
+
+	dev.start_measurement();
+	dev.end_measurement();
+
+	/* util_up = (0 + 0) / 2 = 0.0 → power contribution = 0 */
+	set_parameter_value("pwr_down_testnic-up", 5.0);
+	double power = dev.power_usage(&all_results, &all_parameters);
+	PT_ASSERT_TRUE(power >= -0.001 && power <= 0.001);
+}
+
+/* ------------------------------------------------------------------ */
 /* main                                                                */
 /* ------------------------------------------------------------------ */
 
@@ -152,6 +189,8 @@ int main()
 	PT_RUN_TEST(test_utilization_non_negative);
 	PT_RUN_TEST(test_interface_down_reported);
 	PT_RUN_TEST(test_speed_recorded);
+	PT_RUN_TEST(test_power_usage_with_interface_up);
+	PT_RUN_TEST(test_power_usage_zero_when_interface_down);
 
 	return pt_test_summary();
 }
