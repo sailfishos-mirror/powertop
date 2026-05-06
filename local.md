@@ -147,6 +147,17 @@ Before/after pattern:
 `ninja coverage` is broken due to duplicate test_framework.cpp symbols;
 use the script instead (it passes `--ignore-errors inconsistent`).
 
+When running the interactive `build_acov/powertop` smoke/leak checks after
+`ninja -C build_acov test`, gcov may print
+`libgcov profiling error: ...gcda:overwriting an existing profile data with a different checksum`.
+Treat this as coverage-profile noise from the coverage-instrumented binary, not
+as an ASAN/runtime failure by itself.
+
+`tests/lib/powertop-test-lib` links `src/lib.cpp` without `src/display.cpp`.
+If `lib.cpp` calls display helpers such as `set_notification()`, keep the
+reference optional (for example via a weak declaration) so non-UI test targets
+still link.
+
 # NaN / division-by-zero guard patterns
 
 Two thresholds are used to guard floating-point divisions:
@@ -235,6 +246,53 @@ is declared in `lib.h` and defined in `lib.cpp`. It converts to local time via
 `pt_format("{:" + fmt + "}", zt)` — strftime-style specifiers (`%c`, `%Y%m%d-%H%M%S`).
 Call sites use `std::chrono::system_clock::now()` instead of `time(nullptr)`.
 
+
+# ncurses fix cycle — subagent build/test/commit workflow
+
+Use `build_acov` (ASAN + coverage + tests) for all ncurses fixes.
+
+```bash
+# Build (no new warnings allowed)
+ninja -C build_acov 2>&1 | grep -E "error:|warning:" | grep -v "^ninja:"
+
+# Test suite (must be 52/52)
+ninja -C build_acov test 2>&1 | tail -8
+
+# Runtime smoke-test (ncurses display path)
+ASAN_OPTIONS=detect_leaks=0 sudo -E build_acov/powertop --once --time=2 2>&1 | grep -E "Leaving|ASAN|error"
+
+# Leak check
+ASAN_OPTIONS=detect_leaks=1 sudo -E build_acov/powertop --once --time=2 2>&1 | grep -i "leak\|SUMMARY"
+
+# Coverage snapshot (optional, for significant changes)
+bash scripts/coverage_report.sh <label> build_acov
+```
+
+Commit rules: `--no-gpg-sign`, message to file, `rm` after commit.
+After committing: update `ncurses.md` summary table with `✅ <hash>` in
+the Status column and add `✅ Fixed by <hash>` to the issue heading.
+
+
+
+## Build environment for ncurses fix cycle
+
+`build_acov` — ASAN + coverage + tests combined build directory.
+Configure: `meson setup build_acov -Denable-tests=true -Db_coverage=true -Db_sanitize=address`
+Build:     `ninja -C build_acov`
+Test:      `ninja -C build_acov test`  (52/52 pass)
+Runtime coverage: `ASAN_OPTIONS=detect_leaks=0 sudo -E build_acov/powertop --once --time=2`
+Leak check:       `ASAN_OPTIONS=detect_leaks=1 sudo -E build_acov/powertop --once --time=2`
+Coverage snapshot: `bash scripts/coverage_report.sh <label> build_acov`
+
+## Coverage baseline (build_acov, test suite + one --once run)
+
+lines: **69.7%** (6331/9078)  functions: **75.4%** (741/983)
+Snapshot saved to: `/tmp/pt_baseline_src.info` and `/tmp/pt_baseline_html/`
+
+Notable ncurses files in baseline:
+- `display.cpp`   — 0% (no unit tests; only covered by --once run)
+- `waketab.cpp`   — 42.3%
+- `tuning/tuning.cpp` — 47.0%
 
 # Fixing review comments and bug reports
 
