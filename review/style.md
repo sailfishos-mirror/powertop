@@ -44,6 +44,9 @@ default:
 }
 ```
 
+### 1.4 ternary operators
+Do not use ternary operators, use discrete if statements always.
+
 ## 2. Naming Conventions
 
 ### 2.1 Files
