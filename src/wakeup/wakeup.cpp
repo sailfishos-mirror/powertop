@@ -23,11 +23,13 @@
  *      Gayatri Kammela <gayatri.kammela@intel.com>
  */
 
-#include "wakeup.h"
+#include <memory>
 #include <vector>
+
+#include "wakeup.h"
 #include "../lib.h"
 
-std::vector<class wakeup *> wakeup_all;
+std::vector<std::unique_ptr<wakeup>> wakeup_all;
 
 wakeup::wakeup(const std::string &str, double _score, const std::string &enable, const std::string &disable)
 {

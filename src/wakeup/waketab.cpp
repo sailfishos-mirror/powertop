@@ -104,11 +104,8 @@ void wakeup_window::cursor_enter(void)
 {
 	if ((size_t)cursor_pos >= wakeup_all.size())
 		return;
-	class wakeup *wake;
+	wakeup *wake = wakeup_all[cursor_pos].get();
 	std::string wakeup_toggle_script;
-	wake = wakeup_all[cursor_pos];
-	if (!wake)
-		return;
 	wakeup_toggle_script = wake->wakeup_toggle_script();
 	wake->wakeup_toggle();
 	ui_notify_user(std::format(">> {}\n", wakeup_toggle_script));
@@ -192,8 +189,5 @@ void shutdown_wakeup()
 
 void clear_wakeup()
 {
-	for (size_t i = 0; i < wakeup_all.size(); i++) {
-		delete wakeup_all[i];
-	}
 	wakeup_all.clear();
 }

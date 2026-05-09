@@ -92,7 +92,6 @@ std::string usb_wakeup::wakeup_toggle_script(void)
 
 static void wakeup_usb_callback(const std::string &d_name)
 {
-	class usb_wakeup *usb;
 	std::string filename;
 
 	filename = std::format("/sys/bus/usb/devices/{}/power/wakeup", d_name);
@@ -100,8 +99,7 @@ static void wakeup_usb_callback(const std::string &d_name)
 		return;
 
 	filename = std::format("/sys/bus/usb/devices/{}/power/wakeup", d_name);
-	usb = new usb_wakeup(filename, d_name);
-	wakeup_all.push_back(usb);
+	wakeup_all.push_back(std::make_unique<usb_wakeup>(filename, d_name));
 }
 
 void add_usb_wakeup(void)

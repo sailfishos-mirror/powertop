@@ -24,7 +24,8 @@
  */
 #pragma once
 
-#include<vector>
+#include <memory>
+#include <vector>
 #include <limits.h>
 #include <string>
 #include "../lib.h"
@@ -73,7 +74,7 @@ public:
 
 };
 
-extern std::vector<class wakeup *> wakeup_all;
+extern std::vector<std::unique_ptr<wakeup>> wakeup_all;
 
 extern void initialize_wakeup(void);
 extern void wakeup_update_display(void);

@@ -92,7 +92,6 @@ std::string ethernet_wakeup::wakeup_toggle_script(void)
 
 static void wakeup_eth_callback(const std::string &d_name)
 {
-	class ethernet_wakeup *eth;
 	std::string filename;
 
 	filename = std::format("/sys/class/net/{}/device/power/wakeup", d_name);
@@ -100,8 +99,7 @@ static void wakeup_eth_callback(const std::string &d_name)
 		return;
 
 	filename = std::format("/sys/class/net/{}/device/power/wakeup", d_name);
-	eth = new ethernet_wakeup(filename, d_name);
-	wakeup_all.push_back(eth);
+	wakeup_all.push_back(std::make_unique<ethernet_wakeup>(filename, d_name));
 }
 
 void add_ethernet_wakeup(void)
