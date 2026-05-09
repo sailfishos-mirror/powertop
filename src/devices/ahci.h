@@ -61,7 +61,7 @@ public:
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle) override;
 	virtual bool power_valid(void) override { return utilization_power_valid(partial_rindex) || utilization_power_valid(active_rindex);};
 	virtual int grouping_prio(void) override { return 1; };
-	virtual void report_device_stats(std::vector<std::string> &ahci_data, int idx);
+	virtual void report_device_stats(std::vector<std::string> &ahci_data, int idx) const;
 	void collect_json_fields(std::string &_js) override;
 };
 

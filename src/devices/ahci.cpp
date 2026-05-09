@@ -268,13 +268,13 @@ void ahci_create_device_stats_table(void)
 	report.end_div();
 }
 
-void ahci::report_device_stats(std::vector<std::string> &ahci_data, int idx)
+void ahci::report_device_stats(std::vector<std::string> &ahci_data, int idx) const
 {
 	int offset=(idx*5+5);
-	double active_util = get_result_value(active_rindex, &all_results);
-	double partial_util = get_result_value(partial_rindex, &all_results);
-	double slumber_util = get_result_value(slumber_rindex, &all_results);
-	double devslp_util = get_result_value(devslp_rindex, &all_results);
+	const double active_util = get_result_value(active_rindex, &all_results);
+	const double partial_util = get_result_value(partial_rindex, &all_results);
+	const double slumber_util = get_result_value(slumber_rindex, &all_results);
+	const double devslp_util = get_result_value(devslp_rindex, &all_results);
 
 	ahci_data[offset] = humanname;
 	offset += 1;
