@@ -52,7 +52,7 @@ public:
 	tunable(void);
 	tunable(const std::string &str, double _score, const std::string &good = "", const std::string &bad = "", const std::string &neutral ="");
 
-	void dump_cmd_good(FILE *fp) {
+	void dump_cmd_good(FILE *fp) const {
 		(void) fprintf(fp, "\n### %s\n# %s\n", desc.c_str(), toggle_good.c_str());
 	}
 
@@ -73,7 +73,7 @@ public:
 	}
 
 
-	virtual std::string description(void) { return desc; };
+	virtual std::string description(void) const { return desc; };
 
 	virtual void toggle(void) { };
 
