@@ -26,12 +26,12 @@ void report_maker::add([[maybe_unused]] const std::string &s) {}
 void report_maker::add_header()        {}
 void report_maker::end_header()        {}
 void report_maker::add_logo()          {}
-void report_maker::add_div([[maybe_unused]] struct tag_attr *a) {}
+void report_maker::add_div([[maybe_unused]] const struct tag_attr *a) {}
 void report_maker::end_div()           {}
-void report_maker::add_title([[maybe_unused]] struct tag_attr *a, [[maybe_unused]] const std::string &s) {}
+void report_maker::add_title([[maybe_unused]] const struct tag_attr *a, [[maybe_unused]] const std::string &s) {}
 void report_maker::add_navigation()    {}
 void report_maker::add_summary_list([[maybe_unused]] const std::vector<std::string> &v) {}
-void report_maker::add_table([[maybe_unused]] const std::vector<std::string> &v, [[maybe_unused]] struct table_attributes *t) {}
+void report_maker::add_table([[maybe_unused]] const std::vector<std::string> &v, [[maybe_unused]] const struct table_attributes *t) {}
 void report_maker::setup_report_formatter() {}
 
 report_maker report(REPORT_OFF);

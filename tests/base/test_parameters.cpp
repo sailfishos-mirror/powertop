@@ -37,7 +37,7 @@
 #include "devices/device.h"
 #include "../test_helper.h"
 
-extern double get_parameter_weight(int index, struct parameter_bundle *the_bundle);
+extern double get_parameter_weight(int index, const struct parameter_bundle *the_bundle);
 
 std::vector<class device *> all_devices;
 

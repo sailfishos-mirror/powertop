@@ -3,6 +3,6 @@
 #include "display.h"
 
 void create_tab(const std::string &, const std::string &,
-                tab_window *, std::string) {}
+                tab_window *, const std::string &) {}
 
 WINDOW *get_ncurses_win(const std::string &) { return nullptr; }

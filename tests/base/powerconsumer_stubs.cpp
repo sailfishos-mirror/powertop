@@ -8,13 +8,13 @@ struct parameter_bundle all_parameters;
 struct result_bundle all_results;
 
 double get_parameter_value([[maybe_unused]] const std::string &name,
-			   [[maybe_unused]] struct parameter_bundle *bundle)
+			   [[maybe_unused]] const struct parameter_bundle *bundle)
 {
 	return 0.0;
 }
 
 double get_parameter_value([[maybe_unused]] unsigned int index,
-			   [[maybe_unused]] struct parameter_bundle *bundle)
+			   [[maybe_unused]] const struct parameter_bundle *bundle)
 {
 	return 0.0;
 }

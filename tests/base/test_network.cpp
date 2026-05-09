@@ -56,19 +56,19 @@ public:
 	int fake_up    = 1;
 	int fake_speed = 0;
 
-	int get_iface_up_calls    = 0;
-	int get_iface_speed_calls = 0;
+	mutable int get_iface_up_calls    = 0;
+	mutable int get_iface_speed_calls = 0;
 
 	explicit fake_net(const std::string &name)
 		: network(name, "/sys/class/net/" + name) {}
 
-	int get_iface_up() override
+	int get_iface_up() const override
 	{
 		get_iface_up_calls++;
 		return fake_up;
 	}
 
-	int get_iface_speed() override
+	int get_iface_speed() const override
 	{
 		get_iface_speed_calls++;
 		return fake_speed;

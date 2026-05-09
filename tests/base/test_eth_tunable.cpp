@@ -59,7 +59,7 @@ public:
 
 	explicit fake_eth() : ethernet_tunable("eth_test") {}
 
-	int get_wol(uint32_t &wolopts) override
+	int get_wol(uint32_t &wolopts) const override
 	{
 		if (get_wol_ret < 0)
 			return -1;

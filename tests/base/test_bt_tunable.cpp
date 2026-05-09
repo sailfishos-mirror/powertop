@@ -64,7 +64,7 @@ public:
 
 	int hci_get_dev_info(unsigned int &flags,
 	                     unsigned int &byte_rx,
-	                     unsigned int &byte_tx) override
+	                     unsigned int &byte_tx) const override
 	{
 		if (info_ret < 0)
 			return -1;
@@ -80,7 +80,7 @@ public:
 		set_power_calls++;
 	}
 
-	time_t current_time() override { return fake_time; }
+	time_t current_time() const override { return fake_time; }
 
 	/* Test-only accessor to verify snapshot state */
 	int get_snap_bytes(int i) { return snap_bytes[i]; }
