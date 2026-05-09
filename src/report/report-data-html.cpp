@@ -7,7 +7,7 @@ void init_div(struct tag_attr *div_attr, const std::string &css_class, const std
 }
 
 void
-init_top_table_attr(struct table_attributes *table_css, int rows, int cols){
+init_top_table_attr(struct table_attributes *table_css, const int rows, const int cols){
 	table_css->pos_table_title=L;
 	table_css->table_class="emphasis1";
 	table_css->th_class="table_sysinfo";
@@ -24,7 +24,7 @@ void init_title_attr(struct tag_attr *title_attr)
 	title_attr->css_id="";
 }
 
-void init_std_table_attr(struct table_attributes *table_css, int rows, int cols){
+void init_std_table_attr(struct table_attributes *table_css, const int rows, const int cols){
 	table_css->table_class="emphasis2";
 	table_css->tr_class="emph1";
 	table_css->th_class="emph_title";
@@ -34,7 +34,7 @@ void init_std_table_attr(struct table_attributes *table_css, int rows, int cols)
 	table_css->rows=rows;
 	table_css->cols=cols;
 }
-void init_std_side_table_attr(struct table_attributes *table_css, int rows, int cols){
+void init_std_side_table_attr(struct table_attributes *table_css, const int rows, const int cols){
 	table_css->table_class="emphasis2 side_by_side_left";
 	table_css->tr_class="emph1";
 	table_css->th_class="emph_title";
@@ -46,7 +46,7 @@ void init_std_side_table_attr(struct table_attributes *table_css, int rows, int 
 }
 
 
-void init_pkg_table_attr(struct table_attributes *table_css, int rows, int cols){
+void init_pkg_table_attr(struct table_attributes *table_css, const int rows, const int cols){
 	table_css->table_class="emphasis2 side_by_side_left";
 	table_css->tr_class="";
 	table_css->th_class="title";
@@ -57,8 +57,8 @@ void init_pkg_table_attr(struct table_attributes *table_css, int rows, int cols)
 	table_css->cols=cols;
 }
 
-void init_core_table_attr(struct table_attributes *table_css, int title_mod,
-		int rows, int cols){
+void init_core_table_attr(struct table_attributes *table_css, const int title_mod,
+		const int rows, const int cols){
 	table_css->table_class="emphasis2 side_by_side_left";
 	table_css->tr_class="";
 	table_css->th_class="title";
@@ -69,8 +69,8 @@ void init_core_table_attr(struct table_attributes *table_css, int title_mod,
 	table_css->cols=cols;
 }
 
-void init_cpu_table_attr(struct table_attributes *table_css, int title_mod,
-		int rows, int cols){
+void init_cpu_table_attr(struct table_attributes *table_css, const int title_mod,
+		const int rows, const int cols){
 	table_css->table_class="emphasis2 side_by_side_left";
 	table_css->tr_class="";
 	table_css->th_class="title";
@@ -82,7 +82,7 @@ void init_cpu_table_attr(struct table_attributes *table_css, int title_mod,
 }
 
 
-void init_nowarp_table_attr(struct table_attributes *table_css, int rows, int cols){
+void init_nowarp_table_attr(struct table_attributes *table_css, const int rows, const int cols){
 	table_css->table_class="emphasis2";
 	table_css->tr_class="emph1";
 	table_css->th_class="emph_title";
@@ -93,7 +93,7 @@ void init_nowarp_table_attr(struct table_attributes *table_css, int rows, int co
 	table_css->cols=cols;
 }
 
-void init_tune_table_attr(struct table_attributes *table_css, int rows, int cols){
+void init_tune_table_attr(struct table_attributes *table_css, const int rows, const int cols){
 	table_css->table_class="emphasis2";
 	table_css->tr_class="tune";
 	table_css->th_class="emph_title";
@@ -104,7 +104,7 @@ void init_tune_table_attr(struct table_attributes *table_css, int rows, int cols
 	table_css->cols=cols;
 }
 
-void init_wakeup_table_attr(struct table_attributes *table_css, int rows, int cols){
+void init_wakeup_table_attr(struct table_attributes *table_css, const int rows, const int cols){
 	table_css->table_class="emphasis2";
 	table_css->tr_class="tune";
 	table_css->th_class="emph_title";
@@ -117,12 +117,12 @@ void init_wakeup_table_attr(struct table_attributes *table_css, int rows, int co
 
 /* Other Helper Functions */
 std::string
-double_to_string(double dval)
+double_to_string(const double dval)
 {
 	std::ostringstream dtmp;
 	dtmp << dval;
 	std::string str = dtmp.str();
-	auto dot = str.find('.');
+	const auto dot = str.find('.');
 	if (dot != std::string::npos)
 		str = str.substr(0, dot + 2);
 	return str;

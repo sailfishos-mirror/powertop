@@ -35,38 +35,38 @@ void
 init_div(struct tag_attr *div_attr, const std::string &css_class, const std::string &css_id);
 
 void
-init_top_table_attr(struct table_attributes *table_css, int rows, int cols);
+init_top_table_attr(struct table_attributes *table_css, const int rows, const int cols);
 
 void
 init_title_attr(struct tag_attr *title_attr);
 
 void
-init_std_table_attr(struct table_attributes *table_css, int rows, int cols);
+init_std_table_attr(struct table_attributes *table_css, const int rows, const int cols);
 
 void
-init_std_side_table_attr(struct table_attributes *table_css, int rows,
-		int cols);
+init_std_side_table_attr(struct table_attributes *table_css, const int rows,
+		const int cols);
 
 void
-init_pkg_table_attr(struct table_attributes *table_css, int rows, int cols);
+init_pkg_table_attr(struct table_attributes *table_css, const int rows, const int cols);
 
 void
-init_core_table_attr(struct table_attributes *table_css, int title_mod,
-		int rows, int cols);
+init_core_table_attr(struct table_attributes *table_css, const int title_mod,
+		const int rows, const int cols);
 
 void
-init_cpu_table_attr(struct table_attributes *table_css, int title_mod,
-		int rows, int cols);
+init_cpu_table_attr(struct table_attributes *table_css, const int title_mod,
+		const int rows, const int cols);
 void
-init_nowarp_table_attr(struct table_attributes *table_css, int rows, int cols);
+init_nowarp_table_attr(struct table_attributes *table_css, const int rows, const int cols);
 
 void
-init_tune_table_attr(struct table_attributes *table_css, int rows, int cols);
+init_tune_table_attr(struct table_attributes *table_css, const int rows, const int cols);
 
 void
-init_wakeup_table_attr(struct table_attributes *table_css, int rows, int cols);
+init_wakeup_table_attr(struct table_attributes *table_css, const int rows, const int cols);
 
 /* Other helper functions */
 std::string
-double_to_string(double dval);
+double_to_string(const double dval);
 
