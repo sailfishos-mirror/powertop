@@ -33,13 +33,11 @@ extern int debug_learning;
 
 double calculate_params(struct parameter_bundle *params)
 {
-	unsigned int i;
-
 	params->score = 0;
 
 
-	for (i = 0; i < past_results.size(); i++)
-		compute_bundle(params, past_results[i]);
+	for (auto *r : past_results)
+		compute_bundle(params, r);
 
 	return params->score;
 }
@@ -75,26 +73,20 @@ static unsigned int previous_measurements;
 static void weed_empties(struct parameter_bundle *best_so_far)
 {
 	double best_score;
-	unsigned int i;
 
 	best_score = best_so_far->score;
 
+	for (auto &param : best_so_far->parameters) {
+		double orgvalue = param;
 
-	for (i = 0; i < best_so_far->parameters.size(); i++) {
-		double orgvalue;
-
-		orgvalue = best_so_far->parameters[i];
-
-
-		best_so_far->parameters[i] = 0.0;
+		param = 0.0;
 
 		calculate_params(best_so_far);
 		if (best_so_far->score > best_score) {
-				best_so_far->parameters[i] = orgvalue;
+			param = orgvalue;
 		} else {
 			best_score = best_so_far->score;
 		}
-
 	}
 	calculate_params(best_so_far);
 

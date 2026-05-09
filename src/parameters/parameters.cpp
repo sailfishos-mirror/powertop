@@ -168,9 +168,8 @@ double get_result_value(int index, struct result_bundle *the_bundle)
 
 int result_device_exists(const std::string &name)
 {
-	unsigned int i;
-	for (i = 0; i < all_devices.size(); i++) {
-		if (all_devices[i]->device_name() == name)
+	for (auto *d : all_devices) {
+		if (d->device_name() == name)
 			return 1;
 	}
 	return 0;
@@ -192,15 +191,14 @@ void report_utilization(int index, double value, struct result_bundle *bundle)
 double compute_bundle(struct parameter_bundle *parameters, struct result_bundle *results)
 {
 	double power = 0;
-	unsigned int i;
 
 	static int bpi = 0;
 
 	if (!bpi)
 		bpi = get_param_index("base power");
 
-	for (i = 0; i < all_devices.size(); i++)
-		power += all_devices[i]->power_usage(results, parameters);
+	for (auto *d : all_devices)
+		power += d->power_usage(results, parameters);
 
 	parameters->actual_power = results->power;
 	parameters->guessed_power = power;
@@ -213,19 +211,14 @@ double compute_bundle(struct parameter_bundle *parameters, struct result_bundle 
 static int precomputed_valid = 0;
 void precompute_valid(void)
 {
-	unsigned int i;
-
-
-	for (i = 0; i < all_devices.size(); i++) {
-		all_devices[i]->cached_valid = all_devices[i]->power_valid();
-	}
+	for (auto *d : all_devices)
+		d->cached_valid = d->power_valid();
 	precomputed_valid = 1;
 }
 
 double bundle_power(struct parameter_bundle *parameters, struct result_bundle *results)
 {
 	double power = 0;
-	unsigned int i;
 	static int bpi = 0;
 
 	if (!bpi)
@@ -234,13 +227,11 @@ double bundle_power(struct parameter_bundle *parameters, struct result_bundle *r
 	if (!precomputed_valid)
 		precompute_valid();
 
-
 	power = parameters->parameters[bpi];
 
-	for (i = 0; i < all_devices.size(); i++) {
-
-		if (all_devices[i]->cached_valid)
-			power += all_devices[i]->power_usage(results, parameters);
+	for (auto *d : all_devices) {
+		if (d->cached_valid)
+			power += d->power_usage(results, parameters);
 	}
 
 	return power;
@@ -293,7 +284,6 @@ struct result_bundle * clone_results(struct result_bundle *bundle)
 {
 	struct result_bundle *b2;
 	std::map<std::string, double>::iterator it;
-	unsigned int i;
 
 	b2 = new struct result_bundle;
 
@@ -301,11 +291,7 @@ struct result_bundle * clone_results(struct result_bundle *bundle)
 		return nullptr;
 
 	b2->power = bundle->power;
-	b2->utilization.resize(bundle->utilization.size());
-
-	for (i = 0; i < bundle->utilization.size(); i++) {
-		b2->utilization[i] = bundle->utilization[i];
-	}
+	b2->utilization = bundle->utilization;
 
 	return b2;
 }
@@ -314,7 +300,6 @@ struct result_bundle * clone_results(struct result_bundle *bundle)
 struct parameter_bundle * clone_parameters(struct parameter_bundle *bundle)
 {
 	struct parameter_bundle *b2;
-	unsigned int i;
 
 	b2 = new struct parameter_bundle;
 
@@ -324,10 +309,7 @@ struct parameter_bundle * clone_parameters(struct parameter_bundle *bundle)
 	b2->score = 0;
 	b2->guessed_power = 0;
 	b2->actual_power = bundle->actual_power;
-	b2->parameters.resize(bundle->parameters.size());
-	for (i = 0; i < bundle->parameters.size(); i++) {
-		b2->parameters[i] = bundle->parameters[i];
-	}
+	b2->parameters = bundle->parameters;
 
 	return b2;
 }
@@ -380,9 +362,8 @@ void dump_past_results(void)
 double average_power(void)
 {
 	double sum = 0.0;
-	unsigned int i;
-	for (i = 0; i < past_results.size(); i++)
-		sum += past_results[i]->power;
+	for (const auto *r : past_results)
+		sum += r->power;
 
 	if (past_results.size())
 		sum = sum / past_results.size() + 0.0001;

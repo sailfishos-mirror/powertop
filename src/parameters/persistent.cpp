@@ -34,8 +34,6 @@
 void save_all_results(const std::string &filename)
 {
 	std::ofstream file;
-	unsigned int i;
-	struct result_bundle *bundle;
 	std::string pathname;
 
 	pathname = get_param_directory(filename);
@@ -45,8 +43,7 @@ void save_all_results(const std::string &filename)
 		fprintf(stderr, "%s %s\n", _("Cannot save to file"), pathname.c_str());
 		return;
 	}
-	for (i = 0; i < past_results.size(); i++) {
-		bundle = past_results[i];
+	for (auto *bundle : past_results) {
 		std::map<std::string, int>::iterator it;
 		file << std::setiosflags(std::ios::fixed) <<  std::setprecision(5) << bundle->power << "\n";
 
@@ -62,9 +59,8 @@ void save_all_results(const std::string &filename)
 
 void close_results()
 {
-	for (unsigned int i = 0; i < past_results.size(); i++) {
-		delete past_results[i];
-	}
+	for (auto *r : past_results)
+		delete r;
 
 	past_results.clear();
 	return;
