@@ -118,12 +118,10 @@ msgid "Invalid P state finalize %<PRIu64>\n"
 msgstr ""
 
 #: src/cpu/cpu_core.cpp:38
-#, fuzzy
 msgid " Core(HW)"
 msgstr "  Jádro"
 
 #: src/cpu/cpu_core.cpp:38
-#, fuzzy
 msgid " Core(OS)"
 msgstr "  Jádro"
 
@@ -141,9 +139,9 @@ msgid "cpu package"
 msgstr "cpu svazek"
 
 #: src/cpu/cpu.cpp:88 src/cpu/cpu.cpp:95
-#, fuzzy, c++-format
+#, c++-format
 msgid "package-{}"
-msgstr "Balíček %i"
+msgstr "Balíček {}"
 
 #: src/cpu/cpu.cpp:89
 msgid "cpu rapl package"
@@ -175,14 +173,14 @@ msgid "C0 polling"
 msgstr "C0 sdílení"
 
 #: src/cpu/cpu_linux.cpp:145
-#, fuzzy, c++-format
+#, c++-format
 msgid " CPU(OS) {}"
-msgstr " CPU %i"
+msgstr " CPU {}"
 
 #: src/cpu/cpu_linux.cpp:230 src/cpu/intel_cpus.cpp:747
-#, fuzzy, c++-format
+#, c++-format
 msgid " CPU {}"
-msgstr " CPU %i"
+msgstr " CPU {}"
 
 #: src/cpu/cpu_package.cpp:48
 #, fuzzy
@@ -349,24 +347,24 @@ msgid "get_pp1_power_policy failed\n"
 msgstr ""
 
 #: src/devices/ahci.cpp:103
-#, fuzzy, c++-format
+#, c++-format
 msgid "SATA link: {}"
-msgstr "SATA link: %s"
+msgstr "SATA link: {}"
 
 #: src/devices/ahci.cpp:105
-#, fuzzy, c++-format
+#, c++-format
 msgid "SATA disk: {}"
-msgstr "SATA disk: %s"
+msgstr "SATA disk: {}"
 
 #: src/devices/alsa.cpp:59
-#, fuzzy, c++-format
+#, c++-format
 msgid "Audio codec {}: {} ({})"
-msgstr "Audio kodek %s: %s (%s)"
+msgstr "Audio kodek {}: {} ({})"
 
 #: src/devices/alsa.cpp:61 src/devices/alsa.cpp:63
-#, fuzzy, c++-format
+#, c++-format
 msgid "Audio codec {}: {}"
-msgstr "Audio kodek %s: %s"
+msgstr "Audio kodek {}: {}"
 
 #: src/devices/backlight.h:51
 #, fuzzy
@@ -374,7 +372,6 @@ msgid "Display backlight"
 msgstr "Kalibrace podsvícení\n"
 
 #: src/devices/devfreq.cpp:243
-#, fuzzy
 msgid "Device Freq stats"
 msgstr "Zařízení"
 
@@ -419,19 +416,18 @@ msgid "Intel GPU"
 msgstr ""
 
 #: src/devices/i915-gpu.h:54
-#, fuzzy
 msgid " ops/s"
 msgstr "GPU ops/s"
 
 #: src/devices/network.cpp:169
-#, fuzzy, c++-format
+#, c++-format
 msgid "Network interface: {} ({})"
-msgstr "Síťové rozhraní: %s (%s)"
+msgstr "Síťové rozhraní: {} ({})"
 
 #: src/devices/rfkill.cpp:48 src/devices/rfkill.cpp:51
-#, fuzzy, c++-format
+#, c++-format
 msgid "Radio device: {}"
-msgstr "Radio zařízení: %s"
+msgstr "Radio zařízení: {}"
 
 #: src/devices/runtime_pm.cpp:141
 #, c++-format
@@ -445,14 +441,13 @@ msgstr ""
 
 #: src/devices/runtime_pm.cpp:141 src/process/processdevice.h:41
 #: src/tuning/tuningi2c.cpp:48 src/tuning/tuningi2c.cpp:50
-#, fuzzy
 msgid "Device"
 msgstr "Zařízení"
 
 #: src/devices/runtime_pm.cpp:163
-#, fuzzy, c++-format
+#, c++-format
 msgid "PCI Device: {}"
-msgstr "PCI Zařízení: %s"
+msgstr "PCI Zařízení: {}"
 
 #: src/devices/thinkpad-fan.h:47
 msgid "Laptop fan"
@@ -463,14 +458,14 @@ msgid "Thinkpad light"
 msgstr ""
 
 #: src/devices/usb.cpp:49 src/devices/usb.cpp:76 src/devices/usb.cpp:78
-#, fuzzy, c++-format
+#, c++-format
 msgid "USB device: {}"
-msgstr "USB zařízení: %s"
+msgstr "USB zařízení: {}"
 
 #: src/devices/usb.cpp:74
-#, fuzzy, c++-format
+#, c++-format
 msgid "USB device: {} ({})"
-msgstr "USB zařízení: %s (%s)"
+msgstr "USB zařízení: {} ({})"
 
 #: src/display.cpp:83
 msgid "Overview"
@@ -530,7 +525,7 @@ msgid ""
 msgstr ""
 
 #: src/main.cpp:121
-#, fuzzy, c-format
+#, c-format
 msgid "PowerTOP version "
 msgstr "PowerTOP verze"
 
@@ -623,7 +618,6 @@ msgid "print this help menu"
 msgstr "vypíše tuto nápovědu"
 
 #: src/main.cpp:157
-#, fuzzy
 msgid "For more help please refer to the 'man 8 powertop'"
 msgstr "Pro více nápovědy přejděte prosím do README"
 
@@ -667,7 +661,7 @@ msgid "modprobe cpufreq_stats failed\n"
 msgstr ""
 
 #: src/main.cpp:403
-#, fuzzy, c-format
+#, c-format
 msgid "modprobe msr failed\n"
 msgstr "Selhal tichý mód!\n"
 
@@ -697,7 +691,7 @@ msgid "Invalid HTML filename\n"
 msgstr ""
 
 #: src/main.cpp:554
-#, fuzzy, c-format
+#, c-format
 msgid "Quiet mode failed!\n"
 msgstr "Selhal tichý mód!\n"
 
@@ -971,34 +965,34 @@ msgid "Disable Bluetooth ({})"
 msgstr ""
 
 #: src/tuning/ethernet.cpp:54 src/wakeup/wakeup_ethernet.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wake-on-lan status for device {}"
-msgstr "Wake-on-lan status zařízení %s"
+msgstr "Wake-on-lan status zařízení {}"
 
 #: src/tuning/runtime.cpp:41
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for {} device {}"
-msgstr "Runtime PM pro %s zařízení %s"
+msgstr "Runtime PM pro {} zařízení {}"
 
 #: src/tuning/runtime.cpp:43
-#, fuzzy, c++-format
+#, c++-format
 msgid "{} device {} has no runtime power management"
-msgstr "%s zařízení %s nemá spustitelnou správu napájení"
+msgstr "{} zařízení {} nemá spustitelnou správu napájení"
 
 #: src/tuning/runtime.cpp:68
-#, fuzzy, c++-format
+#, c++-format
 msgid "PCI Device {} has no runtime power management"
-msgstr "PCI Zařízení %s nemá spustitelnou správu napájení"
+msgstr "PCI Zařízení {} nemá spustitelnou správu napájení"
 
 #: src/tuning/runtime.cpp:70
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for PCI Device {}"
-msgstr "Trvání PM pro PCI zařízení %s"
+msgstr "Trvání PM pro PCI zařízení {}"
 
 #: src/tuning/runtime.cpp:75
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for port {} of PCI device: {}"
-msgstr "Runtime PM pro %s zařízení %s"
+msgstr "Runtime PM pro {} zařízení {}"
 
 #: src/tuning/runtime.cpp:79
 #, fuzzy, c++-format
@@ -1083,44 +1077,41 @@ msgid "Runtime PM for I2C {} {} ({})"
 msgstr "Runtime PM pro %s zařízení %s"
 
 #: src/tuning/tuningi2c.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "I2C {} {} has no runtime power management"
-msgstr "%s zařízení %s nemá spustitelnou správu napájení"
+msgstr "{} zařízení {} nemá spustitelnou správu napájení"
 
 #: src/tuning/tuningsysfs.cpp:148
-#, fuzzy, c++-format
+#, c++-format
 msgid "Enable SATA link power management for {}"
-msgstr "Zapnout správu napájení SATA linku pro %s"
+msgstr "Zapnout správu napájení SATA linku pro {}"
 
 #: src/tuning/tuningusb.cpp:49
-#, fuzzy, c++-format
+#, c++-format
 msgid "Autosuspend for unknown USB device {} ({}:{})"
-msgstr "Automatické uspání pro neznámé USB zařízení %s (%s:%s)"
+msgstr "Automatické uspání pro neznámé USB zařízení {} ({}:{})"
 
 #: src/tuning/tuningusb.cpp:58 src/tuning/tuningusb.cpp:60
 #: src/tuning/tuningusb.cpp:62
-#, fuzzy, c++-format
+#, c++-format
 msgid "Autosuspend for USB device {} [{}]"
-msgstr "Automatické uspání pro USB zařízení %s [%s]"
+msgstr "Automatické uspání pro USB zařízení {} [{}]"
 
 #: src/tuning/wifi.cpp:45
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wireless Power Saving for interface {}"
-msgstr "Úspora energie bezdrátových zařízení %s"
+msgstr "Úspora energie bezdrátových zařízení {}"
 
 #: src/wakeup/waketab.cpp:39
-#, fuzzy
 msgid "WakeUp"
 msgstr "Probuzení/s"
 
 #: src/wakeup/waketab.cpp:39
-#, fuzzy
 msgid " <ESC> Exit | <Enter> Toggle wakeup | <r> Window refresh"
 msgstr " <ESC> Konec | <Enter> Přepnout změnitelné | <r> Obnovit okno"
 
 #: src/wakeup/wakeup.cpp:46 src/wakeup/wakeup_ethernet.cpp:47
 #: src/wakeup/wakeup_usb.cpp:47
-#, fuzzy
 msgid "Enabled"
 msgstr "Možnosti vyladění"
 
@@ -1130,9 +1121,9 @@ msgid "Disabled"
 msgstr ""
 
 #: src/wakeup/wakeup_usb.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wake status for USB device {}"
-msgstr "Wake-on-lan status zařízení %s"
+msgstr "Wake-on-lan status zařízení {}"
 
 #, c-format
 #~ msgid "cpu package %i"

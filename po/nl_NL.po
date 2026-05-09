@@ -139,9 +139,9 @@ msgid "cpu package"
 msgstr "cpu package"
 
 #: src/cpu/cpu.cpp:88 src/cpu/cpu.cpp:95
-#, fuzzy, c++-format
+#, c++-format
 msgid "package-{}"
-msgstr "cpu package %i"
+msgstr "cpu package {}"
 
 #: src/cpu/cpu.cpp:89
 msgid "cpu rapl package"
@@ -367,7 +367,6 @@ msgid "Display backlight"
 msgstr ""
 
 #: src/devices/devfreq.cpp:243
-#, fuzzy
 msgid "Device Freq stats"
 msgstr "Apparaat stats"
 
@@ -437,7 +436,6 @@ msgstr ""
 
 #: src/devices/runtime_pm.cpp:141 src/process/processdevice.h:41
 #: src/tuning/tuningi2c.cpp:48 src/tuning/tuningi2c.cpp:50
-#, fuzzy
 msgid "Device"
 msgstr "Apparaat stats"
 
@@ -522,7 +520,7 @@ msgid ""
 msgstr ""
 
 #: src/main.cpp:121
-#, fuzzy, c-format
+#, c-format
 msgid "PowerTOP version "
 msgstr "PowerTOP"
 

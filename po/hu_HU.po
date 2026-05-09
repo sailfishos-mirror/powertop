@@ -141,9 +141,9 @@ msgid "cpu package"
 msgstr "CPU tok"
 
 #: src/cpu/cpu.cpp:88 src/cpu/cpu.cpp:95
-#, fuzzy, c++-format
+#, c++-format
 msgid "package-{}"
-msgstr "Csomag %i"
+msgstr "Csomag {}"
 
 #: src/cpu/cpu.cpp:89
 msgid "cpu rapl package"
@@ -347,24 +347,24 @@ msgid "get_pp1_power_policy failed\n"
 msgstr ""
 
 #: src/devices/ahci.cpp:103
-#, fuzzy, c++-format
+#, c++-format
 msgid "SATA link: {}"
-msgstr "SATA kapcsolat: %s"
+msgstr "SATA kapcsolat: {}"
 
 #: src/devices/ahci.cpp:105
-#, fuzzy, c++-format
+#, c++-format
 msgid "SATA disk: {}"
-msgstr "SATA lemez: %s"
+msgstr "SATA lemez: {}"
 
 #: src/devices/alsa.cpp:59
-#, fuzzy, c++-format
+#, c++-format
 msgid "Audio codec {}: {} ({})"
-msgstr "Hangkodek %s: %s (%s)"
+msgstr "Hangkodek {}: {} ({})"
 
 #: src/devices/alsa.cpp:61 src/devices/alsa.cpp:63
-#, fuzzy, c++-format
+#, c++-format
 msgid "Audio codec {}: {}"
-msgstr "Hangkodek %s: %s"
+msgstr "Hangkodek {}: {}"
 
 #: src/devices/backlight.h:51
 #, fuzzy
@@ -372,7 +372,6 @@ msgid "Display backlight"
 msgstr "Háttérvilágítás kalibrálása\n"
 
 #: src/devices/devfreq.cpp:243
-#, fuzzy
 msgid "Device Freq stats"
 msgstr "Eszközstatisztika"
 
@@ -417,19 +416,18 @@ msgid "Intel GPU"
 msgstr ""
 
 #: src/devices/i915-gpu.h:54
-#, fuzzy
 msgid " ops/s"
 msgstr "GPU művelet/s"
 
 #: src/devices/network.cpp:169
-#, fuzzy, c++-format
+#, c++-format
 msgid "Network interface: {} ({})"
-msgstr "Hálózati csatoló: %s (%s)"
+msgstr "Hálózati csatoló: {} ({})"
 
 #: src/devices/rfkill.cpp:48 src/devices/rfkill.cpp:51
-#, fuzzy, c++-format
+#, c++-format
 msgid "Radio device: {}"
-msgstr "Rádiós eszköz: %s"
+msgstr "Rádiós eszköz: {}"
 
 #: src/devices/runtime_pm.cpp:141
 #, c++-format
@@ -443,14 +441,13 @@ msgstr ""
 
 #: src/devices/runtime_pm.cpp:141 src/process/processdevice.h:41
 #: src/tuning/tuningi2c.cpp:48 src/tuning/tuningi2c.cpp:50
-#, fuzzy
 msgid "Device"
 msgstr "Eszközstatisztika"
 
 #: src/devices/runtime_pm.cpp:163
-#, fuzzy, c++-format
+#, c++-format
 msgid "PCI Device: {}"
-msgstr "PCI eszköz: %s"
+msgstr "PCI eszköz: {}"
 
 #: src/devices/thinkpad-fan.h:47
 msgid "Laptop fan"
@@ -461,14 +458,14 @@ msgid "Thinkpad light"
 msgstr ""
 
 #: src/devices/usb.cpp:49 src/devices/usb.cpp:76 src/devices/usb.cpp:78
-#, fuzzy, c++-format
+#, c++-format
 msgid "USB device: {}"
-msgstr "USB eszköz: %s"
+msgstr "USB eszköz: {}"
 
 #: src/devices/usb.cpp:74
-#, fuzzy, c++-format
+#, c++-format
 msgid "USB device: {} ({})"
-msgstr "USB eszköz: %s (%s)"
+msgstr "USB eszköz: {} ({})"
 
 #: src/display.cpp:83
 msgid "Overview"
@@ -528,7 +525,7 @@ msgid ""
 msgstr ""
 
 #: src/main.cpp:121
-#, fuzzy, c-format
+#, c-format
 msgid "PowerTOP version "
 msgstr "PowerTOP verzió"
 
@@ -621,7 +618,6 @@ msgid "print this help menu"
 msgstr "e súgó kiíratása"
 
 #: src/main.cpp:157
-#, fuzzy
 msgid "For more help please refer to the 'man 8 powertop'"
 msgstr "További információk a README fájlban találhatók"
 
@@ -963,34 +959,34 @@ msgid "Disable Bluetooth ({})"
 msgstr ""
 
 #: src/tuning/ethernet.cpp:54 src/wakeup/wakeup_ethernet.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wake-on-lan status for device {}"
-msgstr "Felébredés hálózati eseményre (wake-on-lan) állapot a(z) %s eszközön"
+msgstr "Felébredés hálózati eseményre (wake-on-lan) állapot a(z) {} eszközön"
 
 #: src/tuning/runtime.cpp:41
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for {} device {}"
-msgstr "Futásidejű energiagazdálkodás a(z) %s buszon és %s eszközön"
+msgstr "Futásidejű energiagazdálkodás a(z) {} buszon és {} eszközön"
 
 #: src/tuning/runtime.cpp:43
-#, fuzzy, c++-format
+#, c++-format
 msgid "{} device {} has no runtime power management"
-msgstr "A(z) %s busz %s eszközének nincs futásidejű energiagazdálkodása"
+msgstr "A(z) {} busz {} eszközének nincs futásidejű energiagazdálkodása"
 
 #: src/tuning/runtime.cpp:68
-#, fuzzy, c++-format
+#, c++-format
 msgid "PCI Device {} has no runtime power management"
-msgstr "A(z) %s PCI eszköznek nincs futásidejű energiagazdálkodása"
+msgstr "A(z) {} PCI eszköznek nincs futásidejű energiagazdálkodása"
 
 #: src/tuning/runtime.cpp:70
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for PCI Device {}"
-msgstr "Futásidejű energiagazdálkodás a(z) %s PCI eszközön"
+msgstr "Futásidejű energiagazdálkodás a(z) {} PCI eszközön"
 
 #: src/tuning/runtime.cpp:75
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for port {} of PCI device: {}"
-msgstr "Futásidejű energiagazdálkodás a(z) %s buszon és %s eszközön"
+msgstr "Futásidejű energiagazdálkodás a(z) {} buszon és {} eszközön"
 
 #: src/tuning/runtime.cpp:79
 #, fuzzy, c++-format
@@ -1075,44 +1071,41 @@ msgid "Runtime PM for I2C {} {} ({})"
 msgstr "Futásidejű energiagazdálkodás a(z) %s buszon és %s eszközön"
 
 #: src/tuning/tuningi2c.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "I2C {} {} has no runtime power management"
-msgstr "A(z) %s busz %s eszközének nincs futásidejű energiagazdálkodása"
+msgstr "A(z) {} busz {} eszközének nincs futásidejű energiagazdálkodása"
 
 #: src/tuning/tuningsysfs.cpp:148
-#, fuzzy, c++-format
+#, c++-format
 msgid "Enable SATA link power management for {}"
-msgstr "SATA link energiaszabályozás engedélyezése %s számára"
+msgstr "SATA link energiaszabályozás engedélyezése {} számára"
 
 #: src/tuning/tuningusb.cpp:49
-#, fuzzy, c++-format
+#, c++-format
 msgid "Autosuspend for unknown USB device {} ({}:{})"
-msgstr "Automatikus felfüggesztés a(z) %s (%s:%s) ismeretlen USB eszközön"
+msgstr "Automatikus felfüggesztés a(z) {} ({}:{}) ismeretlen USB eszközön"
 
 #: src/tuning/tuningusb.cpp:58 src/tuning/tuningusb.cpp:60
 #: src/tuning/tuningusb.cpp:62
-#, fuzzy, c++-format
+#, c++-format
 msgid "Autosuspend for USB device {} [{}]"
-msgstr "Automatikus felfüggesztés a(z) %s [%s] USB eszközön"
+msgstr "Automatikus felfüggesztés a(z) {} [{}] USB eszközön"
 
 #: src/tuning/wifi.cpp:45
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wireless Power Saving for interface {}"
-msgstr "Vezeték nélküli teljesítménymegtakarítás a(z) %s illesztőegységen"
+msgstr "Vezeték nélküli teljesítménymegtakarítás a(z) {} illesztőegységen"
 
 #: src/wakeup/waketab.cpp:39
-#, fuzzy
 msgid "WakeUp"
 msgstr "Felébredés/s"
 
 #: src/wakeup/waketab.cpp:39
-#, fuzzy
 msgid " <ESC> Exit | <Enter> Toggle wakeup | <r> Window refresh"
 msgstr " <ESC> Kilépés | <Enter> Hangolás átkapcsolása | <r> Ablak frissítése"
 
 #: src/wakeup/wakeup.cpp:46 src/wakeup/wakeup_ethernet.cpp:47
 #: src/wakeup/wakeup_usb.cpp:47
-#, fuzzy
 msgid "Enabled"
 msgstr "Hangolások"
 
@@ -1122,9 +1115,9 @@ msgid "Disabled"
 msgstr ""
 
 #: src/wakeup/wakeup_usb.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wake status for USB device {}"
-msgstr "Felébredés hálózati eseményre (wake-on-lan) állapot a(z) %s eszközön"
+msgstr "Felébredés hálózati eseményre (wake-on-lan) állapot a(z) {} eszközön"
 
 #, c-format
 #~ msgid "cpu package %i"

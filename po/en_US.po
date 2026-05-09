@@ -138,9 +138,9 @@ msgid "cpu package"
 msgstr "cpu package"
 
 #: src/cpu/cpu.cpp:88 src/cpu/cpu.cpp:95
-#, fuzzy, c++-format
+#, c++-format
 msgid "package-{}"
-msgstr "cpu package %i"
+msgstr "cpu package {}"
 
 #: src/cpu/cpu.cpp:89
 msgid "cpu rapl package"
@@ -342,24 +342,24 @@ msgid "get_pp1_power_policy failed\n"
 msgstr ""
 
 #: src/devices/ahci.cpp:103
-#, fuzzy, c++-format
+#, c++-format
 msgid "SATA link: {}"
-msgstr "SATA link: %s"
+msgstr "SATA link: {}"
 
 #: src/devices/ahci.cpp:105
-#, fuzzy, c++-format
+#, c++-format
 msgid "SATA disk: {}"
-msgstr "SATA disk: %s"
+msgstr "SATA disk: {}"
 
 #: src/devices/alsa.cpp:59
-#, fuzzy, c++-format
+#, c++-format
 msgid "Audio codec {}: {} ({})"
-msgstr "Audio codec %s: %s (%s)"
+msgstr "Audio codec {}: {} ({})"
 
 #: src/devices/alsa.cpp:61 src/devices/alsa.cpp:63
-#, fuzzy, c++-format
+#, c++-format
 msgid "Audio codec {}: {}"
-msgstr "Audio codec %s: %s"
+msgstr "Audio codec {}: {}"
 
 #: src/devices/backlight.h:51
 #, fuzzy
@@ -367,7 +367,6 @@ msgid "Display backlight"
 msgstr "Calibrating backlight\n"
 
 #: src/devices/devfreq.cpp:243
-#, fuzzy
 msgid "Device Freq stats"
 msgstr "Device stats"
 
@@ -416,14 +415,14 @@ msgid " ops/s"
 msgstr ""
 
 #: src/devices/network.cpp:169
-#, fuzzy, c++-format
+#, c++-format
 msgid "Network interface: {} ({})"
-msgstr "Network interface: %s (%s)"
+msgstr "Network interface: {} ({})"
 
 #: src/devices/rfkill.cpp:48 src/devices/rfkill.cpp:51
-#, fuzzy, c++-format
+#, c++-format
 msgid "Radio device: {}"
-msgstr "Radio device: %s"
+msgstr "Radio device: {}"
 
 #: src/devices/runtime_pm.cpp:141
 #, c++-format
@@ -437,14 +436,13 @@ msgstr ""
 
 #: src/devices/runtime_pm.cpp:141 src/process/processdevice.h:41
 #: src/tuning/tuningi2c.cpp:48 src/tuning/tuningi2c.cpp:50
-#, fuzzy
 msgid "Device"
 msgstr "Device stats"
 
 #: src/devices/runtime_pm.cpp:163
-#, fuzzy, c++-format
+#, c++-format
 msgid "PCI Device: {}"
-msgstr "PCI Device: %s"
+msgstr "PCI Device: {}"
 
 #: src/devices/thinkpad-fan.h:47
 msgid "Laptop fan"
@@ -455,14 +453,14 @@ msgid "Thinkpad light"
 msgstr ""
 
 #: src/devices/usb.cpp:49 src/devices/usb.cpp:76 src/devices/usb.cpp:78
-#, fuzzy, c++-format
+#, c++-format
 msgid "USB device: {}"
-msgstr "USB device: %s"
+msgstr "USB device: {}"
 
 #: src/devices/usb.cpp:74
-#, fuzzy, c++-format
+#, c++-format
 msgid "USB device: {} ({})"
-msgstr "USB device: %s (%s)"
+msgstr "USB device: {} ({})"
 
 #: src/display.cpp:83
 msgid "Overview"
@@ -522,7 +520,7 @@ msgid ""
 msgstr ""
 
 #: src/main.cpp:121
-#, fuzzy, c-format
+#, c-format
 msgid "PowerTOP version "
 msgstr "PowerTOP "
 
@@ -954,34 +952,34 @@ msgid "Disable Bluetooth ({})"
 msgstr ""
 
 #: src/tuning/ethernet.cpp:54 src/wakeup/wakeup_ethernet.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wake-on-lan status for device {}"
-msgstr "Wake-on-lan status for device %s"
+msgstr "Wake-on-lan status for device {}"
 
 #: src/tuning/runtime.cpp:41
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for {} device {}"
-msgstr "Runtime PM for %s device %s"
+msgstr "Runtime PM for {} device {}"
 
 #: src/tuning/runtime.cpp:43
-#, fuzzy, c++-format
+#, c++-format
 msgid "{} device {} has no runtime power management"
-msgstr "%s device %s has no runtime power management"
+msgstr "{} device {} has no runtime power management"
 
 #: src/tuning/runtime.cpp:68
-#, fuzzy, c++-format
+#, c++-format
 msgid "PCI Device {} has no runtime power management"
-msgstr "PCI Device %s has no runtime power management"
+msgstr "PCI Device {} has no runtime power management"
 
 #: src/tuning/runtime.cpp:70
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for PCI Device {}"
-msgstr "Runtime PM for PCI Device %s"
+msgstr "Runtime PM for PCI Device {}"
 
 #: src/tuning/runtime.cpp:75
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for port {} of PCI device: {}"
-msgstr "Runtime PM for %s device %s"
+msgstr "Runtime PM for {} device {}"
 
 #: src/tuning/runtime.cpp:79
 #, fuzzy, c++-format
@@ -1066,9 +1064,9 @@ msgid "Runtime PM for I2C {} {} ({})"
 msgstr "Runtime PM for %s device %s"
 
 #: src/tuning/tuningi2c.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "I2C {} {} has no runtime power management"
-msgstr "%s device %s has no runtime power management"
+msgstr "{} device {} has no runtime power management"
 
 #: src/tuning/tuningsysfs.cpp:148
 #, fuzzy, c++-format
@@ -1076,20 +1074,20 @@ msgid "Enable SATA link power management for {}"
 msgstr "Enable Audio codec power management"
 
 #: src/tuning/tuningusb.cpp:49
-#, fuzzy, c++-format
+#, c++-format
 msgid "Autosuspend for unknown USB device {} ({}:{})"
-msgstr "Autosuspend for unknown USB device %s (%s:%s)"
+msgstr "Autosuspend for unknown USB device {} ({}:{})"
 
 #: src/tuning/tuningusb.cpp:58 src/tuning/tuningusb.cpp:60
 #: src/tuning/tuningusb.cpp:62
-#, fuzzy, c++-format
+#, c++-format
 msgid "Autosuspend for USB device {} [{}]"
-msgstr "Autosuspend for USB device %s [%s]"
+msgstr "Autosuspend for USB device {} [{}]"
 
 #: src/tuning/wifi.cpp:45
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wireless Power Saving for interface {}"
-msgstr "Wireless Power Saving for interface %s"
+msgstr "Wireless Power Saving for interface {}"
 
 #: src/wakeup/waketab.cpp:39
 msgid "WakeUp"
@@ -1101,7 +1099,6 @@ msgstr ""
 
 #: src/wakeup/wakeup.cpp:46 src/wakeup/wakeup_ethernet.cpp:47
 #: src/wakeup/wakeup_usb.cpp:47
-#, fuzzy
 msgid "Enabled"
 msgstr "Tunables"
 
@@ -1111,9 +1108,9 @@ msgid "Disabled"
 msgstr ""
 
 #: src/wakeup/wakeup_usb.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wake status for USB device {}"
-msgstr "Wake-on-lan status for device %s"
+msgstr "Wake-on-lan status for device {}"
 
 #, c-format
 #~ msgid "cpu package %i"

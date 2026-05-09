@@ -117,12 +117,10 @@ msgid "Invalid P state finalize %<PRIu64>\n"
 msgstr ""
 
 #: src/cpu/cpu_core.cpp:38
-#, fuzzy
 msgid " Core(HW)"
 msgstr "  核心"
 
 #: src/cpu/cpu_core.cpp:38
-#, fuzzy
 msgid " Core(OS)"
 msgstr "  核心"
 
@@ -140,9 +138,9 @@ msgid "cpu package"
 msgstr "cpu 代號"
 
 #: src/cpu/cpu.cpp:88 src/cpu/cpu.cpp:95
-#, fuzzy, c++-format
+#, c++-format
 msgid "package-{}"
-msgstr "代號 %i"
+msgstr "代號 {}"
 
 #: src/cpu/cpu.cpp:89
 msgid "cpu rapl package"
@@ -172,14 +170,14 @@ msgid "C0 polling"
 msgstr "C0 輪巡"
 
 #: src/cpu/cpu_linux.cpp:145
-#, fuzzy, c++-format
+#, c++-format
 msgid " CPU(OS) {}"
-msgstr " CPU %i"
+msgstr " CPU {}"
 
 #: src/cpu/cpu_linux.cpp:230 src/cpu/intel_cpus.cpp:747
-#, fuzzy, c++-format
+#, c++-format
 msgid " CPU {}"
-msgstr " CPU %i"
+msgstr " CPU {}"
 
 #: src/cpu/cpu_package.cpp:48
 #, fuzzy
@@ -346,24 +344,24 @@ msgid "get_pp1_power_policy failed\n"
 msgstr ""
 
 #: src/devices/ahci.cpp:103
-#, fuzzy, c++-format
+#, c++-format
 msgid "SATA link: {}"
-msgstr "SATA 連線: %s"
+msgstr "SATA 連線: {}"
 
 #: src/devices/ahci.cpp:105
-#, fuzzy, c++-format
+#, c++-format
 msgid "SATA disk: {}"
-msgstr "SATA 磁碟: %s"
+msgstr "SATA 磁碟: {}"
 
 #: src/devices/alsa.cpp:59
-#, fuzzy, c++-format
+#, c++-format
 msgid "Audio codec {}: {} ({})"
-msgstr "音效設備 %s: %s (%s)"
+msgstr "音效設備 {}: {} ({})"
 
 #: src/devices/alsa.cpp:61 src/devices/alsa.cpp:63
-#, fuzzy, c++-format
+#, c++-format
 msgid "Audio codec {}: {}"
-msgstr "音效設備 %s: %s"
+msgstr "音效設備 {}: {}"
 
 #: src/devices/backlight.h:51
 #, fuzzy
@@ -371,7 +369,6 @@ msgid "Display backlight"
 msgstr "校正螢幕背光\n"
 
 #: src/devices/devfreq.cpp:243
-#, fuzzy
 msgid "Device Freq stats"
 msgstr "設備統計"
 
@@ -416,19 +413,18 @@ msgid "Intel GPU"
 msgstr ""
 
 #: src/devices/i915-gpu.h:54
-#, fuzzy
 msgid " ops/s"
 msgstr "GPU 指令 / 秒"
 
 #: src/devices/network.cpp:169
-#, fuzzy, c++-format
+#, c++-format
 msgid "Network interface: {} ({})"
-msgstr "網路介面卡: %s (%s)"
+msgstr "網路介面卡: {} ({})"
 
 #: src/devices/rfkill.cpp:48 src/devices/rfkill.cpp:51
-#, fuzzy, c++-format
+#, c++-format
 msgid "Radio device: {}"
-msgstr "無線電設備: %s"
+msgstr "無線電設備: {}"
 
 #: src/devices/runtime_pm.cpp:141
 #, c++-format
@@ -442,14 +438,13 @@ msgstr ""
 
 #: src/devices/runtime_pm.cpp:141 src/process/processdevice.h:41
 #: src/tuning/tuningi2c.cpp:48 src/tuning/tuningi2c.cpp:50
-#, fuzzy
 msgid "Device"
 msgstr "設備統計"
 
 #: src/devices/runtime_pm.cpp:163
-#, fuzzy, c++-format
+#, c++-format
 msgid "PCI Device: {}"
-msgstr "PCI 設備: %s"
+msgstr "PCI 設備: {}"
 
 #: src/devices/thinkpad-fan.h:47
 msgid "Laptop fan"
@@ -460,14 +455,14 @@ msgid "Thinkpad light"
 msgstr ""
 
 #: src/devices/usb.cpp:49 src/devices/usb.cpp:76 src/devices/usb.cpp:78
-#, fuzzy, c++-format
+#, c++-format
 msgid "USB device: {}"
-msgstr "USB 設備: %s"
+msgstr "USB 設備: {}"
 
 #: src/devices/usb.cpp:74
-#, fuzzy, c++-format
+#, c++-format
 msgid "USB device: {} ({})"
-msgstr "USB 設備: %s (%s)"
+msgstr "USB 設備: {} ({})"
 
 #: src/display.cpp:83
 msgid "Overview"
@@ -527,7 +522,7 @@ msgid ""
 msgstr ""
 
 #: src/main.cpp:121
-#, fuzzy, c-format
+#, c-format
 msgid "PowerTOP version "
 msgstr "PowerTop 版本"
 
@@ -620,7 +615,6 @@ msgid "print this help menu"
 msgstr "顯示此輔助說明選單"
 
 #: src/main.cpp:157
-#, fuzzy
 msgid "For more help please refer to the 'man 8 powertop'"
 msgstr "更多的輔助說明請參閱 README"
 
@@ -664,7 +658,7 @@ msgid "modprobe cpufreq_stats failed\n"
 msgstr ""
 
 #: src/main.cpp:403
-#, fuzzy, c-format
+#, c-format
 msgid "modprobe msr failed\n"
 msgstr "進入安靜模式失敗！\n"
 
@@ -694,7 +688,7 @@ msgid "Invalid HTML filename\n"
 msgstr ""
 
 #: src/main.cpp:554
-#, fuzzy, c-format
+#, c-format
 msgid "Quiet mode failed!\n"
 msgstr "進入安靜模式失敗！\n"
 
@@ -960,34 +954,34 @@ msgid "Disable Bluetooth ({})"
 msgstr ""
 
 #: src/tuning/ethernet.cpp:54 src/wakeup/wakeup_ethernet.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wake-on-lan status for device {}"
-msgstr "網路喚醒啟用狀態於設備 %s"
+msgstr "網路喚醒啟用狀態於設備 {}"
 
 #: src/tuning/runtime.cpp:41
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for {} device {}"
-msgstr "執行時期省電 %s 設備 %s"
+msgstr "執行時期省電 {} 設備 {}"
 
 #: src/tuning/runtime.cpp:43
-#, fuzzy, c++-format
+#, c++-format
 msgid "{} device {} has no runtime power management"
-msgstr "%s 設備 %s 沒有執行時期電源管理功能"
+msgstr "{} 設備 {} 沒有執行時期電源管理功能"
 
 #: src/tuning/runtime.cpp:68
-#, fuzzy, c++-format
+#, c++-format
 msgid "PCI Device {} has no runtime power management"
-msgstr "PCI 設備 %s 沒有執行時期電源管理功能"
+msgstr "PCI 設備 {} 沒有執行時期電源管理功能"
 
 #: src/tuning/runtime.cpp:70
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for PCI Device {}"
-msgstr "PCI 設備 %s 電源管理"
+msgstr "PCI 設備 {} 電源管理"
 
 #: src/tuning/runtime.cpp:75
-#, fuzzy, c++-format
+#, c++-format
 msgid "Runtime PM for port {} of PCI device: {}"
-msgstr "執行時期省電 %s 設備 %s"
+msgstr "執行時期省電 {} 設備 {}"
 
 #: src/tuning/runtime.cpp:79
 #, fuzzy, c++-format
@@ -1072,44 +1066,41 @@ msgid "Runtime PM for I2C {} {} ({})"
 msgstr "執行時期省電 %s 設備 %s"
 
 #: src/tuning/tuningi2c.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "I2C {} {} has no runtime power management"
-msgstr "%s 設備 %s 沒有執行時期電源管理功能"
+msgstr "{} 設備 {} 沒有執行時期電源管理功能"
 
 #: src/tuning/tuningsysfs.cpp:148
-#, fuzzy, c++-format
+#, c++-format
 msgid "Enable SATA link power management for {}"
-msgstr "啟用 %s 的 SATA 連線電源管理"
+msgstr "啟用 {} 的 SATA 連線電源管理"
 
 #: src/tuning/tuningusb.cpp:49
-#, fuzzy, c++-format
+#, c++-format
 msgid "Autosuspend for unknown USB device {} ({}:{})"
-msgstr "自動閒置於未知的 USB 設備 %s (%s:%s)"
+msgstr "自動閒置於未知的 USB 設備 {} ({}:{})"
 
 #: src/tuning/tuningusb.cpp:58 src/tuning/tuningusb.cpp:60
 #: src/tuning/tuningusb.cpp:62
-#, fuzzy, c++-format
+#, c++-format
 msgid "Autosuspend for USB device {} [{}]"
-msgstr "自動閒置於 USB 設備 %s [%s]"
+msgstr "自動閒置於 USB 設備 {} [{}]"
 
 #: src/tuning/wifi.cpp:45
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wireless Power Saving for interface {}"
-msgstr "無線網路省電狀態於設備 %s"
+msgstr "無線網路省電狀態於設備 {}"
 
 #: src/wakeup/waketab.cpp:39
-#, fuzzy
 msgid "WakeUp"
 msgstr "喚醒 / 秒"
 
 #: src/wakeup/waketab.cpp:39
-#, fuzzy
 msgid " <ESC> Exit | <Enter> Toggle wakeup | <r> Window refresh"
 msgstr " <ESC> 離開 | <Enter> 切換選項開關   | <r> 更新視窗內容"
 
 #: src/wakeup/wakeup.cpp:46 src/wakeup/wakeup_ethernet.cpp:47
 #: src/wakeup/wakeup_usb.cpp:47
-#, fuzzy
 msgid "Enabled"
 msgstr "可調選項"
 
@@ -1119,9 +1110,9 @@ msgid "Disabled"
 msgstr ""
 
 #: src/wakeup/wakeup_usb.cpp:50
-#, fuzzy, c++-format
+#, c++-format
 msgid "Wake status for USB device {}"
-msgstr "網路喚醒啟用狀態於設備 %s"
+msgstr "網路喚醒啟用狀態於設備 {}"
 
 #, c-format
 #~ msgid "cpu package %i"
