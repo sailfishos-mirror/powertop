@@ -54,7 +54,7 @@ public:
 	void collect_json_fields(std::string &_js) override;
 
 protected:
-	virtual int display_is_on(void);
+	virtual int display_is_on(void) const;
 };
 
 extern void create_all_backlights(void);

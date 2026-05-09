@@ -82,7 +82,7 @@ static int dpms_screen_on(void)
 	return 0;
 }
 
-int backlight::display_is_on(void)
+int backlight::display_is_on(void) const
 {
 	return dpms_screen_on();
 }

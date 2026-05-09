@@ -24,7 +24,7 @@ test_backlight(const std::string &name, const std::string &path)
 : backlight(name, path) {}
 
 protected:
-int display_is_on(void) override { return 1; }
+int display_is_on(void) const override { return 1; }
 };
 
 static void test_constructor()
