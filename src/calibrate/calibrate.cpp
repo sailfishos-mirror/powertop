@@ -109,8 +109,7 @@ static void suspend_all_usb_devices(void)
 
 static void find_all_rfkill_callback(const std::string &d_name)
 {
-	std::string filename;
-	filename = std::format("/sys/class/rfkill/{}/soft", d_name);
+	const std::string filename = std::format("/sys/class/rfkill/{}/soft", d_name);
 	if (access(filename.c_str(), R_OK) != 0)
 		return;
 	save_sysfs(filename);
@@ -159,8 +158,7 @@ static void lower_backlight(void)
 
 static void find_scsi_link_callback(const std::string &d_name)
 {
-	std::string filename;
-	filename = std::format("/sys/class/scsi_host/{}/link_power_management_policy", d_name);
+	const std::string filename = std::format("/sys/class/scsi_host/{}/link_power_management_policy", d_name);
 	if (access(filename.c_str(), R_OK)!=0)
 		return;
 
@@ -204,11 +202,10 @@ static void *burn_cpu_wakeups(void *dummy)
 
 static void *burn_disk([[maybe_unused]] void *dummy)
 {
-	int fd;
 	char buffer[64*1024];
 	char filename[] = "/tmp/powertop.XXXXXX";
 
-	fd = mkstemp(filename);
+	const int fd = mkstemp(filename);
 
 	if (fd < 0) {
 		printf(_("Cannot create temp file\n"));
@@ -226,7 +223,7 @@ static void *burn_disk([[maybe_unused]] void *dummy)
 }
 
 
-static void cpu_calibration(int threads)
+static void cpu_calibration(const int threads)
 {
 	int i;
 	std::vector<pthread_t> thr_vec;
@@ -250,7 +247,7 @@ static void cpu_calibration(int threads)
 		pthread_join(thr, nullptr);
 }
 
-static void wakeup_calibration(unsigned long interval)
+static void wakeup_calibration(const unsigned long interval)
 {
 	pthread_t thr;
 
