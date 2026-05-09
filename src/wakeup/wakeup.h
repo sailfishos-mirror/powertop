@@ -49,9 +49,9 @@ public:
 
 	virtual ~wakeup () {};
 
-	virtual int wakeup_value(void) { return WAKEUP_DISABLE; }
+	virtual int wakeup_value(void) const { return WAKEUP_DISABLE; }
 
-	virtual const std::string& wakeup_string(void)
+	virtual const std::string& wakeup_string(void) const
 	{
 		switch (wakeup_value()) {
 		case WAKEUP_ENABLE:
@@ -67,9 +67,9 @@ public:
 
 	virtual void wakeup_toggle(void) { };
 
-	virtual std::string wakeup_toggle_script(void) { return toggle_enable; }
+	virtual std::string wakeup_toggle_script(void) const { return toggle_enable; }
 
-	virtual void collect_json_fields(std::string &_js);
+	virtual void collect_json_fields(std::string &_js) const;
 	std::string serialize() { JSON_START(); collect_json_fields(_js); JSON_END(); }
 
 };

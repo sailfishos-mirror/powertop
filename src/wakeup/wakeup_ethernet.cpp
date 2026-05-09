@@ -53,11 +53,9 @@ ethernet_wakeup::ethernet_wakeup([[maybe_unused]] const std::string &path, const
 	toggle_disable = std::format("echo 'disabled' > '{}';", eth_path);
 }
 
-int ethernet_wakeup::wakeup_value(void)
+int ethernet_wakeup::wakeup_value(void) const
 {
-	std::string content;
-
-	content = read_sysfs_string(eth_path);
+	const std::string content = read_sysfs_string(eth_path);
 
 	if (content == "enabled")
 		return WAKEUP_ENABLE;
@@ -78,10 +76,9 @@ void ethernet_wakeup::wakeup_toggle(void)
 	write_sysfs(eth_path, "enabled");
 }
 
-std::string ethernet_wakeup::wakeup_toggle_script(void)
+std::string ethernet_wakeup::wakeup_toggle_script(void) const
 {
-	int enable;
-	enable = wakeup_value();
+	const int enable = wakeup_value();
 
 	if (enable == WAKEUP_ENABLE) {
 		return toggle_disable;
@@ -107,7 +104,7 @@ void add_ethernet_wakeup(void)
 	process_directory("/sys/class/net/", wakeup_eth_callback);
 }
 
-void ethernet_wakeup::collect_json_fields(std::string &_js)
+void ethernet_wakeup::collect_json_fields(std::string &_js) const
 {
     wakeup::collect_json_fields(_js);
     JSON_FIELD(eth_path);

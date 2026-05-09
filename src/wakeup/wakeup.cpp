@@ -48,7 +48,7 @@ wakeup::wakeup(void)
 	wakeup_idle = _("Unknown");
 }
 
-void wakeup::collect_json_fields(std::string &_js)
+void wakeup::collect_json_fields(std::string &_js) const
 {
 	JSON_FIELD(desc);
 	JSON_FIELD(score);

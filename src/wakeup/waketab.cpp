@@ -69,8 +69,8 @@ static void __wakeup_update_display(int cursor_pos)
 	wmove(win, 1,0);
 
 	for (i = 0; i < wakeup_all.size(); i++) {
-		std::string res = wakeup_all[i]->wakeup_string();
-		std::string desc = wakeup_all[i]->description();
+		const std::string res = wakeup_all[i]->wakeup_string();
+		const std::string desc = wakeup_all[i]->description();
 
 		if ((int)i != cursor_pos) {
 			wattroff(win, A_REVERSE);
@@ -105,15 +105,15 @@ void wakeup_window::cursor_enter(void)
 	if ((size_t)cursor_pos >= wakeup_all.size())
 		return;
 	wakeup *wake = wakeup_all[cursor_pos].get();
-	std::string wakeup_toggle_script;
-	wakeup_toggle_script = wake->wakeup_toggle_script();
+	const std::string wakeup_toggle_script = wake->wakeup_toggle_script();
 	wake->wakeup_toggle();
 	ui_notify_user(std::format(">> {}\n", wakeup_toggle_script));
 }
 
 void report_show_wakeup(void)
 {
-	int idx, rows = 0, cols;
+	int idx, rows = 0;
+	const int cols = 2;
 
 	/* div attr css_class and css_id */
 	tag_attr div_attr;
@@ -125,12 +125,10 @@ void report_show_wakeup(void)
 
 	/* Set Table attributes, rows, and cols */
 	table_attributes wakeup_table_css;
-	cols=2;
 	idx = cols;
 
 	for (const auto &w : wakeup_all) {
-		int tgb;
-		tgb = w->wakeup_value();
+		const int tgb = w->wakeup_value();
 		if (tgb == WAKEUP_DISABLE)
 			rows+=1;
 	}
@@ -149,8 +147,7 @@ void report_show_wakeup(void)
 		wakeup_data[1]=__("Script");
 
 		for (const auto &w : wakeup_all) {
-			int gb;
-			gb = w->wakeup_value();
+			const int gb = w->wakeup_value();
 			if (gb != WAKEUP_DISABLE)
 				continue;
 			wakeup_data[idx]=w->description();

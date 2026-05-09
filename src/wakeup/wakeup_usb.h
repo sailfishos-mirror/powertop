@@ -34,13 +34,13 @@ public:
 	std::string interf;
 	usb_wakeup(const std::string &usb_path, const std::string &iface);
 
-	virtual int wakeup_value(void) override;
+	virtual int wakeup_value(void) const override;
 
 	virtual void wakeup_toggle(void) override;
 
-	virtual std::string wakeup_toggle_script(void) override;
+	virtual std::string wakeup_toggle_script(void) const override;
 
-	void collect_json_fields(std::string &_js) override;
+	void collect_json_fields(std::string &_js) const override;
 
 };
 
