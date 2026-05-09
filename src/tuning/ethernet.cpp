@@ -133,12 +133,9 @@ void ethernet_tunable::toggle(void)
 
 void ethtunable_callback(const std::string &d_name)
 {
-	class ethernet_tunable *eth;
 	if (d_name == "lo")
 		return;
-	eth = new(std::nothrow) ethernet_tunable(d_name);
-	if (eth)
-		all_tunables.push_back(eth);
+	all_tunables.push_back(std::make_unique<ethernet_tunable>(d_name));
 }
 
 void add_ethernet_tunable(void)

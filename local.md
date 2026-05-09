@@ -175,6 +175,18 @@ A full review of all `std::vector<T*>` in `src/` is in `raii.md`.
 
 **Special:** `perf_bundle::records` — `vector<void*>` with malloc/free; needs custom
 RAII wrapper rather than `unique_ptr<T>` (see `raii.md`).
+- `wakeup_all` is now `std::vector<std::unique_ptr<wakeup>>`; use
+  `std::make_unique<>` at registration sites, `wakeup_all.clear()` for teardown,
+  and `.get()` only where a raw `wakeup *` is temporarily needed.
+- `all_tunables` / `all_untunables` are now `std::vector<std::unique_ptr<tunable>>`;
+  registration sites should use `std::make_unique<>` plus `std::move()` for
+  conditional insertion, `clear_tuning()` should just call `.clear()`, and UI/
+  test code should use `.get()` or container resize/clear rather than manual
+  `delete` loops.
+- `measurement_manager.cpp`: the factory function `extech_power_meter(const std::string &)`
+  collides with the class name; when constructing the class inside that function,
+  use `new class extech_power_meter(...)` (or `emplace_back(new class ... )`) to
+  disambiguate the type name from the function.
 
 # NaN / division-by-zero guard patterns
 

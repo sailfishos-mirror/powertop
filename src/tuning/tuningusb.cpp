@@ -93,7 +93,6 @@ void usb_tunable::toggle(void)
 
 static void add_usb_callback(const std::string &d_name)
 {
-	class usb_tunable *usb;
 	std::string filename;
 
 	filename = std::format("/sys/bus/usb/devices/{}/power/control", d_name);
@@ -123,8 +122,7 @@ static void add_usb_callback(const std::string &d_name)
 	}
 
 	filename = std::format("/sys/bus/usb/devices/{}", d_name);
-	usb = new usb_tunable(filename, d_name);
-	all_tunables.push_back(usb);
+	all_tunables.push_back(std::make_unique<usb_tunable>(filename, d_name));
 }
 
 void add_usb_tunables(void)

@@ -224,14 +224,12 @@ void add_bt_tunable(void)
 			continue;
 		}
 
-		auto *bt = new bt_tunable(id, entry);
+		auto bt = std::make_unique<bt_tunable>(id, entry);
 		unsigned int flags, byte_rx, byte_tx;
-		if (bt->hci_get_dev_info(flags, byte_rx, byte_tx) < 0) {
-			delete bt;
+		if (bt->hci_get_dev_info(flags, byte_rx, byte_tx) < 0)
 			continue;
-		}
 
-		all_tunables.push_back(bt);
+		all_tunables.push_back(std::move(bt));
 	}
 }
 

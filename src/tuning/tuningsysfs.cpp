@@ -135,10 +135,7 @@ void add_sysfs_tunable(const std::string &str, const std::string &_sysfs_path, c
 	}
 	if (!any_accessible)
 		return;
-	class sysfs_tunable *st;
-
-	st = new sysfs_tunable(str, _sysfs_path, _target_content);
-	all_tunables.push_back(st);
+	all_tunables.push_back(std::make_unique<sysfs_tunable>(str, _sysfs_path, _target_content));
 }
 
 static void add_sata_callback(const std::string &d_name)

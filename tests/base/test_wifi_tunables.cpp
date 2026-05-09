@@ -49,8 +49,6 @@ static void test_add_wifi_tunables_filters_by_prefix()
 	PT_ASSERT_TRUE(found_wlp2s0);
 
 	/* Clean up global state */
-	for (size_t i = before; i < all_tunables.size(); i++)
-		delete all_tunables[i];
 	all_tunables.resize(before);
 }
 

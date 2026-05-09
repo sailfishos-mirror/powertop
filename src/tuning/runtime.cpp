@@ -118,7 +118,6 @@ void add_runtime_tunables(const std::string &bus)
 	int max_ports = 32, count=0;
 
 	for (const auto &dev : list_directory(std::format("/sys/bus/{}/devices/", bus))) {
-		class runtime_tunable *runtime, *runtime_ahci_port, *runtime_ahci_disk;
 
 		filename = std::format("/sys/bus/{}/devices/{}/power/control", bus, dev);
 
@@ -128,12 +127,12 @@ void add_runtime_tunables(const std::string &bus)
 
 		filename = std::format("/sys/bus/{}/devices/{}", bus, dev);
 
-		runtime = new runtime_tunable(filename, bus, dev, "");
+		auto runtime = std::make_unique<runtime_tunable>(filename, bus, dev, "");
 
 		if (!device_has_runtime_pm(filename))
-			all_untunables.push_back(runtime);
+			all_untunables.push_back(std::move(runtime));
 		else
-			all_tunables.push_back(runtime);
+			all_tunables.push_back(std::move(runtime));
 
 		for (int i=0; i < max_ports; i++) {
 			port = std::format("ata{}", i);
@@ -143,12 +142,12 @@ void add_runtime_tunables(const std::string &bus)
 				continue;
 
 			filename = std::format("/sys/bus/{}/devices/{}/{}", bus, dev, port);
-			runtime_ahci_port = new runtime_tunable(filename, bus, dev, port);
+			auto runtime_ahci_port = std::make_unique<runtime_tunable>(filename, bus, dev, port);
 
 			if (!device_has_runtime_pm(filename))
-				all_untunables.push_back(runtime_ahci_port);
+				all_untunables.push_back(std::move(runtime_ahci_port));
 			else
-				all_tunables.push_back(runtime_ahci_port);
+				all_tunables.push_back(std::move(runtime_ahci_port));
 		}
 
 		for (char blk = 'a'; blk <= 'z'; blk++)
@@ -163,11 +162,11 @@ void add_runtime_tunables(const std::string &bus)
 
 			port = std::format("sd{}", blk);
 			filename = std::format("/sys/block/{}/device", port);
-			runtime_ahci_disk = new runtime_tunable(filename, bus, dev, port);
+			auto runtime_ahci_disk = std::make_unique<runtime_tunable>(filename, bus, dev, port);
 			if (!device_has_runtime_pm(filename))
-				all_untunables.push_back(runtime_ahci_disk);
+				all_untunables.push_back(std::move(runtime_ahci_disk));
 			else
-				all_tunables.push_back(runtime_ahci_disk);
+				all_tunables.push_back(std::move(runtime_ahci_disk));
 		}
 		count = 1;
 

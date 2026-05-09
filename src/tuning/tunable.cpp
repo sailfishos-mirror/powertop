@@ -23,12 +23,14 @@
  *	Arjan van de Ven <arjan@linux.intel.com>
  */
 
+#include <memory>
+
 #include "tuning.h"
 #include "tunable.h"
 #include "../lib.h"
 
-std::vector<class tunable *> all_tunables;
-std::vector<class tunable *> all_untunables;
+std::vector<std::unique_ptr<tunable>> all_tunables;
+std::vector<std::unique_ptr<tunable>> all_untunables;
 
 
 tunable::tunable(const std::string &str, double _score, const std::string &good, const std::string &bad, const std::string &neutral)

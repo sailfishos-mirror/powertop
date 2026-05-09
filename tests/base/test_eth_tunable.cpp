@@ -174,8 +174,6 @@ int main()
 
 	int result = pt_test_summary();
 
-	for (auto *t : all_tunables)
-		delete t;
 	all_tunables.clear();
 
 	return result;

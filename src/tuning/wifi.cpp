@@ -72,11 +72,8 @@ void wifi_tunable::toggle(void)
 void add_wifi_tunables(void)
 {
 	for (const auto &name : list_directory("/sys/class/net/")) {
-		if (name.starts_with("wlan") || name.starts_with("wlp") || name.starts_with("wlx")) {
-			class wifi_tunable *wifi = new(std::nothrow) wifi_tunable(name);
-			if (wifi)
-				all_tunables.push_back(wifi);
-		}
+		if (name.starts_with("wlan") || name.starts_with("wlp") || name.starts_with("wlx"))
+			all_tunables.push_back(std::make_unique<wifi_tunable>(name));
 	}
 }
 

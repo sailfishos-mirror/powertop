@@ -83,7 +83,6 @@ void i2c_tunable::toggle(void)
 
 static void add_i2c_callback(const std::string &d_name)
 {
-	class i2c_tunable *i2c;
 	std::string filename;
 	bool is_adapter = false;
 
@@ -92,7 +91,7 @@ static void add_i2c_callback(const std::string &d_name)
 		is_adapter = true;
 
 	filename = std::format("/sys/bus/i2c/devices/{}", d_name);
-	i2c = new i2c_tunable(filename, d_name, is_adapter);
+	auto i2c = std::make_unique<i2c_tunable>(filename, d_name, is_adapter);
 
 	if (is_adapter)
 		filename = std::format("/sys/bus/i2c/devices/{}/device", d_name);
@@ -100,9 +99,9 @@ static void add_i2c_callback(const std::string &d_name)
 		filename = std::format("/sys/bus/i2c/devices/{}", d_name);
 
 	if (device_has_runtime_pm(filename))
-		all_tunables.push_back(i2c);
+		all_tunables.push_back(std::move(i2c));
 	else
-		all_untunables.push_back(i2c);
+		all_untunables.push_back(std::move(i2c));
 }
 
 void add_i2c_tunables(void)

@@ -24,6 +24,7 @@
  */
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include "../lib.h"
@@ -86,6 +87,6 @@ public:
 	std::string serialize() { JSON_START(); collect_json_fields(_js); JSON_END(); }
 };
 
-extern std::vector<class tunable *> all_tunables;
-extern std::vector<class tunable *> all_untunables;
+extern std::vector<std::unique_ptr<tunable>> all_tunables;
+extern std::vector<std::unique_ptr<tunable>> all_untunables;
 
