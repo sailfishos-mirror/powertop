@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PowerTOP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-09 16:37-0700\n"
+"POT-Creation-Date: 2026-05-09 16:40-0700\n"
 "PO-Revision-Date: 2013-11-05 08:40+0000\n"
 "Last-Translator: Margie Foster <margie@linux.intel.com>\n"
 "Language-Team: Spanish (Spain) (http://www.transifex.com/projects/p/PowerTOP/"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Cannot create temp file\n"
 msgstr "No puede crear archivo temp\n"
 
-#: src/calibrate/calibrate.cpp:218
+#: src/calibrate/calibrate.cpp:218 src/measurement/extech.cpp:292
 #, c-format
 msgid "Error: %s\n"
 msgstr ""
@@ -192,6 +192,10 @@ msgstr ""
 msgid "Package"
 msgstr ""
 
+#: src/cpu/cpu_rapl_device.h:45 src/cpu/cpu_rapl_device.h:46
+msgid "CPU core"
+msgstr ""
+
 #: src/cpu/intel_cpus.cpp:157
 #, c-format
 msgid "read_msr cpu%d 0x%llx : "
@@ -263,6 +267,80 @@ msgstr " CPU %i"
 msgid "{:5.1f}%"
 msgstr ""
 
+#: src/cpu/rapl/rapl_interface.cpp:89
+#, c-format
+msgid "RAPL device for cpu %d\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:129
+#, c-format
+msgid "RAPL Using PowerCap Sysfs : Domain Mask %x\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:288
+msgid "get_pkg_energy_status failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:309
+msgid "get_pkg_power_info failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:331
+msgid "get_pkg_power_limit failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:349
+msgid "set_pkg_power_limit failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:378
+msgid "get_dram_energy_status failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:399
+msgid "get_dram_power_info failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:422
+msgid "get_dram_power_limit failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:440
+msgid "set_dram_power_limit failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:469
+msgid "get_pp0_energy_status failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:489
+msgid "get_pp0_power_limit failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:507
+msgid "set_pp0_power_limit failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:526
+msgid "get_pp0_power_policy failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:557
+msgid "get_pp1_energy_status failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:577
+msgid "get_pp1_power_info failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:595
+msgid "set_pp1_power_limit failed\n"
+msgstr ""
+
+#: src/cpu/rapl/rapl_interface.cpp:614
+msgid "get_pp1_power_policy failed\n"
+msgstr ""
+
 #: src/devices/ahci.cpp:103
 #, c++-format
 msgid "SATA link: {}"
@@ -283,6 +361,10 @@ msgstr ""
 msgid "Audio codec {}: {}"
 msgstr ""
 
+#: src/devices/backlight.h:51
+msgid "Display backlight"
+msgstr ""
+
 #: src/devices/devfreq.cpp:243
 #, fuzzy
 msgid "Device Freq stats"
@@ -294,6 +376,42 @@ msgstr ""
 
 #: src/devices/devfreq.cpp:277
 msgid " No devfreq devices available"
+msgstr ""
+
+#: src/devices/device_manager.cpp:118 src/process/do_process.cpp:828
+#, c-format
+msgid "The battery reports a discharge rate of %sW\n"
+msgstr "La batería reporta una tasa de descarga de %sW\n"
+
+#: src/devices/device_manager.cpp:120 src/process/do_process.cpp:830
+#, c-format
+msgid "The energy consumed was %sJ\n"
+msgstr ""
+
+#: src/devices/device_manager.cpp:125
+#, c-format
+msgid "System baseline power is estimated at %sW\n"
+msgstr "Linea base de energía del sistema es estimada en %sW\n"
+
+#: src/devices/device_manager.cpp:132
+msgid "Power est.    Usage     Device name\n"
+msgstr "Power est.    Usage     Device name\n"
+
+#: src/devices/device_manager.cpp:134
+msgid "              Usage     Device name\n"
+msgstr "              Uso     Nombre del dispositivo\n"
+
+#: src/devices/gpu_rapl_device.h:44 src/devices/gpu_rapl_device.h:45
+#: src/devices/gpu_rapl_device.h:46
+msgid "GPU core"
+msgstr ""
+
+#: src/devices/i915-gpu.h:51
+msgid "Intel GPU"
+msgstr ""
+
+#: src/devices/i915-gpu.h:54
+msgid " ops/s"
 msgstr ""
 
 #: src/devices/network.cpp:169
@@ -316,8 +434,8 @@ msgstr ""
 msgid "Adapter"
 msgstr ""
 
-#: src/devices/runtime_pm.cpp:141 src/tuning/tuningi2c.cpp:48
-#: src/tuning/tuningi2c.cpp:50
+#: src/devices/runtime_pm.cpp:141 src/process/processdevice.h:41
+#: src/tuning/tuningi2c.cpp:48 src/tuning/tuningi2c.cpp:50
 #, fuzzy
 msgid "Device"
 msgstr "Estadísticas del dispositivo"
@@ -325,6 +443,14 @@ msgstr "Estadísticas del dispositivo"
 #: src/devices/runtime_pm.cpp:163
 #, c++-format
 msgid "PCI Device: {}"
+msgstr ""
+
+#: src/devices/thinkpad-fan.h:47
+msgid "Laptop fan"
+msgstr ""
+
+#: src/devices/thinkpad-light.h:47
+msgid "Thinkpad light"
 msgstr ""
 
 #: src/devices/usb.cpp:49 src/devices/usb.cpp:76 src/devices/usb.cpp:78
@@ -574,6 +700,42 @@ msgstr ""
 msgid "Leaving PowerTOP"
 msgstr ""
 
+#: src/measurement/extech.cpp:218
+#, c-format
+msgid "Invalid packet\n"
+msgstr ""
+
+#: src/measurement/extech.cpp:228
+#, c-format
+msgid "Invalid packet, conversion failed\n"
+msgstr ""
+
+#: src/measurement/extech.cpp:355
+#, c-format
+msgid "ERROR: extech measurement thread creation failed\n"
+msgstr ""
+
+#: src/parameters/parameters.cpp:247
+#, c-format
+msgid "Parameter state \n"
+msgstr ""
+
+#: src/parameters/parameters.cpp:249 src/parameters/parameters.cpp:271
+#, c-format
+msgid "Value\t\tName\n"
+msgstr ""
+
+#: src/parameters/parameters.cpp:269
+#, c-format
+msgid "Utilisation state \n"
+msgstr ""
+
+#: src/parameters/parameters.cpp:438
+#, c-format
+msgid ""
+"To show power estimates do %ld measurement(s) connected to battery only\n"
+msgstr ""
+
 #: src/parameters/persistent.cpp:41 src/parameters/persistent.cpp:142
 msgid "Cannot save to file"
 msgstr ""
@@ -654,16 +816,6 @@ msgstr ""
 "Energía estimada: %5.1f    Energía medida: %5.1f    Sum: %5.1f\n"
 "\n"
 
-#: src/process/do_process.cpp:828
-#, c-format
-msgid "The battery reports a discharge rate of %sW\n"
-msgstr "La batería reporta una tasa de descarga de %sW\n"
-
-#: src/process/do_process.cpp:830
-#, c-format
-msgid "The energy consumed was %sJ\n"
-msgstr ""
-
 #: src/process/do_process.cpp:835
 #, c-format
 msgid "The estimated remaining time is %i hours, %i minutes\n"
@@ -696,6 +848,40 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+#: src/process/powerconsumer.cpp:101
+msgid " µs/s"
+msgstr ""
+
+#: src/process/powerconsumer.cpp:103
+msgid " us/s"
+msgstr ""
+
+#: src/process/powerconsumer.cpp:105
+msgid " ms/s"
+msgstr ""
+
+#: src/process/powerconsumer.h:59 src/process/powerconsumer.h:60
+msgid "abstract"
+msgstr ""
+
+#: src/process/process.cpp:116 src/process/process.cpp:124
+#, c++-format
+msgid "[PID {}] {}"
+msgstr ""
+
+#: src/process/process.cpp:121
+#, c++-format
+msgid "[PID {}] [{}]"
+msgstr ""
+
+#: src/process/processdevice.h:40
+msgid "device"
+msgstr ""
+
+#: src/process/timer.cpp:103
+msgid "%"
+msgstr ""
+
 #: src/report/report.cpp:119
 #, c++-format
 msgid "{} ran at {}"
@@ -709,6 +895,22 @@ msgstr "No puede crear archivo temp\n"
 #: src/report/report.cpp:196
 #, c-format
 msgid "PowerTOP outputting using base filename %s\n"
+msgstr ""
+
+#: src/report/report-formatter-html.cpp:139
+msgid "PowerTop"
+msgstr ""
+
+#: src/report/report-formatter-md.cpp:36
+msgid "PowerTOP Report"
+msgstr ""
+
+#: src/report/report-formatter-md.cpp:68
+msgid "Property"
+msgstr ""
+
+#: src/report/report-formatter-md.cpp:68
+msgid "Value"
 msgstr ""
 
 #: src/tuning/bluetooth.cpp:47 src/tuning/ethernet.cpp:51
@@ -951,16 +1153,6 @@ msgstr ""
 #, c-format
 #~ msgid "Audio codec %s: %s"
 #~ msgstr "Codec de audio %s: %s"
-
-#, c-format
-#~ msgid "System baseline power is estimated at %sW\n"
-#~ msgstr "Linea base de energía del sistema es estimada en %sW\n"
-
-#~ msgid "Power est.    Usage     Device name\n"
-#~ msgstr "Power est.    Usage     Device name\n"
-
-#~ msgid "              Usage     Device name\n"
-#~ msgstr "              Uso     Nombre del dispositivo\n"
 
 #, fuzzy
 #~ msgid "The battery reports a discharge rate of: "
