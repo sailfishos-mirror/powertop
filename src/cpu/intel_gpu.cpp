@@ -120,7 +120,7 @@ static std::string find_drm_card_with_rc6(void)
 		/* skip connector entries like card0-HDMI-A-1 */
 		if (entry.find('-') != std::string::npos)
 			continue;
-		std::string path = std::format("/sys/class/drm/{}", entry);
+		const std::string path = std::format("/sys/class/drm/{}", entry);
 		if (access(std::format("{}/power/rc6_residency_ms", path).c_str(), R_OK) == 0)
 			return path;
 	}
@@ -129,7 +129,7 @@ static std::string find_drm_card_with_rc6(void)
 
 std::string find_intel_rc6_card_path(void)
 {
-	static std::string path = find_drm_card_with_rc6();
+	static const std::string path = find_drm_card_with_rc6();
 	return path;
 }
 
