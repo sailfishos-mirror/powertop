@@ -44,7 +44,7 @@ public:
 	virtual std::string class_name(void) const override { return _("GPU core");};
 	virtual std::string device_name(void) const override { return _("GPU core");};
 	virtual std::string human_name(void) override { return _("GPU core");};
-	bool device_present() { return device_valid;}
+	bool device_present() const { return device_valid;}
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle) override;
 	virtual void start_measurement(void) override;
 	virtual void end_measurement(void) override;

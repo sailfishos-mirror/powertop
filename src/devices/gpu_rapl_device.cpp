@@ -52,8 +52,8 @@ void gpu_rapl_device::end_measurement(void)
 {
 	if (!device_valid)
 		return;
-	struct timeval	curr_time = pt_gettime();
-	double		delta = (curr_time.tv_sec - last_time.tv_sec)
+	const struct timeval	curr_time = pt_gettime();
+	const double		delta = (curr_time.tv_sec - last_time.tv_sec)
 			      + (curr_time.tv_usec - last_time.tv_usec) / 1000000.0;
 	double energy;
 
