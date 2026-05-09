@@ -34,9 +34,7 @@
 i2c_tunable::i2c_tunable(const std::string &path, const std::string &name, bool is_adapter) : tunable("", 0.9, _("Good"), _("Bad"), _("Unknown"))
 {
 	std::string filename;
-	std::string devname;
-
-	devname = read_sysfs_string(std::format("{}/name", path));
+	const std::string devname = read_sysfs_string(std::format("{}/name", path));
 
 	if (is_adapter) {
 		i2c_path = std::format("{}/device/power/control", path);
@@ -70,8 +68,7 @@ int i2c_tunable::good_bad(void)
 
 void i2c_tunable::toggle(void)
 {
-	int good;
-	good = good_bad();
+	const int good = good_bad();
 
 	if (good == TUNE_GOOD) {
 		write_sysfs(i2c_path, "on");
