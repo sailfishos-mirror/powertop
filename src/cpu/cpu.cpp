@@ -380,7 +380,6 @@ static int get_cstates_num(void)
 {
 	unsigned int package, core, cpu;
 	class abstract_cpu *_package, * _core, * _cpu;
-	unsigned int i;
 	int cstates_num;
 
 	for (package = 0, cstates_num = 0;
@@ -390,9 +389,8 @@ static int get_cstates_num(void)
 			continue;
 
 		/* walk package cstates and get largest cstates number */
-		for (i = 0; i < _package->cstates.size(); i++)
-			cstates_num = std::max(cstates_num,
-						(_package->cstates[i])->line_level);
+		for (const auto *s : _package->cstates)
+			cstates_num = std::max(cstates_num, s->line_level);
 
 		/*
 		 * for each core in this package, walk core cstates and get
@@ -403,9 +401,8 @@ static int get_cstates_num(void)
 			if (_core == nullptr)
 				continue;
 
-			for (i = 0; i <  _core->cstates.size(); i++)
-				cstates_num = std::max(cstates_num,
-						(_core->cstates[i])->line_level);
+			for (const auto *s : _core->cstates)
+				cstates_num = std::max(cstates_num, s->line_level);
 
 			/*
 			 * for each core, walk the logical cpus in case
@@ -416,9 +413,8 @@ static int get_cstates_num(void)
 				if (_cpu == nullptr)
 					continue;
 
-				for (i = 0; i < _cpu->cstates.size(); i++)
-					cstates_num = std::max(cstates_num,
-						(_cpu->cstates[i])->line_level);
+				for (const auto *s : _cpu->cstates)
+					cstates_num = std::max(cstates_num, s->line_level);
 			}
 		}
 	}
@@ -635,7 +631,7 @@ void report_display_cpu_pstates(void)
 	unsigned int package, core, cpu;
 	int line, title=0;
 	class abstract_cpu *_package, *_core = nullptr, * _cpu;
-	unsigned int i, pstates_num;
+	unsigned int pstates_num;
 	std::string core_type;
 
 	/* div attr css_class and css_id */
@@ -661,10 +657,11 @@ void report_display_cpu_pstates(void)
 	int idx1, idx2, idx3, num_cpus=0, num_cores=0;
         std::string tmp_str;
 
-	for (i = 0, pstates_num = 0; i < all_cpus.size(); i++) {
-		if (all_cpus[i])
+	pstates_num = 0;
+	for (const auto *acpu : all_cpus) {
+		if (acpu)
 			pstates_num = std::max<unsigned int>(pstates_num,
-				all_cpus[i]->pstates.size());
+				acpu->pstates.size());
 	}
 
 	for (package = 0; package < system_level.children.size(); package++) {
@@ -815,15 +812,15 @@ void impl_w_display_cpu_states(int state)
 	int line, loop, cstates_num, pstates_num;
 	class abstract_cpu *_package, * _core, * _cpu;
 	int ctr = 0;
-	unsigned int i;
 
 	cstates_num = get_cstates_num();
 
-	for (i = 0, pstates_num = 0; i < all_cpus.size(); i++) {
-		if (!all_cpus[i])
+	pstates_num = 0;
+	for (const auto *acpu : all_cpus) {
+		if (!acpu)
 			continue;
 
-		pstates_num = std::max<int>(pstates_num, all_cpus[i]->pstates.size());
+		pstates_num = std::max<int>(pstates_num, acpu->pstates.size());
 	}
 
 	if (state == PSTATE) {
@@ -1026,14 +1023,13 @@ void perf_power_bundle::handle_trace_point(void *trace, int cpunr, uint64_t time
 
 void process_cpu_data(void)
 {
-	unsigned int i;
 	system_level.reset_pstate_data();
 
 	perf_events->process();
 
-	for (i = 0; i < system_level.children.size(); i++)
-		if (system_level.children[i])
-			system_level.children[i]->validate();
+	for (auto *child : system_level.children)
+		if (child)
+			child->validate();
 
 }
 
@@ -1054,10 +1050,8 @@ void clear_cpu_data(void)
 
 void clear_all_cpus(void)
 {
-	unsigned int i;
-	for (i = 0; i < system_level.children.size(); i++) {
-		delete system_level.children[i];
-	}
+	for (auto *child : system_level.children)
+		delete child;
 	system_level.children.clear();
 	all_cpus.clear();
 }

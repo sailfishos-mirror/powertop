@@ -71,27 +71,21 @@ static int phase;
 
 void clean_open_devices()
 {
-	unsigned int i=0;
-
-	for (i = 0; i < one.size(); i++) {
-		delete one[i];
-	}
+	for (auto *d : one)
+		delete d;
 	one.clear();
 
-	for (i = 0; i < two.size(); i++) {
-		delete two[i];
-	}
+	for (auto *d : two)
+		delete d;
 	two.clear();
 
-	for (i = 0; i < devpower.size(); i++){
-		delete devpower[i];
-	}
+	for (auto *d : devpower)
+		delete d;
 	devpower.clear();
 }
 
 void collect_open_devices(void)
 {
-	unsigned int i;
 	std::vector<struct devuser *> *target;
 
 	if (phase == 1)
@@ -99,10 +93,9 @@ void collect_open_devices(void)
 	else
 		target = &two;
 
-	for (i = 0; i < target->size(); i++) {
-		delete (*target)[i];
-	}
-	target->resize(0);
+	for (auto *d : *target)
+		delete d;
+	target->clear();
 
 
 	for (const auto &pid : list_directory("/proc/")) {
@@ -155,17 +148,16 @@ void collect_open_devices(void)
 /* returns 0 if no process is identified as having the device open and a value > 0 otherwise */
 int charge_device_to_openers(const std::string &devstring, double power, class device *_dev)
 {
-	unsigned int i;
 	int openers = 0;
 	class process *proc;
 	/* 1. count the number of openers */
 
-	for (i = 0; i < one.size(); i++) {
-		if (one[i]->device.find(devstring) != std::string::npos)
+	for (const auto *d : one) {
+		if (d->device.find(devstring) != std::string::npos)
 			openers++;
 	}
-	for (i = 0; i < two.size(); i++) {
-		if (two[i]->device.find(devstring) != std::string::npos)
+	for (const auto *d : two) {
+		if (d->device.find(devstring) != std::string::npos)
 			openers++;
 	}
 
@@ -179,25 +171,25 @@ int charge_device_to_openers(const std::string &devstring, double power, class d
 
 	/* 3. for each process that has it open, add the charge */
 
-	for (i = 0; i < one.size(); i++)
-		if (one[i]->device.find(devstring) != std::string::npos) {
-			proc = find_create_process(one[i]->comm, one[i]->pid);
+	for (const auto *d : one)
+		if (d->device.find(devstring) != std::string::npos) {
+			proc = find_create_process(d->comm, d->pid);
 			if (proc) {
 				proc->power_charge += power;
-				if (_dev->guilty.find(one[i]->comm) == std::string::npos) {
-					_dev->guilty += one[i]->comm;
+				if (_dev->guilty.find(d->comm) == std::string::npos) {
+					_dev->guilty += d->comm;
 					_dev->guilty += " ";
 				}
 			}
 		}
 
-	for (i = 0; i < two.size(); i++)
-		if (two[i]->device.find(devstring) != std::string::npos) {
-			proc = find_create_process(two[i]->comm, two[i]->pid);
+	for (const auto *d : two)
+		if (d->device.find(devstring) != std::string::npos) {
+			proc = find_create_process(d->comm, d->pid);
 			if (proc) {
 				proc->power_charge += power;
-				if (_dev->guilty.find(two[i]->comm) == std::string::npos) {
-					_dev->guilty += two[i]->comm;
+				if (_dev->guilty.find(d->comm) == std::string::npos) {
+					_dev->guilty += d->comm;
 					_dev->guilty += " ";
 				}
 			}
@@ -210,23 +202,19 @@ int charge_device_to_openers(const std::string &devstring, double power, class d
 
 void clear_devpower(void)
 {
-	unsigned int i;
-
-	for (i = 0; i < devpower.size(); i++) {
-		devpower[i]->power = 0.0;
-		devpower[i]->dev->guilty.clear();
+	for (auto *dp : devpower) {
+		dp->power = 0.0;
+		dp->dev->guilty.clear();
 	}
 }
 
 void register_devpower(const std::string &devstring, double power, class device *_dev)
 {
-	unsigned int i;
 	struct devpower *dev =  nullptr;
 
-	for (i = 0; i < devpower.size(); i++)
-		if (devstring == devpower[i]->device) {
-			dev = devpower[i];
-		}
+	for (auto *dp : devpower)
+		if (devstring == dp->device)
+			dev = dp;
 
 	if (!dev) {
 		dev = new(std::nothrow) struct devpower;
@@ -242,18 +230,14 @@ void register_devpower(const std::string &devstring, double power, class device 
 
 void run_devpower_list(void)
 {
-	unsigned int i;
-
-	for (i = 0; i < devpower.size(); i++) {
+	for (auto *dp : devpower) {
 		int ret;
-		ret = charge_device_to_openers(devpower[i]->device, devpower[i]->power, devpower[i]->dev);
+		ret = charge_device_to_openers(dp->device, dp->power, dp->dev);
 		if (ret)
-			devpower[i]->dev->hide = true;
+			dp->dev->hide = true;
 		else
-			devpower[i]->dev->hide = false;
-
+			dp->dev->hide = false;
 	}
-
 }
 
 static bool devlist_sort(const devuser *i, const devuser *j)
@@ -267,7 +251,6 @@ static bool devlist_sort(const devuser *i, const devuser *j)
 void report_show_open_devices(void)
 {
 	std::vector<struct devuser *> *target;
-	unsigned int i;
 	std::string prev, proc;
 	int idx, cols, rows;
 
@@ -298,16 +281,16 @@ void report_show_open_devices(void)
 	process_data[0]=__("Process");
 	process_data[1]=__("Device");
 
-	for (i = 0; i < target->size(); i++) {
+	for (const auto *d : *target) {
 		proc = "";
-		if (prev != (*target)[i]->comm)
-			proc = (*target)[i]->comm;
+		if (prev != d->comm)
+			proc = d->comm;
 
 		process_data[idx]=proc;
 		idx+=1;
-		process_data[idx]=(*target)[i]->device;
+		process_data[idx]=d->device;
 		idx+=1;
-		prev = (*target)[i]->comm;
+		prev = d->comm;
 	}
 
 	/* Report Output */
