@@ -56,19 +56,19 @@ public:
 	virtual double Witts(void) const;
 	virtual std::string description(void) { return ""; };
 
-	virtual std::string name(void) { return _("abstract"); };
-	virtual std::string type(void) { return _("abstract"); };
+	virtual std::string name(void) const { return _("abstract"); };
+	virtual std::string type(void) const { return _("abstract"); };
 
-	virtual double usage(void);
-	virtual std::string usage_units(void);
+	virtual double usage(void) const;
+	virtual std::string usage_units(void) const;
 
-	virtual double usage_summary(void) { return usage();};
-	virtual std::string usage_units_summary(void) { return usage_units(); };
-	virtual double events(void) { if (measurement_time < 0.00001) return 0.0; return  (wake_ups + gpu_ops + hard_disk_hits) / measurement_time;};
-	virtual int show_events(void) { return 1; };
+	virtual double usage_summary(void) const { return usage();};
+	virtual std::string usage_units_summary(void) const { return usage_units(); };
+	virtual double events(void) const { if (measurement_time < 0.00001) return 0.0; return  (wake_ups + gpu_ops + hard_disk_hits) / measurement_time;};
+	virtual int show_events(void) const { return 1; };
 
-	virtual void collect_json_fields(std::string &_js);
-	std::string serialize() { JSON_START(); collect_json_fields(_js); JSON_END(); }
+	virtual void collect_json_fields(std::string &_js) const;
+	std::string serialize() const { JSON_START(); collect_json_fields(_js); JSON_END(); }
 };
 
 extern std::vector <class power_consumer *> all_power;

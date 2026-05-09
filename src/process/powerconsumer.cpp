@@ -79,7 +79,7 @@ power_consumer::power_consumer(void)
 	power_charge = 0.0;
 }
 
-double power_consumer::usage(void)
+double power_consumer::usage(void) const
 {
 	double t;
 	if (measurement_time < 0.00001)
@@ -90,7 +90,7 @@ double power_consumer::usage(void)
 	return t;
 }
 
-std::string power_consumer::usage_units(void)
+std::string power_consumer::usage_units(void) const
 {
 	double t;
 	if (measurement_time < 0.00001)
@@ -105,7 +105,7 @@ std::string power_consumer::usage_units(void)
 	return _(" ms/s");
 }
 
-void power_consumer::collect_json_fields(std::string &_js)
+void power_consumer::collect_json_fields(std::string &_js) const
 {
 	JSON_KV("name", name());
 	JSON_KV("type", type());

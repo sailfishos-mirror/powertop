@@ -28,7 +28,7 @@
 #include "interrupt.h"
 #include "../lib.h"
 
-const std::vector<std::string> softirqs = {
+constexpr std::array<std::string_view, 10> softirqs = {
 	"HI_SOFTIRQ",
 	"timer(softirq)",
 	"net tx(softirq)",
@@ -62,9 +62,8 @@ void interrupt::start_interrupt(uint64_t time)
 
 uint64_t interrupt::end_interrupt(uint64_t time)
 {
-	uint64_t delta;
+	const uint64_t delta = time - running_since;
 
-	delta = time - running_since;
 	accumulated_runtime += delta;
 	return delta;
 }
@@ -76,14 +75,13 @@ std::string interrupt::description(void)
 	return desc;
 }
 
-double interrupt::usage_summary(void)
+double interrupt::usage_summary(void) const
 {
-	double t;
-	t = (accumulated_runtime - child_runtime) / 1000000.0 / measurement_time / 10;
+	const double t = (accumulated_runtime - child_runtime) / 1000000.0 / measurement_time / 10;
 	return t;
 }
 
-std::string interrupt::usage_units_summary(void)
+std::string interrupt::usage_units_summary(void) const
 {
 	return "%";
 }
@@ -119,7 +117,7 @@ void clear_interrupts(void)
 	all_interrupts.clear();
 }
 
-void interrupt::collect_json_fields(std::string &_js)
+void interrupt::collect_json_fields(std::string &_js) const
 {
     power_consumer::collect_json_fields(_js);
     JSON_FIELD(running_since);

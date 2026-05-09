@@ -26,6 +26,8 @@
 
 #include <stdint.h>
 #include <memory>
+#include <array>
+#include <string_view>
 
 #include "powerconsumer.h"
 
@@ -45,16 +47,15 @@ public:
 
 	virtual std::string description(void) override;
 
-	virtual std::string name(void) override { return "interrupt"; };
-	virtual std::string type(void) override { return "Interrupt"; };
-	virtual double usage_summary(void) override;
-	virtual std::string usage_units_summary(void) override;
-	void collect_json_fields(std::string &_js) override;
+	virtual std::string name(void) const override { return "interrupt"; };
+	virtual std::string type(void) const override { return "Interrupt"; };
+	virtual double usage_summary(void) const override;
+	virtual std::string usage_units_summary(void) const override;
+	void collect_json_fields(std::string &_js) const override;
 };
 
 extern std::vector<std::unique_ptr<interrupt>> all_interrupts;
-extern const std::vector<std::string> softirqs;
-
+extern const std::array<std::string_view, 10> softirqs;
 
 extern class interrupt * find_create_interrupt(const std::string &_handler, int nr, int cpu);
 extern void all_interrupts_to_all_power(void);
