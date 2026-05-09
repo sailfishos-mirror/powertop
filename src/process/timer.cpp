@@ -45,7 +45,7 @@ static bool timer_is_deferred(std::string_view handler)
 
 	std::istringstream stream(content);
 	std::string line;
-	std::string handler_str(handler);
+	const std::string handler_str(handler);
 
 	while (std::getline(stream, line)) {
 		if (line.find(handler_str) != std::string::npos) {
@@ -92,14 +92,13 @@ uint64_t timer::done(uint64_t time, uint64_t timer_struct)
 	return delta;
 }
 
-double timer::usage_summary(void)
+double timer::usage_summary(void) const
 {
-	double t;
-	t = (accumulated_runtime - child_runtime) / 1000000.0 / measurement_time / 10;
+	const double t = (accumulated_runtime - child_runtime) / 1000000.0 / measurement_time / 10;
 	return t;
 }
 
-std::string timer::usage_units_summary(void)
+std::string timer::usage_units_summary(void) const
 {
 	return _("%");
 }
@@ -147,12 +146,12 @@ void clear_timers(void)
 	running_since.clear();
 }
 
-bool timer::is_deferred(void)
+bool timer::is_deferred(void) const
 {
 	return deferred;
 }
 
-void timer::collect_json_fields(std::string &_js)
+void timer::collect_json_fields(std::string &_js) const
 {
     power_consumer::collect_json_fields(_js);
     JSON_FIELD(desc);
