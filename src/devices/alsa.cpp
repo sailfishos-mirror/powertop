@@ -101,8 +101,8 @@ void alsa::end_measurement(void)
 		} catch (...) {}
 	}
 
-	double active_delta = (end_active >= start_active) ? (double)(end_active - start_active) : 0.0;
-	double total_delta = (end_active + end_inactive >= start_active + start_inactive) ?
+	const double active_delta = (end_active >= start_active) ? (double)(end_active - start_active) : 0.0;
+	const double total_delta = (end_active + end_inactive >= start_active + start_inactive) ?
 		(double)(end_active + end_inactive - start_active - start_inactive) : 0.0;
 
 	if (total_delta < 0.001)
@@ -118,8 +118,8 @@ double alsa::utilization(void)
 {
 	double p;
 
-	double active_delta = (end_active >= start_active) ? (double)(end_active - start_active) : 0.0;
-	double total_delta = (end_active + end_inactive >= start_active + start_inactive) ?
+	const double active_delta = (end_active >= start_active) ? (double)(end_active - start_active) : 0.0;
+	const double total_delta = (end_active + end_inactive >= start_active + start_inactive) ?
 		(double)(end_active + end_inactive - start_active - start_inactive) : 0.0;
 
 	if (total_delta < 0.001)
