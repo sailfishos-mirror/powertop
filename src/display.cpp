@@ -86,6 +86,9 @@ void init_display(void)
 	create_tab("Device stats", _("Device stats"));
 
 	display = 1;
+
+	printw("%s", _("Preparing to take measurements\n"));
+	refresh();
 }
 
 void reset_display(void)
