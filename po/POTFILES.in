@@ -41,5 +41,3 @@ src/wakeup/waketab.cpp
 src/wakeup/wakeup.cpp
 src/wakeup/wakeup_ethernet.cpp
 src/wakeup/wakeup_usb.cpp
-traceevent/event-parse.h
-traceevent/parse-utils.c

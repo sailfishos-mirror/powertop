@@ -7,638 +7,644 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: powertop 2.15\n"
-"Report-Msgid-Bugs-To: \"powertop@lists.01.org\"\n"
-"POT-Creation-Date: 2022-09-29 04:45-0700\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-09 16:37-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: André Barata <andretiagob@protonmail.com>\n"
 "Language-Team: Portuguese Portugal <>\n"
-"Language: pt_PT"
-"MIME-Version: 1.0\n"
+"Language: pt_PTMIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/calibrate/calibrate.cpp:238
+#: src/calibrate/calibrate.cpp:211
 #, c-format
 msgid "Cannot create temp file\n"
 msgstr "Não foi possível criar o ficheiro temporário\n"
 
-#: src/calibrate/calibrate.cpp:258
+#: src/calibrate/calibrate.cpp:218
+#, c-format
+msgid "Error: %s\n"
+msgstr ""
+
+#: src/calibrate/calibrate.cpp:231
 #, c-format
 msgid "Calibrating: CPU usage on %i threads\n"
 msgstr "A calibrar: Utilização da CPU em %i threads\n"
 
-#: src/calibrate/calibrate.cpp:273
+#: src/calibrate/calibrate.cpp:237
+#, c-format
+msgid "Failed to create calibration thread\n"
+msgstr ""
+
+#: src/calibrate/calibrate.cpp:254
 #, c-format
 msgid "Calibrating: CPU wakeup power consumption\n"
 msgstr "A calibrar: Consumo de energia ao despertar a CPU\n"
 
-#: src/calibrate/calibrate.cpp:290
+#: src/calibrate/calibrate.cpp:259
+#, c-format
+msgid "Failed to create wakeup calibration thread\n"
+msgstr ""
+
+#: src/calibrate/calibrate.cpp:273
 #, c-format
 msgid "Calibrating USB devices\n"
 msgstr "A calibrar: Dispositivos USB\n"
 
-#: src/calibrate/calibrate.cpp:292 src/calibrate/calibrate.cpp:309
-#: src/calibrate/calibrate.cpp:317 src/calibrate/calibrate.cpp:334
+#: src/calibrate/calibrate.cpp:275 src/calibrate/calibrate.cpp:290
+#: src/calibrate/calibrate.cpp:298 src/calibrate/calibrate.cpp:320
 #, c-format
 msgid ".... device %s \n"
 msgstr ".... dispositivo %s \n"
 
-#: src/calibrate/calibrate.cpp:307
+#: src/calibrate/calibrate.cpp:288
 #, c-format
 msgid "Calibrating radio devices\n"
 msgstr "A calibrar: Dispositivos wireless\n"
 
-#: src/calibrate/calibrate.cpp:331
+#: src/calibrate/calibrate.cpp:317
 #, c-format
 msgid "Calibrating backlight\n"
 msgstr "A calibrar: Luz de fundo\n"
 
-#: src/calibrate/calibrate.cpp:355 src/calibrate/calibrate.cpp:365
+#: src/calibrate/calibrate.cpp:341 src/calibrate/calibrate.cpp:349
 #, c-format
 msgid "Calibrating idle\n"
 msgstr "A calibrar: Estado inativo\n"
 
-#: src/calibrate/calibrate.cpp:378
+#: src/calibrate/calibrate.cpp:360
 #, c-format
 msgid "Calibrating: disk usage \n"
 msgstr "A calibrar: Utilização de disco \n"
 
-#: src/calibrate/calibrate.cpp:403
+#: src/calibrate/calibrate.cpp:366
+#, c-format
+msgid "Failed to create disk calibration thread\n"
+msgstr ""
+
+#: src/calibrate/calibrate.cpp:389
 msgid "Starting PowerTOP power estimate calibration \n"
-msgstr "A iniciar a calibração da estimativa do consumo de energia do PowerTOP \n"
+msgstr ""
+"A iniciar a calibração da estimativa do consumo de energia do PowerTOP \n"
 
-#: src/calibrate/calibrate.cpp:426
+#: src/calibrate/calibrate.cpp:412
 msgid "Finishing PowerTOP power estimate calibration \n"
-msgstr "A terminar a calibração da estimativa do consumo de energia do PowerTOP \n"
+msgstr ""
+"A terminar a calibração da estimativa do consumo de energia do PowerTOP \n"
 
-#: src/calibrate/calibrate.cpp:430
+#: src/calibrate/calibrate.cpp:416
 #, c-format
 msgid "Parameters after calibration:\n"
 msgstr "Parâmetros depois da calibração:\n"
 
-#: src/cpu/abstract_cpu.cpp:74
+#: src/cpu/abstract_cpu.cpp:55 src/devices/devfreq.cpp:97
 msgid "Idle"
 msgstr "Estado inativo"
 
-#: src/cpu/abstract_cpu.cpp:76
+#: src/cpu/abstract_cpu.cpp:57
 msgid "Turbo Mode"
 msgstr "Modo de turbo"
 
-#: src/cpu/cpu_core.cpp:37
+#: src/cpu/abstract_cpu.cpp:234
 #, c-format
+msgid "Invalid C state finalize %s\n"
+msgstr ""
+
+#: src/cpu/abstract_cpu.cpp:324
+#, c-format
+msgid "Invalid P state finalize %<PRIu64>\n"
+msgstr ""
+
+#: src/cpu/cpu_core.cpp:38
 msgid " Core(HW)"
 msgstr " Núcleo(HW)"
 
-#: src/cpu/cpu_core.cpp:37
-#, c-format
+#: src/cpu/cpu_core.cpp:38
 msgid " Core(OS)"
 msgstr " Núcleo(OS)"
 
-#: src/cpu/cpu_core.cpp:91 src/cpu/intel_cpus.cpp:367
-#, c-format
+#: src/cpu/cpu_core.cpp:89 src/cpu/intel_cpus.cpp:377
 msgid "  Core"
 msgstr "  Núcleo"
 
-#: src/cpu/cpu.cpp:85
-#, c-format
-msgid "cpu package %i"
-msgstr "pacote da cpu %i"
+#: src/cpu/cpu.cpp:84
+#, c++-format
+msgid "cpu package {}"
+msgstr ""
 
-#: src/cpu/cpu.cpp:86
+#: src/cpu/cpu.cpp:85
 msgid "cpu package"
 msgstr "pacote da cpu"
 
-#: src/cpu/cpu.cpp:89 src/cpu/cpu.cpp:96
-#, c-format
-msgid "package-%i"
-msgstr "pacote-%i"
+#: src/cpu/cpu.cpp:88 src/cpu/cpu.cpp:95
+#, c++-format
+msgid "package-{}"
+msgstr ""
 
-#: src/cpu/cpu.cpp:90
+#: src/cpu/cpu.cpp:89
 msgid "cpu rapl package"
 msgstr "rapl do pacote da cpu"
 
-#: src/cpu/cpu.cpp:97
+#: src/cpu/cpu.cpp:96
 msgid "dram rapl package"
 msgstr "rapl da dram do pacote"
 
-#: src/cpu/cpu.cpp:471
-msgid "Processor Idle State Report"
-msgstr "Relatório do estado inativo do processador"
-
-#: src/cpu/cpu.cpp:535 src/cpu/cpu.cpp:761
-msgid "Package"
-msgstr "Pacote"
-
-#: src/cpu/cpu.cpp:572 src/cpu/cpu.cpp:783
+#: src/cpu/cpu.cpp:975
 #, c-format
-msgid "Core %d"
-msgstr "Núcleo %d"
+msgid "INVALID cpu nr in handle_trace_point\n"
+msgstr ""
 
-#: src/cpu/cpu.cpp:579
-#, c-format
-msgid "GPU %d"
-msgstr "GPU %d"
-
-#: src/cpu/cpu.cpp:602
-msgid "CPU"
-msgstr "CPU"
-
-#: src/cpu/cpu.cpp:684
-msgid "Processor Frequency Report"
-msgstr "Relatório da frequência do processador"
-
-#: src/cpu/cpu.cpp:804
-#, c-format
-msgid "CPU %d"
-msgstr "CPU %d"
-
-#: src/cpu/cpu.cpp:1005
+#: src/cpu/cpu.cpp:989
 #, c-format
 msgid "cpu_idle event returned no state?\n"
 msgstr "o evento cpu_idle não devolveu nenhum estado?\n"
 
-#: src/cpu/cpu.cpp:1020
+#: src/cpu/cpu.cpp:1004
 #, c-format
 msgid "power or cpu_frequency event returned no state?\n"
 msgstr "o evento cpu_frequency ou energia não devolveu nenhum estado?\n"
 
-#: src/cpu/cpu_linux.cpp:79
+#: src/cpu/cpu_linux.cpp:51
 msgid "C0 polling"
 msgstr "Analisando o C0"
 
-#: src/cpu/cpu_linux.cpp:242
-#, c-format
-msgid " CPU(OS) %i"
-msgstr " CPU(OS) %i"
+#: src/cpu/cpu_linux.cpp:145
+#, c++-format
+msgid " CPU(OS) {}"
+msgstr ""
 
-#: src/cpu/cpu_linux.cpp:341 src/cpu/intel_cpus.cpp:733
-#, c-format
-msgid " CPU %i"
-msgstr " CPU %i"
+#: src/cpu/cpu_linux.cpp:230 src/cpu/intel_cpus.cpp:747
+#, c++-format
+msgid " CPU {}"
+msgstr ""
 
-#: src/cpu/cpu_package.cpp:47
-#, c-format
-msgid " Pkg(HW)"
-msgstr " Pacote(HW)"
+#: src/cpu/cpu_package.cpp:48
+msgid " Package(HW)"
+msgstr ""
 
-#: src/cpu/cpu_package.cpp:47
-#, c-format
-msgid " Pkg(OS)"
-msgstr " Pacote(OS)"
+#: src/cpu/cpu_package.cpp:48
+msgid " Package(OS)"
+msgstr ""
 
-#: src/cpu/cpu_package.cpp:104 src/cpu/intel_cpus.cpp:498
-#, c-format
-msgid "  Package"
-msgstr "  Pacote"
+#: src/cpu/cpu_package.cpp:99
+msgid "Package"
+msgstr "Pacote"
 
-#: src/cpu/intel_cpus.cpp:152
+#: src/cpu/intel_cpus.cpp:157
 #, c-format
 msgid "read_msr cpu%d 0x%llx : "
 msgstr "read_msr cpu%d 0x%llx : "
 
-#: src/cpu/intel_cpus.cpp:656
+#: src/cpu/intel_cpus.cpp:271
+msgid "C1 (cc1)"
+msgstr ""
+
+#: src/cpu/intel_cpus.cpp:273
+msgid "C3 (cc3)"
+msgstr ""
+
+#: src/cpu/intel_cpus.cpp:274
+msgid "C6 (cc6)"
+msgstr ""
+
+#: src/cpu/intel_cpus.cpp:276
+msgid "C7 (cc7)"
+msgstr ""
+
+#: src/cpu/intel_cpus.cpp:528
+msgid "  Package"
+msgstr "  Pacote"
+
+#: src/cpu/intel_cpus.cpp:569
+msgid "C2 (pc2)"
+msgstr ""
+
+#: src/cpu/intel_cpus.cpp:572
+msgid "C3 (pc3)"
+msgstr ""
+
+#: src/cpu/intel_cpus.cpp:573
+msgid "C6 (pc6)"
+msgstr ""
+
+#: src/cpu/intel_cpus.cpp:575
+msgid "C7 (pc7)"
+msgstr ""
+
+#: src/cpu/intel_cpus.cpp:577
+msgid "C8 (pc8)"
+msgstr ""
+
+#: src/cpu/intel_cpus.cpp:578
+msgid "C9 (pc9)"
+msgstr ""
+
+#: src/cpu/intel_cpus.cpp:579
+msgid "C10 (pc10)"
+msgstr ""
+
+#: src/cpu/intel_cpus.cpp:675
 msgid "C0 active"
 msgstr "C0 ativo"
 
-#: src/cpu/intel_cpus.cpp:714
-#, c-format
+#: src/cpu/intel_cpus.cpp:730
 msgid "Average"
 msgstr "Média"
 
-#: src/cpu/intel_gpu.cpp:64
-#, c-format
+#: src/cpu/intel_gpu.cpp:61
 msgid "  GPU "
 msgstr "  GPU "
 
-#: src/devices/ahci.cpp:154
-#, c-format
-msgid "SATA link: %s"
-msgstr "Ligação SATA: %s"
+#: src/cpu/intel_gpu.cpp:92
+#, c++-format
+msgid "{:5.1f}%"
+msgstr ""
 
-#: src/devices/ahci.cpp:156
-#, c-format
-msgid "SATA disk: %s"
-msgstr "Disco SATA: %s"
+#: src/devices/ahci.cpp:103
+#, c++-format
+msgid "SATA link: {}"
+msgstr ""
 
-#: src/devices/ahci.cpp:374
-msgid "AHCI ALPM Residency Statistics - Not supported on this macine"
-msgstr "Estatísticas do estado de AHCI ALPM - Não é suportado por este computador"
+#: src/devices/ahci.cpp:105
+#, c++-format
+msgid "SATA disk: {}"
+msgstr ""
 
-#: src/devices/ahci.cpp:389
-msgid "Link"
-msgstr "Ligação"
+#: src/devices/alsa.cpp:59
+#, c++-format
+msgid "Audio codec {}: {} ({})"
+msgstr ""
 
-#: src/devices/ahci.cpp:390
-msgid "Active"
-msgstr "Ativo"
+#: src/devices/alsa.cpp:61 src/devices/alsa.cpp:63
+#, c++-format
+msgid "Audio codec {}: {}"
+msgstr ""
 
-#: src/devices/ahci.cpp:391
-msgid "Partial"
-msgstr "Parcial"
-
-#: src/devices/ahci.cpp:392
-msgid "Slumber"
-msgstr "Inativo"
-
-#: src/devices/ahci.cpp:393
-msgid "Devslp"
-msgstr "Devslp"
-
-#: src/devices/ahci.cpp:399
-msgid "AHCI ALPM Residency Statistics"
-msgstr "Estatísticas do estado de AHCI ALPM"
-
-#: src/devices/alsa.cpp:77
-#, c-format
-msgid "Audio codec %s: %s (%s)"
-msgstr "Codec de áudio %s: %s (%s)"
-
-#: src/devices/alsa.cpp:79 src/devices/alsa.cpp:81
-#, c-format
-msgid "Audio codec %s: %s"
-msgstr "Codec de áudio %s: %s"
-
-#: src/devices/devfreq.cpp:260
+#: src/devices/devfreq.cpp:243
 msgid "Device Freq stats"
 msgstr "Estatísticas da frequência do dispositivo"
 
-#: src/devices/devfreq.cpp:278
+#: src/devices/devfreq.cpp:265
 msgid " Devfreq is not enabled"
 msgstr " O Devfreq não está ativado"
 
-#: src/devices/devfreq.cpp:283
+#: src/devices/devfreq.cpp:277
 msgid " No devfreq devices available"
 msgstr " Não existem dispositivos devfreq disponíveis"
 
-#: src/devices/device.cpp:172 src/process/do_process.cpp:831
-#, c-format
-msgid "The battery reports a discharge rate of %sW\n"
-msgstr "A bateria reporta um consumo de energia de %sW\n"
+#: src/devices/network.cpp:169
+#, c++-format
+msgid "Network interface: {} ({})"
+msgstr ""
 
-#: src/devices/device.cpp:174 src/process/do_process.cpp:833
-#, c-format
-msgid "The energy consumed was %sJ\n"
-msgstr "A energia consumida foi %sJ\n"
+#: src/devices/rfkill.cpp:48 src/devices/rfkill.cpp:51
+#, c++-format
+msgid "Radio device: {}"
+msgstr ""
 
-#: src/devices/device.cpp:180
-#, c-format
-msgid "System baseline power is estimated at %sW\n"
-msgstr "A base de referência de energia do sistema está estimada em %sW\n"
+#: src/devices/runtime_pm.cpp:141
+#, c++-format
+msgid "I2C {} ({}): {}"
+msgstr ""
 
-#: src/devices/device.cpp:187
-msgid "Power est.    Usage     Device name\n"
-msgstr "Est. de consumo    Utilização     Nome do dispositivo\n"
-
-#: src/devices/device.cpp:189
-msgid "              Usage     Device name\n"
-msgstr "              Utilização     Nome do dispositivo\n"
-
-#: src/devices/device.cpp:256
-msgid "The battery reports a discharge rate of: "
-msgstr "A bateria reporta um consumo de energia: "
-
-#: src/devices/device.cpp:261
-msgid "The energy consumed was : "
-msgstr "A energia consumida foi :"
-
-#: src/devices/device.cpp:268
-msgid "The system baseline power is estimated at: "
-msgstr "A base de referência de energia do sistema está estimada em: "
-
-#: src/devices/device.cpp:277 src/process/do_process.cpp:850
-#: src/process/do_process.cpp:852 src/process/do_process.cpp:926
-#: src/process/do_process.cpp:1077
-msgid "Usage"
-msgstr "Utilização"
-
-#: src/devices/device.cpp:278
-msgid "Device Name"
-msgstr "Nome do dispositivo"
-
-#: src/devices/device.cpp:280 src/process/do_process.cpp:935
-#: src/process/do_process.cpp:1082
-msgid "PW Estimate"
-msgstr "Estimativa de energia"
-
-#: src/devices/device.cpp:317
-msgid "Device Power Report"
-msgstr "Relatório de energia do dispositivo"
-
-#: src/devices/network.cpp:177
-#, c-format
-msgid "Network interface: %s (%s)"
-msgstr "Interface de rede: %s (%s)"
-
-#: src/devices/rfkill.cpp:65 src/devices/rfkill.cpp:69
-#, c-format
-msgid "Radio device: %s"
-msgstr "Dispositivo wireless: %s"
-
-#: src/devices/runtime_pm.cpp:216
-#, c-format
-msgid "I2C %s (%s): %s"
-msgstr "I2C %s (%s): %s"
-
-#: src/devices/runtime_pm.cpp:216 src/tuning/tuningi2c.cpp:57
-#: src/tuning/tuningi2c.cpp:59
+#: src/devices/runtime_pm.cpp:141 src/tuning/tuningi2c.cpp:48
+#: src/tuning/tuningi2c.cpp:50
 msgid "Adapter"
 msgstr "Adaptador"
 
-#: src/devices/runtime_pm.cpp:216 src/devlist.cpp:331
-#: src/tuning/tuningi2c.cpp:57 src/tuning/tuningi2c.cpp:59
+#: src/devices/runtime_pm.cpp:141 src/tuning/tuningi2c.cpp:48
+#: src/tuning/tuningi2c.cpp:50
 msgid "Device"
 msgstr "Dispositivo"
 
-#: src/devices/runtime_pm.cpp:241
-#, c-format
-msgid "PCI Device: %s"
-msgstr "Dispositivo PCI: %s"
+#: src/devices/runtime_pm.cpp:163
+#, c++-format
+msgid "PCI Device: {}"
+msgstr ""
 
-#: src/devices/usb.cpp:51 src/devices/usb.cpp:96 src/devices/usb.cpp:98
-#, c-format
-msgid "USB device: %s"
-msgstr "Dispositivo USB: %s"
+#: src/devices/usb.cpp:49 src/devices/usb.cpp:76 src/devices/usb.cpp:78
+#, c++-format
+msgid "USB device: {}"
+msgstr ""
 
-#: src/devices/usb.cpp:94
-#, c-format
-msgid "USB device: %s (%s)"
-msgstr "Dispositivo USB: %s (%s)"
+#: src/devices/usb.cpp:74
+#, c++-format
+msgid "USB device: {} ({})"
+msgstr ""
 
-#: src/devlist.cpp:330
-msgid "Process"
-msgstr "Processo"
-
-#: src/devlist.cpp:347
-msgid "Process Device Activity"
-msgstr "Processo da atividade do dispositivo"
-
-#: src/display.cpp:70
+#: src/display.cpp:83
 msgid "Overview"
 msgstr "Vista geral"
 
-#: src/display.cpp:71
+#: src/display.cpp:84
 msgid "Idle stats"
 msgstr "Estatísticas do estado inativo"
 
-#: src/display.cpp:72
+#: src/display.cpp:85
 msgid "Frequency stats"
 msgstr "Estatísticas da frequência"
 
-#: src/display.cpp:73
+#: src/display.cpp:86
 msgid "Device stats"
 msgstr "Estatísticas do dispositivo"
 
-#: src/display.cpp:131
+#: src/display.cpp:90 src/main.cpp:326
+#, c-format
+msgid "Preparing to take measurements\n"
+msgstr "A preparar para fazer medições\n"
+
+#: src/display.cpp:210
 msgid "Exit"
 msgstr "Sair"
 
-#: src/display.cpp:132
+#: src/display.cpp:211
 msgid "Navigate"
 msgstr "Navegar"
 
-#: src/lib.cpp:288
-#, c-format
-msgid "%7sW"
-msgstr "%7sW"
+#: src/lib.cpp:347
+#, c++-format
+msgid "{:7s}W"
+msgstr ""
 
-#: src/lib.cpp:291
-#, c-format
+#: src/lib.cpp:350
 msgid "    0 mW"
 msgstr "    0 mW"
 
-#: src/lib.cpp:410
+#: src/lib.cpp:473
 msgid "PS/2 Touchpad / Keyboard / Mouse"
 msgstr "PS/2 Touchpad (Rato de toque) / Teclado / Rato"
 
-#: src/lib.cpp:411
+#: src/lib.cpp:474
 msgid "SATA controller"
 msgstr "Controlador SATA"
 
-#: src/lib.cpp:412
+#: src/lib.cpp:475
 msgid "Intel built in USB hub"
 msgstr "Centro de portas USB incorporadas da Intel"
 
-#: src/lib.cpp:467
-#, c-format
-msgid "glob returned GLOB_NOSPACE\n"
-msgstr "o glob devolveu GLOB_NOSPACE\n"
-
-#: src/lib.cpp:471
-#, c-format
-msgid "glob returned GLOB_ABORTED\n"
-msgstr "o glob devolveu GLOB_ABORTED\n"
-
-#: src/lib.cpp:475
-#, c-format
-msgid "glob returned GLOB_NOMATCH\n"
-msgstr "o glob devolveu GLOB_NOMATCH\n"
-
-#: src/lib.cpp:513 src/lib.cpp:549
+#: src/lib.cpp:555 src/lib.cpp:595
 #, c-format
 msgid ""
 "Model-specific registers (MSR)\t\t\t not found (try enabling "
 "CONFIG_X86_MSR).\n"
 msgstr ""
-"Model-specific registers (MSR)\t\t\t não encontrado (tente ativar o"
-"CONFIG_X86_MSR).\n"
+"Model-specific registers (MSR)\t\t\t não encontrado (tente ativar "
+"oCONFIG_X86_MSR).\n"
 
-#: src/main.cpp:104
+#: src/main.cpp:121
 #, c-format
 msgid "PowerTOP version "
 msgstr "Versão do PowerTOP"
 
-#: src/main.cpp:110
+#: src/main.cpp:127
 msgid "Set refresh time out"
 msgstr "Definir o tempo limite da taxa de atualização"
 
-#: src/main.cpp:123
+#: src/main.cpp:139
 msgid "Usage: powertop [OPTIONS]"
 msgstr "Utilização: powertop [OPÇÕES]"
 
-#: src/main.cpp:124
+#: src/main.cpp:140
 msgid "sets all tunable options to their GOOD setting"
 msgstr "definir todas as opções de ajuste para a definição BOA"
 
-#: src/main.cpp:125
+#: src/main.cpp:141
+msgid "print auto-tune commands to STDOUT *instead* of executing them"
+msgstr ""
+
+#: src/main.cpp:142
+msgid "skip root privilege check (for testing only)"
+msgstr ""
+
+#: src/main.cpp:143
 msgid "runs powertop in calibration mode"
 msgstr "inicia o powertop no modo de calibração"
 
-#: src/main.cpp:126 src/main.cpp:129
+#: src/main.cpp:144 src/main.cpp:147
 msgid "[=filename]"
 msgstr "[=nome do ficheiro]"
 
-#: src/main.cpp:126
+#: src/main.cpp:144
 msgid "generate a csv report"
 msgstr "gerar um relatório em csv"
 
-#: src/main.cpp:127
+#: src/main.cpp:145
 msgid "run in \"debug\" mode"
 msgstr "iniciar em modo \"depurar\""
 
-#: src/main.cpp:128
+#: src/main.cpp:146
 msgid "[=devnode]"
 msgstr "[=devnode]"
 
-#: src/main.cpp:128
+#: src/main.cpp:146
 msgid "uses an Extech Power Analyzer for measurements"
 msgstr "utiliza um analisador de energia Extech para fazer medições"
 
-#: src/main.cpp:129
+#: src/main.cpp:147
 msgid "generate a html report"
 msgstr "gerar um relatório em html"
 
-#: src/main.cpp:130
+#: src/main.cpp:148
 msgid "[=iterations] number of times to run each test"
 msgstr "[=repetir] número de vezes para repetir cada teste"
 
-#: src/main.cpp:131
+#: src/main.cpp:149
+msgid "run measurements only once, then exit"
+msgstr ""
+
+#: src/main.cpp:150
 msgid "suppress stderr output"
 msgstr "suprimir o resultado de stderr"
 
-#: src/main.cpp:132 src/main.cpp:133
+#: src/main.cpp:151 src/main.cpp:152
 msgid "[=seconds]"
 msgstr "[=segundos]"
 
-#: src/main.cpp:132
+#: src/main.cpp:151
 msgid "interval for power consumption measurement"
 msgstr "intervalo da medição do consumo de energia"
 
-#: src/main.cpp:133
+#: src/main.cpp:152
 msgid "generate a report for 'x' seconds"
 msgstr "gerar um relatório a cada 'x' segundos"
 
-#: src/main.cpp:134
+#: src/main.cpp:153
 msgid "[=workload]"
 msgstr "[=tarefa]"
 
-#: src/main.cpp:134
+#: src/main.cpp:153
 msgid "file to execute for workload"
 msgstr "ficheiro a executar para a tarefa"
 
-#: src/main.cpp:135
+#: src/main.cpp:154
 msgid "print version information"
 msgstr "mostrar informação sobre a versão"
 
-#: src/main.cpp:136
+#: src/main.cpp:155
 msgid "print this help menu"
 msgstr "mostrar este menu de ajuda"
 
-#: src/main.cpp:138
+#: src/main.cpp:157
 msgid "For more help please refer to the 'man 8 powertop'"
 msgstr "Para obter mais ajuda consulte o 'man 8 powertop'"
 
-#: src/main.cpp:233
+#: src/main.cpp:255
+#, c-format
+msgid "ERROR: workload measurement thread creation failed\n"
+msgstr ""
+
+#: src/main.cpp:258
 #, c-format
 msgid "Unknown issue running workload!\n"
 msgstr "Ocorreu um problema desconhecido ao executar a tarefa!\n"
 
-#: src/main.cpp:290
+#: src/main.cpp:316
 msgid "PowerTOP is out of memory. PowerTOP is Aborting"
 msgstr "O PowerTOP está sem memória e vai abortar"
 
-#: src/main.cpp:298
-#, c-format
-msgid "Preparing to take measurements\n"
-msgstr "A preparar para fazer medições\n"
-
-#: src/main.cpp:303
+#: src/main.cpp:331
 #, c-format
 msgid "Taking %d measurement(s) for a duration of %d second(s) each.\n"
 msgstr "A fazer %d medição(ões) com uma duração de %d segundo(s) em cada.\n"
 
-#: src/main.cpp:305
+#: src/main.cpp:333
 #, c-format
 msgid "Measuring workload %s.\n"
 msgstr "A fazer medição da tarefa %s.\n"
 
-#: src/main.cpp:330
+#: src/main.cpp:369
 #, c-format
 msgid "PowerTOP "
 msgstr "POWERTOP "
 
-#: src/main.cpp:331 src/main.cpp:381
+#: src/main.cpp:370 src/main.cpp:416
 #, c-format
 msgid "exiting...\n"
 msgstr "a sair...\n"
 
-#: src/main.cpp:365
+#: src/main.cpp:400
 #, c-format
 msgid "modprobe cpufreq_stats failed\n"
 msgstr "o modprobe cpufreq_stats falhou\n"
 
-#: src/main.cpp:368
+#: src/main.cpp:403
 #, c-format
 msgid "modprobe msr failed\n"
 msgstr "o modprobe msr falhou\n"
 
-#: src/main.cpp:380 src/main.cpp:384
+#: src/main.cpp:415 src/main.cpp:418
 #, c-format
 msgid "Failed to mount debugfs!\n"
 msgstr "A montagem do debugfs falhou!\n"
 
-#: src/main.cpp:385
+#: src/main.cpp:419
 #, c-format
 msgid "Should still be able to auto tune...\n"
 msgstr "Pode ser ainda possível ajustar automaticamente...\n"
 
-#: src/main.cpp:467
+#: src/main.cpp:509
+#, c-format
+msgid "Invalid Markdown filename\n"
+msgstr ""
+
+#: src/main.cpp:518
 #, c-format
 msgid "Invalid CSV filename\n"
 msgstr "Nome do ficheiro CSV inválido\n"
 
-#: src/main.cpp:483
+#: src/main.cpp:545
 #, c-format
 msgid "Invalid HTML filename\n"
 msgstr "Nome do ficheiro HTML inválido\n"
 
-#: src/main.cpp:492
+#: src/main.cpp:554
 #, c-format
 msgid "Quiet mode failed!\n"
 msgstr "O modo silencioso falhou!\n"
 
-#: src/main.cpp:560
+#: src/main.cpp:586
+#, c-format
+msgid "Learning debugging enabled\n"
+msgstr ""
+
+#: src/main.cpp:622
 msgid "Leaving PowerTOP"
 msgstr "A sair do POWERTOP"
 
-#: src/parameters/persistent.cpp:46 src/parameters/persistent.cpp:155
+#: src/parameters/persistent.cpp:41 src/parameters/persistent.cpp:142
 msgid "Cannot save to file"
 msgstr "Não foi possível guardar no ficheiro"
 
-#: src/parameters/persistent.cpp:89 src/parameters/persistent.cpp:180
+#: src/parameters/persistent.cpp:78 src/parameters/persistent.cpp:162
 msgid "Cannot load from file"
 msgstr "Não foi possível carregar do ficheiro"
 
-#: src/parameters/persistent.cpp:138
+#: src/parameters/persistent.cpp:132
 #, c-format
 msgid "Loaded %i prior measurements\n"
 msgstr "%i medições anteriores carregadas\n"
 
-#: src/parameters/persistent.cpp:181
+#: src/parameters/persistent.cpp:163
+#, c-format
 msgid ""
 "File will be loaded after taking minimum number of measurement(s) with "
-"battery only \n"
+"battery only\n"
 msgstr ""
-"O ficheiro vai ser carregado depois de fazer um número mínimo de medições só "
-"a usar a bateria \n"
 
-#: src/perf/perf.cpp:115
+#: src/perf/perf_bundle.cpp:237
+#, c-format
+msgid "abstract handle_trace_point called\n"
+msgstr ""
+
+#: src/perf/perf.cpp:100
 #, c-format
 msgid ""
 "Too many open files, please increase the limit of open file descriptors.\n"
 msgstr ""
-"Estão demasiados ficheiros abertos, aumente o limite dos descritores de ficheiros abertos, por favor.\n"
+"Estão demasiados ficheiros abertos, aumente o limite dos descritores de "
+"ficheiros abertos, por favor.\n"
 
-#: src/perf/perf.cpp:117
+#: src/perf/perf.cpp:102
 #, c-format
 msgid "PowerTOP %s needs the kernel to support the 'perf' subsystem\n"
 msgstr "O PowerTOP %s necessita que o kernel suporte o subsistema 'perf'\n"
 
-#: src/perf/perf.cpp:118
+#: src/perf/perf.cpp:103
 #, c-format
 msgid "as well as support for trace points in the kernel:\n"
 msgstr "bem como o suporte para o rastreio de pontos no kernel:\n"
 
-#: src/process/do_process.cpp:819
+#: src/perf/perf.cpp:119
+#, c-format
+msgid "failed to mmap with %d (%s)\n"
+msgstr ""
+
+#: src/perf/perf.cpp:128
+#, c-format
+msgid "failed to enable perf\n"
+msgstr ""
+
+#: src/perf/perf.cpp:232
+#, c-format
+msgid "stop failing\n"
+msgstr ""
+
+#: src/process/do_process.cpp:414
+#, c-format
+msgid "softirq_entry event returned no vector number?\n"
+msgstr ""
+
+#: src/process/do_process.cpp:451
+#, c-format
+msgid "timer_expire_entry event returned no function value?\n"
+msgstr ""
+
+#: src/process/do_process.cpp:463
+#, c-format
+msgid "timer_expire_entry event returned no timer?\n"
+msgstr ""
+
+#: src/process/do_process.cpp:817
 #, c-format
 msgid ""
 "Estimated power: %5.1f    Measured power: %5.1f    Sum: %5.1f\n"
@@ -647,310 +653,584 @@ msgstr ""
 "Energia estimada: %5.1f    Medição da energia: %5.1f    Soma: %5.1f\n"
 "\n"
 
-#: src/process/do_process.cpp:838
+#: src/process/do_process.cpp:828
+#, c-format
+msgid "The battery reports a discharge rate of %sW\n"
+msgstr "A bateria reporta um consumo de energia de %sW\n"
+
+#: src/process/do_process.cpp:830
+#, c-format
+msgid "The energy consumed was %sJ\n"
+msgstr "A energia consumida foi %sJ\n"
+
+#: src/process/do_process.cpp:835
 #, c-format
 msgid "The estimated remaining time is %i hours, %i minutes\n"
 msgstr "O tempo restante de bateria estimado são %i horas, %i minutos\n"
 
-#: src/process/do_process.cpp:846
-msgid "Summary"
-msgstr "Resumo"
+#: src/process/do_process.cpp:843
+#, c-format, c++-format
+msgid ""
+"Summary: {:3.1f} wakeups/second,  {:3.1f} GPU ops/seconds, {:3.1f} VFS ops/"
+"sec and {:3.1f}% CPU use"
+msgstr ""
 
-#: src/process/do_process.cpp:846
-msgid "wakeups/second"
-msgstr "despertar/segundo"
-
-#: src/process/do_process.cpp:846
-msgid "GPU ops/seconds"
-msgstr "GPU ops/segundos"
-
-#: src/process/do_process.cpp:846
-msgid "VFS ops/sec and"
-msgstr "VFS ops/segundo e"
-
-#: src/process/do_process.cpp:846
-msgid "CPU use"
-msgstr "Utilização da CPU"
-
-#: src/process/do_process.cpp:850
+#: src/process/do_process.cpp:847
 msgid "Power est."
 msgstr "Estimativa de energia"
 
-#: src/process/do_process.cpp:850 src/process/do_process.cpp:852
-#: src/process/do_process.cpp:1078
+#: src/process/do_process.cpp:847 src/process/do_process.cpp:849
+msgid "Usage"
+msgstr "Utilização"
+
+#: src/process/do_process.cpp:847 src/process/do_process.cpp:849
 msgid "Events/s"
 msgstr "Eventos/segundo"
 
-#: src/process/do_process.cpp:850 src/process/do_process.cpp:852
-#: src/process/do_process.cpp:931 src/process/do_process.cpp:1079
+#: src/process/do_process.cpp:847 src/process/do_process.cpp:849
 msgid "Category"
 msgstr "Categoria"
 
-#: src/process/do_process.cpp:850 src/process/do_process.cpp:852
-#: src/process/do_process.cpp:932 src/process/do_process.cpp:1080
-#: src/tuning/tuning.cpp:242 src/tuning/tuning.cpp:270
-#: src/tuning/tuning.cpp:295 src/wakeup/waketab.cpp:155
+#: src/process/do_process.cpp:847 src/process/do_process.cpp:849
 msgid "Description"
 msgstr "Descrição"
 
-#: src/process/do_process.cpp:927
-msgid "Wakeups/s"
-msgstr "Despertar/segundo"
+#: src/report/report.cpp:119
+#, c++-format
+msgid "{} ran at {}"
+msgstr ""
 
-#: src/process/do_process.cpp:928
-msgid "GPU ops/s"
-msgstr "GPU ops/segundo"
-
-#: src/process/do_process.cpp:929
-msgid "Disk IO/s"
-msgstr "Disk IO/segundo"
-
-#: src/process/do_process.cpp:930
-msgid "GFX Wakeups/s"
-msgstr "Despertar de GFX/segundo"
-
-#: src/process/do_process.cpp:1017
-msgid "Overview of Software Power Consumers"
-msgstr "Vista geral do consumo de energia de software"
-
-#: src/process/do_process.cpp:1057
-msgid "Target:"
-msgstr "Destino:"
-
-#: src/process/do_process.cpp:1058
-msgid "1 units/s"
-msgstr "1 unidade/segundo"
-
-#: src/process/do_process.cpp:1059
-msgid "System: "
-msgstr "Sistema: "
-
-#: src/process/do_process.cpp:1061
-msgid " wakeup/s"
-msgstr " despertar/segundo"
-
-#: src/process/do_process.cpp:1062
-msgid "CPU: "
-msgstr "CPU: "
-
-#: src/process/do_process.cpp:1064
-#, c-format
-msgid "% usage"
-msgstr "% de utilização"
-
-#: src/process/do_process.cpp:1065
-msgid "GPU:"
-msgstr "GPU:"
-
-#: src/process/do_process.cpp:1067 src/process/do_process.cpp:1073
-msgid " ops/s"
-msgstr " ops/segundo"
-
-#: src/process/do_process.cpp:1068
-msgid "GFX:"
-msgstr "GFX:"
-
-#: src/process/do_process.cpp:1070
-msgid " wakeups/s"
-msgstr " despertar/segundo"
-
-#: src/process/do_process.cpp:1071
-msgid "VFS:"
-msgstr "VFS:"
-
-#: src/process/do_process.cpp:1139
-msgid "Top 10 Power Consumers"
-msgstr "Os top 10 que consomem mais energia"
-
-#: src/report/report.cpp:122
-msgid "PowerTOP Version"
-msgstr "Versão do PowerTOP"
-
-#: src/report/report.cpp:131
-msgid "Kernel Version"
-msgstr "Versão do kernel"
-
-#: src/report/report.cpp:135
-msgid "System Name"
-msgstr "Nome do sistema"
-
-#: src/report/report.cpp:142
-msgid "CPU Information"
-msgstr "Informação da CPU"
-
-#: src/report/report.cpp:154
-msgid "OS Information"
-msgstr "Informação do sistema operativo"
-
-#: src/report/report.cpp:161
-msgid "System Information"
-msgstr "Informação do sistema"
-
-#: src/report/report.cpp:195
+#: src/report/report.cpp:180
 #, c-format
 msgid "Cannot open output file %s (%s)\n"
 msgstr "Não foi possível abrir o ficheiro de resultados %s (%s)\n"
 
-#: src/report/report.cpp:211
+#: src/report/report.cpp:196
 #, c-format
 msgid "PowerTOP outputting using base filename %s\n"
-msgstr "O PowerTOP está a exportar o resultado usando o nome de ficheiro base %s\n"
+msgstr ""
+"O PowerTOP está a exportar o resultado usando o nome de ficheiro base %s\n"
 
-#: src/tuning/bluetooth.cpp:46 src/tuning/ethernet.cpp:50
-#: src/tuning/runtime.cpp:42 src/tuning/tunable.cpp:49
-#: src/tuning/tuningi2c.cpp:35 src/tuning/tuningsysfs.cpp:45
-#: src/tuning/tuningusb.cpp:39 src/tuning/wifi.cpp:45
+#: src/tuning/bluetooth.cpp:47 src/tuning/ethernet.cpp:51
+#: src/tuning/runtime.cpp:36 src/tuning/tunable.cpp:50
+#: src/tuning/tuningi2c.cpp:34 src/tuning/tuningsysfs.cpp:69
+#: src/tuning/tuningusb.cpp:38 src/tuning/wifi.cpp:42
 msgid "Good"
 msgstr "Bom"
 
-#: src/tuning/bluetooth.cpp:46 src/tuning/ethernet.cpp:50
-#: src/tuning/runtime.cpp:42 src/tuning/tunable.cpp:50
-#: src/tuning/tuningi2c.cpp:35 src/tuning/tuningsysfs.cpp:45
-#: src/tuning/tuningusb.cpp:39 src/tuning/wifi.cpp:45
+#: src/tuning/bluetooth.cpp:47 src/tuning/ethernet.cpp:51
+#: src/tuning/runtime.cpp:36 src/tuning/tunable.cpp:51
+#: src/tuning/tuningi2c.cpp:34 src/tuning/tuningsysfs.cpp:69
+#: src/tuning/tuningusb.cpp:38 src/tuning/wifi.cpp:42
 msgid "Bad"
 msgstr "Mau"
 
-#: src/tuning/bluetooth.cpp:46 src/tuning/ethernet.cpp:50
-#: src/tuning/runtime.cpp:42 src/tuning/tunable.cpp:51
-#: src/tuning/tuningi2c.cpp:35 src/tuning/tuningsysfs.cpp:45
-#: src/tuning/tuningusb.cpp:39 src/tuning/wifi.cpp:45 src/wakeup/wakeup.cpp:50
+#: src/tuning/bluetooth.cpp:47 src/tuning/ethernet.cpp:51
+#: src/tuning/runtime.cpp:36 src/tuning/tunable.cpp:52
+#: src/tuning/tuningi2c.cpp:34 src/tuning/tuningsysfs.cpp:69
+#: src/tuning/tuningusb.cpp:38 src/tuning/wifi.cpp:42 src/wakeup/wakeup.cpp:48
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: src/tuning/bluetooth.cpp:48
-#, c-format
-msgid "Bluetooth device interface status"
-msgstr "Estado da interface do dispositivo de bluetooth"
+#: src/tuning/bluetooth.cpp:51
+#, c++-format
+msgid "Bluetooth device interface status ({})"
+msgstr ""
 
-#: src/tuning/ethernet.cpp:54 src/wakeup/wakeup_ethernet.cpp:51
-#, c-format
-msgid "Wake-on-lan status for device %s"
-msgstr "Estado do wake-on-lan para o dispositivo %s"
+#: src/tuning/bluetooth.cpp:52
+#, c++-format
+msgid "Enable Bluetooth ({})"
+msgstr ""
 
-#: src/tuning/runtime.cpp:48
-#, c-format
-msgid "Runtime PM for %s device %s"
-msgstr "Tempo de execução PM para o %s dispositivo %s"
+#: src/tuning/bluetooth.cpp:53
+#, c++-format
+msgid "Disable Bluetooth ({})"
+msgstr ""
 
-#: src/tuning/runtime.cpp:50
-#, c-format
-msgid "%s device %s has no runtime power management"
-msgstr "o %s dispositivo %s não possui uma gestão de energia do tempo de execução"
+#: src/tuning/ethernet.cpp:54 src/wakeup/wakeup_ethernet.cpp:50
+#, c++-format
+msgid "Wake-on-lan status for device {}"
+msgstr ""
 
-#: src/tuning/runtime.cpp:74
-#, c-format
-msgid "PCI Device %s has no runtime power management"
-msgstr "O dispositivo PCI %s não possui uma gestão de energia do tempo de execução"
+#: src/tuning/runtime.cpp:41
+#, c++-format
+msgid "Runtime PM for {} device {}"
+msgstr ""
 
-#: src/tuning/runtime.cpp:76
-#, c-format
-msgid "Runtime PM for PCI Device %s"
-msgstr "Tempo de execução PM para o dispositivo PCI %s"
+#: src/tuning/runtime.cpp:43
+#, c++-format
+msgid "{} device {} has no runtime power management"
+msgstr ""
 
-#: src/tuning/runtime.cpp:80
-#, c-format
-msgid "Runtime PM for port %s of PCI device: %s"
-msgstr "Tempo de execução PM para a porta %s do dispositivo PCI: %s"
+#: src/tuning/runtime.cpp:68
+#, c++-format
+msgid "PCI Device {} has no runtime power management"
+msgstr ""
 
-#: src/tuning/runtime.cpp:83
-#, c-format
-msgid "Runtime PM for disk %s"
-msgstr "Tempo de execução PM para o disco %s"
+#: src/tuning/runtime.cpp:70
+#, c++-format
+msgid "Runtime PM for PCI Device {}"
+msgstr ""
 
-#: src/tuning/tuning.cpp:62
+#: src/tuning/runtime.cpp:75
+#, c++-format
+msgid "Runtime PM for port {} of PCI device: {}"
+msgstr ""
+
+#: src/tuning/runtime.cpp:79
+#, c++-format
+msgid "Runtime PM for disk {}"
+msgstr ""
+
+#: src/tuning/tuning.cpp:61
 msgid "Enable Audio codec power management"
 msgstr "Ativar a gestão de energia do codec de áudio"
 
-#: src/tuning/tuning.cpp:63
+#: src/tuning/tuning.cpp:62
 msgid "NMI watchdog should be turned off"
 msgstr "O 'watchdog' do NMI devia estar desligado"
 
-#: src/tuning/tuning.cpp:64
+#: src/tuning/tuning.cpp:63
 msgid "Power Aware CPU scheduler"
 msgstr "Sincronizador da CPU ciente de energia"
 
-#: src/tuning/tuning.cpp:65
+#: src/tuning/tuning.cpp:64
 msgid "VM writeback timeout"
 msgstr "Tempo limite de escrita da VM"
 
+#: src/tuning/tuning.cpp:72
+msgid "VM dirty ratio"
+msgstr ""
+
+#: src/tuning/tuning.cpp:73
+msgid "Tuning for scan sleep millisecs"
+msgstr ""
+
+#: src/tuning/tuning.cpp:74
+msgid "Tuning for cursor blink"
+msgstr ""
+
+#: src/tuning/tuning.cpp:75
+msgid "Tuning for sleep millisecs"
+msgstr ""
+
+#: src/tuning/tuning.cpp:76
+msgid "Batch size for KSM"
+msgstr ""
+
+#: src/tuning/tuning.cpp:77
+msgid "Autogroup scheduling"
+msgstr ""
+
+#: src/tuning/tuning.cpp:78
+msgid "Intel P-state minimum performance"
+msgstr ""
+
+#: src/tuning/tuning.cpp:79
+msgid "Tuning for default qdisc"
+msgstr ""
+
+#: src/tuning/tuning.cpp:80
+msgid "Intel ITMT (Turbo Boost Max 3.0)"
+msgstr ""
+
 #: src/tuning/tuning.cpp:81
+msgid "Intel energy performance bias"
+msgstr ""
+
+#: src/tuning/tuning.cpp:82 src/tuning/tuning.cpp:83
+msgid "Intel energy performance preference"
+msgstr ""
+
+#: src/tuning/tuning.cpp:84
+msgid "CPU C1 demotion"
+msgstr ""
+
+#: src/tuning/tuning.cpp:94
 msgid "Tunables"
 msgstr "Ajustes"
 
-#: src/tuning/tuning.cpp:81
+#: src/tuning/tuning.cpp:94
 msgid " <ESC> Exit | <Enter> Toggle tunable | <r> Window refresh"
 msgstr " <ESC> Sair | <Enter> Ativar/Desativar ajuste | <r> Atualizar janela"
 
-#: src/tuning/tuning.cpp:243 src/wakeup/waketab.cpp:156
-msgid "Script"
-msgstr "Script"
+#: src/tuning/tuningi2c.cpp:48
+#, c++-format
+msgid "Runtime PM for I2C {} {} ({})"
+msgstr ""
 
-#: src/tuning/tuning.cpp:257
-msgid "Software Settings in Need of Tuning"
-msgstr "Definições de software que necessitam de ajustes"
+#: src/tuning/tuningi2c.cpp:50
+#, c++-format
+msgid "I2C {} {} has no runtime power management"
+msgstr ""
 
-#: src/tuning/tuning.cpp:276
-msgid "Untunable Software Issues"
-msgstr "Problemas de software que não são possíveis de ajustar"
+#: src/tuning/tuningsysfs.cpp:148
+#, c++-format
+msgid "Enable SATA link power management for {}"
+msgstr ""
 
-#: src/tuning/tuning.cpp:307
-msgid "Optimal Tuned Software Settings"
-msgstr "Definições de ajustes ideais para o software"
+#: src/tuning/tuningusb.cpp:49
+#, c++-format
+msgid "Autosuspend for unknown USB device {} ({}:{})"
+msgstr ""
 
-#: src/tuning/tuningi2c.cpp:57
-#, c-format
-msgid "Runtime PM for I2C %s %s (%s)"
-msgstr "Tempo de execução PM para o I2C %s %s (%s)"
+#: src/tuning/tuningusb.cpp:58 src/tuning/tuningusb.cpp:60
+#: src/tuning/tuningusb.cpp:62
+#, c++-format
+msgid "Autosuspend for USB device {} [{}]"
+msgstr ""
 
-#: src/tuning/tuningi2c.cpp:59
-#, c-format
-msgid "I2C %s %s has no runtime power management"
-msgstr "O I2C %s %s não possui uma gestão de energia do tempo de execução"
+#: src/tuning/wifi.cpp:45
+#, c++-format
+msgid "Wireless Power Saving for interface {}"
+msgstr ""
 
-#: src/tuning/tuningsysfs.cpp:123
-#, c-format
-msgid "Enable SATA link power management for %s"
-msgstr "Ativar gestão de energia da ligação SATA para %s"
-
-#: src/tuning/tuningusb.cpp:54
-#, c-format
-msgid "Autosuspend for unknown USB device %s (%s:%s)"
-msgstr "Suspender automaticamente o dispositivo USB desconhecido %s (%s:%s)"
-
-#: src/tuning/tuningusb.cpp:71 src/tuning/tuningusb.cpp:73
-#: src/tuning/tuningusb.cpp:75
-#, c-format
-msgid "Autosuspend for USB device %s [%s]"
-msgstr "Suspender automaticamente o dispositivo USB %s [%s]"
-
-#: src/tuning/wifi.cpp:48
-#, c-format
-msgid "Wireless Power Saving for interface %s"
-msgstr "Poupança de energia wireless para a interface %s"
-
-#: src/wakeup/waketab.cpp:42
+#: src/wakeup/waketab.cpp:39
 msgid "WakeUp"
 msgstr "Despertar"
 
-#: src/wakeup/waketab.cpp:42
+#: src/wakeup/waketab.cpp:39
 msgid " <ESC> Exit | <Enter> Toggle wakeup | <r> Window refresh"
-msgstr " <ESC> Sair | <Enter> Ativar/Desativar despertar | <r> Atualizar janela"
+msgstr ""
+" <ESC> Sair | <Enter> Ativar/Desativar despertar | <r> Atualizar janela"
 
-#: src/wakeup/waketab.cpp:170
-msgid "Wake status of the devices"
-msgstr "Estado do despertar dos dispositivos"
-
-#: src/wakeup/wakeup.cpp:48 src/wakeup/wakeup_ethernet.cpp:47
+#: src/wakeup/wakeup.cpp:46 src/wakeup/wakeup_ethernet.cpp:47
 #: src/wakeup/wakeup_usb.cpp:47
 msgid "Enabled"
 msgstr "Ativado"
 
-#: src/wakeup/wakeup.cpp:49 src/wakeup/wakeup_ethernet.cpp:47
+#: src/wakeup/wakeup.cpp:47 src/wakeup/wakeup_ethernet.cpp:47
 #: src/wakeup/wakeup_usb.cpp:47
 msgid "Disabled"
 msgstr "Desativado"
 
-#: src/wakeup/wakeup_usb.cpp:51
+#: src/wakeup/wakeup_usb.cpp:50
+#, c++-format
+msgid "Wake status for USB device {}"
+msgstr ""
+
 #, c-format
-msgid "Wake status for USB device %s"
-msgstr "Estado do despertar para o dispositivo USB %s"
+#~ msgid "cpu package %i"
+#~ msgstr "pacote da cpu %i"
+
+#, c-format
+#~ msgid "package-%i"
+#~ msgstr "pacote-%i"
+
+#~ msgid "Processor Idle State Report"
+#~ msgstr "Relatório do estado inativo do processador"
+
+#, c-format
+#~ msgid "Core %d"
+#~ msgstr "Núcleo %d"
+
+#, c-format
+#~ msgid "GPU %d"
+#~ msgstr "GPU %d"
+
+#~ msgid "CPU"
+#~ msgstr "CPU"
+
+#~ msgid "Processor Frequency Report"
+#~ msgstr "Relatório da frequência do processador"
+
+#, c-format
+#~ msgid "CPU %d"
+#~ msgstr "CPU %d"
+
+#, c-format
+#~ msgid " CPU(OS) %i"
+#~ msgstr " CPU(OS) %i"
+
+#, c-format
+#~ msgid " CPU %i"
+#~ msgstr " CPU %i"
+
+#, c-format
+#~ msgid " Pkg(HW)"
+#~ msgstr " Pacote(HW)"
+
+#, c-format
+#~ msgid " Pkg(OS)"
+#~ msgstr " Pacote(OS)"
+
+#, c-format
+#~ msgid "SATA link: %s"
+#~ msgstr "Ligação SATA: %s"
+
+#, c-format
+#~ msgid "SATA disk: %s"
+#~ msgstr "Disco SATA: %s"
+
+#~ msgid "AHCI ALPM Residency Statistics - Not supported on this macine"
+#~ msgstr ""
+#~ "Estatísticas do estado de AHCI ALPM - Não é suportado por este computador"
+
+#~ msgid "Link"
+#~ msgstr "Ligação"
+
+#~ msgid "Active"
+#~ msgstr "Ativo"
+
+#~ msgid "Partial"
+#~ msgstr "Parcial"
+
+#~ msgid "Slumber"
+#~ msgstr "Inativo"
+
+#~ msgid "Devslp"
+#~ msgstr "Devslp"
+
+#~ msgid "AHCI ALPM Residency Statistics"
+#~ msgstr "Estatísticas do estado de AHCI ALPM"
+
+#, c-format
+#~ msgid "Audio codec %s: %s (%s)"
+#~ msgstr "Codec de áudio %s: %s (%s)"
+
+#, c-format
+#~ msgid "Audio codec %s: %s"
+#~ msgstr "Codec de áudio %s: %s"
+
+#, c-format
+#~ msgid "System baseline power is estimated at %sW\n"
+#~ msgstr "A base de referência de energia do sistema está estimada em %sW\n"
+
+#~ msgid "Power est.    Usage     Device name\n"
+#~ msgstr "Est. de consumo    Utilização     Nome do dispositivo\n"
+
+#~ msgid "              Usage     Device name\n"
+#~ msgstr "              Utilização     Nome do dispositivo\n"
+
+#~ msgid "The battery reports a discharge rate of: "
+#~ msgstr "A bateria reporta um consumo de energia: "
+
+#~ msgid "The energy consumed was : "
+#~ msgstr "A energia consumida foi :"
+
+#~ msgid "The system baseline power is estimated at: "
+#~ msgstr "A base de referência de energia do sistema está estimada em: "
+
+#~ msgid "Device Name"
+#~ msgstr "Nome do dispositivo"
+
+#~ msgid "PW Estimate"
+#~ msgstr "Estimativa de energia"
+
+#~ msgid "Device Power Report"
+#~ msgstr "Relatório de energia do dispositivo"
+
+#, c-format
+#~ msgid "Network interface: %s (%s)"
+#~ msgstr "Interface de rede: %s (%s)"
+
+#, c-format
+#~ msgid "Radio device: %s"
+#~ msgstr "Dispositivo wireless: %s"
+
+#, c-format
+#~ msgid "I2C %s (%s): %s"
+#~ msgstr "I2C %s (%s): %s"
+
+#, c-format
+#~ msgid "PCI Device: %s"
+#~ msgstr "Dispositivo PCI: %s"
+
+#, c-format
+#~ msgid "USB device: %s"
+#~ msgstr "Dispositivo USB: %s"
+
+#, c-format
+#~ msgid "USB device: %s (%s)"
+#~ msgstr "Dispositivo USB: %s (%s)"
+
+#~ msgid "Process"
+#~ msgstr "Processo"
+
+#~ msgid "Process Device Activity"
+#~ msgstr "Processo da atividade do dispositivo"
+
+#, c-format
+#~ msgid "%7sW"
+#~ msgstr "%7sW"
+
+#, c-format
+#~ msgid "glob returned GLOB_NOSPACE\n"
+#~ msgstr "o glob devolveu GLOB_NOSPACE\n"
+
+#, c-format
+#~ msgid "glob returned GLOB_ABORTED\n"
+#~ msgstr "o glob devolveu GLOB_ABORTED\n"
+
+#, c-format
+#~ msgid "glob returned GLOB_NOMATCH\n"
+#~ msgstr "o glob devolveu GLOB_NOMATCH\n"
+
+#~ msgid ""
+#~ "File will be loaded after taking minimum number of measurement(s) with "
+#~ "battery only \n"
+#~ msgstr ""
+#~ "O ficheiro vai ser carregado depois de fazer um número mínimo de medições "
+#~ "só a usar a bateria \n"
+
+#~ msgid "Summary"
+#~ msgstr "Resumo"
+
+#~ msgid "wakeups/second"
+#~ msgstr "despertar/segundo"
+
+#~ msgid "GPU ops/seconds"
+#~ msgstr "GPU ops/segundos"
+
+#~ msgid "VFS ops/sec and"
+#~ msgstr "VFS ops/segundo e"
+
+#~ msgid "CPU use"
+#~ msgstr "Utilização da CPU"
+
+#~ msgid "Wakeups/s"
+#~ msgstr "Despertar/segundo"
+
+#~ msgid "GPU ops/s"
+#~ msgstr "GPU ops/segundo"
+
+#~ msgid "Disk IO/s"
+#~ msgstr "Disk IO/segundo"
+
+#~ msgid "GFX Wakeups/s"
+#~ msgstr "Despertar de GFX/segundo"
+
+#~ msgid "Overview of Software Power Consumers"
+#~ msgstr "Vista geral do consumo de energia de software"
+
+#~ msgid "Target:"
+#~ msgstr "Destino:"
+
+#~ msgid "1 units/s"
+#~ msgstr "1 unidade/segundo"
+
+#~ msgid "System: "
+#~ msgstr "Sistema: "
+
+#~ msgid " wakeup/s"
+#~ msgstr " despertar/segundo"
+
+#~ msgid "CPU: "
+#~ msgstr "CPU: "
+
+#, c-format
+#~ msgid "% usage"
+#~ msgstr "% de utilização"
+
+#~ msgid "GPU:"
+#~ msgstr "GPU:"
+
+#~ msgid " ops/s"
+#~ msgstr " ops/segundo"
+
+#~ msgid "GFX:"
+#~ msgstr "GFX:"
+
+#~ msgid " wakeups/s"
+#~ msgstr " despertar/segundo"
+
+#~ msgid "VFS:"
+#~ msgstr "VFS:"
+
+#~ msgid "Top 10 Power Consumers"
+#~ msgstr "Os top 10 que consomem mais energia"
+
+#~ msgid "PowerTOP Version"
+#~ msgstr "Versão do PowerTOP"
+
+#~ msgid "Kernel Version"
+#~ msgstr "Versão do kernel"
+
+#~ msgid "System Name"
+#~ msgstr "Nome do sistema"
+
+#~ msgid "CPU Information"
+#~ msgstr "Informação da CPU"
+
+#~ msgid "OS Information"
+#~ msgstr "Informação do sistema operativo"
+
+#~ msgid "System Information"
+#~ msgstr "Informação do sistema"
+
+#, c-format
+#~ msgid "Bluetooth device interface status"
+#~ msgstr "Estado da interface do dispositivo de bluetooth"
+
+#, c-format
+#~ msgid "Wake-on-lan status for device %s"
+#~ msgstr "Estado do wake-on-lan para o dispositivo %s"
+
+#, c-format
+#~ msgid "Runtime PM for %s device %s"
+#~ msgstr "Tempo de execução PM para o %s dispositivo %s"
+
+#, c-format
+#~ msgid "%s device %s has no runtime power management"
+#~ msgstr ""
+#~ "o %s dispositivo %s não possui uma gestão de energia do tempo de execução"
+
+#, c-format
+#~ msgid "PCI Device %s has no runtime power management"
+#~ msgstr ""
+#~ "O dispositivo PCI %s não possui uma gestão de energia do tempo de execução"
+
+#, c-format
+#~ msgid "Runtime PM for PCI Device %s"
+#~ msgstr "Tempo de execução PM para o dispositivo PCI %s"
+
+#, c-format
+#~ msgid "Runtime PM for port %s of PCI device: %s"
+#~ msgstr "Tempo de execução PM para a porta %s do dispositivo PCI: %s"
+
+#, c-format
+#~ msgid "Runtime PM for disk %s"
+#~ msgstr "Tempo de execução PM para o disco %s"
+
+#~ msgid "Script"
+#~ msgstr "Script"
+
+#~ msgid "Software Settings in Need of Tuning"
+#~ msgstr "Definições de software que necessitam de ajustes"
+
+#~ msgid "Untunable Software Issues"
+#~ msgstr "Problemas de software que não são possíveis de ajustar"
+
+#~ msgid "Optimal Tuned Software Settings"
+#~ msgstr "Definições de ajustes ideais para o software"
+
+#, c-format
+#~ msgid "Runtime PM for I2C %s %s (%s)"
+#~ msgstr "Tempo de execução PM para o I2C %s %s (%s)"
+
+#, c-format
+#~ msgid "I2C %s %s has no runtime power management"
+#~ msgstr "O I2C %s %s não possui uma gestão de energia do tempo de execução"
+
+#, c-format
+#~ msgid "Enable SATA link power management for %s"
+#~ msgstr "Ativar gestão de energia da ligação SATA para %s"
+
+#, c-format
+#~ msgid "Autosuspend for unknown USB device %s (%s:%s)"
+#~ msgstr "Suspender automaticamente o dispositivo USB desconhecido %s (%s:%s)"
+
+#, c-format
+#~ msgid "Autosuspend for USB device %s [%s]"
+#~ msgstr "Suspender automaticamente o dispositivo USB %s [%s]"
+
+#, c-format
+#~ msgid "Wireless Power Saving for interface %s"
+#~ msgstr "Poupança de energia wireless para a interface %s"
+
+#~ msgid "Wake status of the devices"
+#~ msgstr "Estado do despertar dos dispositivos"
+
+#, c-format
+#~ msgid "Wake status for USB device %s"
+#~ msgstr "Estado do despertar para o dispositivo USB %s"
