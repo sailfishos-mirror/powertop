@@ -116,7 +116,7 @@ double usbdevice::utilization(void) const /* percentage */
 
 void usbdevice::register_power_with_devlist(struct result_bundle *results, struct parameter_bundle *bundle)
 {
-	std::string devfs_name = std::format("usb/{:03}/{:03}", busnum, devnum);
+	const std::string devfs_name = std::format("usb/{:03}/{:03}", busnum, devnum);
 	register_devpower(devfs_name.c_str(), power_usage(results, bundle), this);
 }
 
@@ -150,8 +150,8 @@ static void create_all_usb_devices_callback(const std::string &d_name)
 	vendorid = read_sysfs_string(std::format("/sys/bus/usb/devices/{}/idVendor", d_name));
 	devid = read_sysfs_string(std::format("/sys/bus/usb/devices/{}/idProduct", d_name));
 
-	std::string devid_name = std::format("usb-device-{}-{}", vendorid, devid);
-	std::string device_name = std::format("usb-device-{}-{}-{}", d_name, vendorid, devid);
+	const std::string devid_name = std::format("usb-device-{}-{}", vendorid, devid);
+	const std::string device_name = std::format("usb-device-{}-{}-{}", d_name, vendorid, devid);
 	if (result_device_exists(device_name))
 		return;
 
