@@ -65,7 +65,7 @@ void thinkpad_light::end_measurement(void)
 }
 
 
-double thinkpad_light::utilization(void)
+double thinkpad_light::utilization(void) const
 {
 	return (start_rate+end_rate) / 2.55 / 2.0;
 }

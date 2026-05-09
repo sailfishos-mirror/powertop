@@ -50,24 +50,24 @@ public:
 
 	void register_sysfs_path(const std::string &path);
 
-	virtual double	utilization(void); /* percentage */
+	virtual double	utilization(void) const; /* percentage */
 
-	virtual std::string util_units(void) { return "%"; };
+	virtual std::string util_units(void) const { return "%"; };
 
-	virtual std::string class_name(void) { return "abstract device";};
-	virtual std::string device_name(void) { return "abstract device";};
+	virtual std::string class_name(void) const { return "abstract device";};
+	virtual std::string device_name(void) const { return "abstract device";};
 
 	virtual std::string human_name(void) { return device_name(); };
 
 	virtual double power_usage([[maybe_unused]] struct result_bundle *results, [[maybe_unused]] struct parameter_bundle *bundle) { return 0.0; };
 
-	virtual bool show_in_list(void) {return !hide;};
+	virtual bool show_in_list(void) const {return !hide;};
 
-	virtual bool power_valid(void) { return true;};
+	virtual bool power_valid(void) const { return true;};
 
 	virtual void register_power_with_devlist([[maybe_unused]] struct result_bundle *results, [[maybe_unused]] struct parameter_bundle *bundle) { ; };
 
-	virtual int grouping_prio(void) { return 0; }; /* priority of this device class if multiple classes match to the same underlying device. 0 is lowest */
+	virtual int grouping_prio(void) const { return 0; }; /* priority of this device class if multiple classes match to the same underlying device. 0 is lowest */
 
 	virtual void collect_json_fields(std::string &_js);
 	std::string serialize() { JSON_START(); collect_json_fields(_js); JSON_END(); }

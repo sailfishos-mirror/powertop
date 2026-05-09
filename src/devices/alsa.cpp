@@ -114,7 +114,7 @@ void alsa::end_measurement(void)
 }
 
 
-double alsa::utilization(void)
+double alsa::utilization(void) const
 {
 	double p;
 

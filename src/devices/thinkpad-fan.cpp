@@ -64,7 +64,7 @@ void thinkpad_fan::end_measurement(void)
 }
 
 
-double thinkpad_fan::utilization(void)
+double thinkpad_fan::utilization(void) const
 {
 	return (start_rate+end_rate) / 2;
 }

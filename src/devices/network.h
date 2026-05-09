@@ -68,16 +68,16 @@ public:
 	virtual void start_measurement(void) override;
 	virtual void end_measurement(void) override;
 
-	virtual double	utilization(void) override;
-	virtual std::string util_units(void) override { return " pkts/s"; };
+	virtual double	utilization(void) const override;
+	virtual std::string util_units(void) const override { return " pkts/s"; };
 
-	virtual std::string class_name(void) override { return "ethernet";};
+	virtual std::string class_name(void) const override { return "ethernet";};
 
-	virtual std::string device_name(void) override { return name; };
+	virtual std::string device_name(void) const override { return name; };
 	virtual std::string human_name(void) override { return humanname; };
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle) override;
-	virtual bool power_valid(void) override { return utilization_power_valid(rindex_up) || utilization_power_valid(rindex_link_100) || utilization_power_valid(rindex_link_1000) || utilization_power_valid(rindex_link_high);};
-	virtual int grouping_prio(void) override { return 10; };
+	virtual bool power_valid(void) const override { return utilization_power_valid(rindex_up) || utilization_power_valid(rindex_link_100) || utilization_power_valid(rindex_link_1000) || utilization_power_valid(rindex_link_high);};
+	virtual int grouping_prio(void) const override { return 10; };
 	void collect_json_fields(std::string &_js) override;
 
 	/* Virtual hardware helpers — override in tests to inject fake data */

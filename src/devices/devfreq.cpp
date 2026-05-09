@@ -182,7 +182,7 @@ double devfreq::power_usage([[maybe_unused]] struct result_bundle *result, [[may
 	return 0;
 }
 
-double devfreq::utilization(void)
+double devfreq::utilization(void) const
 {
 	return 0;
 }

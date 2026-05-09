@@ -162,7 +162,7 @@ void ahci::end_measurement(void)
 }
 
 
-double ahci::utilization(void)
+double ahci::utilization(void) const
 {
 	double p;
 	double total;

@@ -109,7 +109,7 @@ void backlight::end_measurement(void)
 }
 
 
-double backlight::utilization(void)
+double backlight::utilization(void) const
 {
 	if (max_level <= 0)
 		return 0.0;

@@ -38,15 +38,15 @@ public:
 		real_path = path;          /* device::real_path is public */
 	}
 
-	std::string device_name(void)    override { return _name; }
-	std::string human_name(void)     override { return _name; }
+	std::string device_name(void) const override { return _name; }
+	std::string human_name(void) override { return _name; }
 	double power_usage([[maybe_unused]] struct result_bundle *r,
 	                   [[maybe_unused]] struct parameter_bundle *p) override
 	{
 		return _power;
 	}
-	int  grouping_prio(void)  override { return _prio; }
-	bool show_in_list(void)   override { return _visible; }
+	int  grouping_prio(void) const override { return _prio; }
+	bool show_in_list(void) const override { return _visible; }
 };
 
 /* ── Fixture helpers ───────────────────────────────────────────────── */

@@ -58,7 +58,7 @@ void i915gpu::end_measurement(void)
 }
 
 
-double i915gpu::utilization(void)
+double i915gpu::utilization(void) const
 {
 	return  get_result_value(rindex);
 

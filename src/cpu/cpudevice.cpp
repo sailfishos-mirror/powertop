@@ -41,7 +41,7 @@ cpudevice::cpudevice(const std::string &classname, const std::string &dev_name, 
 	r_consumption_index = get_result_index("cpu-consumption");
 }
 
-std::string cpudevice::device_name(void)
+std::string cpudevice::device_name(void) const
 {
 	return _cpuname;
 }
@@ -81,7 +81,7 @@ double cpudevice::power_usage(struct result_bundle *result, struct parameter_bun
 	return power;
 }
 
-double	cpudevice::utilization(void)
+double	cpudevice::utilization(void) const
 {
 	double _utilization;
 	_utilization = get_result_value(r_consumption_index);

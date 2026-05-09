@@ -314,7 +314,7 @@ void network::end_measurement(void)
 }
 
 
-double network::utilization(void)
+double network::utilization(void) const
 {
 	if (duration < 0.01)
 		return 0.0;

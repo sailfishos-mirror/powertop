@@ -74,7 +74,7 @@ void rfkill::end_measurement(void)
 }
 
 
-double rfkill::utilization(void)
+double rfkill::utilization(void) const
 {
 	double p;
 	int rfk;

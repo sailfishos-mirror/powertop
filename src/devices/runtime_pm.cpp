@@ -69,7 +69,7 @@ void runtime_pmdevice::end_measurement(void)
 	after_active_time = read_sysfs(std::format("{}/power/runtime_active_time", sysfs_path));
 }
 
-double runtime_pmdevice::utilization(void) /* percentage */
+double runtime_pmdevice::utilization(void) const /* percentage */
 {
 	double d;
 	double delta_active = (double)after_active_time - before_active_time;

@@ -56,16 +56,16 @@ public:
 	virtual void start_measurement(void) override;
 	virtual void end_measurement(void) override;
 
-	virtual double	utilization(void) override; /* percentage */
+	virtual double	utilization(void) const override; /* percentage */
 
-	virtual std::string class_name(void) override { return "devfreq";};
+	virtual std::string class_name(void) const override { return "devfreq";};
 
-	virtual std::string device_name(void) override { return dir_name; };
+	virtual std::string device_name(void) const override { return dir_name; };
 	virtual std::string human_name(void) override { return "devfreq";};
 	virtual double power_usage(struct result_bundle *result, struct parameter_bundle *bundle) override;
-	virtual std::string util_units(void) override { return " rpm"; };
-	virtual bool power_valid(void) override { return false; /*utilization_power_valid(r_index);*/};
-	virtual int grouping_prio(void) override { return 1; };
+	virtual std::string util_units(void) const override { return " rpm"; };
+	virtual bool power_valid(void) const override { return false; /*utilization_power_valid(r_index);*/};
+	virtual int grouping_prio(void) const override { return 1; };
 	void collect_json_fields(std::string &_js) override;
 };
 

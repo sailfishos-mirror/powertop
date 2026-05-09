@@ -63,7 +63,7 @@ void device::end_measurement(void)
 {
 }
 
-double device::utilization(void)
+double device::utilization(void) const
 {
 	return 0.0;
 }

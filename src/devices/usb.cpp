@@ -98,7 +98,7 @@ void usbdevice::end_measurement(void)
 	report_utilization(name, utilization());
 }
 
-double usbdevice::utilization(void) /* percentage */
+double usbdevice::utilization(void) const /* percentage */
 {
 	double d;
 	double total_connected = (double)connected_after - connected_before;
