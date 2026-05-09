@@ -40,7 +40,7 @@
 
 void cpu_linux::parse_cstates_start(void)
 {
-	std::string dir = std::format("/sys/devices/system/cpu/cpu{}/cpuidle", number);
+	const std::string dir = std::format("/sys/devices/system/cpu/cpu{}/cpuidle", number);
 
 	for (const auto &linux_name : list_directory(dir)) {
 		std::string human_name = read_sysfs_string(std::format("{}/{}/name", dir, linux_name));
@@ -51,10 +51,10 @@ void cpu_linux::parse_cstates_start(void)
 			human_name = _("C0 polling");
 
 		bool ok = false;
-		uint64_t usage    = read_sysfs(std::format("{}/{}/usage", dir, linux_name), &ok);
+		const uint64_t usage    = read_sysfs(std::format("{}/{}/usage", dir, linux_name), &ok);
 		if (!ok)
 			continue;
-		uint64_t duration = read_sysfs(std::format("{}/{}/time", dir, linux_name));
+		const uint64_t duration = read_sysfs(std::format("{}/{}/time", dir, linux_name));
 
 		update_cstate(linux_name, human_name, usage, duration, 1);
 	}
@@ -72,7 +72,7 @@ void cpu_linux::parse_pstates_start(void)
 
 	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/stats/time_in_state", first_cpu);
 
-	std::string content = read_file_content(filename);
+	const std::string content = read_file_content(filename);
 	if (!content.empty()) {
 		std::istringstream stream(content);
 		std::string line;
@@ -95,14 +95,14 @@ void cpu_linux::measurement_start(void)
 
 void cpu_linux::parse_cstates_end(void)
 {
-	std::string dir = std::format("/sys/devices/system/cpu/cpu{}/cpuidle", number);
+	const std::string dir = std::format("/sys/devices/system/cpu/cpu{}/cpuidle", number);
 
 	for (const auto &linux_name : list_directory(dir)) {
 		bool ok = false;
-		uint64_t usage    = read_sysfs(std::format("{}/{}/usage", dir, linux_name), &ok);
+		const uint64_t usage    = read_sysfs(std::format("{}/{}/usage", dir, linux_name), &ok);
 		if (!ok)
 			continue;
-		uint64_t duration = read_sysfs(std::format("{}/{}/time", dir, linux_name));
+		const uint64_t duration = read_sysfs(std::format("{}/{}/time", dir, linux_name));
 
 		finalize_cstate(linux_name, usage, duration, 1);
 	}
@@ -114,7 +114,7 @@ void cpu_linux::parse_pstates_end(void)
 
 	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/stats/time_in_state", number);
 
-	std::string content = read_file_content(filename);
+	const std::string content = read_file_content(filename);
 	if (!content.empty()) {
 		std::istringstream stream(content);
 		std::string line;
