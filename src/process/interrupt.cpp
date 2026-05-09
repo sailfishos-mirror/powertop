@@ -52,7 +52,7 @@ interrupt::interrupt(const std::string &_handler, int _number) : power_consumer(
 }
 
 
-std::vector <class interrupt *> all_interrupts;
+std::vector<std::unique_ptr<interrupt>> all_interrupts;
 
 void interrupt::start_interrupt(uint64_t time)
 {
@@ -93,7 +93,6 @@ class interrupt * find_create_interrupt(const std::string &_handler, int nr, int
 {
 	std::string handler_s;
 	unsigned int i;
-	class interrupt *new_irq;
 
 	handler_s = _handler;
 	if (handler_s == "timer")
@@ -101,13 +100,12 @@ class interrupt * find_create_interrupt(const std::string &_handler, int nr, int
 
 
 	for (i = 0; i < all_interrupts.size(); i++) {
-		if (all_interrupts[i] && all_interrupts[i]->number == nr && all_interrupts[i]->handler == handler_s)
-			return all_interrupts[i];
+		if (all_interrupts[i]->number == nr && all_interrupts[i]->handler == handler_s)
+			return all_interrupts[i].get();
 	}
 
-	new_irq = new interrupt(handler_s, nr);
-	all_interrupts.push_back(new_irq);
-	return new_irq;
+	all_interrupts.push_back(std::make_unique<interrupt>(handler_s, nr));
+	return all_interrupts.back().get();
 }
 
 void all_interrupts_to_all_power(void)
@@ -115,16 +113,12 @@ void all_interrupts_to_all_power(void)
 	unsigned int i;
 	for (i = 0; i < all_interrupts.size() ; i++)
 		if (all_interrupts[i]->accumulated_runtime)
-			all_power.push_back(all_interrupts[i]);
+			all_power.push_back(all_interrupts[i].get());
 }
 
 void clear_interrupts(void)
 {
-	std::vector<class interrupt *>::iterator it = all_interrupts.begin();
-	while (it != all_interrupts.end()) {
-		delete *it;
-		it = all_interrupts.erase(it);
-	}
+	all_interrupts.clear();
 }
 
 void interrupt::collect_json_fields(std::string &_js)

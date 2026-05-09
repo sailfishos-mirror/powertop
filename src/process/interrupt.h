@@ -25,6 +25,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <memory>
 
 #include "powerconsumer.h"
 
@@ -51,7 +52,7 @@ public:
 	void collect_json_fields(std::string &_js) override;
 };
 
-extern std::vector <class interrupt *> all_interrupts;
+extern std::vector<std::unique_ptr<interrupt>> all_interrupts;
 extern const std::vector<std::string> softirqs;
 
 
