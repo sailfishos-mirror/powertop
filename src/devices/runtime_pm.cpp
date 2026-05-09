@@ -72,9 +72,9 @@ void runtime_pmdevice::end_measurement(void)
 double runtime_pmdevice::utilization(void) const /* percentage */
 {
 	double d;
-	double delta_active = (double)after_active_time - before_active_time;
-	double delta_suspended = (double)after_suspended_time - before_suspended_time;
-	double total_time = delta_active + delta_suspended;
+	const double delta_active = (double)after_active_time - before_active_time;
+	const double delta_suspended = (double)after_suspended_time - before_suspended_time;
+	const double total_time = delta_active + delta_suspended;
 
 	if (total_time < 0.01)
 		return 0.0;
