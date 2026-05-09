@@ -42,7 +42,7 @@
 
 static bool is_enabled = true;
 
-static std::vector<class devfreq *> all_devfreq;
+static std::vector<std::unique_ptr<devfreq>> all_devfreq;
 
 devfreq::devfreq(const std::string &dpath): device()
 {
@@ -51,8 +51,6 @@ devfreq::devfreq(const std::string &dpath): device()
 
 devfreq::~devfreq()
 {
-	for (auto *s : dstates)
-		delete s;
 }
 
 uint64_t devfreq::parse_freq_time(const std::string &pchr_s)
@@ -72,7 +70,6 @@ uint64_t devfreq::parse_freq_time(const std::string &pchr_s)
 
 void devfreq::process_time_stamps()
 {
-	unsigned int i;
 	uint64_t active_time = 0;
 
 	if (dstates.empty())
@@ -81,25 +78,19 @@ void devfreq::process_time_stamps()
 	sample_time = (1000000.0 * (stamp_after.tv_sec - stamp_before.tv_sec))
 			+ ((stamp_after.tv_usec - stamp_before.tv_usec) );
 
-	for (i=0; i < dstates.size()-1; i++) {
-		class frequency *state = dstates[i];
+	for (size_t i = 0; i < dstates.size() - 1; i++) {
+		auto *state = dstates[i].get();
 		state->time_after = 1000 * (state->time_after - state->time_before);
 		active_time += state->time_after;
 	}
 	/* Compute idle time for the device */
 	double idle = sample_time - (double)active_time;
-	dstates[i]->time_after = (idle > 0.0) ? (uint64_t)idle : 0;
+	dstates.back()->time_after = (idle > 0.0) ? (uint64_t)idle : 0;
 }
 
 void devfreq::add_devfreq_freq_state(uint64_t freq, uint64_t time)
 {
-	class frequency *state;
-
-	state = new(std::nothrow) frequency;
-	if (!state)
-		return;
-
-	dstates.push_back(state);
+	auto state = std::make_unique<frequency>();
 
 	state->freq = freq;
 	if (freq == 0)
@@ -107,16 +98,18 @@ void devfreq::add_devfreq_freq_state(uint64_t freq, uint64_t time)
 	else
 		state->human_name = hz_to_human(freq);
 	state->time_before = time;
+	dstates.push_back(std::move(state));
 }
 
 void devfreq::update_devfreq_freq_state(uint64_t freq, uint64_t time)
 {
-	unsigned int i;
 	class frequency *state = nullptr;
 
-	for (i=0; i < dstates.size(); i++) {
-		if (freq == dstates[i]->freq)
-			state = dstates[i];
+	for (const auto &s : dstates) {
+		if (freq == s->freq) {
+			state = s.get();
+			break;
+		}
 	}
 
 	if (state == nullptr) {
@@ -168,11 +161,7 @@ void devfreq::parse_devfreq_trans_stat([[maybe_unused]] const std::string &dname
 
 void devfreq::start_measurement(void)
 {
-	unsigned int i;
-
-	for (i=0; i < dstates.size(); i++)
-		delete dstates[i];
-	dstates.resize(0);
+	dstates.clear();
 	sample_time = 0;
 
 	stamp_before = pt_gettime();
@@ -201,7 +190,7 @@ double devfreq::utilization(void)
 std::string devfreq::fill_freq_utilization(unsigned int idx)
 {
 	if (idx < dstates.size() && dstates[idx]) {
-		class frequency *state = dstates[idx];
+		const auto *state = dstates[idx].get();
 		if (sample_time < 0.00001)
 			return "";
 		return std::format(" {:5.1f}% ", percentage(1.0 * state->time_after / sample_time));
@@ -219,25 +208,19 @@ std::string devfreq::fill_freq_name(unsigned int idx)
 
 void start_devfreq_measurement(void)
 {
-	unsigned int i;
-
-	for (i=0; i<all_devfreq.size(); i++)
-		all_devfreq[i]->start_measurement();
+	for (auto &df : all_devfreq)
+		df->start_measurement();
 }
 
 void end_devfreq_measurement(void)
 {
-	unsigned int i;
-
-	for (i=0; i<all_devfreq.size(); i++)
-		all_devfreq[i]->end_measurement();
+	for (auto &df : all_devfreq)
+		df->end_measurement();
 }
 
 static void devfreq_dev_callback(const std::string &d_name)
 {
-	devfreq *df = new(std::nothrow) devfreq(d_name);
-	if (df)
-		all_devfreq.push_back(df);
+	all_devfreq.push_back(std::make_unique<devfreq>(d_name));
 }
 
 void create_all_devfreq_devices(void)
@@ -262,7 +245,6 @@ void initialize_devfreq(void)
 
 void display_devfreq_devices(void)
 {
-	unsigned int i, j;
 	WINDOW *win;
 
 	win = get_ncurses_win("Device Freq stats");
@@ -303,12 +285,11 @@ void display_devfreq_devices(void)
 		return;
 	}
 
-	for (i=0; i<all_devfreq.size(); i++) {
+	for (auto &df : all_devfreq) {
 
-		class devfreq *df = all_devfreq[i];
 		wprintw(win, "\n%s\n", df->device_name().c_str());
 
-		for (j=0; j < df->dstates.size(); j++) {
+		for (unsigned int j = 0; j < df->dstates.size(); j++) {
 			std::string f_name = df->fill_freq_name(j);
 			std::string f_util = df->fill_freq_utilization(j);
 			wprintw(win, "\t%s%s\n", f_name.c_str(), f_util.c_str());
@@ -337,13 +318,6 @@ void report_devfreq_devices(void)
 
 void clear_all_devfreq()
 {
-	unsigned int i;
-
-	for (i=0; i < all_devfreq.size(); i++) {
-		class devfreq *df = all_devfreq[i];
-
-		delete df;
-	}
 	all_devfreq.clear();
 }
 

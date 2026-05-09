@@ -155,11 +155,11 @@ inline std::string pt_json_kv(const std::string &k, double v)
 { return "\"" + k + "\":" + std::format("{:.6g}", v); }
 
 /*
- * pt_json_array — serializes a vector of pointers whose pointees have a
- * serialize() const method. Returns a JSON array string "[...]".
+ * pt_json_array — serializes a vector of pointers or smart pointers whose
+ * pointees have a serialize() const method. Returns a JSON array string "[...]".
  */
 template<typename T>
-inline std::string pt_json_array(const std::vector<T *> &vec)
+inline std::string pt_json_array(const std::vector<T> &vec)
 {
 	std::string out = "[";
 	for (size_t i = 0; i < vec.size(); ++i) {

@@ -24,10 +24,12 @@
  */
 #pragma once
 
+#include <memory>
+#include <string>
+#include <sys/time.h>
+
 #include "device.h"
 #include "../parameters/parameters.h"
-#include <sys/time.h>
-#include <string>
 
 class frequency;
 
@@ -44,7 +46,7 @@ class devfreq: public device {
 
 public:
 
-	std::vector<class frequency *> dstates;
+	std::vector<std::unique_ptr<frequency>> dstates;
 
 	devfreq(const std::string &c);
 	~devfreq();
