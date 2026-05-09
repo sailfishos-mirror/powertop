@@ -28,6 +28,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <memory>
 #include <stdint.h>
 #include <sys/time.h>
 #include "../lib.h"
@@ -55,9 +56,9 @@ public:
 	uint64_t	current_frequency = 0;
 	uint64_t	effective_frequency = 0;
 
-	std::vector<class abstract_cpu *> children;
-	std::vector<struct idle_state *> cstates;
-	std::vector<class frequency *> pstates;
+	std::vector<std::unique_ptr<abstract_cpu>> children;
+	std::vector<std::unique_ptr<idle_state>> cstates;
+	std::vector<std::unique_ptr<frequency>> pstates;
 
 	virtual ~abstract_cpu();
 

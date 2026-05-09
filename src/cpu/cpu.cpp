@@ -175,37 +175,37 @@ static void handle_one_cpu(unsigned int number, const std::string &vendor, int f
 
 
 	if (system_level.children.size() <= package_number)
-		system_level.children.resize(package_number + 1, nullptr);
+		system_level.children.resize(package_number + 1);
 
 	if (!system_level.children[package_number]) {
-		system_level.children[package_number] = new_package(package_number, number, vendor, family, model);
+		system_level.children[package_number] = std::unique_ptr<abstract_cpu>(new_package(package_number, number, vendor, family, model));
 		system_level.childcount++;
 	}
 
-	package = system_level.children[package_number];
+	package = system_level.children[package_number].get();
 	package->parent = &system_level;
 
 
 	if (package->children.size() <= core_number)
-		package->children.resize(core_number + 1, nullptr);
+		package->children.resize(core_number + 1);
 
 	if (!package->children[core_number]) {
-		package->children[core_number] = new_core(core_number, number, vendor, family, model);
+		package->children[core_number] = std::unique_ptr<abstract_cpu>(new_core(core_number, number, vendor, family, model));
 		package->childcount++;
 	}
 
-	core = package->children[core_number];
+	core = package->children[core_number].get();
 	core->parent = package;
 
 	if (core->children.size() <= number)
-		core->children.resize(number + 1, nullptr);
+		core->children.resize(number + 1);
 
 	if (!core->children[number]) {
-		core->children[number] = new_cpu(number, vendor, family, model);
+		core->children[number] = std::unique_ptr<abstract_cpu>(new_cpu(number, vendor, family, model));
 		core->childcount++;
 	}
 
-	cpu = core->children[number];
+	cpu = core->children[number].get();
 	cpu->parent = core;
 
 	if (number >= all_cpus.size())
@@ -219,15 +219,15 @@ static void handle_i965_gpu(void)
 	class abstract_cpu *package;
 
 
-	package = system_level.children[0];
+	package = system_level.children[0].get();
 
 	core_number = package->children.size();
 
 	if (package->children.size() <= core_number)
-		package->children.resize(core_number + 1, nullptr);
+		package->children.resize(core_number + 1);
 
 	if (!package->children[core_number]) {
-		package->children[core_number] = new_i965_gpu();
+		package->children[core_number] = std::unique_ptr<abstract_cpu>(new_i965_gpu());
 		package->childcount++;
 	}
 }
@@ -384,12 +384,12 @@ static int get_cstates_num(void)
 
 	for (package = 0, cstates_num = 0;
 			package < system_level.children.size(); package++) {
-		_package = system_level.children[package];
+		_package = system_level.children[package].get();
 		if (_package == nullptr)
 			continue;
 
 		/* walk package cstates and get largest cstates number */
-		for (const auto *s : _package->cstates)
+		for (const auto &s : _package->cstates)
 			cstates_num = std::max(cstates_num, s->line_level);
 
 		/*
@@ -397,11 +397,11 @@ static int get_cstates_num(void)
 		 * largest cstates number
 		 */
 		for (core = 0; core < _package->children.size(); core++) {
-			_core = _package->children[core];
+			_core = _package->children[core].get();
 			if (_core == nullptr)
 				continue;
 
-			for (const auto *s : _core->cstates)
+			for (const auto &s : _core->cstates)
 				cstates_num = std::max(cstates_num, s->line_level);
 
 			/*
@@ -409,11 +409,11 @@ static int get_cstates_num(void)
 			 * there is are more linux cstates than hw cstates
 			 */
 			 for (cpu = 0; cpu < _core->children.size(); cpu++) {
-				_cpu = _core->children[cpu];
+				_cpu = _core->children[cpu].get();
 				if (_cpu == nullptr)
 					continue;
 
-				for (const auto *s : _cpu->cstates)
+				for (const auto &s : _cpu->cstates)
 					cstates_num = std::max(cstates_num, s->line_level);
 			}
 		}
@@ -459,7 +459,7 @@ void report_display_cpu_cstates(void)
 		idx2=0;
 		idx3=0;
 
-		_package = system_level.children[package];
+		_package = system_level.children[package].get();
 		if (!_package)
 			continue;
 		/* Tables for PKG, CORE, CPU */
@@ -474,7 +474,7 @@ void report_display_cpu_cstates(void)
 		int num_cpus=0, num_cores=0;
 
 		for (core = 0; core < _package->children.size(); core++) {
-			_core = _package->children[core];
+			_core = _package->children[core].get();
 			if (!_core)
 				continue;
 			core_type = _core->get_type();
@@ -483,7 +483,7 @@ void report_display_cpu_cstates(void)
 					num_cores+=1;
 
 			for (cpu = 0; cpu < _core->children.size(); cpu++) {
-				_cpu = _core->children[cpu];
+				_cpu = _core->children[cpu].get();
 				if (!_cpu)
 					continue;
 				num_cpus+=1;
@@ -500,7 +500,7 @@ void report_display_cpu_cstates(void)
 		for (core = 0; core < _package->children.size(); core++) {
 			cpu_data[idx3]="&nbsp;";
 			idx3+=1;
-			_core = _package->children[core];
+			_core = _package->children[core].get();
 
 			if (!_core)
 				continue;
@@ -570,7 +570,7 @@ void report_display_cpu_cstates(void)
 				}
 				// *** CPU STARTS ***
 				for (cpu = 0; cpu < _core->children.size(); cpu++) {
-					_cpu = _core->children[cpu];
+					_cpu = _core->children[cpu].get();
 
 					if (!_cpu)
 						continue;
@@ -670,7 +670,7 @@ void report_display_cpu_pstates(void)
 		idx2=0;
 		idx3=0;
 
-		_package = system_level.children[package];
+		_package = system_level.children[package].get();
 		if (!_package)
 			continue;
 
@@ -687,7 +687,7 @@ void report_display_cpu_pstates(void)
 		num_cpus=0;
 		num_cores=0;
 		for (core = 0; core < _package->children.size(); core++) {
-			_core = _package->children[core];
+			_core = _package->children[core].get();
 			if (!_core)
 				continue;
 
@@ -697,7 +697,7 @@ void report_display_cpu_pstates(void)
 					num_cores+=1;
 
 			for (cpu = 0; cpu < _core->children.size(); cpu++) {
-				_cpu = _core->children[cpu];
+				_cpu = _core->children[cpu].get();
 				if (!_cpu)
 					continue;
 				num_cpus+=1;
@@ -715,7 +715,7 @@ void report_display_cpu_pstates(void)
 		for (core = 0; core < _package->children.size(); core++) {
 			cpu_data[idx3]="&nbsp;";
 			idx3+=1;
-			_core = _package->children[core];
+			_core = _package->children[core].get();
 			if (!_core)
 				continue;
 
@@ -763,7 +763,7 @@ void report_display_cpu_pstates(void)
 
 				/* CPU */
 				for (cpu = 0; cpu < _core->children.size(); cpu++) {
-					_cpu = _core->children[cpu];
+					_cpu = _core->children[cpu].get();
 					if (!_cpu)
 						continue;
 
@@ -851,12 +851,12 @@ void impl_w_display_cpu_states(int state)
 
 	for (package = 0; package < system_level.children.size(); package++) {
 		int first_pkg = 0;
-		_package = system_level.children[package];
+		_package = system_level.children[package].get();
 		if (!_package)
 			continue;
 
 		for (core = 0; core < _package->children.size(); core++) {
-			_core = _package->children[core];
+			_core = _package->children[core].get();
 			if (!_core)
 				continue;
 			if (!_core->has_pstates() && state == PSTATE)
@@ -897,7 +897,7 @@ void impl_w_display_cpu_states(int state)
 				}
 
 				for (cpu = 0; cpu < _core->children.size(); cpu++) {
-					_cpu = _core->children[cpu];
+					_cpu = _core->children[cpu].get();
 					if (!_cpu)
 						continue;
 
@@ -1027,7 +1027,7 @@ void process_cpu_data(void)
 
 	perf_events->process();
 
-	for (auto *child : system_level.children)
+	for (auto &child : system_level.children)
 		if (child)
 			child->validate();
 
@@ -1050,8 +1050,6 @@ void clear_cpu_data(void)
 
 void clear_all_cpus(void)
 {
-	for (auto *child : system_level.children)
-		delete child;
 	system_level.children.clear();
 	all_cpus.clear();
 }

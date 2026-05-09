@@ -320,7 +320,7 @@ void nhm_core::measurement_end(void)
 
 	time_factor = 1000000.0 * (stamp_after.tv_sec - stamp_before.tv_sec) + stamp_after.tv_usec - stamp_before.tv_usec;
 
-	for (auto *child : children)
+	for (auto &child : children)
 		if (child) {
 			child->measurement_end();
 			child->wiggle();
@@ -331,7 +331,7 @@ void nhm_core::measurement_end(void)
 	if (tsc_after != tsc_before)
 		ratio = 1.0 * time_delta / (tsc_after - tsc_before);
 
-	for (auto *state : cstates) {
+	for (auto &state : cstates) {
 		if (state->after_count == 0)
 			continue;
 
@@ -347,7 +347,7 @@ void nhm_core::measurement_end(void)
 		if (children[i]) {
 			for (j = 0; j < children[i]->pstates.size(); j++) {
 				class frequency *state;
-				state = children[i]->pstates[j];
+				state = children[i]->pstates[j].get();
 				if (!state)
 					continue;
 
@@ -585,7 +585,7 @@ void nhm_package::measurement_end(void)
 	uint64_t time_delta;
 	double ratio = 0.0;
 
-	for (auto *child : children)
+	for (auto &child : children)
 		if (child)
 			child->wiggle();
 
@@ -629,7 +629,7 @@ void nhm_package::measurement_end(void)
 		finalize_cstate("pkg c10", 0, c10_after, 1);
 	}
 
-	for (auto *child : children)
+	for (auto &child : children)
 		if (child)
 			child->measurement_end();
 
@@ -638,7 +638,7 @@ void nhm_package::measurement_end(void)
 	if (tsc_after != tsc_before)
 		ratio = 1.0 * time_delta / (tsc_after - tsc_before);
 
-	for (auto *state : cstates) {
+	for (auto &state : cstates) {
 		if (state->after_count == 0)
 			continue;
 
@@ -648,11 +648,9 @@ void nhm_package::measurement_end(void)
 		state->usage_delta =    ratio * (state->usage_after    - state->usage_before)    / state->after_count;
 		state->duration_delta = ratio * (state->duration_after - state->duration_before) / state->after_count;
 	}
-	for (auto *child : children)
+	for (auto &child : children)
 		if (child) {
-			for (auto *state : child->pstates) {
-				if (!state)
-					continue;
+			for (const auto &state : child->pstates) {
 
 				update_pstate(  state->freq, state->human_name.c_str(), state->time_before, state->before_count);
 				finalize_pstate(state->freq,                    state->time_after,  state->after_count);
@@ -714,7 +712,7 @@ void nhm_cpu::measurement_end(void)
 		ratio = 1.0 * time_delta / (tsc_after - tsc_before);
 
 
-	for (auto *state : cstates) {
+	for (auto &state : cstates) {
 		if (state->line_level != LEVEL_C0)
 			continue;
 
@@ -739,7 +737,7 @@ std::string nhm_cpu::fill_pstate_line(int line_nr)
 	const int intel_pstate = is_intel_pstate_driver_loaded();
 
 	if (!intel_pstate && total_stamp ==0) {
-		for (const auto *s : pstates)
+		for (const auto &s : pstates)
 			total_stamp += s->time_after;
 		if (total_stamp == 0)
 			total_stamp = 1;

@@ -66,7 +66,7 @@ void cpu_linux::parse_pstates_start(void)
 	std::string filename;
 
 	last_stamp = 0;
-	for (auto *child : children)
+	for (auto &child : children)
 		if (child)
 			child->wiggle();
 
@@ -148,7 +148,7 @@ std::string cpu_linux::fill_cstate_line(int line_nr, const std::string &separato
 	if (time_factor < 1.0)
 		return "";
 
-	for (const auto *s : cstates) {
+	for (const auto &s : cstates) {
 		if (s->line_level != line_nr)
 			continue;
 
@@ -168,7 +168,7 @@ std::string cpu_linux::fill_cstate_percentage(int line_nr)
 	if (time_factor < 1.0)
 		return "";
 
-	for (const auto *s : cstates) {
+	for (const auto &s : cstates) {
 		if (s->line_level != line_nr)
 			continue;
 
@@ -184,7 +184,7 @@ std::string cpu_linux::fill_cstate_time(int line_nr)
 	if (line_nr == LEVEL_C0)
 		return "";
 
-	for (const auto *s : cstates) {
+	for (const auto &s : cstates) {
 		if (s->line_level != line_nr)
 			continue;
 
@@ -198,7 +198,7 @@ std::string cpu_linux::fill_cstate_time(int line_nr)
 
 std::string cpu_linux::fill_cstate_name(int line_nr)
 {
-	for (const auto *s : cstates) {
+	for (const auto &s : cstates) {
 		if (s->line_level != line_nr)
 			continue;
 
@@ -220,7 +220,7 @@ std::string cpu_linux::fill_pstate_name(int line_nr)
 std::string cpu_linux::fill_pstate_line(int line_nr)
 {
 	if (total_stamp ==0) {
-		for (const auto *s : pstates)
+		for (const auto &s : pstates)
 			total_stamp += s->time_after;
 		if (total_stamp == 0)
 			total_stamp = 1;
