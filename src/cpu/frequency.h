@@ -51,7 +51,7 @@ struct idle_state {
 
 	int line_level = 0;
 
-	std::string serialize() {
+	std::string serialize() const {
 		JSON_START();
 		JSON_FIELD(linux_name); JSON_FIELD(human_name);
 		JSON_FIELD(usage_before); JSON_FIELD(usage_after); JSON_FIELD(usage_delta);
@@ -78,7 +78,7 @@ public:
 
 	double   display_value = 0.0;
 
-	std::string serialize() {
+	std::string serialize() const {
 		JSON_START();
 		JSON_FIELD(human_name); JSON_FIELD(line_level);
 		JSON_FIELD(freq);
