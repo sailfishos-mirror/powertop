@@ -68,14 +68,13 @@ uint64_t work::done(uint64_t time, uint64_t work_struct)
 	return delta;
 }
 
-double work::usage_summary(void)
+double work::usage_summary(void) const
 {
-	double t;
-	t = (accumulated_runtime - child_runtime) / 1000000.0 / measurement_time / 10;
+	const double t = (accumulated_runtime - child_runtime) / 1000000.0 / measurement_time / 10;
 	return t;
 }
 
-std::string work::usage_units_summary(void)
+std::string work::usage_units_summary(void) const
 {
 	return "%";
 }
@@ -126,7 +125,7 @@ class work * find_create_work(uint64_t func)
 	return work;
 }
 
-void work::collect_json_fields(std::string &_js)
+void work::collect_json_fields(std::string &_js) const
 {
     power_consumer::collect_json_fields(_js);
     JSON_FIELD(desc);
