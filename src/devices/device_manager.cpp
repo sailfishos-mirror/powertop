@@ -51,22 +51,20 @@
 
 void devices_start_measurement(void)
 {
-	unsigned int i;
-	for (i = 0; i < all_devices.size(); i++)
-		all_devices[i]->start_measurement();
+	for (auto *d : all_devices)
+		d->start_measurement();
 }
 
 void devices_end_measurement(void)
 {
-	unsigned int i;
-	for (i = 0; i < all_devices.size(); i++)
-		all_devices[i]->end_measurement();
+	for (auto *d : all_devices)
+		d->end_measurement();
 
 	clear_devpower();
 
-	for (i = 0; i < all_devices.size(); i++) {
-		all_devices[i]->hide = false;
-		all_devices[i]->register_power_with_devlist(&all_results, &all_parameters);
+	for (auto *d : all_devices) {
+		d->hide = false;
+		d->register_power_with_devlist(&all_results, &all_parameters);
 	}
 }
 
@@ -92,7 +90,6 @@ static bool power_device_sort(class device *i, class device *j)
 void report_devices(void)
 {
 	WINDOW *win;
-	unsigned int i;
 	int show_power;
 	double pw;
 
@@ -136,33 +133,33 @@ void report_devices(void)
 	else
 		wprintw(win, _("              Usage     Device name\n"));
 
-	for (i = 0; i < all_devices.size(); i++) {
+	for (auto *d : all_devices) {
 		double P;
 		std::string power;
 
 		util = "";
 
-		if (!all_devices[i]->util_units().empty()) {
-			if (all_devices[i]->utilization() < 1000)
-				util = std::format("{:5.1f}{}", all_devices[i]->utilization(),
-						all_devices[i]->util_units());
+		if (!d->util_units().empty()) {
+			if (d->utilization() < 1000)
+				util = std::format("{:5.1f}{}", d->utilization(),
+						d->util_units());
 			else
-				util = std::format("{:5d}{}", (int)all_devices[i]->utilization(),
-						all_devices[i]->util_units());
+				util = std::format("{:5d}{}", (int)d->utilization(),
+						d->util_units());
 		}
 		while (util.length() < 13) util.append(" ");
 
-		P = all_devices[i]->power_usage(&all_results, &all_parameters);
+		P = d->power_usage(&all_results, &all_parameters);
 
 		power = format_watts(P, 11);
 
-		if (!show_power || !all_devices[i]->power_valid())
+		if (!show_power || !d->power_valid())
 			power = "           ";
 
 		wprintw(win, "%s %s %s\n",
 			power.c_str(),
 			util.c_str(),
-			all_devices[i]->human_name().c_str());
+			d->human_name().c_str());
 	}
 
 #ifndef ENABLE_TEST_FRAMEWORK
@@ -176,7 +173,6 @@ void report_devices(void)
 
 void show_report_devices(void)
 {
-	unsigned int i;
 	int show_power, cols, rows, idx;
 	double pw;
 
@@ -231,32 +227,32 @@ void show_report_devices(void)
 	if (show_power)
 		device_data[2] = __("PW Estimate");
 
-	for (i = 0; i < all_devices.size(); i++) {
+	for (auto *d : all_devices) {
 		double P;
 		std::string util;
 		std::string power;
 
-		if (!all_devices[i]->util_units().empty()) {
-			if (all_devices[i]->utilization() < 1000)
+		if (!d->util_units().empty()) {
+			if (d->utilization() < 1000)
 				util = std::format("{:5.1f}{}",
-					all_devices[i]->utilization(),
-					all_devices[i]->util_units());
+					d->utilization(),
+					d->util_units());
 			else
 				util = std::format("{:5d}{}",
-					(int)all_devices[i]->utilization(),
-					all_devices[i]->util_units());
+					(int)d->utilization(),
+					d->util_units());
 		}
 
-		P = all_devices[i]->power_usage(&all_results, &all_parameters);
+		P = d->power_usage(&all_results, &all_parameters);
 		power = format_watts(P, 11);
 
-		if (!show_power || !all_devices[i]->power_valid())
+		if (!show_power || !d->power_valid())
 			power = "           ";
 
 		device_data[idx] = util;
 		idx += 1;
 
-		device_data[idx] = all_devices[i]->human_name();
+		device_data[idx] = d->human_name();
 		idx += 1;
 
 		if (show_power) {
@@ -285,9 +281,7 @@ void create_all_devices(void)
 
 void clear_all_devices(void)
 {
-	unsigned int i;
-	for (i = 0; i < all_devices.size(); i++) {
-		delete all_devices[i];
-	}
+	for (auto *d : all_devices)
+		delete d;
 	all_devices.clear();
 }

@@ -104,9 +104,8 @@ static class power_consumer *current_consumer(unsigned int cpu)
 
 static void clear_consumers(void)
 {
-	unsigned int i;
-	for (i = 0; i < cpu_stack.size(); i++)
-		cpu_stack[i].resize(0);
+	for (auto &stack : cpu_stack)
+		stack.resize(0);
 }
 
 static void consumer_child_time(unsigned int cpu, uint64_t time)
@@ -727,9 +726,8 @@ double total_wakeups(void)
 	if (measurement_time < 0.00001)
 		return 0.0;
 	double total = 0;
-	unsigned int i;
-	for (i = 0; i < all_power.size() ; i++)
-		total += all_power[i]->wake_ups;
+	for (const auto *p : all_power)
+		total += p->wake_ups;
 
 	return total / measurement_time;
 }
@@ -739,9 +737,8 @@ double total_gpu_ops(void)
 	if (measurement_time < 0.00001)
 		return 0.0;
 	double total = 0;
-	unsigned int i;
-	for (i = 0; i < all_power.size() ; i++)
-		total += all_power[i]->gpu_ops;
+	for (const auto *p : all_power)
+		total += p->gpu_ops;
 
 	return total / measurement_time;
 }
@@ -751,9 +748,8 @@ double total_disk_hits(void)
 	if (measurement_time < 0.00001)
 		return 0.0;
 	double total = 0;
-	unsigned int i;
-	for (i = 0; i < all_power.size() ; i++)
-		total += all_power[i]->disk_hits;
+	for (const auto *p : all_power)
+		total += p->disk_hits;
 
 	return total / measurement_time;
 }
@@ -764,9 +760,8 @@ double total_hard_disk_hits(void)
 	if (measurement_time < 0.00001)
 		return 0.0;
 	double total = 0;
-	unsigned int i;
-	for (i = 0; i < all_power.size() ; i++)
-		total += all_power[i]->hard_disk_hits;
+	for (const auto *p : all_power)
+		total += p->hard_disk_hits;
 
 	return total / measurement_time;
 }
@@ -776,9 +771,8 @@ double total_xwakes(void)
 	if (measurement_time < 0.00001)
 		return 0.0;
 	double total = 0;
-	unsigned int i;
-	for (i = 0; i < all_power.size() ; i++)
-		total += all_power[i]->xwakes;
+	for (const auto *p : all_power)
+		total += p->xwakes;
 
 	return total / measurement_time;
 }
@@ -1195,16 +1189,15 @@ void process_process_data(void)
 
 double total_cpu_time(void)
 {
-	unsigned int i;
 	double total = 0.0;
 
 	if (first_stamp == ~0ULL)
 		return 0.0; /* since there is no measurement (yet) utilization gets reported as 0.0 */
 
-	for (i = 0; i < all_power.size() ; i++) {
-		if (all_power[i]->child_runtime > all_power[i]->accumulated_runtime)
-			all_power[i]->child_runtime = 0;
-		total += all_power[i]->accumulated_runtime - all_power[i]->child_runtime;
+	for (auto *p : all_power) {
+		if (p->child_runtime > p->accumulated_runtime)
+			p->child_runtime = 0;
+		total += p->accumulated_runtime - p->child_runtime;
 	}
 
 	if (last_stamp - first_stamp < 10000)
