@@ -322,6 +322,9 @@ void report_show_tunables(void)
 
 void clear_tuning()
 {
+	delete tune_window;
+	tune_window = nullptr;
+
 	for (size_t i = 0; i < all_tunables.size(); i++) {
 		delete all_tunables[i];
 	}

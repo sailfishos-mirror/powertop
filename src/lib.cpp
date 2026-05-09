@@ -373,8 +373,10 @@ std::string pci_id_to_name(uint16_t vendor, uint16_t device)
 
 void end_pci_access(void)
 {
-	if (pci_access)
-		pci_free_name_list(pci_access);
+	if (pci_access) {
+		pci_cleanup(pci_access);
+		pci_access = nullptr;
+	}
 }
 
 #else

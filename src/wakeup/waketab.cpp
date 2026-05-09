@@ -184,6 +184,9 @@ void wakeup_window::window_refresh(void)
 
 void clear_wakeup()
 {
+	delete newtab_window;
+	newtab_window = nullptr;
+
 	for (size_t i = 0; i < wakeup_all.size(); i++) {
 		delete wakeup_all[i];
 	}
