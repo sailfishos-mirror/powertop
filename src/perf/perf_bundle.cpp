@@ -74,12 +74,8 @@ void perf_bundle_event::handle_event(struct perf_event_header *header, void *coo
 
 void perf_bundle::release(void)
 {
-	for (auto *ev : events) {
-		if (!ev)
-			continue;
+	for (auto &ev : events)
 		ev->clear();
-		delete ev;
-	}
 	events.clear();
 
 	for (auto record : records)
@@ -91,24 +87,20 @@ bool perf_bundle::add_event(const std::string &system_name, const std::string &e
 {
 	unsigned int i;
 	int event_added = false;
-	class perf_event *ev;
-
 
 	for (i = 0; i < all_cpus.size(); i++) {
 
 		if (!all_cpus[i])
 			continue;
 
-		ev = new perf_bundle_event();
+		auto ev = std::make_unique<perf_bundle_event>();
 
 		ev->set_event_name(system_name, event_name);
 		ev->set_cpu(i);
 
 		if ((int)ev->trace_type >= 0) {
-			events.push_back(ev);
+			events.push_back(std::move(ev));
 			event_added = true;
-		} else {
-			delete ev;
 		}
 	}
 	return event_added;
@@ -116,27 +108,18 @@ bool perf_bundle::add_event(const std::string &system_name, const std::string &e
 
 void perf_bundle::start(void)
 {
-	for (auto *ev : events) {
-		if (!ev)
-			continue;
+	for (auto &ev : events)
 		ev->start();
-	}
 }
 void perf_bundle::stop(void)
 {
-	for (auto *ev : events) {
-		if (!ev)
-			continue;
+	for (auto &ev : events)
 		ev->stop();
-	}
 }
 void perf_bundle::clear(void)
 {
-	for (auto *ev : events) {
-		if (!ev)
-			continue;
+	for (auto &ev : events)
 		ev->clear();
-	}
 
 	for (auto record : records)
 		free(record);
@@ -232,11 +215,8 @@ static void fixup_sample_trace_cpu(struct perf_sample *sample)
 void perf_bundle::process(void)
 {
 	/* fixme: reserve enough space in the array in one go */
-	for (auto *ev : events) {
-		if (!ev)
-			continue;
+	for (auto &ev : events)
 		ev->process(&records);
-	}
 	std::sort(records.begin(), records.end(), event_sort_function);
 
 	for (auto record : records) {

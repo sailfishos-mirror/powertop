@@ -25,6 +25,7 @@
 #pragma once
 
 #include <iostream>
+#include <memory>
 #include <vector>
 #include <map>
 
@@ -34,7 +35,7 @@ class perf_event;
 
 class  perf_bundle {
 protected:
-	std::vector<class perf_event *> events;
+	std::vector<std::unique_ptr<perf_event>> events;
 public:
 	std::vector<void *> records;
 	virtual ~perf_bundle() {};
