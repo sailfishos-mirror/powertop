@@ -88,7 +88,7 @@ void abstract_cpu::measurement_start(void)
 
 
 	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_available_frequencies", number);
-	std::string content = read_file_content(filename);
+	const std::string content = read_file_content(filename);
 	if (!content.empty()) {
 		std::istringstream stream(content);
 		stream >> max_frequency;
