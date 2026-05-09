@@ -108,7 +108,7 @@ void set_parameter_value(const std::string &name, double value, struct parameter
 }
 
 
-double get_parameter_value(const std::string &name, struct parameter_bundle *the_bundle)
+double get_parameter_value(const std::string &name, const struct parameter_bundle *the_bundle)
 {
 	unsigned int index;
 	index = get_param_index(name);
@@ -116,7 +116,7 @@ double get_parameter_value(const std::string &name, struct parameter_bundle *the
 }
 
 
-double get_parameter_value(unsigned int index, struct parameter_bundle *the_bundle)
+double get_parameter_value(unsigned int index, const struct parameter_bundle *the_bundle)
 {
 	if (index >= the_bundle->parameters.size()) {
 		fprintf(stderr, "BUG: requesting unregistered parameter %d\n", index);
@@ -125,7 +125,7 @@ double get_parameter_value(unsigned int index, struct parameter_bundle *the_bund
 	return the_bundle->parameters[index];
 }
 
-double get_parameter_weight(int index, struct parameter_bundle *the_bundle)
+double get_parameter_weight(int index, const struct parameter_bundle *the_bundle)
 {
 	if (index < 0 || (unsigned int)index >= the_bundle->weights.size()) {
 		fprintf(stderr, "BUG: requesting unregistered weight %d\n", index);
@@ -134,7 +134,7 @@ double get_parameter_weight(int index, struct parameter_bundle *the_bundle)
 	return the_bundle->weights[index];
 }
 
-double get_result_value(const std::string &name, struct result_bundle *the_bundle)
+double get_result_value(const std::string &name, const struct result_bundle *the_bundle)
 {
 	return get_result_value(get_result_index(name), the_bundle);
 }
@@ -156,7 +156,7 @@ void set_result_value(unsigned int index, double value, struct result_bundle *th
 	the_bundle->utilization[index] = value;
 }
 
-double get_result_value(int index, struct result_bundle *the_bundle)
+double get_result_value(int index, const struct result_bundle *the_bundle)
 {
 	if (!the_bundle)
 		return 0;
@@ -238,7 +238,7 @@ double bundle_power(struct parameter_bundle *parameters, struct result_bundle *r
 }
 
 
-void dump_parameter_bundle(struct parameter_bundle *para)
+void dump_parameter_bundle(const struct parameter_bundle *para)
 {
 	std::map<std::string, int>::iterator it;
 	int index;
@@ -260,7 +260,7 @@ void dump_parameter_bundle(struct parameter_bundle *para)
 	printf("----------------------------------\n");
 }
 
-void dump_result_bundle(struct result_bundle *res)
+void dump_result_bundle(const struct result_bundle *res)
 {
 	std::map<std::string, int>::iterator it;
 	unsigned int index;
@@ -280,7 +280,7 @@ void dump_result_bundle(struct result_bundle *res)
 	printf("----------------------------------\n");
 }
 
-struct result_bundle * clone_results(struct result_bundle *bundle)
+struct result_bundle * clone_results(const struct result_bundle *bundle)
 {
 	struct result_bundle *b2;
 	std::map<std::string, double>::iterator it;
@@ -297,7 +297,7 @@ struct result_bundle * clone_results(struct result_bundle *bundle)
 }
 
 
-struct parameter_bundle * clone_parameters(struct parameter_bundle *bundle)
+struct parameter_bundle * clone_parameters(const struct parameter_bundle *bundle)
 {
 	struct parameter_bundle *b2;
 
@@ -376,7 +376,6 @@ int utilization_power_valid(const std::string &u)
 {
 	unsigned int i;
 	unsigned int index;
-	double first_value;
 
 	index = get_result_index(u);
 	if (index <= 0)
@@ -388,7 +387,7 @@ int utilization_power_valid(const std::string &u)
 	if (index >= past_results[0]->utilization.size())
 		return 0;
 
-	first_value = past_results[0]->utilization[index];
+	const double first_value = past_results[0]->utilization[index];
 	for (i = 1; i < past_results.size(); i++) {
 		if (get_result_value(index, past_results[i]) < first_value - 0.0001)
 			return 1;
@@ -402,7 +401,6 @@ int utilization_power_valid(const std::string &u)
 int utilization_power_valid(int index)
 {
 	unsigned int i;
-	double first_value;
 
 	if (index <= 0)
 		return 0;
@@ -412,7 +410,7 @@ int utilization_power_valid(int index)
 
 	if (index >= (int)past_results[0]->utilization.size())
 		return 0;
-	first_value = past_results[0]->utilization[index];
+	const double first_value = past_results[0]->utilization[index];
 	for (i = 1; i < past_results.size(); i++) {
 		if (get_result_value(index, past_results[i]) < first_value - 0.0001)
 			return 1;
