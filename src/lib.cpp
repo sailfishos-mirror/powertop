@@ -198,7 +198,7 @@ void write_sysfs(const std::string &filename, const std::string &value)
 
 int read_sysfs(const std::string &filename, bool *ok)
 {
-	std::string content = read_file_content(filename);
+	const std::string content = read_file_content(filename);
 	if (content.empty()) {
 		if (ok)
 			*ok = false;
@@ -206,7 +206,7 @@ int read_sysfs(const std::string &filename, bool *ok)
 	}
 	try
 	{
-		int i = std::stoi(content);
+		const int i = std::stoi(content);
 		if (ok)
 			*ok = true;
 		return i;
@@ -219,7 +219,7 @@ int read_sysfs(const std::string &filename, bool *ok)
 
 uint64_t read_sysfs_uint64(const std::string &filename, bool *ok)
 {
-	std::string content = read_file_content(filename);
+	const std::string content = read_file_content(filename);
 	if (content.empty()) {
 		if (ok)
 			*ok = false;
@@ -227,7 +227,7 @@ uint64_t read_sysfs_uint64(const std::string &filename, bool *ok)
 	}
 	try
 	{
-		uint64_t i = std::stoull(content);
+		const uint64_t i = std::stoull(content);
 		if (ok)
 			*ok = true;
 		return i;
@@ -241,7 +241,7 @@ uint64_t read_sysfs_uint64(const std::string &filename, bool *ok)
 std::string read_sysfs_string(const std::string &filename)
 {
 	std::string content = read_file_content(filename);
-	size_t pos = content.find('\n');
+	const size_t pos = content.find('\n');
 	if (pos != std::string::npos)
 		content.erase(pos);
 	return content;
@@ -367,7 +367,7 @@ std::string pci_id_to_name(uint16_t vendor, uint16_t device)
 		pci_init(pci_access);
 	}
 
-	char *ret = pci_lookup_name(pci_access, buf.data(), len, PCI_LOOKUP_VENDOR | PCI_LOOKUP_DEVICE, vendor, device);
+	const char *ret = pci_lookup_name(pci_access, buf.data(), len, PCI_LOOKUP_VENDOR | PCI_LOOKUP_DEVICE, vendor, device);
 	return ret ? std::string(ret) : std::string();
 }
 
@@ -405,7 +405,7 @@ std::string fmt_prefix(double n)
 	std::string res;
 
 	if (utf_ok == -1) {
-		char *g;
+		const char *g;
 		g = getenv("LANG");
 		if (g && strstr(g, "UTF-8"))
 			utf_ok = 1;
@@ -615,7 +615,7 @@ int write_msr(int cpu, uint64_t offset, uint64_t value)
 
 std::string get_time_string(const std::string &fmt, std::chrono::system_clock::time_point tp)
 {
-	auto zt = std::chrono::zoned_time{std::chrono::current_zone(), tp};
+	const auto zt = std::chrono::zoned_time{std::chrono::current_zone(), tp};
 	return pt_format("{:" + fmt + "}", zt);
 }
 
