@@ -319,7 +319,7 @@ void out_of_memory()
 
 void clean_shutdown();
 
-void make_report(int time, const std::string &workload, int iterations, int sample_interval, const std::string &file)
+void make_report(const int time, const std::string &workload, const int iterations, const int sample_interval, const std::string &file)
 {
 
 	/* one to warm up everything */
@@ -363,8 +363,7 @@ static void checkroot() {
 		return;
 	if (test_framework_manager::get().is_replaying())
 		return;
-	int uid;
-	uid = geteuid();
+	const int uid = geteuid();
 
 	if (uid != 0) {
 		printf(_("PowerTOP " PACKAGE_VERSION " must be run with root privileges.\n"));
