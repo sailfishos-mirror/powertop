@@ -141,7 +141,7 @@ struct perf_sample {
 	unsigned char			data[0];
 } __attribute__((packed));
 
-static uint64_t timestamp(perf_event_header *event)
+static uint64_t timestamp(const perf_event_header *event)
 {
 	struct perf_sample *sample;
 
@@ -178,12 +178,12 @@ static uint64_t timestamp(perf_event_header *event)
 
 }
 
-static bool event_sort_function (void *i, void *j)
+static bool event_sort_function (const void *i, const void *j)
 {
-	struct perf_event_header *I, *J;
+	const struct perf_event_header *I, *J;
 
-	I = (struct perf_event_header *) i;
-	J = (struct perf_event_header *) j;
+	I = (const struct perf_event_header *) i;
+	J = (const struct perf_event_header *) j;
 	return (timestamp(I)<timestamp(J));
 }
 
