@@ -103,10 +103,8 @@ static void find_all_usb(void)
 
 static void suspend_all_usb_devices(void)
 {
-	unsigned int i;
-
-	for (i = 0; i < usb_devices.size(); i++)
-		write_sysfs(usb_devices[i], "auto\n");
+	for (const auto &dev : usb_devices)
+		write_sysfs(dev, "auto\n");
 }
 
 static void find_all_rfkill_callback(const std::string &d_name)
@@ -126,17 +124,13 @@ static void find_all_rfkill(void)
 
 static void rfkill_all_radios(void)
 {
-	unsigned int i;
-
-	for (i = 0; i < rfkill_devices.size(); i++)
-		write_sysfs(rfkill_devices[i], "1\n");
+	for (const auto &dev : rfkill_devices)
+		write_sysfs(dev, "1\n");
 }
 static void unrfkill_all_radios(void)
 {
-	unsigned int i;
-
-	for (i = 0; i < rfkill_devices.size(); i++)
-		write_sysfs(rfkill_devices[i], "0\n");
+	for (const auto &dev : rfkill_devices)
+		write_sysfs(dev, "0\n");
 }
 
 static void find_backlight_callback(const std::string &d_name)
@@ -159,10 +153,8 @@ static void find_backlight(void)
 
 static void lower_backlight(void)
 {
-	unsigned int i;
-
-	for (i = 0; i < backlight_devices.size(); i++)
-		write_sysfs(backlight_devices[i], "0\n");
+	for (const auto &dev : backlight_devices)
+		write_sysfs(dev, "0\n");
 }
 
 static void find_scsi_link_callback(const std::string &d_name)
@@ -183,10 +175,8 @@ static void find_scsi_link(void)
 
 static void set_scsi_link(const std::string &state)
 {
-	unsigned int i;
-
-	for (i = 0; i < scsi_link_devices.size(); i++)
-		write_sysfs(scsi_link_devices[i], state);
+	for (const auto &dev : scsi_link_devices)
+		write_sysfs(dev, state);
 }
 
 
@@ -281,15 +271,13 @@ static void wakeup_calibration(unsigned long interval)
 
 static void usb_calibration(void)
 {
-	unsigned int i;
-
 	/* chances are one of the USB devices is bluetooth; unrfkill first */
 	unrfkill_all_radios();
 	printf(_("Calibrating USB devices\n"));
-	for (i = 0; i < usb_devices.size(); i++) {
-		printf(_(".... device %s \n"), usb_devices[i].c_str());
+	for (const auto &dev : usb_devices) {
+		printf(_(".... device %s \n"), dev.c_str());
 		suspend_all_usb_devices();
-		write_sysfs(usb_devices[i], "on\n");
+		write_sysfs(dev, "on\n");
 		one_measurement(15, 15, "");
 		suspend_all_usb_devices();
 		sleep(3);
@@ -300,21 +288,19 @@ static void usb_calibration(void)
 
 static void rfkill_calibration(void)
 {
-	unsigned int i;
-
 	printf(_("Calibrating radio devices\n"));
-	for (i = 0; i < rfkill_devices.size(); i++) {
-		printf(_(".... device %s \n"), rfkill_devices[i].c_str());
+	for (const auto &dev : rfkill_devices) {
+		printf(_(".... device %s \n"), dev.c_str());
 		rfkill_all_radios();
-		write_sysfs(rfkill_devices[i], "0\n");
+		write_sysfs(dev, "0\n");
 		one_measurement(15, 15, "");
 		rfkill_all_radios();
 		sleep(3);
 	}
-	for (i = 0; i < rfkill_devices.size(); i++) {
-		printf(_(".... device %s \n"), rfkill_devices[i].c_str());
+	for (const auto &dev : rfkill_devices) {
+		printf(_(".... device %s \n"), dev.c_str());
 		unrfkill_all_radios();
-		write_sysfs(rfkill_devices[i], "1\n");
+		write_sysfs(dev, "1\n");
 		one_measurement(15, 15, "");
 		unrfkill_all_radios();
 		sleep(3);
@@ -331,28 +317,26 @@ static void try_xset_dpms(const char *state)
 
 static void backlight_calibration(void)
 {
-	unsigned int i;
-
 	printf(_("Calibrating backlight\n"));
-	for (i = 0; i < backlight_devices.size(); i++) {
+	for (const auto &dev : backlight_devices) {
 		std::string str;
-		printf(_(".... device %s \n"), backlight_devices[i].c_str());
+		printf(_(".... device %s \n"), dev.c_str());
 		lower_backlight();
 		one_measurement(15, 15, "");
 		str = std::format("{}\n", blmax / 4);
-		write_sysfs(backlight_devices[i], str);
+		write_sysfs(dev, str);
 		one_measurement(15, 15, "");
 
 		str = std::format("{}\n", blmax / 2);
-		write_sysfs(backlight_devices[i], str);
+		write_sysfs(dev, str);
 		one_measurement(15, 15, "");
 
 		str = std::format("{}\n", 3 * blmax / 4 );
-		write_sysfs(backlight_devices[i], str);
+		write_sysfs(dev, str);
 		one_measurement(15, 15, "");
 
 		str = std::format("{}\n", blmax);
-		write_sysfs(backlight_devices[i], str);
+		write_sysfs(dev, str);
 		one_measurement(15, 15, "");
 		lower_backlight();
 		sleep(1);

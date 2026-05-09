@@ -64,12 +64,11 @@ void cpu_linux::parse_cstates_start(void)
 void cpu_linux::parse_pstates_start(void)
 {
 	std::string filename;
-	unsigned int i;
 
 	last_stamp = 0;
-	for (i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->wiggle();
+	for (auto *child : children)
+		if (child)
+			child->wiggle();
 
 	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/stats/time_in_state", first_cpu);
 
@@ -142,8 +141,6 @@ void cpu_linux::measurement_end(void)
 
 std::string cpu_linux::fill_cstate_line(int line_nr, const std::string &separator)
 {
-	unsigned int i;
-
 	if (line_nr == LEVEL_HEADER) {
 		return pt_format(_(" CPU(OS) {}"), number);
 	}
@@ -151,34 +148,32 @@ std::string cpu_linux::fill_cstate_line(int line_nr, const std::string &separato
 	if (time_factor < 1.0)
 		return "";
 
-	for (i = 0; i < cstates.size(); i++) {
-		if (cstates[i]->line_level != line_nr)
+	for (const auto *s : cstates) {
+		if (s->line_level != line_nr)
 			continue;
 
 		if (line_nr == LEVEL_C0)
-			return std::format("{:5.1f}%", percentage(cstates[i]->duration_delta / time_factor));
+			return std::format("{:5.1f}%", percentage(s->duration_delta / time_factor));
 		else
 			return std::format("{:5.1f}%{} {:6.1f} ms",
-				percentage(cstates[i]->duration_delta / time_factor),
+				percentage(s->duration_delta / time_factor),
 				separator,
-				1.0 * cstates[i]->duration_delta / (1 + cstates[i]->usage_delta) / 1000);
+				1.0 * s->duration_delta / (1 + s->usage_delta) / 1000);
 	}
 	return "";
 }
 
 std::string cpu_linux::fill_cstate_percentage(int line_nr)
 {
-	unsigned int i;
-
 	if (time_factor < 1.0)
 		return "";
 
-	for (i = 0; i < cstates.size(); i++) {
-		if (cstates[i]->line_level != line_nr)
+	for (const auto *s : cstates) {
+		if (s->line_level != line_nr)
 			continue;
 
 		return std::format("{:5.1f}%",
-			percentage(cstates[i]->duration_delta / time_factor));
+			percentage(s->duration_delta / time_factor));
 	}
 
 	return "";
@@ -186,18 +181,16 @@ std::string cpu_linux::fill_cstate_percentage(int line_nr)
 
 std::string cpu_linux::fill_cstate_time(int line_nr)
 {
-	unsigned int i;
-
 	if (line_nr == LEVEL_C0)
 		return "";
 
-	for (i = 0; i < cstates.size(); i++) {
-		if (cstates[i]->line_level != line_nr)
+	for (const auto *s : cstates) {
+		if (s->line_level != line_nr)
 			continue;
 
 		return std::format("{:6.1f} ms",
-			1.0 * cstates[i]->duration_delta /
-			(1 + cstates[i]->usage_delta) / 1000);
+			1.0 * s->duration_delta /
+			(1 + s->usage_delta) / 1000);
 	}
 
 	return "";
@@ -205,13 +198,11 @@ std::string cpu_linux::fill_cstate_time(int line_nr)
 
 std::string cpu_linux::fill_cstate_name(int line_nr)
 {
-	unsigned int i;
-
-	for (i = 0; i < cstates.size(); i++) {
-		if (cstates[i]->line_level != line_nr)
+	for (const auto *s : cstates) {
+		if (s->line_level != line_nr)
 			continue;
 
-		return std::format("{}", cstates[i]->human_name);
+		return std::format("{}", s->human_name);
 	}
 
 	return "";
@@ -229,9 +220,8 @@ std::string cpu_linux::fill_pstate_name(int line_nr)
 std::string cpu_linux::fill_pstate_line(int line_nr)
 {
 	if (total_stamp ==0) {
-		unsigned int i;
-		for (i = 0; i < pstates.size(); i++)
-			total_stamp += pstates[i]->time_after;
+		for (const auto *s : pstates)
+			total_stamp += s->time_after;
 		if (total_stamp == 0)
 			total_stamp = 1;
 	}
