@@ -34,9 +34,7 @@
 void save_all_results(const std::string &filename)
 {
 	std::ofstream file;
-	std::string pathname;
-
-	pathname = get_param_directory(filename);
+	const std::string pathname = get_param_directory(filename);
 
 	file.open(pathname, std::ios::out);
 	if (!file) {
@@ -72,12 +70,10 @@ void load_results(const std::string &filename)
 	struct result_bundle *bundle;
 	int first = 1;
 	unsigned int count = 0;
-	std::string pathname;
+	const std::string pathname = get_param_directory(filename);
 	int bundle_saved = 0;
 
-	pathname = get_param_directory(filename);
-
-	std::string content = read_file_content(pathname);
+	const std::string content = read_file_content(pathname);
 	if (content.empty()) {
 		fprintf(stderr, "%s %s\n", _("Cannot load from file"), pathname.c_str());
 		return;
@@ -102,10 +98,7 @@ void load_results(const std::string &filename)
 		}
 
 		if (line.length() < 3) {
-			int overflow_index;
-
-			bundle_saved = 1;
-			overflow_index = 50 + (rand() % MAX_KEEP);
+			const int overflow_index = 50 + (rand() % MAX_KEEP);
 			if (past_results.size() >= MAX_PARAM) {
 				delete past_results[overflow_index];
 				past_results[overflow_index] = bundle;
@@ -118,12 +111,12 @@ void load_results(const std::string &filename)
 			continue;
 		}
 
-		size_t pos = line.find('\t');
+		const size_t pos = line.find('\t');
 		if (pos == std::string::npos)
 			continue;
 
-		std::string name = line.substr(0, pos);
-		std::string value_str = line.substr(pos + 1);
+		const std::string name = line.substr(0, pos);
+		const std::string value_str = line.substr(pos + 1);
 		try {
 			d = std::stod(value_str);
 			set_result_value(name, d, bundle);
@@ -142,14 +135,7 @@ void load_results(const std::string &filename)
 void save_parameters(const std::string &filename)
 {
 	std::ofstream file;
-	std::string pathname;
-
-//	printf("result size is %i, #parameters is %i \n", (int)past_results.size(), (int)all_parameters.parameters.size());
-
-	if (!global_power_valid())
-		return;
-
-	pathname = get_param_directory(filename);
+	const std::string pathname = get_param_directory(filename);
 
 	file.open(pathname, std::ios::out);
 	if (!file) {
@@ -160,8 +146,7 @@ void save_parameters(const std::string &filename)
 	std::map<std::string, int>::iterator it;
 
 	for (it = param_index.begin(); it != param_index.end(); it++) {
-		int index;
-		index = it->second;
+		const int index = it->second;
 		file << it->first << "\t" << std::setprecision(9) << all_parameters.parameters[index] << "\n";
 	}
 	file.close();
@@ -170,11 +155,9 @@ void save_parameters(const std::string &filename)
 void load_parameters(const std::string &filename)
 {
 	std::string line;
-	std::string pathname;
+	const std::string pathname = get_param_directory(filename);
 
-	pathname = get_param_directory(filename);
-
-	std::string content = read_file_content(pathname);
+	const std::string content = read_file_content(pathname);
 	if (content.empty()) {
 		fprintf(stderr, "%s %s\n", _("Cannot load from file"), pathname.c_str());
 		fprintf(stderr, _("File will be loaded after taking minimum number of measurement(s) with battery only\n"));
@@ -185,12 +168,12 @@ void load_parameters(const std::string &filename)
 
 	while (getline(stream, line)) {
 		double d;
-		size_t pos = line.find('\t');
+		const size_t pos = line.find('\t');
 		if (pos == std::string::npos)
 			continue;
 
-		std::string name = line.substr(0, pos);
-		std::string value_str = line.substr(pos + 1);
+		const std::string name = line.substr(0, pos);
+		const std::string value_str = line.substr(pos + 1);
 		try {
 			d = std::stod(value_str);
 			set_parameter_value(name, d);
