@@ -169,7 +169,7 @@ network::network(const std::string &_name, const std::string &path): device()
 		humanname = pt_format(_("Network interface: {} ({})"), _name, link.substr(link.rfind('/') + 1));
 }
 
-int network::get_iface_up()
+int network::get_iface_up() const
 {
 	struct ifreq ifr;
 
@@ -217,7 +217,7 @@ static int iface_link(const std::string &ifname)
 	return link;
 }
 
-int network::get_iface_speed()
+int network::get_iface_speed() const
 {
 	struct ifreq ifr;
 	struct ethtool_cmd cmd;

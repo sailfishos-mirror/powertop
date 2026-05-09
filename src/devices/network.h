@@ -81,8 +81,8 @@ public:
 	void collect_json_fields(std::string &_js) override;
 
 	/* Virtual hardware helpers — override in tests to inject fake data */
-	virtual int get_iface_up();
-	virtual int get_iface_speed();
+	virtual int get_iface_up() const;
+	virtual int get_iface_speed() const;
 };
 
 extern void create_all_nics(callback fn = nullptr);
