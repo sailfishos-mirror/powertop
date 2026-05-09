@@ -97,7 +97,7 @@ report_formatter_csv::add_logo()
 }
 
 
-void report_formatter_csv::add_div([[maybe_unused]] struct tag_attr *div_attr)
+void report_formatter_csv::add_div([[maybe_unused]] const struct tag_attr *div_attr)
 {
 }
 
@@ -106,7 +106,7 @@ report_formatter_csv::end_div()
 {
 }
 
-void report_formatter_csv::add_title([[maybe_unused]] struct tag_attr *title_att, const std::string &title)
+void report_formatter_csv::add_title([[maybe_unused]] const struct tag_attr *title_att, const std::string &title)
 {
 	add_exact(std::format("\n# {}\n", title));
 }
@@ -127,7 +127,7 @@ report_formatter_csv::add_summary_list(const std::vector<std::string> &list)
 
 
 void
-report_formatter_csv::add_table(const std::vector<std::string> &system_data, struct table_attributes* tb_attr)
+report_formatter_csv::add_table(const std::vector<std::string> &system_data, const struct table_attributes* tb_attr)
 {
 	int i, j;
 	int offset=0;

@@ -54,12 +54,12 @@ public:
 	void add_logo() override;
 	void add_header() override;
 	void end_header() override;
-	void add_div(struct tag_attr *div_attr) override;
+	void add_div(const struct tag_attr *div_attr) override;
 	void end_div() override;
-	void add_title(struct tag_attr *title_att, const std::string &title) override;
+	void add_title(const struct tag_attr *title_att, const std::string &title) override;
 	void add_navigation() override;
 	void add_summary_list(const std::vector<std::string> &list) override;
-	void add_table(const std::vector<std::string> &system_data, struct table_attributes *tb_attr) override;private:
+	void add_table(const std::vector<std::string> &system_data, const struct table_attributes *tb_attr) override;private:
 	std::string escape_string(const std::string &str) override;
 	bool csv_need_quotes = false;
 };

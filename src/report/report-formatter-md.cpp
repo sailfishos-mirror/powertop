@@ -41,11 +41,11 @@ void report_formatter_md::add_header()
 	add_exact("______________________________________________________________________\n\n");
 }
 
-void report_formatter_md::add_div([[maybe_unused]] struct tag_attr *div_attr)
+void report_formatter_md::add_div([[maybe_unused]] const struct tag_attr *div_attr)
 {
 }
 
-void report_formatter_md::add_title([[maybe_unused]] struct tag_attr *title_attr, const std::string &title)
+void report_formatter_md::add_title([[maybe_unused]] const struct tag_attr *title_attr, const std::string &title)
 {
 	add_exact(std::format("## {}\n\n", title));
 }
@@ -58,7 +58,7 @@ void report_formatter_md::add_summary_list(const std::vector<std::string> &list)
 	add_exact("\n");
 }
 
-void report_formatter_md::add_table(const std::vector<std::string> &system_data, struct table_attributes *tb_attr)
+void report_formatter_md::add_table(const std::vector<std::string> &system_data, const struct table_attributes *tb_attr)
 {
 	if (tb_attr->rows <= 0 || tb_attr->cols <= 0) {
 		return;
@@ -98,7 +98,7 @@ void report_formatter_md::add_table(const std::vector<std::string> &system_data,
 	add_exact("\n");
 }
 
-std::string report_formatter_md::get_result()
+std::string report_formatter_md::get_result() const
 {
 	std::string res = report_formatter_string_base::get_result();
 	while (!res.empty() && isspace(res.back())) {

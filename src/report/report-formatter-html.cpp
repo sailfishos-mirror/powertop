@@ -275,7 +275,7 @@ report_formatter_html::end_header()
 }
 
 void
-report_formatter_html::add_div(struct tag_attr *div_attr)
+report_formatter_html::add_div(const struct tag_attr *div_attr)
 {
 	std::string  empty="";
 
@@ -300,7 +300,7 @@ report_formatter_html::end_div()
 }
 
 void
-report_formatter_html::add_title(struct tag_attr *title_att, const std::string &title)
+report_formatter_html::add_title(const struct tag_attr *title_att, const std::string &title)
 {
 	add_exact(std::format("<h2 class=\"{}\"> {} </h2>\n", title_att->css_class, escape_string(title)));
 }
@@ -324,7 +324,7 @@ report_formatter_html::add_summary_list(const std::vector<std::string> &list)
 
 
 void
-report_formatter_html::add_table(const std::vector<std::string> &system_data, struct table_attributes* tb_attr)
+report_formatter_html::add_table(const std::vector<std::string> &system_data, const struct table_attributes* tb_attr)
 {
 	int i, j;
 	int offset=0;

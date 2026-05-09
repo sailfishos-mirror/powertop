@@ -35,7 +35,7 @@ public:
 	virtual ~report_formatter() {}
 
 	virtual void finish_report() {}
-	virtual std::string get_result() {return "Basic report_formatter::get_result() call\n";}
+	virtual std::string get_result() const {return "Basic report_formatter::get_result() call\n";}
 	virtual void clear_result() {}
 
 	virtual void add([[maybe_unused]] const std::string &str) {}
@@ -44,12 +44,12 @@ public:
 	virtual void add_logo() {}
 	virtual void add_header() {}
 	virtual void end_header() {}
-	virtual void add_div([[maybe_unused]] struct tag_attr *div_attr) {}
+	virtual void add_div([[maybe_unused]] const struct tag_attr *div_attr) {}
 	virtual void end_div() {}
-	virtual void add_title([[maybe_unused]] struct tag_attr *att_title, [[maybe_unused]] const std::string &title) {}
+	virtual void add_title([[maybe_unused]] const struct tag_attr *att_title, [[maybe_unused]] const std::string &title) {}
 	virtual void add_navigation() {}
 	virtual void add_summary_list([[maybe_unused]] const std::vector<std::string> &list) {}
 	virtual void add_table([[maybe_unused]] const std::vector<std::string> &system_data,
-			[[maybe_unused]] struct table_attributes *tb_attr)     {}
+			[[maybe_unused]] const struct table_attributes *tb_attr)     {}
 };
 

@@ -121,12 +121,12 @@ public:
 	void add_header();
 	void end_header();
 	void add_logo();
-	void add_div(struct tag_attr *div_attr);
+	void add_div(const struct tag_attr *div_attr);
 	void end_div();
-	void add_title(struct tag_attr *att_title, const std::string &title);
+	void add_title(const struct tag_attr *att_title, const std::string &title);
 	void add_navigation();
 	void add_summary_list(const std::vector<std::string> &list);
-	void add_table(const std::vector<std::string> &system_data, struct table_attributes *tb_attr);
+	void add_table(const std::vector<std::string> &system_data, const struct table_attributes *tb_attr);
 
 private:
 	void setup_report_formatter();

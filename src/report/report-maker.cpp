@@ -138,13 +138,13 @@ report_maker::end_header()
 }
 
 void
-report_maker::add_title(struct tag_attr *att_title, const std::string &title)
+report_maker::add_title(const struct tag_attr *att_title, const std::string &title)
 {
         formatter->add_title(att_title, title);
 }
 
 void
-report_maker::add_div(struct tag_attr * div_attr)
+report_maker::add_div(const struct tag_attr * div_attr)
 {
         formatter->add_div(div_attr);
 }
@@ -168,7 +168,7 @@ report_maker::add_summary_list(const std::vector<std::string> &list)
 }
 
 void
-report_maker::add_table(const std::vector<std::string> &system_data, struct table_attributes *tb_attr)
+report_maker::add_table(const std::vector<std::string> &system_data, const struct table_attributes *tb_attr)
 {
         formatter->add_table(system_data, tb_attr);
 }

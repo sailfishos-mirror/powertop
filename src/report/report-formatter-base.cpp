@@ -35,7 +35,7 @@
 /* ************************************************************************ */
 
 std::string
-report_formatter_string_base::get_result()
+report_formatter_string_base::get_result() const
 {
 	return result;
 }
