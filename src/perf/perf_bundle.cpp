@@ -74,11 +74,7 @@ void perf_bundle_event::handle_event(struct perf_event_header *header, void *coo
 
 void perf_bundle::release(void)
 {
-	class perf_event *ev;
-	unsigned int i = 0;
-
-	for (i = 0; i < events.size(); i++) {
-		ev = events[i];
+	for (auto *ev : events) {
 		if (!ev)
 			continue;
 		ev->clear();
@@ -86,9 +82,8 @@ void perf_bundle::release(void)
 	}
 	events.clear();
 
-	for (i = 0; i < records.size(); i++) {
-		free(records[i]);
-	}
+	for (auto record : records)
+		free(record);
 	records.clear();
 }
 
@@ -121,11 +116,7 @@ bool perf_bundle::add_event(const std::string &system_name, const std::string &e
 
 void perf_bundle::start(void)
 {
-	unsigned int i;
-	class perf_event *ev;
-
-	for (i = 0; i < events.size(); i++) {
-		ev = events[i];
+	for (auto *ev : events) {
 		if (!ev)
 			continue;
 		ev->start();
@@ -133,11 +124,7 @@ void perf_bundle::start(void)
 }
 void perf_bundle::stop(void)
 {
-	unsigned int i;
-	class perf_event *ev;
-
-	for (i = 0; i < events.size(); i++) {
-		ev = events[i];
+	for (auto *ev : events) {
 		if (!ev)
 			continue;
 		ev->stop();
@@ -145,21 +132,15 @@ void perf_bundle::stop(void)
 }
 void perf_bundle::clear(void)
 {
-	unsigned int i;
-
-	class perf_event *ev;
-
-	for (i = 0; i < events.size(); i++) {
-		ev = events[i];
+	for (auto *ev : events) {
 		if (!ev)
 			continue;
 		ev->clear();
 	}
 
-	for (i = 0; i < records.size(); i++) {
-		free(records[i]);
-	}
-	records.resize(0);
+	for (auto record : records)
+		free(record);
+	records.clear();
 }
 
 
@@ -250,22 +231,16 @@ static void fixup_sample_trace_cpu(struct perf_sample *sample)
 
 void perf_bundle::process(void)
 {
-	unsigned int i;
-	class perf_event *ev;
-
 	/* fixme: reserve enough space in the array in one go */
-	for (i = 0; i < events.size(); i++) {
-		ev = events[i];
+	for (auto *ev : events) {
 		if (!ev)
 			continue;
 		ev->process(&records);
 	}
 	std::sort(records.begin(), records.end(), event_sort_function);
 
-	for (i = 0; i < records.size(); i++) {
-		struct perf_sample *sample;
-
-		sample = (struct perf_sample *)records[i];
+	for (auto record : records) {
+		struct perf_sample *sample = (struct perf_sample *)record;
 		if (!sample)
 			continue;
 

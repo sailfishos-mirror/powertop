@@ -296,7 +296,6 @@ void nhm_core::measurement_start(void)
 
 void nhm_core::measurement_end(void)
 {
-	unsigned int i;
 	uint64_t time_delta;
 	double ratio = 0.0;
 
@@ -321,10 +320,10 @@ void nhm_core::measurement_end(void)
 
 	time_factor = 1000000.0 * (stamp_after.tv_sec - stamp_before.tv_sec) + stamp_after.tv_usec - stamp_before.tv_usec;
 
-	for (i = 0; i < children.size(); i++)
-		if (children[i]) {
-			children[i]->measurement_end();
-			children[i]->wiggle();
+	for (auto *child : children)
+		if (child) {
+			child->measurement_end();
+			child->wiggle();
 		}
 
 	time_delta = 1000000 * (stamp_after.tv_sec - stamp_before.tv_sec) + stamp_after.tv_usec - stamp_before.tv_usec;
@@ -332,9 +331,7 @@ void nhm_core::measurement_end(void)
 	if (tsc_after != tsc_before)
 		ratio = 1.0 * time_delta / (tsc_after - tsc_before);
 
-	for (i = 0; i < cstates.size(); i++) {
-		struct idle_state *state = cstates[i];
-
+	for (auto *state : cstates) {
 		if (state->after_count == 0)
 			continue;
 
@@ -587,11 +584,10 @@ void nhm_package::measurement_end(void)
 {
 	uint64_t time_delta;
 	double ratio = 0.0;
-	unsigned int i, j;
 
-	for (i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->wiggle();
+	for (auto *child : children)
+		if (child)
+			child->wiggle();
 
 
 	if (this->has_c2c6_res)
@@ -633,19 +629,16 @@ void nhm_package::measurement_end(void)
 		finalize_cstate("pkg c10", 0, c10_after, 1);
 	}
 
-	for (i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->measurement_end();
+	for (auto *child : children)
+		if (child)
+			child->measurement_end();
 
 	time_delta = 1000000 * (stamp_after.tv_sec - stamp_before.tv_sec) + stamp_after.tv_usec - stamp_before.tv_usec;
 
 	if (tsc_after != tsc_before)
 		ratio = 1.0 * time_delta / (tsc_after - tsc_before);
 
-
-	for (i = 0; i < cstates.size(); i++) {
-		struct idle_state *state = cstates[i];
-
+	for (auto *state : cstates) {
 		if (state->after_count == 0)
 			continue;
 
@@ -655,11 +648,9 @@ void nhm_package::measurement_end(void)
 		state->usage_delta =    ratio * (state->usage_after    - state->usage_before)    / state->after_count;
 		state->duration_delta = ratio * (state->duration_after - state->duration_before) / state->after_count;
 	}
-	for (i = 0; i < children.size(); i++)
-		if (children[i]) {
-			for (j = 0; j < children[i]->pstates.size(); j++) {
-				class frequency *state;
-				state = children[i]->pstates[j];
+	for (auto *child : children)
+		if (child) {
+			for (auto *state : child->pstates) {
 				if (!state)
 					continue;
 
@@ -705,7 +696,6 @@ void nhm_cpu::measurement_end(void)
 {
 	uint64_t time_delta;
 	double ratio = 0.0;
-	unsigned int i;
 
 	aperf_after = get_msr(number, MSR_APERF);
 	mperf_after = get_msr(number, MSR_MPERF);
@@ -724,8 +714,7 @@ void nhm_cpu::measurement_end(void)
 		ratio = 1.0 * time_delta / (tsc_after - tsc_before);
 
 
-	for (i = 0; i < cstates.size(); i++) {
-		struct idle_state *state = cstates[i];
+	for (auto *state : cstates) {
 		if (state->line_level != LEVEL_C0)
 			continue;
 
@@ -750,9 +739,8 @@ std::string nhm_cpu::fill_pstate_line(int line_nr)
 	const int intel_pstate = is_intel_pstate_driver_loaded();
 
 	if (!intel_pstate && total_stamp ==0) {
-		unsigned int i;
-		for (i = 0; i < pstates.size(); i++)
-			total_stamp += pstates[i]->time_after;
+		for (const auto *s : pstates)
+			total_stamp += s->time_after;
 		if (total_stamp == 0)
 			total_stamp = 1;
 	}
