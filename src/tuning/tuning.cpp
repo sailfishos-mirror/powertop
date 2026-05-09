@@ -163,10 +163,9 @@ void tuning_window::repaint(void)
 void tuning_window::cursor_enter(void)
 {
 	tunable *tun = all_tunables[cursor_pos].get();
-	std::string toggle_script;
+	const std::string toggle_script = tun->toggle_script();
 	/** device will change its state so need to store toggle script before
 	 * we toggle()*/
-	toggle_script = tun->toggle_script();
 	tun->toggle();
 	if (!toggle_script.empty())
 		ui_notify_user(std::format(">> {}\n", toggle_script));
@@ -174,11 +173,9 @@ void tuning_window::cursor_enter(void)
 
 static bool tunables_sort(const std::unique_ptr<tunable> &i, const std::unique_ptr<tunable> &j)
 {
-	int i_g, j_g;
+	const int i_g = i->good_bad();
+	const int j_g = j->good_bad();
 	double d;
-
-	i_g = i->good_bad();
-	j_g = j->good_bad();
 
 	if (!equals(i_g, j_g))
 		return i_g < j_g;
