@@ -28,7 +28,7 @@
 class c_rapl_interface
 {
 private:
-	static const int def_sampling_interval = 1; //In seconds
+	static constexpr int def_sampling_interval = 1; //In seconds
 	bool powercap_sysfs_present = false;
 	std::string powercap_core_path;
 	std::string powercap_uncore_path;
@@ -41,7 +41,7 @@ private:
 	double energy_status_units = 0.0;
 	double time_units = 0.0;
 
-	int read_msr(int cpu, unsigned int idx, uint64_t *val);
+	int read_msr(int cpu, unsigned int idx, uint64_t *val) const;
 	int write_msr(int cpu, unsigned int idx, uint64_t val);
 
 protected:
@@ -54,37 +54,37 @@ protected:
 public:
 	c_rapl_interface(const std::string &dev_name = "package-0", int cpu = 0);
 
-	int get_rapl_power_unit(uint64_t *value);
-	double get_power_unit();
-	double get_energy_status_unit();
-	double get_time_unit();
+	int get_rapl_power_unit(uint64_t *value) const;
+	double get_power_unit() const;
+	double get_energy_status_unit() const;
+	double get_time_unit() const;
 
-	int get_pkg_energy_status(double *status);
+	int get_pkg_energy_status(double *status) const;
 	int get_pkg_power_info(double *thermal_spec_power,
-			double *max_power, double *min_power, double *max_time_window);
-	int get_pkg_power_limit(uint64_t *value);
+			double *max_power, double *min_power, double *max_time_window) const;
+	int get_pkg_power_limit(uint64_t *value) const;
 	int set_pkg_power_limit(uint64_t value);
 
-	int get_dram_energy_status(double *status);
+	int get_dram_energy_status(double *status) const;
 	int get_dram_power_info(double *thermal_spec_power,
-			double *max_power, double *min_power, double *max_time_window);
-	int get_dram_power_limit(uint64_t *value);
+			double *max_power, double *min_power, double *max_time_window) const;
+	int get_dram_power_limit(uint64_t *value) const;
 	int set_dram_power_limit(uint64_t value);
 
-	int get_pp0_energy_status(double *status);
-	int get_pp0_power_limit(uint64_t *value);
+	int get_pp0_energy_status(double *status) const;
+	int get_pp0_power_limit(uint64_t *value) const;
 	int set_pp0_power_limit(uint64_t value);
-	int get_pp0_power_policy(unsigned int *pp0_power_policy);
+	int get_pp0_power_policy(unsigned int *pp0_power_policy) const;
 
-	int get_pp1_energy_status(double *status);
-	int get_pp1_power_limit(uint64_t *value);
+	int get_pp1_energy_status(double *status) const;
+	int get_pp1_power_limit(uint64_t *value) const;
 	int set_pp1_power_limit(uint64_t value);
-	int get_pp1_power_policy(unsigned int *pp1_power_policy);
+	int get_pp1_power_policy(unsigned int *pp1_power_policy) const;
 
-	bool pkg_domain_present();
-	bool dram_domain_present();
-	bool pp0_domain_present();
-	bool pp1_domain_present();
+	bool pkg_domain_present() const;
+	bool dram_domain_present() const;
+	bool pp0_domain_present() const;
+	bool pp1_domain_present() const;
 
 	void rapl_measure_energy();
 };

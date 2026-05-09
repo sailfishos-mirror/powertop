@@ -176,7 +176,7 @@ c_rapl_interface::c_rapl_interface(const std::string &dev_name, int cpu) :
 	RAPL_DBG_PRINT("RAPL Domain mask: %x\n", rapl_domains);
 }
 
-bool c_rapl_interface::pkg_domain_present()
+bool c_rapl_interface::pkg_domain_present() const
 {
 	if ((rapl_domains & PKG_DOMAIN_PRESENT)) {
 		return true;
@@ -185,7 +185,7 @@ bool c_rapl_interface::pkg_domain_present()
 	return false;
 }
 
-bool c_rapl_interface::dram_domain_present()
+bool c_rapl_interface::dram_domain_present() const
 {
 	if ((rapl_domains & DRAM_DOMAIN_PRESENT)) {
 		return true;
@@ -194,7 +194,7 @@ bool c_rapl_interface::dram_domain_present()
 	return false;
 }
 
-bool c_rapl_interface::pp0_domain_present()
+bool c_rapl_interface::pp0_domain_present() const
 {
 	if ((rapl_domains & PP0_DOMAIN_PRESENT)) {
 		return true;
@@ -203,7 +203,7 @@ bool c_rapl_interface::pp0_domain_present()
 	return false;
 }
 
-bool c_rapl_interface::pp1_domain_present()
+bool c_rapl_interface::pp1_domain_present() const
 {
 	if ((rapl_domains & PP1_DOMAIN_PRESENT)) {
 		return true;
@@ -212,7 +212,7 @@ bool c_rapl_interface::pp1_domain_present()
 	return false;
 }
 
-int c_rapl_interface::read_msr(int cpu, unsigned int idx, uint64_t *val)
+int c_rapl_interface::read_msr(int cpu, unsigned int idx, uint64_t *val) const
 {
 	return ::read_msr(cpu, idx, val);
 }
@@ -222,7 +222,7 @@ int c_rapl_interface::write_msr(int cpu, unsigned int idx, uint64_t val)
 	return ::write_msr(cpu, idx, val);
 }
 
-int c_rapl_interface::get_rapl_power_unit(uint64_t *value)
+int c_rapl_interface::get_rapl_power_unit(uint64_t *value) const
 {
 	int ret;
 
@@ -231,7 +231,7 @@ int c_rapl_interface::get_rapl_power_unit(uint64_t *value)
 	return ret;
 }
 
-double c_rapl_interface::get_power_unit()
+double c_rapl_interface::get_power_unit() const
 {
 	int ret;
 	uint64_t value;
@@ -245,7 +245,7 @@ double c_rapl_interface::get_power_unit()
 	return (double) 1/pow((double)2, (double)(value & 0xf));
 }
 
-double c_rapl_interface::get_energy_status_unit()
+double c_rapl_interface::get_energy_status_unit() const
 {
 	int ret;
 	uint64_t value;
@@ -259,7 +259,7 @@ double c_rapl_interface::get_energy_status_unit()
 	return (double)1/ pow((double)2, (double)((value & 0x1f00) >> 8));
 }
 
-double c_rapl_interface::get_time_unit()
+double c_rapl_interface::get_time_unit() const
 {
 	int ret;
 	uint64_t value;
@@ -273,7 +273,7 @@ double c_rapl_interface::get_time_unit()
 	return (double)1 / pow((double)2, (double)((value & 0xf0000) >> 16));
 }
 
-int c_rapl_interface::get_pkg_energy_status(double *status)
+int c_rapl_interface::get_pkg_energy_status(double *status) const
 {
 	int ret;
 	uint64_t value;
@@ -295,7 +295,7 @@ int c_rapl_interface::get_pkg_energy_status(double *status)
 }
 
 int c_rapl_interface::get_pkg_power_info(double *thermal_spec_power,
-			double *max_power, double *min_power, double *max_time_window)
+			double *max_power, double *min_power, double *max_time_window) const
 {
 	int ret;
 	uint64_t value;
@@ -317,7 +317,7 @@ int c_rapl_interface::get_pkg_power_info(double *thermal_spec_power,
 	return ret;
 }
 
-int c_rapl_interface::get_pkg_power_limit(uint64_t *value)
+int c_rapl_interface::get_pkg_power_limit(uint64_t *value) const
 {
 	int ret;
 
@@ -353,7 +353,7 @@ int c_rapl_interface::set_pkg_power_limit(uint64_t value)
 	return ret;
 }
 
-int c_rapl_interface::get_dram_energy_status(double *status)
+int c_rapl_interface::get_dram_energy_status(double *status) const
 {
 	int ret;
 	uint64_t value;
@@ -385,7 +385,7 @@ int c_rapl_interface::get_dram_energy_status(double *status)
 }
 
 int c_rapl_interface::get_dram_power_info(double *thermal_spec_power,
-			double *max_power, double *min_power, double *max_time_window)
+			double *max_power, double *min_power, double *max_time_window) const
 {
 	int ret;
 	uint64_t value;
@@ -408,7 +408,7 @@ int c_rapl_interface::get_dram_power_info(double *thermal_spec_power,
 	return ret;
 }
 
-int c_rapl_interface::get_dram_power_limit(uint64_t *value)
+int c_rapl_interface::get_dram_power_limit(uint64_t *value) const
 {
 	int ret;
 
@@ -444,7 +444,7 @@ int c_rapl_interface::set_dram_power_limit(uint64_t value)
 	return ret;
 }
 
-int c_rapl_interface::get_pp0_energy_status(double *status)
+int c_rapl_interface::get_pp0_energy_status(double *status) const
 {
 	int ret;
 	uint64_t value;
@@ -475,7 +475,7 @@ int c_rapl_interface::get_pp0_energy_status(double *status)
 	return ret;
 }
 
-int c_rapl_interface::get_pp0_power_limit(uint64_t *value)
+int c_rapl_interface::get_pp0_power_limit(uint64_t *value) const
 {
 	int ret;
 
@@ -511,7 +511,7 @@ int c_rapl_interface::set_pp0_power_limit(uint64_t value)
 	return ret;
 }
 
-int c_rapl_interface::get_pp0_power_policy(unsigned int *pp0_power_policy)
+int c_rapl_interface::get_pp0_power_policy(unsigned int *pp0_power_policy) const
 {
 	int ret;
 	uint64_t value;
@@ -532,7 +532,7 @@ int c_rapl_interface::get_pp0_power_policy(unsigned int *pp0_power_policy)
 	return ret;
 }
 
-int c_rapl_interface::get_pp1_energy_status(double *status)
+int c_rapl_interface::get_pp1_energy_status(double *status) const
 {
 	int ret;
 	uint64_t value;
@@ -563,7 +563,7 @@ int c_rapl_interface::get_pp1_energy_status(double *status)
 	return ret;
 }
 
-int c_rapl_interface::get_pp1_power_limit(uint64_t *value)
+int c_rapl_interface::get_pp1_power_limit(uint64_t *value) const
 {
 	int ret;
 
@@ -599,7 +599,7 @@ int c_rapl_interface::set_pp1_power_limit(uint64_t value)
 	return ret;
 }
 
-int c_rapl_interface::get_pp1_power_policy(unsigned int *pp1_power_policy)
+int c_rapl_interface::get_pp1_power_policy(unsigned int *pp1_power_policy) const
 {
 	int ret;
 	uint64_t value;
