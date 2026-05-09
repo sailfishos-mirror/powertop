@@ -22,6 +22,8 @@
  * Authors:
  *	Arjan van de Ven <arjan@linux.intel.com>
  */
+#include <memory>
+
 #include "measurement.h"
 #include "../lib.h"
 
@@ -48,4 +50,4 @@ void power_meter::collect_json_fields(std::string &_js)
 	JSON_KV("capacity", dev_capacity());
 }
 
-std::vector<class power_meter *> power_meters;
+std::vector<std::unique_ptr<power_meter>> power_meters;

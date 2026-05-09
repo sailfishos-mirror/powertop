@@ -129,31 +129,21 @@ void sysfs_power_meters_callback(const std::string &d_name)
 	if (type != "Battery" && type != "UPS")
 		return;
 
-	class sysfs_power_meter *meter;
-	meter = new(std::nothrow) sysfs_power_meter(d_name);
-	if (meter)
-		power_meters.push_back(meter);
+	power_meters.push_back(std::make_unique<sysfs_power_meter>(d_name));
 }
 
 void acpi_power_meters_callback(const std::string &d_name)
 {
-	class acpi_power_meter *meter;
-	meter = new(std::nothrow) acpi_power_meter(d_name);
-	if (meter)
-		power_meters.push_back(meter);
+	power_meters.push_back(std::make_unique<acpi_power_meter>(d_name));
 }
 
 void sysfs_opal_sensors_callback(const std::string &d_name)
 {
-	class opal_sensors_power_meter *meter;
-
 	/* Those that end in / are directories and we don't want them */
 	if (!d_name.empty() && d_name.back() == '/')
 		return;
 
-	meter = new(std::nothrow) opal_sensors_power_meter(d_name);
-	if (meter)
-		power_meters.push_back(meter);
+	power_meters.push_back(std::make_unique<opal_sensors_power_meter>(d_name));
 }
 
 void detect_power_meters(void)
@@ -182,15 +172,10 @@ void detect_power_meters(void)
 
 void extech_power_meter(const std::string &devnode)
 {
-	class extech_power_meter *meter;
-	meter = new class extech_power_meter(devnode);
-	power_meters.push_back(meter);
+	power_meters.emplace_back(new class extech_power_meter(devnode));
 }
 
 void clear_power_meters(void)
 {
-	unsigned int i;
-	for (i = 0; i < power_meters.size(); i++)
-		delete power_meters[i];
 	power_meters.clear();
 }

@@ -24,6 +24,7 @@
  */
 #pragma once
 
+#include <memory>
 #include <vector>
 #include <string>
 #include "../lib.h"
@@ -59,7 +60,7 @@ public:
 	std::string serialize() { JSON_START(); collect_json_fields(_js); JSON_END(); }
 };
 
-extern std::vector<class power_meter *> power_meters;
+extern std::vector<std::unique_ptr<power_meter>> power_meters;
 
 extern void start_power_measurement(void);
 extern void end_power_measurement(void);
