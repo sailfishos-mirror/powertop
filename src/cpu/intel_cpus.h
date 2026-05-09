@@ -57,7 +57,7 @@ protected:
 public:
 	intel_util();
 	virtual void byt_has_ahci();
-	virtual int get_byt_ahci_support();
+	virtual int get_byt_ahci_support() const;
 };
 
 class nhm_package: public cpu_package, public intel_util

@@ -43,7 +43,7 @@
 #include "../display.h"
 
 /* List of supported Intel CPU models, sorted by family then model */
-static int intel_cpu_models[] = {
+static constexpr int intel_cpu_models[] = {
 	IFM(6, 0x1A),	/* NEHALEM_EP */
 	IFM(6, 0x1E),	/* NEHALEM */
 	IFM(6, 0x1F),	/* NEHALEM_G */
@@ -135,7 +135,7 @@ int is_intel_pstate_driver_loaded()
 	if (intel_pstate_driver_loaded > -1)
 		return intel_pstate_driver_loaded;
 
-	std::string scaling_driver = read_sysfs_string("/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver");
+	const std::string scaling_driver = read_sysfs_string("/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver");
 
 	if (scaling_driver == "intel_pstate") {
 		intel_pstate_driver_loaded = 1;
@@ -172,7 +172,7 @@ void intel_util::byt_has_ahci()
 	byt_ahci_support = std::filesystem::exists("/sys/bus/pci/devices/0000:00:13.0") ? 1 : 0;
 }
 
-int intel_util::get_byt_ahci_support()
+int intel_util::get_byt_ahci_support() const
 {
 	return byt_ahci_support;
 }
@@ -279,7 +279,7 @@ void nhm_core::measurement_start(void)
 
 	filename = std::format("/sys/devices/system/cpu/cpu{}/cpufreq/stats/time_in_state", first_cpu);
 
-	std::string content = read_file_content(filename);
+	const std::string content = read_file_content(filename);
 	if (!content.empty()) {
 		std::istringstream stream(content);
 		std::string line;
@@ -748,10 +748,9 @@ std::string nhm_cpu::fill_pstate_line(int line_nr)
 	}
 
 	if (line_nr == LEVEL_C0) {
-		double F;
 		if (mperf_after <= mperf_before || time_factor < 1.0)
 			return "";
-		F = 1.0 * (tsc_after - tsc_before) * (aperf_after - aperf_before) / (mperf_after - mperf_before) / time_factor * 1000;
+		const double F = 1.0 * (tsc_after - tsc_before) * (aperf_after - aperf_before) / (mperf_after - mperf_before) / time_factor * 1000;
 		return hz_to_human(F, 1);
 	}
 	if (intel_pstate > 0 || line_nr >= (int)pstates.size() || line_nr < 0)
