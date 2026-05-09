@@ -131,14 +131,14 @@ static void test_find_create_process_idempotent()
 	PT_ASSERT_TRUE(all_processes.size() == 1);
 
 	test_framework_manager::get().set_replay(DATA_DIR + "/process_user.ptrecord");
-	class process *thread = new process("bash", 5678, 5678);
+	auto thread = std::make_unique<process>("bash", 5678, 5678);
 	test_framework_manager::get().reset();
 
 	p1->accumulated_runtime = 10;
 	thread->pid = 5679;
 	thread->tgid = 5678;
 	thread->accumulated_runtime = 20;
-	all_processes.push_back(thread);
+	all_processes.push_back(std::move(thread));
 	merge_processes();
 	PT_ASSERT_TRUE(all_processes.size() == 1);
 	PT_ASSERT_TRUE(p1->accumulated_runtime == 30);

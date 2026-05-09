@@ -25,6 +25,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <memory>
 
 #include "powerconsumer.h"
 
@@ -68,7 +69,7 @@ public:
 
 };
 
-extern std::vector <class process *> all_processes;
+extern std::vector<std::unique_ptr<process>> all_processes;
 
 extern double measurement_time;
 

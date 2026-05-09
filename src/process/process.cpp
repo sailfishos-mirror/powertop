@@ -38,7 +38,7 @@
 #include "../lib.h"
 
 
-std::vector <class process *> all_processes;
+std::vector<std::unique_ptr<process>> all_processes;
 
 void process::account_disk_dirty(void)
 {
@@ -150,79 +150,58 @@ std::string process::usage_units_summary(void)
 
 class process * find_create_process(const std::string &comm, int pid)
 {
-	unsigned int i;
-	class process *new_proc;
+	for (auto &p : all_processes)
+		if (p->pid == pid && p->comm == comm)
+			return p.get();
 
-	for (i = 0; i < all_processes.size(); i++) {
-		if (all_processes[i]->pid == pid && all_processes[i]->comm == comm)
-			return all_processes[i];
-	}
-
-	new_proc = new process(comm, pid);
-	all_processes.push_back(new_proc);
-	return new_proc;
+	all_processes.push_back(std::make_unique<process>(comm, pid));
+	return all_processes.back().get();
 }
 
-static void merge_process(class process *one, class process *two)
+static void merge_process(process &one, process &two)
 {
-	one->accumulated_runtime += two->accumulated_runtime;
-	one->child_runtime += two->child_runtime;
-	one->wake_ups += two->wake_ups;
-	one->disk_hits += two->disk_hits;
-	one->hard_disk_hits += two->hard_disk_hits;
-	one->xwakes += two->xwakes;
-	one->gpu_ops += two->gpu_ops;
-	one->power_charge += two->power_charge;
+	one.accumulated_runtime += two.accumulated_runtime;
+	one.child_runtime += two.child_runtime;
+	one.wake_ups += two.wake_ups;
+	one.disk_hits += two.disk_hits;
+	one.hard_disk_hits += two.hard_disk_hits;
+	one.xwakes += two.xwakes;
+	one.gpu_ops += two.gpu_ops;
+	one.power_charge += two.power_charge;
 }
 
 
 void merge_processes(void)
 {
-	std::vector<class process*>::iterator it1, it2;
-	class process *one, *two;
-
-	it1 = all_processes.begin();
-	while (it1 != all_processes.end()) {
-		it2 = it1 + 1;
-		one = *it1;
-		while (it2 != all_processes.end()) {
-			two = *it2;
+	for (auto it1 = all_processes.begin(); it1 != all_processes.end(); ++it1) {
+		for (auto it2 = it1 + 1; it2 != all_processes.end(); ) {
 			/* fold threads */
-			if (one->pid == two->tgid && two->tgid != 0) {
-				merge_process(one, two);
-				delete *it2;
+			if ((*it1)->pid == (*it2)->tgid && (*it2)->tgid != 0) {
+				merge_process(**it1, **it2);
 				it2 = all_processes.erase(it2);
 				continue;
 			}
 			/* find dupes and add up */
-			if (one->desc == two->desc) {
-				merge_process(one, two);
-				delete *it2;
+			if ((*it1)->desc == (*it2)->desc) {
+				merge_process(**it1, **it2);
 				it2 = all_processes.erase(it2);
 				continue;
 			}
 			++it2;
 		}
-		++it1;
 	}
 }
 
 void all_processes_to_all_power(void)
 {
-	unsigned int i;
-	for (i = 0; i < all_processes.size() ; i++)
-		if (all_processes[i]->accumulated_runtime ||
-		    all_processes[i]->power_charge)
-			all_power.push_back(all_processes[i]);
+	for (auto &p : all_processes)
+		if (p->accumulated_runtime || p->power_charge)
+			all_power.push_back(p.get());
 }
 
 void clear_processes(void)
 {
-	std::vector <class process *>::iterator it = all_processes.begin();
-	while (it != all_processes.end()) {
-		delete *it;
-		it = all_processes.erase(it);
-	}
+	all_processes.clear();
 }
 
 void process::collect_json_fields(std::string &_js)
