@@ -37,13 +37,13 @@ public:
 	device_consumer(class device *dev);
 
 	virtual std::string description(void) override;
-	virtual std::string name(void) override { return _("device"); };
-	virtual std::string type(void) override { return _("Device"); };
+	virtual std::string name(void) const override { return _("device"); };
+	virtual std::string type(void) const override { return _("Device"); };
 	virtual double Witts(void) const override;
-	virtual double usage(void) override { return device->utilization();};
-	virtual std::string usage_units(void) override {return device->util_units();};
-	virtual int show_events(void) override { return 0; };
-	void collect_json_fields(std::string &_js) override;
+	virtual double usage(void) const override { return device->utilization();};
+	virtual std::string usage_units(void) const override {return device->util_units();};
+	virtual int show_events(void) const override { return 0; };
+	void collect_json_fields(std::string &_js) const override;
 };
 
 extern void all_devices_to_all_power(void);

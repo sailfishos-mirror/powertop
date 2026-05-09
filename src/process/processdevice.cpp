@@ -97,7 +97,7 @@ void clear_proc_devices(void)
 	}
 }
 
-void device_consumer::collect_json_fields(std::string &_js)
+void device_consumer::collect_json_fields(std::string &_js) const
 {
     power_consumer::collect_json_fields(_js);
     JSON_FIELD(prio);
