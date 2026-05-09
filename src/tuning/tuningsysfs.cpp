@@ -40,18 +40,18 @@
 
 static std::vector<std::string> get_matching_files(const std::string& path) {
 	std::vector<std::string> files;
-	size_t star_pos = path.find('*');
+	const size_t star_pos = path.find('*');
 	if (star_pos == std::string::npos) {
 		files.push_back(path);
 		return files;
 	}
 
-	size_t dir_end = path.rfind('/', star_pos);
+	const size_t dir_end = path.rfind('/', star_pos);
 	if (dir_end == std::string::npos) return files;
 
-	std::string base_dir = path.substr(0, dir_end + 1);
-	std::string match_prefix = path.substr(dir_end + 1, star_pos - dir_end - 1);
-	std::string suffix = path.substr(star_pos + 1);
+	const std::string base_dir = path.substr(0, dir_end + 1);
+	const std::string match_prefix = path.substr(dir_end + 1, star_pos - dir_end - 1);
+	const std::string suffix = path.substr(star_pos + 1);
 
 	std::error_code ec;
 	if (!std::filesystem::exists(base_dir, ec)) return files;
@@ -80,7 +80,7 @@ sysfs_tunable::sysfs_tunable(const std::string &str, const std::string &_sysfs_p
 
 int sysfs_tunable::good_bad(void)
 {
-	std::vector<std::string> files = get_matching_files(sysfs_path);
+	const std::vector<std::string> files = get_matching_files(sysfs_path);
 	if (files.empty())
 		return TUNE_BAD;
 
@@ -107,8 +107,8 @@ int sysfs_tunable::good_bad(void)
 
 void sysfs_tunable::toggle(void)
 {
-	int good = good_bad();
-	std::vector<std::string> files = get_matching_files(sysfs_path);
+	const int good = good_bad();
+	const std::vector<std::string> files = get_matching_files(sysfs_path);
 
 	if (good == TUNE_GOOD) {
 		if (!bad_value.empty()) {
@@ -125,7 +125,7 @@ void sysfs_tunable::toggle(void)
 
 void add_sysfs_tunable(const std::string &str, const std::string &_sysfs_path, const std::string &_target_content)
 {
-	std::vector<std::string> files = get_matching_files(_sysfs_path);
+	const std::vector<std::string> files = get_matching_files(_sysfs_path);
 	bool any_accessible = false;
 	for (const auto& file : files) {
 		if (access(file.c_str(), R_OK) == 0) {
