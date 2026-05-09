@@ -38,7 +38,7 @@ class devfreq: public device {
 	struct timeval  stamp_before, stamp_after;
 	double sample_time = 0.0;
 
-	uint64_t parse_freq_time(const std::string &ptr);
+	uint64_t parse_freq_time(const std::string &ptr) const;
 	void add_devfreq_freq_state(uint64_t freq, uint64_t time);
 	void update_devfreq_freq_state(uint64_t freq, uint64_t time);
 	void parse_devfreq_trans_stat(const std::string &dname);
@@ -50,8 +50,8 @@ public:
 
 	devfreq(const std::string &c);
 	~devfreq();
-	std::string fill_freq_utilization(unsigned int idx);
-	std::string fill_freq_name(unsigned int idx);
+	std::string fill_freq_utilization(unsigned int idx) const;
+	std::string fill_freq_name(unsigned int idx) const;
 
 	virtual void start_measurement(void) override;
 	virtual void end_measurement(void) override;

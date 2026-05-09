@@ -39,58 +39,58 @@ c_rapl_interface::c_rapl_interface(
     [[maybe_unused]] const std::string &dev_name,
     [[maybe_unused]] int cpu) {}
 
-bool c_rapl_interface::pkg_domain_present()  { return false; }
-bool c_rapl_interface::dram_domain_present() { return rapl_dram_present; }
-bool c_rapl_interface::pp0_domain_present()  { return rapl_pp0_present; }
-bool c_rapl_interface::pp1_domain_present()  { return rapl_pp1_present; }
+bool c_rapl_interface::pkg_domain_present() const{ return false; }
+bool c_rapl_interface::dram_domain_present() const{ return rapl_dram_present; }
+bool c_rapl_interface::pp0_domain_present() const{ return rapl_pp0_present; }
+bool c_rapl_interface::pp1_domain_present() const{ return rapl_pp1_present; }
 
 int c_rapl_interface::read_msr(
     [[maybe_unused]] int cpu,
     [[maybe_unused]] unsigned int idx,
-    [[maybe_unused]] uint64_t *val) { return -1; }
+    [[maybe_unused]] uint64_t *val) const{ return -1; }
 
 int c_rapl_interface::write_msr(
     [[maybe_unused]] int cpu,
     [[maybe_unused]] unsigned int idx,
     [[maybe_unused]] uint64_t val)  { return -1; }
 
-int c_rapl_interface::get_rapl_power_unit([[maybe_unused]] uint64_t *v) { return -1; }
-double c_rapl_interface::get_power_unit()         { return 0.0; }
-double c_rapl_interface::get_energy_status_unit() { return 0.0; }
-double c_rapl_interface::get_time_unit()          { return 0.0; }
+int c_rapl_interface::get_rapl_power_unit([[maybe_unused]] uint64_t *v) const{ return -1; }
+double c_rapl_interface::get_power_unit() const{ return 0.0; }
+double c_rapl_interface::get_energy_status_unit() const{ return 0.0; }
+double c_rapl_interface::get_time_unit() const{ return 0.0; }
 
-int c_rapl_interface::get_pkg_energy_status([[maybe_unused]] double *s) { return -1; }
+int c_rapl_interface::get_pkg_energy_status([[maybe_unused]] double *s) const{ return -1; }
 int c_rapl_interface::get_pkg_power_info(
     [[maybe_unused]] double *a, [[maybe_unused]] double *b,
-    [[maybe_unused]] double *c, [[maybe_unused]] double *d) { return -1; }
-int c_rapl_interface::get_pkg_power_limit([[maybe_unused]] uint64_t *v) { return -1; }
+    [[maybe_unused]] double *c, [[maybe_unused]] double *d) const{ return -1; }
+int c_rapl_interface::get_pkg_power_limit([[maybe_unused]] uint64_t *v) const{ return -1; }
 int c_rapl_interface::set_pkg_power_limit([[maybe_unused]] uint64_t v)  { return -1; }
 
-int c_rapl_interface::get_dram_energy_status(double *s) {
+int c_rapl_interface::get_dram_energy_status(double *s) const{
     assert(dram_idx < dram_cnt && "dram energy queue exhausted — unexpected call");
     *s = dram_seq[dram_idx++]; return 0;
 }
 int c_rapl_interface::get_dram_power_info(
     [[maybe_unused]] double *a, [[maybe_unused]] double *b,
-    [[maybe_unused]] double *c, [[maybe_unused]] double *d) { return -1; }
-int c_rapl_interface::get_dram_power_limit([[maybe_unused]] uint64_t *v) { return -1; }
+    [[maybe_unused]] double *c, [[maybe_unused]] double *d) const{ return -1; }
+int c_rapl_interface::get_dram_power_limit([[maybe_unused]] uint64_t *v) const{ return -1; }
 int c_rapl_interface::set_dram_power_limit([[maybe_unused]] uint64_t v)  { return -1; }
 
-int c_rapl_interface::get_pp0_energy_status(double *s) {
+int c_rapl_interface::get_pp0_energy_status(double *s) const{
     assert(pp0_idx < pp0_cnt && "pp0 energy queue exhausted — unexpected call");
     *s = pp0_seq[pp0_idx++]; return 0;
 }
-int c_rapl_interface::get_pp0_power_limit([[maybe_unused]] uint64_t *v) { return -1; }
+int c_rapl_interface::get_pp0_power_limit([[maybe_unused]] uint64_t *v) const{ return -1; }
 int c_rapl_interface::set_pp0_power_limit([[maybe_unused]] uint64_t v)  { return -1; }
-int c_rapl_interface::get_pp0_power_policy([[maybe_unused]] unsigned int *p) { return -1; }
+int c_rapl_interface::get_pp0_power_policy([[maybe_unused]] unsigned int *p) const{ return -1; }
 
-int c_rapl_interface::get_pp1_energy_status(double *s) {
+int c_rapl_interface::get_pp1_energy_status(double *s) const{
     assert(pp1_idx < pp1_cnt && "pp1 energy queue exhausted — unexpected call");
     *s = pp1_seq[pp1_idx++]; return 0;
 }
-int c_rapl_interface::get_pp1_power_limit([[maybe_unused]] uint64_t *v) { return -1; }
+int c_rapl_interface::get_pp1_power_limit([[maybe_unused]] uint64_t *v) const{ return -1; }
 int c_rapl_interface::set_pp1_power_limit([[maybe_unused]] uint64_t v)  { return -1; }
-int c_rapl_interface::get_pp1_power_policy([[maybe_unused]] unsigned int *p) { return -1; }
+int c_rapl_interface::get_pp1_power_policy([[maybe_unused]] unsigned int *p) const{ return -1; }
 
 void c_rapl_interface::rapl_measure_energy() {}
 

@@ -53,7 +53,7 @@ devfreq::~devfreq()
 {
 }
 
-uint64_t devfreq::parse_freq_time(const std::string &pchr_s)
+uint64_t devfreq::parse_freq_time(const std::string &pchr_s) const
 {
 	uint64_t ctime = 0;
 	size_t pos;
@@ -187,7 +187,7 @@ double devfreq::utilization(void)
 	return 0;
 }
 
-std::string devfreq::fill_freq_utilization(unsigned int idx)
+std::string devfreq::fill_freq_utilization(unsigned int idx) const
 {
 	if (idx < dstates.size() && dstates[idx]) {
 		const auto *state = dstates[idx].get();
@@ -198,7 +198,7 @@ std::string devfreq::fill_freq_utilization(unsigned int idx)
 	return "";
 }
 
-std::string devfreq::fill_freq_name(unsigned int idx)
+std::string devfreq::fill_freq_name(unsigned int idx) const
 {
 	if (idx < dstates.size() && dstates[idx]) {
 		return std::format("{:<15}", dstates[idx]->human_name);
@@ -225,7 +225,7 @@ static void devfreq_dev_callback(const std::string &d_name)
 
 void create_all_devfreq_devices(void)
 {
-	std::string p = "/sys/class/devfreq/";
+	const std::string p = "/sys/class/devfreq/";
 
 	if (list_directory(p).empty()) {
 		fprintf(stderr, "Devfreq not enabled\n");
@@ -290,8 +290,8 @@ void display_devfreq_devices(void)
 		wprintw(win, "\n%s\n", df->device_name().c_str());
 
 		for (unsigned int j = 0; j < df->dstates.size(); j++) {
-			std::string f_name = df->fill_freq_name(j);
-			std::string f_util = df->fill_freq_utilization(j);
+			const std::string f_name = df->fill_freq_name(j);
+			const std::string f_util = df->fill_freq_utilization(j);
 			wprintw(win, "\t%s%s\n", f_name.c_str(), f_util.c_str());
 		}
 		wprintw(win, "\n");
