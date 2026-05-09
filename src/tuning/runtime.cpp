@@ -86,9 +86,7 @@ runtime_tunable::runtime_tunable(const std::string &path, const std::string &bus
 
 int runtime_tunable::good_bad(void)
 {
-	std::string content;
-
-	content = read_sysfs_string(runtime_path);
+	const std::string content = read_sysfs_string(runtime_path);
 
 	if (content == "auto")
 		return TUNE_GOOD;
@@ -100,8 +98,7 @@ int runtime_tunable::good_bad(void)
 
 void runtime_tunable::toggle(void)
 {
-	int good;
-	good = good_bad();
+	const int good = good_bad();
 
 	if (good == TUNE_GOOD) {
 		write_sysfs(runtime_path, "on");
@@ -115,7 +112,8 @@ void runtime_tunable::toggle(void)
 void add_runtime_tunables(const std::string &bus)
 {
 	std::string filename, port;
-	int max_ports = 32, count=0;
+	constexpr int max_ports = 32;
+	int count = 0;
 
 	for (const auto &dev : list_directory(std::format("/sys/bus/{}/devices/", bus))) {
 
