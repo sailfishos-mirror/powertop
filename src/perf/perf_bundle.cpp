@@ -47,7 +47,7 @@ class perf_bundle_event: public perf_event
 {
 public:
 	perf_bundle_event(void);
-	virtual void handle_event(struct perf_event_header *header, void *cookie) override;
+	virtual void handle_event(const struct perf_event_header *header, void *cookie) override;
 };
 
 perf_bundle_event::perf_bundle_event(void) : perf_event()
@@ -55,7 +55,7 @@ perf_bundle_event::perf_bundle_event(void) : perf_event()
 }
 
 
-void perf_bundle_event::handle_event(struct perf_event_header *header, void *cookie)
+void perf_bundle_event::handle_event(const struct perf_event_header *header, void *cookie)
 {
 	unsigned char *buffer;
 	std::vector<void *> *vector;

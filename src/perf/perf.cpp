@@ -239,7 +239,7 @@ void perf_event::process(void *cookie)
 	if (perf_fd < 0)
 		return;
 
-	uint64_t head = pc->data_head;
+	const uint64_t head = pc->data_head;
 	__sync_synchronize(); /* required rmb() before reading ring buffer data */
 
 	while (pc->data_tail != head) {
