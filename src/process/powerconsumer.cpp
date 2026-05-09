@@ -27,7 +27,7 @@
 #include "process.h"
 #include "../parameters/parameters.h"
 
-double power_consumer::Witts(void)
+double power_consumer::Witts(void) const
 {
 	double cost;
 	double timecost;
@@ -40,8 +40,7 @@ double power_consumer::Witts(void)
 	if (measurement_time < 0.00001)
 		return 0.0;
 
-	if (child_runtime > accumulated_runtime)
-		child_runtime = 0;
+	const uint64_t net_runtime = std::max(accumulated_runtime, child_runtime) - child_runtime;
 
 	timecost = get_parameter_value("cpu-consumption");
 	wakeupcost = get_parameter_value("cpu-wakeups");
@@ -53,7 +52,7 @@ double power_consumer::Witts(void)
 	cost = 0;
 
 	cost += wakeupcost * wake_ups / 10000.0;
-	cost += ( (accumulated_runtime - child_runtime) / 1000000000.0) * timecost;
+	cost += ( net_runtime / 1000000000.0) * timecost;
 	cost += gpucost * gpu_ops / 100.0;
 	cost += hard_disk_cost * hard_disk_hits / 100.0;
 	cost += disk_cost * disk_hits / 100.0;

@@ -256,7 +256,7 @@ void run_devpower_list(void)
 
 }
 
-static bool devlist_sort(struct devuser * i, struct devuser * j)
+static bool devlist_sort(const devuser *i, const devuser *j)
 {
 	if (i->pid != j->pid)
 		return i->pid < j->pid;

@@ -42,7 +42,7 @@ std::string device_consumer::description(void)
 	return device->human_name();
 }
 
-double device_consumer::Witts(void)
+double device_consumer::Witts(void) const
 {
 	return power;
 }

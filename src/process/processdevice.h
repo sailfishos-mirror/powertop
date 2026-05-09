@@ -39,7 +39,7 @@ public:
 	virtual std::string description(void) override;
 	virtual std::string name(void) override { return _("device"); };
 	virtual std::string type(void) override { return _("Device"); };
-	virtual double Witts(void) override;
+	virtual double Witts(void) const override;
 	virtual double usage(void) override { return device->utilization();};
 	virtual std::string usage_units(void) override {return device->util_units();};
 	virtual int show_events(void) override { return 0; };

@@ -701,7 +701,7 @@ void end_process_measurement(void)
 }
 
 
-static bool power_cpu_sort(class power_consumer * i, class power_consumer * j)
+static bool power_cpu_sort(const power_consumer *i, const power_consumer *j)
 {
 	double iW, jW;
 
