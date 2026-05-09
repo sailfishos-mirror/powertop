@@ -60,12 +60,12 @@ public:
 	virtual void account_disk_dirty(void);
 
 	virtual std::string description(void) override;
-	virtual std::string name(void) override { return "process"; };
-	virtual std::string type(void) override { return "Process"; };
+	virtual std::string name(void) const override { return "process"; };
+	virtual std::string type(void) const override { return "Process"; };
 
-	virtual double usage_summary(void) override;
-	virtual std::string usage_units_summary(void) override;
-	void collect_json_fields(std::string &_js) override;
+	virtual double usage_summary(void) const override;
+	virtual std::string usage_units_summary(void) const override;
+	virtual void collect_json_fields(std::string &_js) const override;
 
 };
 

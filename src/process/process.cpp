@@ -54,7 +54,7 @@ void process::schedule_thread(uint64_t time, [[maybe_unused]] int thread_id)
 
 uint64_t process::deschedule_thread(uint64_t time, int thread_id)
 {
-	uint64_t delta;
+	uint64_t delta = time - running_since;
 
 	if (!running_since)
 		return 0;
@@ -65,8 +65,6 @@ uint64_t process::deschedule_thread(uint64_t time, int thread_id)
 		running_since = 0;
 		return 0;
 	}
-
-	delta = time - running_since;
 
 	if (thread_id == 0) /* idle thread */
 		delta = 0;
@@ -94,13 +92,13 @@ process::process(const std::string &_comm, int _pid, int _tid) : power_consumer(
 	tgid = _tid;
 
 	if (_tid == 0) {
-		std::string content = read_file_content(std::format("/proc/{}/status", _pid));
+		const std::string content = read_file_content(std::format("/proc/{}/status", _pid));
 		if (!content.empty()) {
 			std::istringstream stream(content);
 			std::string line;
 			while (std::getline(stream, line)) {
 				if (line.starts_with("Tgid:")) {
-					size_t pos = line.find(':');
+					const size_t pos = line.find(':');
 					if (pos != std::string::npos) {
 						try {
 							tgid = std::stoi(line.substr(pos + 1));
@@ -136,14 +134,13 @@ std::string process::description(void)
 	return desc;
 }
 
-double process::usage_summary(void)
+double process::usage_summary(void) const
 {
-	double t;
-	t = (accumulated_runtime - child_runtime) / 1000000.0 / measurement_time / 10;
+	const double t = (accumulated_runtime - child_runtime) / 1000000.0 / measurement_time / 10;
 	return t;
 }
 
-std::string process::usage_units_summary(void)
+std::string process::usage_units_summary(void) const
 {
 	return "%";
 }
@@ -204,7 +201,7 @@ void clear_processes(void)
 	all_processes.clear();
 }
 
-void process::collect_json_fields(std::string &_js)
+void process::collect_json_fields(std::string &_js) const
 {
     power_consumer::collect_json_fields(_js);
     JSON_FIELD(running_since);
