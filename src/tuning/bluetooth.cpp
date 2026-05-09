@@ -121,17 +121,17 @@ struct hci_dev_info {
  */
 int bt_tunable::hci_get_dev_info(unsigned int &flags,
                                   unsigned int &byte_rx,
-                                  unsigned int &byte_tx)
+                                  unsigned int &byte_tx) const
 {
 	struct hci_dev_info devinfo;
 
-	int fd = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
+	const int fd = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
 	if (fd < 0)
 		return -1;
 
 	memset(&devinfo, 0, sizeof(devinfo));
 	strncpy(devinfo.name, bt_name.c_str(), sizeof(devinfo.name) - 1);
-	int ret = ioctl(fd, HCIGETDEVINFO, (void *) &devinfo);
+	const int ret = ioctl(fd, HCIGETDEVINFO, (void *) &devinfo);
 	close(fd);
 	if (ret < 0)
 		return -1;
@@ -151,7 +151,7 @@ void bt_tunable::hci_set_power(bool up)
 	close(fd);
 }
 
-time_t bt_tunable::current_time()
+time_t bt_tunable::current_time() const
 {
 	return time(nullptr);
 }
@@ -159,8 +159,6 @@ time_t bt_tunable::current_time()
 int bt_tunable::good_bad(void)
 {
 	unsigned int flags, byte_rx, byte_tx;
-	int thisbytes;
-	time_t now;
 
 	if (hci_get_dev_info(flags, byte_rx, byte_tx) < 0)
 		return TUNE_GOOD;
@@ -169,8 +167,8 @@ int bt_tunable::good_bad(void)
 	if ((flags & 1) == 0)
 		return TUNE_GOOD;
 
-	thisbytes = byte_rx + byte_tx;
-	now = current_time();
+	const int thisbytes = byte_rx + byte_tx;
+	const time_t now = current_time();
 
 	/* Initialise slot 0 on first call */
 	if (snap_bytes[0] < 0) {

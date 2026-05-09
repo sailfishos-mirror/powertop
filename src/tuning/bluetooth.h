@@ -42,9 +42,9 @@ public:
 	/* Virtual hardware helpers — override in tests to inject fake data */
 	virtual int  hci_get_dev_info(unsigned int &flags,
 	                              unsigned int &byte_rx,
-	                              unsigned int &byte_tx);
+	                              unsigned int &byte_tx) const;
 	virtual void hci_set_power(bool up);
-	virtual time_t current_time();
+	virtual time_t current_time() const;
 
 protected:
 	int    snap_bytes[2];
