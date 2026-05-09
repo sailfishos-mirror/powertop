@@ -363,4 +363,22 @@ if valgrind.found() and get_option('b_sanitize') == 'none'
     timeout: 120,
     suite: 'valgrind',
   )
+  test('valgrind-csv',
+    valgrind,
+    args: valgrind_common_args + [
+      powertop_exe.full_path(),
+      '--bypass-root-check', '--csv=' + meson.build_root() / 'valgrind-test.csv', '--time=1',
+    ],
+    timeout: 120,
+    suite: 'valgrind',
+  )
+  test('valgrind-markdown',
+    valgrind,
+    args: valgrind_common_args + [
+      powertop_exe.full_path(),
+      '--bypass-root-check', '--markdown=' + meson.build_root() / 'valgrind-test.md', '--time=1',
+    ],
+    timeout: 120,
+    suite: 'valgrind',
+  )
 endif
