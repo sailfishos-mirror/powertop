@@ -79,6 +79,7 @@ void (*ui_notify_user) (const std::string &msg);
 enum {
 	OPT_AUTO_TUNE = CHAR_MAX + 1,
 	OPT_AUTO_TUNE_DUMP,
+	OPT_BYPASS_ROOT,
 	OPT_EXTECH,
 	OPT_DEBUG,
 	OPT_ONCE,
@@ -86,12 +87,15 @@ enum {
 	OPT_REPLAY
 };
 
+static bool bypass_root_check = false;
+
 static const struct option long_options[] =
 {
 	/* These options set a flag. */
-	{"auto-tune",	no_argument,		nullptr,		 OPT_AUTO_TUNE},
-	{"auto-tune-dump",	no_argument,	nullptr,		 OPT_AUTO_TUNE_DUMP},
-	{"calibrate",	no_argument,		nullptr,		 'c'},
+	{"auto-tune",		no_argument,		nullptr,	 OPT_AUTO_TUNE},
+	{"auto-tune-dump",	no_argument,		nullptr,	 OPT_AUTO_TUNE_DUMP},
+	{"bypass-root-check",	no_argument,		nullptr,	 OPT_BYPASS_ROOT},
+	{"calibrate",		no_argument,		nullptr,	 'c'},
 	{"markdown",	optional_argument,	nullptr,		 'M'},
 	{"csv",		optional_argument,	nullptr,		 'C'},
 	{"debug",	no_argument,		&debug_learning, OPT_DEBUG},
@@ -135,6 +139,7 @@ static void print_usage()
 	printf("%s\n\n", _("Usage: powertop [OPTIONS]"));
 	printf("     --auto-tune\t %s\n", _("sets all tunable options to their GOOD setting"));
 	printf("     --auto-tune-dump\t %s\n", _("print auto-tune commands to STDOUT *instead* of executing them"));
+	printf("     --bypass-root-check %s\n", _("skip root privilege check (for testing only)"));
 	printf(" -c, --calibrate\t %s\n", _("runs powertop in calibration mode"));
 	printf(" -C, --csv%s\t %s\n", _("[=filename]"), _("generate a csv report"));
 	printf("     --debug\t\t %s\n", _("run in \"debug\" mode"));
@@ -335,7 +340,8 @@ void make_report(int time, const std::string &workload, int iterations, int samp
 		report_show_tunables();
 		report_show_wakeup();
 		finish_report_output();
-		clear_tuning();
+		clear_wakeup();
+		shutdown_tuning();
 	}
 	/* and wrap up */
 	learn_parameters(50, 0);
@@ -353,6 +359,8 @@ void make_report(int time, const std::string &workload, int iterations, int samp
 }
 
 static void checkroot() {
+	if (bypass_root_check)
+		return;
 	if (test_framework_manager::get().is_replaying())
 		return;
 	int uid;
@@ -449,7 +457,7 @@ void clean_shutdown()
 	clear_all_devfreq();
 	clear_all_cpus();
 	clear_power_meters();
-	clear_wakeup();
+	shutdown_wakeup();
 
 	return;
 }
@@ -486,6 +494,9 @@ int main(int argc, char **argv)
 				auto_tune = 1;
 				leave_powertop = 1;
 				ui_notify_user = ui_notify_user_console;
+				break;
+			case OPT_BYPASS_ROOT:
+				bypass_root_check = true;
 				break;
 			case 'c':
 				powertop_init(0);
@@ -621,7 +632,8 @@ int main(int argc, char **argv)
 		learn_parameters(500, 0);
 		save_parameters("saved_parameters.powertop");
 		end_pci_access();
-		clear_tuning();
+		shutdown_tuning();
+		shutdown_wakeup();
 		reset_display();
 
 		clean_shutdown();

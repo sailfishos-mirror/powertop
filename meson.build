@@ -287,7 +287,7 @@ if get_option('test-framework')
   add_project_arguments('-DENABLE_TEST_FRAMEWORK', language: 'cpp')
 endif
 
-executable('powertop',
+powertop_exe = executable('powertop',
   powertop_sources,
   include_directories: [src_inc, include_directories('.')],
   dependencies: [
@@ -332,4 +332,35 @@ endif
 
 if get_option('enable-tests')
   subdir('tests')
+endif
+
+# Optional valgrind leak/error tests — run with: sudo meson test --suite valgrind
+# Skipped automatically when built with sanitizers (ASAN/valgrind are incompatible).
+valgrind = find_program('valgrind', required: false)
+if valgrind.found() and get_option('b_sanitize') == 'none'
+  valgrind_common_args = [
+    '--leak-check=full',
+    '--show-leak-kinds=all',
+    '--errors-for-leak-kinds=definite,indirect',
+    '--error-exitcode=1',
+    '--suppressions=' + meson.source_root() / 'scripts/valgrind.supp',
+  ]
+  test('valgrind-html',
+    valgrind,
+    args: valgrind_common_args + [
+      powertop_exe.full_path(),
+      '--bypass-root-check', '--html', '--time=1',
+    ],
+    timeout: 120,
+    suite: 'valgrind',
+  )
+  test('valgrind-tui',
+    valgrind,
+    args: valgrind_common_args + [
+      powertop_exe.full_path(),
+      '--bypass-root-check', '--once', '--time=1',
+    ],
+    timeout: 120,
+    suite: 'valgrind',
+  )
 endif

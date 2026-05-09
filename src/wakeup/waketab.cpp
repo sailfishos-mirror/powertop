@@ -182,11 +182,16 @@ void wakeup_window::window_refresh(void)
 	init_wakeup();
 }
 
-void clear_wakeup()
+void shutdown_wakeup()
 {
+	tab_windows.erase("WakeUp");
 	delete newtab_window;
 	newtab_window = nullptr;
+	clear_wakeup();
+}
 
+void clear_wakeup()
+{
 	for (size_t i = 0; i < wakeup_all.size(); i++) {
 		delete wakeup_all[i];
 	}

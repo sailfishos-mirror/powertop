@@ -1,0 +1,30 @@
+# PowerTOP valgrind suppressions
+#
+# These suppressions cover known leaks inside third-party libraries that are
+# not caused by incorrect API use on our part.
+
+# libtracefs caches the tracing-directory path via strdup() in a library-
+# internal singleton.  There is no public API to free it.
+{
+   libtracefs-tracing-dir-cache
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:*/libtracefs.so*
+   fun:tracefs_tracing_dir
+}
+
+# libpci allocates an internal name buffer inside pci_lookup_name() that
+# pci_cleanup() does not free.  This is a libpci internal bug.
+{
+   libpci-lookup-name-internal
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*/libpci.so*
+   obj:*/libpci.so*
+   obj:*/libpci.so*
+   obj:*/libpci.so*
+   fun:pci_lookup_name
+}

@@ -320,11 +320,16 @@ void report_show_tunables(void)
         report.end_div();
 }
 
-void clear_tuning()
+void shutdown_tuning()
 {
+	tab_windows.erase("Tunables");
 	delete tune_window;
 	tune_window = nullptr;
+	clear_tuning();
+}
 
+void clear_tuning()
+{
 	for (size_t i = 0; i < all_tunables.size(); i++) {
 		delete all_tunables[i];
 	}

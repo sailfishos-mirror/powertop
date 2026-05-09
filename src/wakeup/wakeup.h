@@ -79,4 +79,5 @@ extern void initialize_wakeup(void);
 extern void wakeup_update_display(void);
 extern void report_show_wakeup(void);
 extern void clear_wakeup(void);
+extern void shutdown_wakeup(void);
 

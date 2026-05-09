@@ -158,6 +158,24 @@ If `lib.cpp` calls display helpers such as `set_notification()`, keep the
 reference optional (for example via a weak declaration) so non-UI test targets
 still link.
 
+# RAII / vector<T*> ownership map
+
+A full review of all `std::vector<T*>` in `src/` is in `raii.md`.
+
+**Owning vectors (should migrate to `vector<unique_ptr<T>>`):**
+- `power_meters`, `all_tunables`, `all_untunables`, `all_devices`, `past_results`,
+  `wakeup_all`, `all_interrupts`, `all_processes`, `all_proc_devices` (global)
+- `abstract_cpu::children`, `abstract_cpu::cstates`, `abstract_cpu::pstates` (member)
+- `perf_bundle::events`, `devfreq::dstates` (member)
+
+**Non-owning observer vectors (raw pointer correct — do not migrate):**
+- `all_power` — aggregates from all owning collections; never deletes.
+- `all_cpus` — flat indexed lookup into `system_level.children`; may contain nullptrs.
+- `cpudevice::child_devices`, `i915_gpu::child_devices` — views into `all_devices`.
+
+**Special:** `perf_bundle::records` — `vector<void*>` with malloc/free; needs custom
+RAII wrapper rather than `unique_ptr<T>` (see `raii.md`).
+
 # NaN / division-by-zero guard patterns
 
 Two thresholds are used to guard floating-point divisions:
@@ -293,6 +311,21 @@ Notable ncurses files in baseline:
 - `display.cpp`   — 0% (no unit tests; only covered by --once run)
 - `waketab.cpp`   — 42.3%
 - `tuning/tuning.cpp` — 47.0%
+
+# Valgrind memory leak policy
+
+Run: `sudo valgrind --leak-check=full --show-leak-kinds=all build/powertop --html --time=3`
+
+Known remaining "out of scope" library-internal leaks (do not fix):
+- 20 bytes: libtracefs internal `strdup` of tracing dir path (no public cleanup API)
+- 21 bytes: libpci `pci_lookup_name` internal buffer not freed by `pci_cleanup()` (libpci bug)
+
+Fixed leaks (commit 7791a45):
+- `end_pci_access()`: replaced `pci_free_name_list()` with `pci_cleanup()` + null pointer
+- `clear_tuning()`: now deletes `tune_window` before clearing tunables vectors
+- `clear_wakeup()`: now deletes `newtab_window` before clearing wakeup_all vector
+
+Policy: 3rd-party library leaks are out of scope UNLESS caused by us not calling APIs correctly.
 
 # Fixing review comments and bug reports
 

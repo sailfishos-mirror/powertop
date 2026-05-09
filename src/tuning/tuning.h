@@ -28,5 +28,6 @@ extern void initialize_tuning(void);
 extern void tuning_update_display(void);
 extern void report_show_tunables(void);
 extern void clear_tuning(void);
+extern void shutdown_tuning(void);
 extern void auto_toggle_tuning(bool dump_only);
 
