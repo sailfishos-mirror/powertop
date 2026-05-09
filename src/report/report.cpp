@@ -46,7 +46,7 @@ report_maker report(REPORT_OFF);
 
 std::string cpu_model(void)
 {
-	std::string content = read_file_content("/proc/cpuinfo");
+	const std::string content = read_file_content("/proc/cpuinfo");
 	if (content.empty())
 		return "";
 
@@ -55,7 +55,7 @@ std::string cpu_model(void)
 
 	while (std::getline(stream, line)) {
 		if (line.find("model name") != std::string::npos) {
-			size_t pos = line.find(':');
+			const size_t pos = line.find(':');
 			if (pos != std::string::npos) {
 				std::string model = line.substr(pos + 1);
 				/* Trim leading space if any */
@@ -99,7 +99,7 @@ static std::string read_os_release(const std::string &filename)
 static void system_info(void)
 {
 	std::string str;
-	auto now = std::chrono::system_clock::now();
+	const auto now = std::chrono::system_clock::now();
 
 	/* div attr css_class and css_id */
 	tag_attr div_attr;
@@ -168,7 +168,7 @@ void init_report_output(const std::string &filename_str, int iterations)
 		if (period == std::string::npos)
 			period = filename_str.length();
 
-		auto stamp = std::chrono::system_clock::now();
+		const auto stamp = std::chrono::system_clock::now();
 		reportout.filename = std::format("{}-{}{}",
 			filename_str.substr(0, period),
 			get_time_string("%Y%m%d-%H%M%S", stamp),
