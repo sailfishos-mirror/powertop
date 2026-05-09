@@ -65,12 +65,12 @@ public:
 	class abstract_cpu *parent = nullptr;
 
 
-	int	get_first_cpu() { return first_cpu; }
+	int	get_first_cpu() const { return first_cpu; }
 	void	set_number(int _number, int cpu) {this->number = _number; this->first_cpu = cpu;};
 	void	set_intel_MSR(bool _bool_value) {this->has_intel_MSR =  _bool_value;};
 	void	set_type(const std::string& _name) {this->name = _name;};
-	int	get_number(void) { return number; };
-	std::string get_type(void) { return name; };
+	int	get_number(void) const { return number; };
+	std::string get_type(void) const { return name; };
 
 	virtual void	measurement_start(void);
 	virtual void	measurement_end(void);
@@ -84,7 +84,7 @@ public:
 	void		update_cstate(const std::string &linux_name, const std::string &human_name, uint64_t usage, uint64_t duration, int count, int level = -1);
 	void		finalize_cstate(const std::string &linux_name, uint64_t usage, uint64_t duration, int count);
 
-	virtual int	has_cstate_level(int level);
+	virtual int	has_cstate_level(int level) const;
 
 	virtual std::string  fill_cstate_line([[maybe_unused]] int line_nr, [[maybe_unused]] const std::string &separator ="") { return "";};
 	virtual std::string  fill_cstate_percentage([[maybe_unused]] int line_nr) { return ""; };
@@ -100,8 +100,8 @@ public:
 
 	virtual std::string  fill_pstate_line([[maybe_unused]] int line_nr) { return "";};
 	virtual std::string  fill_pstate_name([[maybe_unused]] int line_nr) { return "";};
-	virtual int	has_pstate_level(int level);
-	virtual int	has_pstates(void) { return 1; };
+	virtual int	has_pstate_level(int level) const;
+	virtual int	has_pstates(void) const { return 1; };
 
 	/* Frequency micro accounting methods */
 	virtual void    calculate_freq(uint64_t time);
@@ -113,7 +113,7 @@ public:
 
 	virtual void    wiggle(void);
 
-	virtual uint64_t total_pstate_time(void);
+	virtual uint64_t total_pstate_time(void) const;
 
 	virtual void validate(void);
 	virtual void reset_pstate_data(void);

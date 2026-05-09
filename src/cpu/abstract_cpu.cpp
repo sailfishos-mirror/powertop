@@ -262,7 +262,7 @@ void abstract_cpu::update_cstate(const std::string &linux_name, const std::strin
 	state->before_count += count;
 }
 
-int abstract_cpu::has_cstate_level(int level)
+int abstract_cpu::has_cstate_level(int level) const
 {
 	if (level == LEVEL_HEADER)
 		return 1;
@@ -278,7 +278,7 @@ int abstract_cpu::has_cstate_level(int level)
 	return  0;
 }
 
-int abstract_cpu::has_pstate_level(int level)
+int abstract_cpu::has_pstate_level(int level) const
 {
 	if (level == LEVEL_HEADER)
 		return 1;
@@ -421,7 +421,7 @@ void abstract_cpu::wiggle(void)
 		write_sysfs(std::format("/sys/devices/system/cpu/cpu{}/cpufreq/scaling_setspeed", first_cpu), std::to_string(setspeed));
 	}
 }
-uint64_t abstract_cpu::total_pstate_time(void)
+uint64_t abstract_cpu::total_pstate_time(void) const
 {
 	uint64_t stamp = 0;
 

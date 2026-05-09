@@ -131,7 +131,7 @@ public:
 
 	virtual std::string  fill_pstate_name(int line_nr) override;
 	virtual std::string  fill_pstate_line(int line_nr) override;
-	virtual int	has_pstate_level(int level) override;
+	virtual int	has_pstate_level(int level) const override;
 	void collect_json_fields(std::string &_js) override;
 };
 
@@ -170,8 +170,8 @@ public:
 	virtual std::string  fill_pstate_line(int line_nr) override;
 	virtual std::string  fill_pstate_name(int line_nr) override;
 	virtual std::string  fill_cstate_line(int line_nr, const std::string &separator) override;
-	virtual int	has_pstate_level([[maybe_unused]] int level) override { return 0; };
-	virtual int	has_pstates(void) override { return 0; };
+	virtual int	has_pstate_level([[maybe_unused]] int level) const override { return 0; };
+	virtual int	has_pstates(void) const override { return 0; };
 	virtual void	wiggle(void) override { };
 	void collect_json_fields(std::string &_js) override;
 

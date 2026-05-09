@@ -235,7 +235,7 @@ static void handle_i965_gpu(void)
 
 void enumerate_cpus(void)
 {
-	std::string content = read_file_content("/proc/cpuinfo");
+	const std::string content = read_file_content("/proc/cpuinfo");
 
 	if (content.empty())
 		return;

@@ -761,7 +761,7 @@ std::string nhm_cpu::fill_pstate_line(int line_nr)
 }
 
 
-int nhm_cpu::has_pstate_level(int level)
+int nhm_cpu::has_pstate_level(int level) const
 {
 	if (level == LEVEL_C0)
 		return 1;
