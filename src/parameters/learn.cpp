@@ -47,7 +47,7 @@ double calculate_params(struct parameter_bundle *params)
  * gradual linear convergence of non-independent variables works better if once in a while
  * you make a wrong move....
  */
-static int random_disturb(int retry_left)
+static int random_disturb(const int retry_left)
 {
 	if (retry_left < 10)
 		return 0;
@@ -57,7 +57,7 @@ static int random_disturb(int retry_left)
 	return 0;
 }
 
-static int try_zero(double value)
+static int try_zero(const double value)
 {
 	if (value > 0.01)
 	if ( (rand() % 100) == 1)
@@ -77,7 +77,7 @@ static void weed_empties(struct parameter_bundle *best_so_far)
 	best_score = best_so_far->score;
 
 	for (auto &param : best_so_far->parameters) {
-		double orgvalue = param;
+		const double orgvalue = param;
 
 		param = 0.0;
 
@@ -93,7 +93,7 @@ static void weed_empties(struct parameter_bundle *best_so_far)
 }
 
 /* leaks like a sieve */
-void learn_parameters(int iterations, int do_base_power)
+void learn_parameters(const int iterations, const int do_base_power)
 {
 	struct parameter_bundle *best_so_far;
 	double best_score = 10000000000000000.0;
@@ -156,7 +156,7 @@ void learn_parameters(int iterations, int do_base_power)
 		int changed  = 0;
 		int bestparam;
 		double newvalue = 0;
-		double orgscore;
+		const double orgscore = best_so_far->score;
 		double weight;
 
 		bestparam = -1;
@@ -165,7 +165,7 @@ void learn_parameters(int iterations, int do_base_power)
 			retry = 0;
 
 		calculate_params(best_so_far);
-		orgscore = best_score = best_so_far->score;
+		best_score = best_so_far->score;
 
 
 	        for (i = 1; i < best_so_far->parameters.size(); i++) {
