@@ -36,9 +36,9 @@ msgid "Calibrating: CPU usage on %i threads\n"
 msgstr "Calibrando: uso de CPU en %i discusiones\n"
 
 #: src/calibrate/calibrate.cpp:237
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to create calibration thread\n"
-msgstr ""
+msgstr "Parámetros tras calibración:\n"
 
 #: src/calibrate/calibrate.cpp:254
 #, c-format
@@ -130,18 +130,18 @@ msgid "  Core"
 msgstr ""
 
 #: src/cpu/cpu.cpp:84
-#, c++-format
+#, fuzzy, c++-format
 msgid "cpu package {}"
-msgstr ""
+msgstr "paquete cpu"
 
 #: src/cpu/cpu.cpp:85
 msgid "cpu package"
 msgstr "paquete cpu"
 
 #: src/cpu/cpu.cpp:88 src/cpu/cpu.cpp:95
-#, c++-format
+#, fuzzy, c++-format
 msgid "package-{}"
-msgstr ""
+msgstr "package cpu %i"
 
 #: src/cpu/cpu.cpp:89
 msgid "cpu rapl package"
@@ -176,17 +176,19 @@ msgid " CPU(OS) {}"
 msgstr ""
 
 #: src/cpu/cpu_linux.cpp:230 src/cpu/intel_cpus.cpp:747
-#, c++-format
+#, fuzzy, c++-format
 msgid " CPU {}"
-msgstr ""
+msgstr " CPU %i"
 
 #: src/cpu/cpu_package.cpp:48
+#, fuzzy
 msgid " Package(HW)"
-msgstr ""
+msgstr "paquete cpu"
 
 #: src/cpu/cpu_package.cpp:48
+#, fuzzy
 msgid " Package(OS)"
-msgstr ""
+msgstr "paquete cpu"
 
 #: src/cpu/cpu_package.cpp:99
 msgid "Package"
@@ -342,28 +344,29 @@ msgid "get_pp1_power_policy failed\n"
 msgstr ""
 
 #: src/devices/ahci.cpp:103
-#, c++-format
+#, fuzzy, c++-format
 msgid "SATA link: {}"
-msgstr ""
+msgstr "Enlace SATA: %s"
 
 #: src/devices/ahci.cpp:105
-#, c++-format
+#, fuzzy, c++-format
 msgid "SATA disk: {}"
-msgstr ""
+msgstr "Disco SATA: %s"
 
 #: src/devices/alsa.cpp:59
-#, c++-format
+#, fuzzy, c++-format
 msgid "Audio codec {}: {} ({})"
-msgstr ""
+msgstr "Codec de audio %s: %s (%s)"
 
 #: src/devices/alsa.cpp:61 src/devices/alsa.cpp:63
-#, c++-format
+#, fuzzy, c++-format
 msgid "Audio codec {}: {}"
-msgstr ""
+msgstr "Codec de audio %s: %s"
 
 #: src/devices/backlight.h:51
+#, fuzzy
 msgid "Display backlight"
-msgstr ""
+msgstr "Calibrando luz trasera\n"
 
 #: src/devices/devfreq.cpp:243
 #, fuzzy
@@ -415,14 +418,14 @@ msgid " ops/s"
 msgstr ""
 
 #: src/devices/network.cpp:169
-#, c++-format
+#, fuzzy, c++-format
 msgid "Network interface: {} ({})"
-msgstr ""
+msgstr "Interfaz de red: %s (%s)"
 
 #: src/devices/rfkill.cpp:48 src/devices/rfkill.cpp:51
-#, c++-format
+#, fuzzy, c++-format
 msgid "Radio device: {}"
-msgstr ""
+msgstr "Dispositivo de radio: %s"
 
 #: src/devices/runtime_pm.cpp:141
 #, c++-format
@@ -441,9 +444,9 @@ msgid "Device"
 msgstr "Estadísticas del dispositivo"
 
 #: src/devices/runtime_pm.cpp:163
-#, c++-format
+#, fuzzy, c++-format
 msgid "PCI Device: {}"
-msgstr ""
+msgstr "Dispositivo PCI: %s"
 
 #: src/devices/thinkpad-fan.h:47
 msgid "Laptop fan"
@@ -454,14 +457,14 @@ msgid "Thinkpad light"
 msgstr ""
 
 #: src/devices/usb.cpp:49 src/devices/usb.cpp:76 src/devices/usb.cpp:78
-#, c++-format
+#, fuzzy, c++-format
 msgid "USB device: {}"
-msgstr ""
+msgstr "Dispositivo USB: %s"
 
 #: src/devices/usb.cpp:74
-#, c++-format
+#, fuzzy, c++-format
 msgid "USB device: {} ({})"
-msgstr ""
+msgstr "Dispositivo USB: %s (%s)"
 
 #: src/display.cpp:83
 msgid "Overview"
@@ -716,9 +719,9 @@ msgid "ERROR: extech measurement thread creation failed\n"
 msgstr ""
 
 #: src/parameters/parameters.cpp:247
-#, c-format
+#, fuzzy, c-format
 msgid "Parameter state \n"
-msgstr ""
+msgstr "Parámetros tras calibración:\n"
 
 #: src/parameters/parameters.cpp:249 src/parameters/parameters.cpp:271
 #, c-format
@@ -875,8 +878,9 @@ msgid "[PID {}] [{}]"
 msgstr ""
 
 #: src/process/processdevice.h:40
+#, fuzzy
 msgid "device"
-msgstr ""
+msgstr "Estadísticas del dispositivo"
 
 #: src/process/timer.cpp:103
 msgid "%"
@@ -898,12 +902,14 @@ msgid "PowerTOP outputting using base filename %s\n"
 msgstr ""
 
 #: src/report/report-formatter-html.cpp:139
+#, fuzzy
 msgid "PowerTop"
-msgstr ""
+msgstr "PowerTOP "
 
 #: src/report/report-formatter-md.cpp:36
+#, fuzzy
 msgid "PowerTOP Report"
-msgstr ""
+msgstr "PowerTOP "
 
 #: src/report/report-formatter-md.cpp:68
 msgid "Property"
@@ -935,9 +941,9 @@ msgid "Unknown"
 msgstr "Desconocido"
 
 #: src/tuning/bluetooth.cpp:51
-#, c++-format
+#, fuzzy, c++-format
 msgid "Bluetooth device interface status ({})"
-msgstr ""
+msgstr "Estado de la interfaz de dispositivo Bluetooth"
 
 #: src/tuning/bluetooth.cpp:52
 #, c++-format
@@ -950,39 +956,41 @@ msgid "Disable Bluetooth ({})"
 msgstr ""
 
 #: src/tuning/ethernet.cpp:54 src/wakeup/wakeup_ethernet.cpp:50
-#, c++-format
+#, fuzzy, c++-format
 msgid "Wake-on-lan status for device {}"
-msgstr ""
+msgstr "Estado Wake-on-lan para dispositivo %s"
 
 #: src/tuning/runtime.cpp:41
-#, c++-format
+#, fuzzy, c++-format
 msgid "Runtime PM for {} device {}"
-msgstr ""
+msgstr "Tiempo de ejecución PM para %s dispositivo %s"
 
 #: src/tuning/runtime.cpp:43
-#, c++-format
+#, fuzzy, c++-format
 msgid "{} device {} has no runtime power management"
 msgstr ""
+"%s dispositivo %s no tiene administración de energía en tiempo de ejecución"
 
 #: src/tuning/runtime.cpp:68
-#, c++-format
+#, fuzzy, c++-format
 msgid "PCI Device {} has no runtime power management"
 msgstr ""
+"Dispositivo PCI %s no tiene administración de energía en tiempo de ejecución"
 
 #: src/tuning/runtime.cpp:70
-#, c++-format
+#, fuzzy, c++-format
 msgid "Runtime PM for PCI Device {}"
-msgstr ""
+msgstr "Tiempo de ejecución PM para dispositivo PCI %s"
 
 #: src/tuning/runtime.cpp:75
-#, c++-format
+#, fuzzy, c++-format
 msgid "Runtime PM for port {} of PCI device: {}"
-msgstr ""
+msgstr "Tiempo de ejecución PM para %s dispositivo %s"
 
 #: src/tuning/runtime.cpp:79
-#, c++-format
+#, fuzzy, c++-format
 msgid "Runtime PM for disk {}"
-msgstr ""
+msgstr "Tiempo de ejecución PM para %s dispositivo %s"
 
 #: src/tuning/tuning.cpp:61
 msgid "Enable Audio codec power management"
@@ -1058,35 +1066,36 @@ msgstr ""
 " Salida de <ESC>| <Enter>Palanca ajustable | Actualización de <r>ventana"
 
 #: src/tuning/tuningi2c.cpp:48
-#, c++-format
+#, fuzzy, c++-format
 msgid "Runtime PM for I2C {} {} ({})"
-msgstr ""
+msgstr "Tiempo de ejecución PM para %s dispositivo %s"
 
 #: src/tuning/tuningi2c.cpp:50
-#, c++-format
+#, fuzzy, c++-format
 msgid "I2C {} {} has no runtime power management"
 msgstr ""
+"%s dispositivo %s no tiene administración de energía en tiempo de ejecución"
 
 #: src/tuning/tuningsysfs.cpp:148
-#, c++-format
+#, fuzzy, c++-format
 msgid "Enable SATA link power management for {}"
-msgstr ""
+msgstr "Habilitar administración de energía del codec de Audio "
 
 #: src/tuning/tuningusb.cpp:49
-#, c++-format
+#, fuzzy, c++-format
 msgid "Autosuspend for unknown USB device {} ({}:{})"
-msgstr ""
+msgstr "Autosuspender para dispositivo USB desconocido %s (%s:%s)"
 
 #: src/tuning/tuningusb.cpp:58 src/tuning/tuningusb.cpp:60
 #: src/tuning/tuningusb.cpp:62
-#, c++-format
+#, fuzzy, c++-format
 msgid "Autosuspend for USB device {} [{}]"
-msgstr ""
+msgstr "Autosuspender para dispositivo USB %s [%s]"
 
 #: src/tuning/wifi.cpp:45
-#, c++-format
+#, fuzzy, c++-format
 msgid "Wireless Power Saving for interface {}"
-msgstr ""
+msgstr "Ahorro de Energía Wireless para interfaz %s"
 
 #: src/wakeup/waketab.cpp:39
 msgid "WakeUp"
@@ -1110,16 +1119,12 @@ msgid "Disabled"
 msgstr ""
 
 #: src/wakeup/wakeup_usb.cpp:50
-#, c++-format
+#, fuzzy, c++-format
 msgid "Wake status for USB device {}"
-msgstr ""
+msgstr "Estado Wake-on-lan para dispositivo %s"
 
 #, c-format
 #~ msgid "cpu package %i"
-#~ msgstr "package cpu %i"
-
-#, fuzzy, c-format
-#~ msgid "package-%i"
 #~ msgstr "package cpu %i"
 
 #, fuzzy, c-format
@@ -1130,29 +1135,9 @@ msgstr ""
 #~ msgid "CPU"
 #~ msgstr " CPU %i"
 
-#, fuzzy, c-format
-#~ msgid "CPU %d"
-#~ msgstr " CPU %i"
-
-#, c-format
-#~ msgid "SATA link: %s"
-#~ msgstr "Enlace SATA: %s"
-
-#, c-format
-#~ msgid "SATA disk: %s"
-#~ msgstr "Disco SATA: %s"
-
 #, fuzzy
 #~ msgid "Active"
 #~ msgstr "C0 activo"
-
-#, c-format
-#~ msgid "Audio codec %s: %s (%s)"
-#~ msgstr "Codec de audio %s: %s (%s)"
-
-#, c-format
-#~ msgid "Audio codec %s: %s"
-#~ msgstr "Codec de audio %s: %s"
 
 #, fuzzy
 #~ msgid "The battery reports a discharge rate of: "
@@ -1167,26 +1152,6 @@ msgstr ""
 #~ msgstr "Estadísticas del dispositivo"
 
 #, c-format
-#~ msgid "Network interface: %s (%s)"
-#~ msgstr "Interfaz de red: %s (%s)"
-
-#, c-format
-#~ msgid "Radio device: %s"
-#~ msgstr "Dispositivo de radio: %s"
-
-#, c-format
-#~ msgid "PCI Device: %s"
-#~ msgstr "Dispositivo PCI: %s"
-
-#, c-format
-#~ msgid "USB device: %s"
-#~ msgstr "Dispositivo USB: %s"
-
-#, c-format
-#~ msgid "USB device: %s (%s)"
-#~ msgstr "Dispositivo USB: %s (%s)"
-
-#, c-format
 #~ msgid "%7sW"
 #~ msgstr "%7sW"
 
@@ -1197,74 +1162,8 @@ msgstr ""
 #~ msgid "PowerTOP Version"
 #~ msgstr "PowerTOP "
 
-#, c-format
-#~ msgid "Bluetooth device interface status"
-#~ msgstr "Estado de la interfaz de dispositivo Bluetooth"
-
-#, c-format
-#~ msgid "Wake-on-lan status for device %s"
-#~ msgstr "Estado Wake-on-lan para dispositivo %s"
-
-#, c-format
-#~ msgid "Runtime PM for %s device %s"
-#~ msgstr "Tiempo de ejecución PM para %s dispositivo %s"
-
-#, c-format
-#~ msgid "%s device %s has no runtime power management"
-#~ msgstr ""
-#~ "%s dispositivo %s no tiene administración de energía en tiempo de "
-#~ "ejecución"
-
-#, c-format
-#~ msgid "PCI Device %s has no runtime power management"
-#~ msgstr ""
-#~ "Dispositivo PCI %s no tiene administración de energía en tiempo de "
-#~ "ejecución"
-
-#, c-format
-#~ msgid "Runtime PM for PCI Device %s"
-#~ msgstr "Tiempo de ejecución PM para dispositivo PCI %s"
-
-#, fuzzy, c-format
-#~ msgid "Runtime PM for port %s of PCI device: %s"
-#~ msgstr "Tiempo de ejecución PM para %s dispositivo %s"
-
-#, fuzzy, c-format
-#~ msgid "Runtime PM for disk %s"
-#~ msgstr "Tiempo de ejecución PM para %s dispositivo %s"
-
-#, fuzzy, c-format
-#~ msgid "Runtime PM for I2C %s %s (%s)"
-#~ msgstr "Tiempo de ejecución PM para %s dispositivo %s"
-
-#, fuzzy, c-format
-#~ msgid "I2C %s %s has no runtime power management"
-#~ msgstr ""
-#~ "%s dispositivo %s no tiene administración de energía en tiempo de "
-#~ "ejecución"
-
-#, fuzzy, c-format
-#~ msgid "Enable SATA link power management for %s"
-#~ msgstr "Habilitar administración de energía del codec de Audio "
-
-#, c-format
-#~ msgid "Autosuspend for unknown USB device %s (%s:%s)"
-#~ msgstr "Autosuspender para dispositivo USB desconocido %s (%s:%s)"
-
-#, c-format
-#~ msgid "Autosuspend for USB device %s [%s]"
-#~ msgstr "Autosuspender para dispositivo USB %s [%s]"
-
-#, c-format
-#~ msgid "Wireless Power Saving for interface %s"
-#~ msgstr "Ahorro de Energía Wireless para interfaz %s"
-
 #, fuzzy
 #~ msgid "Wake status of the devices"
-#~ msgstr "Estado Wake-on-lan para dispositivo %s"
-
-#, fuzzy, c-format
-#~ msgid "Wake status for USB device %s"
 #~ msgstr "Estado Wake-on-lan para dispositivo %s"
 
 #~ msgid "Actual"

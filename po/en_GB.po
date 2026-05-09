@@ -130,18 +130,18 @@ msgid "  Core"
 msgstr ""
 
 #: src/cpu/cpu.cpp:84
-#, c++-format
+#, fuzzy, c++-format
 msgid "cpu package {}"
-msgstr ""
+msgstr "CPU package"
 
 #: src/cpu/cpu.cpp:85
 msgid "cpu package"
 msgstr "CPU package"
 
 #: src/cpu/cpu.cpp:88 src/cpu/cpu.cpp:95
-#, c++-format
+#, fuzzy, c++-format
 msgid "package-{}"
-msgstr ""
+msgstr "CPU package %i"
 
 #: src/cpu/cpu.cpp:89
 msgid "cpu rapl package"
@@ -181,12 +181,14 @@ msgid " CPU {}"
 msgstr ""
 
 #: src/cpu/cpu_package.cpp:48
+#, fuzzy
 msgid " Package(HW)"
-msgstr ""
+msgstr "CPU package"
 
 #: src/cpu/cpu_package.cpp:48
+#, fuzzy
 msgid " Package(OS)"
-msgstr ""
+msgstr "CPU package"
 
 #: src/cpu/cpu_package.cpp:99
 msgid "Package"
@@ -440,9 +442,9 @@ msgid "Device"
 msgstr "Device stats"
 
 #: src/devices/runtime_pm.cpp:163
-#, c++-format
+#, fuzzy, c++-format
 msgid "PCI Device: {}"
-msgstr ""
+msgstr "Device stats"
 
 #: src/devices/thinkpad-fan.h:47
 msgid "Laptop fan"
@@ -874,8 +876,9 @@ msgid "[PID {}] [{}]"
 msgstr ""
 
 #: src/process/processdevice.h:40
+#, fuzzy
 msgid "device"
-msgstr ""
+msgstr "Device stats"
 
 #: src/process/timer.cpp:103
 msgid "%"
@@ -1113,10 +1116,6 @@ msgstr ""
 #~ msgid "cpu package %i"
 #~ msgstr "CPU package %i"
 
-#, fuzzy, c-format
-#~ msgid "package-%i"
-#~ msgstr "CPU package %i"
-
 #, fuzzy
 #~ msgid "Active"
 #~ msgstr "C0 active"
@@ -1143,7 +1142,3 @@ msgstr ""
 
 #~ msgid "Actual"
 #~ msgstr "Actual"
-
-#, fuzzy
-#~ msgid "I2C Device: %s"
-#~ msgstr "Device stats"

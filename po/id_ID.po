@@ -35,9 +35,9 @@ msgid "Calibrating: CPU usage on %i threads\n"
 msgstr "Kalibrasi: Pemakaian CPU pada %i thread \n"
 
 #: src/calibrate/calibrate.cpp:237
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to create calibration thread\n"
-msgstr ""
+msgstr "Parameter setelah kalibrasi:\n"
 
 #: src/calibrate/calibrate.cpp:254
 #, c-format
@@ -131,18 +131,18 @@ msgid "  Core"
 msgstr "  Core"
 
 #: src/cpu/cpu.cpp:84
-#, c++-format
+#, fuzzy, c++-format
 msgid "cpu package {}"
-msgstr ""
+msgstr "paket cpu"
 
 #: src/cpu/cpu.cpp:85
 msgid "cpu package"
 msgstr "paket cpu"
 
 #: src/cpu/cpu.cpp:88 src/cpu/cpu.cpp:95
-#, c++-format
+#, fuzzy, c++-format
 msgid "package-{}"
-msgstr ""
+msgstr "Paket %i"
 
 #: src/cpu/cpu.cpp:89
 msgid "cpu rapl package"
@@ -172,30 +172,33 @@ msgid "C0 polling"
 msgstr "C0 polling"
 
 #: src/cpu/cpu_linux.cpp:145
-#, c++-format
+#, fuzzy, c++-format
 msgid " CPU(OS) {}"
-msgstr ""
+msgstr " CPU %i"
 
 #: src/cpu/cpu_linux.cpp:230 src/cpu/intel_cpus.cpp:747
-#, c++-format
+#, fuzzy, c++-format
 msgid " CPU {}"
-msgstr ""
+msgstr " CPU %i"
 
 #: src/cpu/cpu_package.cpp:48
+#, fuzzy
 msgid " Package(HW)"
-msgstr ""
+msgstr "Paket"
 
 #: src/cpu/cpu_package.cpp:48
+#, fuzzy
 msgid " Package(OS)"
-msgstr ""
+msgstr "Paket"
 
 #: src/cpu/cpu_package.cpp:99
 msgid "Package"
 msgstr "Paket"
 
 #: src/cpu/cpu_rapl_device.h:45 src/cpu/cpu_rapl_device.h:46
+#, fuzzy
 msgid "CPU core"
-msgstr ""
+msgstr "pakai CPU"
 
 #: src/cpu/intel_cpus.cpp:157
 #, c-format
@@ -343,28 +346,29 @@ msgid "get_pp1_power_policy failed\n"
 msgstr ""
 
 #: src/devices/ahci.cpp:103
-#, c++-format
+#, fuzzy, c++-format
 msgid "SATA link: {}"
-msgstr ""
+msgstr "Link SATA: %s"
 
 #: src/devices/ahci.cpp:105
-#, c++-format
+#, fuzzy, c++-format
 msgid "SATA disk: {}"
-msgstr ""
+msgstr "Disk SATA: %s"
 
 #: src/devices/alsa.cpp:59
-#, c++-format
+#, fuzzy, c++-format
 msgid "Audio codec {}: {} ({})"
-msgstr ""
+msgstr "Codec audio %s: %s (%s)"
 
 #: src/devices/alsa.cpp:61 src/devices/alsa.cpp:63
-#, c++-format
+#, fuzzy, c++-format
 msgid "Audio codec {}: {}"
-msgstr ""
+msgstr "Codec audio %s: %s"
 
 #: src/devices/backlight.h:51
+#, fuzzy
 msgid "Display backlight"
-msgstr ""
+msgstr "Kalibrasi cahaya latar \n"
 
 #: src/devices/devfreq.cpp:243
 #, fuzzy
@@ -417,14 +421,14 @@ msgid " ops/s"
 msgstr "Op GPU/d"
 
 #: src/devices/network.cpp:169
-#, c++-format
+#, fuzzy, c++-format
 msgid "Network interface: {} ({})"
-msgstr ""
+msgstr "Antarmuka jaringa: %s (%s)"
 
 #: src/devices/rfkill.cpp:48 src/devices/rfkill.cpp:51
-#, c++-format
+#, fuzzy, c++-format
 msgid "Radio device: {}"
-msgstr ""
+msgstr "Perangkat radio: %s"
 
 #: src/devices/runtime_pm.cpp:141
 #, c++-format
@@ -443,9 +447,9 @@ msgid "Device"
 msgstr "Stat perangkat"
 
 #: src/devices/runtime_pm.cpp:163
-#, c++-format
+#, fuzzy, c++-format
 msgid "PCI Device: {}"
-msgstr ""
+msgstr "Perangkat PCI: %s"
 
 #: src/devices/thinkpad-fan.h:47
 msgid "Laptop fan"
@@ -456,14 +460,14 @@ msgid "Thinkpad light"
 msgstr ""
 
 #: src/devices/usb.cpp:49 src/devices/usb.cpp:76 src/devices/usb.cpp:78
-#, c++-format
+#, fuzzy, c++-format
 msgid "USB device: {}"
-msgstr ""
+msgstr "Perangkat USB: %s"
 
 #: src/devices/usb.cpp:74
-#, c++-format
+#, fuzzy, c++-format
 msgid "USB device: {} ({})"
-msgstr ""
+msgstr "Perangkat USB: %s (%s)"
 
 #: src/display.cpp:83
 msgid "Overview"
@@ -719,9 +723,9 @@ msgid "ERROR: extech measurement thread creation failed\n"
 msgstr ""
 
 #: src/parameters/parameters.cpp:247
-#, c-format
+#, fuzzy, c-format
 msgid "Parameter state \n"
-msgstr ""
+msgstr "Parameter setelah kalibrasi:\n"
 
 #: src/parameters/parameters.cpp:249 src/parameters/parameters.cpp:271
 #, c-format
@@ -796,19 +800,19 @@ msgid "stop failing\n"
 msgstr ""
 
 #: src/process/do_process.cpp:414
-#, c-format
+#, fuzzy, c-format
 msgid "softirq_entry event returned no vector number?\n"
-msgstr ""
+msgstr "kejadian power atau cpu_frequency tak mengembalikan keadaan?\n"
 
 #: src/process/do_process.cpp:451
-#, c-format
+#, fuzzy, c-format
 msgid "timer_expire_entry event returned no function value?\n"
-msgstr ""
+msgstr "kejadian power atau cpu_frequency tak mengembalikan keadaan?\n"
 
 #: src/process/do_process.cpp:463
-#, c-format
+#, fuzzy, c-format
 msgid "timer_expire_entry event returned no timer?\n"
-msgstr ""
+msgstr "kejadian power atau cpu_frequency tak mengembalikan keadaan?\n"
 
 #: src/process/do_process.cpp:817
 #, c-format
@@ -878,8 +882,9 @@ msgid "[PID {}] [{}]"
 msgstr ""
 
 #: src/process/processdevice.h:40
+#, fuzzy
 msgid "device"
-msgstr ""
+msgstr "Stat perangkat"
 
 #: src/process/timer.cpp:103
 msgid "%"
@@ -901,12 +906,14 @@ msgid "PowerTOP outputting using base filename %s\n"
 msgstr ""
 
 #: src/report/report-formatter-html.cpp:139
+#, fuzzy
 msgid "PowerTop"
-msgstr ""
+msgstr "PowerTOP "
 
 #: src/report/report-formatter-md.cpp:36
+#, fuzzy
 msgid "PowerTOP Report"
-msgstr ""
+msgstr "PowerTOP "
 
 #: src/report/report-formatter-md.cpp:68
 msgid "Property"
@@ -938,9 +945,9 @@ msgid "Unknown"
 msgstr "Tak diketahui"
 
 #: src/tuning/bluetooth.cpp:51
-#, c++-format
+#, fuzzy, c++-format
 msgid "Bluetooth device interface status ({})"
-msgstr ""
+msgstr "Status antarmuka perangkat Bluetooth"
 
 #: src/tuning/bluetooth.cpp:52
 #, c++-format
@@ -953,39 +960,39 @@ msgid "Disable Bluetooth ({})"
 msgstr ""
 
 #: src/tuning/ethernet.cpp:54 src/wakeup/wakeup_ethernet.cpp:50
-#, c++-format
+#, fuzzy, c++-format
 msgid "Wake-on-lan status for device {}"
-msgstr ""
+msgstr "Status wake-on-lan bagi perangkat %s"
 
 #: src/tuning/runtime.cpp:41
-#, c++-format
+#, fuzzy, c++-format
 msgid "Runtime PM for {} device {}"
-msgstr ""
+msgstr "PM runtime bagi %s perangkat %s"
 
 #: src/tuning/runtime.cpp:43
-#, c++-format
+#, fuzzy, c++-format
 msgid "{} device {} has no runtime power management"
-msgstr ""
+msgstr "%s perangkat %s tak memiliki manajemen daya runtime"
 
 #: src/tuning/runtime.cpp:68
-#, c++-format
+#, fuzzy, c++-format
 msgid "PCI Device {} has no runtime power management"
-msgstr ""
+msgstr "Perangkat PCI %s tak memiliki manajemen daya runtime"
 
 #: src/tuning/runtime.cpp:70
-#, c++-format
+#, fuzzy, c++-format
 msgid "Runtime PM for PCI Device {}"
-msgstr ""
+msgstr "PM runtime bagi Perangkat PCI %s"
 
 #: src/tuning/runtime.cpp:75
-#, c++-format
+#, fuzzy, c++-format
 msgid "Runtime PM for port {} of PCI device: {}"
-msgstr ""
+msgstr "PM runtime bagi %s perangkat %s"
 
 #: src/tuning/runtime.cpp:79
-#, c++-format
+#, fuzzy, c++-format
 msgid "Runtime PM for disk {}"
-msgstr ""
+msgstr "PM runtime bagi %s perangkat %s"
 
 #: src/tuning/tuning.cpp:61
 msgid "Enable Audio codec power management"
@@ -1060,35 +1067,35 @@ msgid " <ESC> Exit | <Enter> Toggle tunable | <r> Window refresh"
 msgstr " <ESC> Keluar | <Enter> Jungkit tunable | <r> Segarkan jendela"
 
 #: src/tuning/tuningi2c.cpp:48
-#, c++-format
+#, fuzzy, c++-format
 msgid "Runtime PM for I2C {} {} ({})"
-msgstr ""
+msgstr "PM runtime bagi %s perangkat %s"
 
 #: src/tuning/tuningi2c.cpp:50
-#, c++-format
+#, fuzzy, c++-format
 msgid "I2C {} {} has no runtime power management"
-msgstr ""
+msgstr "%s perangkat %s tak memiliki manajemen daya runtime"
 
 #: src/tuning/tuningsysfs.cpp:148
-#, c++-format
+#, fuzzy, c++-format
 msgid "Enable SATA link power management for {}"
-msgstr ""
+msgstr "Fungsikan Manajemen daya link SATA bagi %s"
 
 #: src/tuning/tuningusb.cpp:49
-#, c++-format
+#, fuzzy, c++-format
 msgid "Autosuspend for unknown USB device {} ({}:{})"
-msgstr ""
+msgstr "Suspensi otomatis bagi perangkat USB tak dikenal %s (%s:%s)"
 
 #: src/tuning/tuningusb.cpp:58 src/tuning/tuningusb.cpp:60
 #: src/tuning/tuningusb.cpp:62
-#, c++-format
+#, fuzzy, c++-format
 msgid "Autosuspend for USB device {} [{}]"
-msgstr ""
+msgstr "Suspensi otomatis bagi perangkat USB %s [%s]"
 
 #: src/tuning/wifi.cpp:45
-#, c++-format
+#, fuzzy, c++-format
 msgid "Wireless Power Saving for interface {}"
-msgstr ""
+msgstr "Penghematan Daya Nirkabel bagi antarmuka %s"
 
 #: src/wakeup/waketab.cpp:39
 #, fuzzy
@@ -1112,17 +1119,13 @@ msgid "Disabled"
 msgstr ""
 
 #: src/wakeup/wakeup_usb.cpp:50
-#, c++-format
+#, fuzzy, c++-format
 msgid "Wake status for USB device {}"
-msgstr ""
+msgstr "Status wake-on-lan bagi perangkat %s"
 
 #, c-format
 #~ msgid "cpu package %i"
 #~ msgstr "paket %i cpu"
-
-#, fuzzy, c-format
-#~ msgid "package-%i"
-#~ msgstr "Paket %i"
 
 #, fuzzy, c-format
 #~ msgid "Core %d"
@@ -1140,33 +1143,9 @@ msgstr ""
 #~ msgid "CPU %d"
 #~ msgstr "CPU %i"
 
-#, fuzzy, c-format
-#~ msgid " CPU(OS) %i"
-#~ msgstr " CPU %i"
-
-#, c-format
-#~ msgid " CPU %i"
-#~ msgstr " CPU %i"
-
-#, c-format
-#~ msgid "SATA link: %s"
-#~ msgstr "Link SATA: %s"
-
-#, c-format
-#~ msgid "SATA disk: %s"
-#~ msgstr "Disk SATA: %s"
-
 #, fuzzy
 #~ msgid "Active"
 #~ msgstr "C0 aktif"
-
-#, c-format
-#~ msgid "Audio codec %s: %s (%s)"
-#~ msgstr "Codec audio %s: %s (%s)"
-
-#, c-format
-#~ msgid "Audio codec %s: %s"
-#~ msgstr "Codec audio %s: %s"
 
 #, fuzzy
 #~ msgid "The battery reports a discharge rate of: "
@@ -1179,26 +1158,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Device Name"
 #~ msgstr "Stat perangkat"
-
-#, c-format
-#~ msgid "Network interface: %s (%s)"
-#~ msgstr "Antarmuka jaringa: %s (%s)"
-
-#, c-format
-#~ msgid "Radio device: %s"
-#~ msgstr "Perangkat radio: %s"
-
-#, c-format
-#~ msgid "PCI Device: %s"
-#~ msgstr "Perangkat PCI: %s"
-
-#, c-format
-#~ msgid "USB device: %s"
-#~ msgstr "Perangkat USB: %s"
-
-#, c-format
-#~ msgid "USB device: %s (%s)"
-#~ msgstr "Perangkat USB: %s (%s)"
 
 #, c-format
 #~ msgid "%7sW"
@@ -1215,9 +1174,6 @@ msgstr ""
 
 #~ msgid "VFS ops/sec and"
 #~ msgstr "op VFS/detik"
-
-#~ msgid "CPU use"
-#~ msgstr "pakai CPU"
 
 #~ msgid "Wakeups/s"
 #~ msgstr "Bangun/d"
@@ -1262,68 +1218,8 @@ msgstr ""
 #~ msgid "System Information"
 #~ msgstr "cetak informasi versi"
 
-#, c-format
-#~ msgid "Bluetooth device interface status"
-#~ msgstr "Status antarmuka perangkat Bluetooth"
-
-#, c-format
-#~ msgid "Wake-on-lan status for device %s"
-#~ msgstr "Status wake-on-lan bagi perangkat %s"
-
-#, c-format
-#~ msgid "Runtime PM for %s device %s"
-#~ msgstr "PM runtime bagi %s perangkat %s"
-
-#, c-format
-#~ msgid "%s device %s has no runtime power management"
-#~ msgstr "%s perangkat %s tak memiliki manajemen daya runtime"
-
-#, c-format
-#~ msgid "PCI Device %s has no runtime power management"
-#~ msgstr "Perangkat PCI %s tak memiliki manajemen daya runtime"
-
-#, c-format
-#~ msgid "Runtime PM for PCI Device %s"
-#~ msgstr "PM runtime bagi Perangkat PCI %s"
-
-#, fuzzy, c-format
-#~ msgid "Runtime PM for port %s of PCI device: %s"
-#~ msgstr "PM runtime bagi %s perangkat %s"
-
-#, fuzzy, c-format
-#~ msgid "Runtime PM for disk %s"
-#~ msgstr "PM runtime bagi %s perangkat %s"
-
-#, fuzzy, c-format
-#~ msgid "Runtime PM for I2C %s %s (%s)"
-#~ msgstr "PM runtime bagi %s perangkat %s"
-
-#, fuzzy, c-format
-#~ msgid "I2C %s %s has no runtime power management"
-#~ msgstr "%s perangkat %s tak memiliki manajemen daya runtime"
-
-#, fuzzy, c-format
-#~ msgid "Enable SATA link power management for %s"
-#~ msgstr "Fungsikan Manajemen daya link SATA bagi %s"
-
-#, c-format
-#~ msgid "Autosuspend for unknown USB device %s (%s:%s)"
-#~ msgstr "Suspensi otomatis bagi perangkat USB tak dikenal %s (%s:%s)"
-
-#, c-format
-#~ msgid "Autosuspend for USB device %s [%s]"
-#~ msgstr "Suspensi otomatis bagi perangkat USB %s [%s]"
-
-#, c-format
-#~ msgid "Wireless Power Saving for interface %s"
-#~ msgstr "Penghematan Daya Nirkabel bagi antarmuka %s"
-
 #, fuzzy
 #~ msgid "Wake status of the devices"
-#~ msgstr "Status wake-on-lan bagi perangkat %s"
-
-#, fuzzy, c-format
-#~ msgid "Wake status for USB device %s"
 #~ msgstr "Status wake-on-lan bagi perangkat %s"
 
 #~ msgid "Actual"
