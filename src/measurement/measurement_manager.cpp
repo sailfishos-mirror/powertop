@@ -119,7 +119,7 @@ double global_time_left(void)
 
 void sysfs_power_meters_callback(const std::string &d_name)
 {
-	std::string type = read_sysfs_string(
+	const std::string type = read_sysfs_string(
 		std::format("/sys/class/power_supply/{}/type", d_name));
 
 	if (type != "Battery" && type != "UPS")
@@ -147,16 +147,16 @@ void detect_power_meters(void)
 	process_directory("/sys/class/power_supply", sysfs_power_meters_callback);
 	
 	std::error_code ec;
-	std::string hwmon_base = "/sys/devices/platform/opal-sensor/hwmon/";
+	const std::string hwmon_base = "/sys/devices/platform/opal-sensor/hwmon/";
 	
 	if (std::filesystem::exists(hwmon_base, ec)) {
 		for (const auto& hwmon_entry : std::filesystem::directory_iterator(hwmon_base, ec)) {
 			if (!hwmon_entry.is_directory(ec)) continue;
-			std::string hwmon_name = hwmon_entry.path().filename().string();
+			const std::string hwmon_name = hwmon_entry.path().filename().string();
 			if (!hwmon_name.starts_with("hwmon")) continue;
 			
 			for (const auto& power_entry : std::filesystem::directory_iterator(hwmon_entry.path(), ec)) {
-				std::string power_name = power_entry.path().filename().string();
+				const std::string power_name = power_entry.path().filename().string();
 				if (power_name.starts_with("power")) {
 					if (power_entry.is_directory(ec)) continue;
 					sysfs_opal_sensors_callback(power_entry.path().string());
