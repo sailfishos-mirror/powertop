@@ -57,14 +57,14 @@ ethernet_tunable::ethernet_tunable(const std::string &iface) : tunable("", 0.3, 
 }
 
 
-int ethernet_tunable::get_wol(uint32_t &wolopts)
+int ethernet_tunable::get_wol(uint32_t &wolopts) const
 {
 	struct ifreq ifr;
 	struct ethtool_wolinfo wol;
 
 	memset(&ifr, 0, sizeof(struct ifreq));
 
-	int sock = socket(AF_INET, SOCK_DGRAM, 0);
+	const int sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sock < 0)
 		return -1;
 

@@ -41,7 +41,7 @@ public:
 	void collect_json_fields(std::string &_js) override;
 
 	/* Virtual hardware helpers — override in tests to inject fake data */
-	virtual int  get_wol(uint32_t &wolopts);
+	virtual int  get_wol(uint32_t &wolopts) const;
 	virtual void set_wol(uint32_t wolopts);
 };
 
