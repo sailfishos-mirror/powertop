@@ -92,16 +92,15 @@ std::string interrupt::usage_units_summary(void)
 class interrupt * find_create_interrupt(const std::string &_handler, int nr, int cpu)
 {
 	std::string handler_s;
-	unsigned int i;
 
 	handler_s = _handler;
 	if (handler_s == "timer")
 		handler_s = std::format("timer/{}", cpu);
 
 
-	for (i = 0; i < all_interrupts.size(); i++) {
-		if (all_interrupts[i]->number == nr && all_interrupts[i]->handler == handler_s)
-			return all_interrupts[i].get();
+	for (const auto &irq : all_interrupts) {
+		if (irq->number == nr && irq->handler == handler_s)
+			return irq.get();
 	}
 
 	all_interrupts.push_back(std::make_unique<interrupt>(handler_s, nr));
@@ -110,10 +109,9 @@ class interrupt * find_create_interrupt(const std::string &_handler, int nr, int
 
 void all_interrupts_to_all_power(void)
 {
-	unsigned int i;
-	for (i = 0; i < all_interrupts.size() ; i++)
-		if (all_interrupts[i]->accumulated_runtime)
-			all_power.push_back(all_interrupts[i].get());
+	for (const auto &irq : all_interrupts)
+		if (irq->accumulated_runtime)
+			all_power.push_back(irq.get());
 }
 
 void clear_interrupts(void)

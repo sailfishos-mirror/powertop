@@ -46,29 +46,26 @@ static struct timespec tlast;
 
 void start_power_measurement(void)
 {
-	unsigned int i;
 	clock_gettime(CLOCK_MONOTONIC, &tlast);
-	for (i = 0; i < power_meters.size(); i++)
-		power_meters[i]->start_measurement();
+	for (auto &m : power_meters)
+		m->start_measurement();
 	all_results.joules = 0.0;
 }
 
 void end_power_measurement(void)
 {
-	unsigned int i;
-	for (i = 0; i < power_meters.size(); i++)
-		power_meters[i]->end_measurement();
+	for (auto &m : power_meters)
+		m->end_measurement();
 }
 
 double global_power(void)
 {
 	bool global_discharging = false;
 	double total = 0.0;
-	unsigned int i;
 
-	for (i = 0; i < power_meters.size(); i++) {
-		global_discharging |= power_meters[i]->is_discharging();
-		total += power_meters[i]->power();
+	for (auto &m : power_meters) {
+		global_discharging |= m->is_discharging();
+		total += m->power();
 	}
 
 	/* report global time left if at least one battery is discharging */
@@ -103,12 +100,11 @@ double global_time_left(void)
 	bool global_discharging = false;
 	double total_capacity = 0.0;
 	double total_rate = 0.0;
-	unsigned int i;
 
-	for (i = 0; i < power_meters.size(); i++) {
-		global_discharging |= power_meters[i]->is_discharging();
-		total_capacity += power_meters[i]->dev_capacity();
-		total_rate += power_meters[i]->power();
+	for (auto &m : power_meters) {
+		global_discharging |= m->is_discharging();
+		total_capacity += m->dev_capacity();
+		total_rate += m->power();
 	}
 
 	/* report global time left if at least one battery is discharging */

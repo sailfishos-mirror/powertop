@@ -113,7 +113,6 @@ void wakeup_window::cursor_enter(void)
 
 void report_show_wakeup(void)
 {
-	unsigned int i;
 	int idx, rows = 0, cols;
 
 	/* div attr css_class and css_id */
@@ -129,9 +128,9 @@ void report_show_wakeup(void)
 	cols=2;
 	idx = cols;
 
-	for (i = 0; i < wakeup_all.size(); i++) {
+	for (const auto &w : wakeup_all) {
 		int tgb;
-		tgb = wakeup_all[i]->wakeup_value();
+		tgb = w->wakeup_value();
 		if (tgb == WAKEUP_DISABLE)
 			rows+=1;
 	}
@@ -149,14 +148,14 @@ void report_show_wakeup(void)
 		wakeup_data[0]=__("Description");
 		wakeup_data[1]=__("Script");
 
-		for (i = 0; i < wakeup_all.size(); i++) {
+		for (const auto &w : wakeup_all) {
 			int gb;
-			gb = wakeup_all[i]->wakeup_value();
+			gb = w->wakeup_value();
 			if (gb != WAKEUP_DISABLE)
 				continue;
-			wakeup_data[idx]=wakeup_all[i]->description();
+			wakeup_data[idx]=w->description();
 			idx+=1;
-			wakeup_data[idx]=std::string(wakeup_all[i]->wakeup_toggle_script());
+			wakeup_data[idx]=std::string(w->wakeup_toggle_script());
 			idx+=1;
 		}
 

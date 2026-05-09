@@ -213,7 +213,6 @@ void tuning_window::expose(void)
 
 void report_show_tunables(void)
 {
-	unsigned int i;
 	/* three tables; bad, unfixable, good */
 	sort_tunables();
 	int idx, rows = 0, cols;
@@ -233,9 +232,9 @@ void report_show_tunables(void)
 	cols=2;
 	idx = cols;
 
-	for (i = 0; i < all_tunables.size(); i++) {
+	for (const auto &t : all_tunables) {
 		int tgb;
-		tgb = all_tunables[i]->good_bad();
+		tgb = t->good_bad();
 		if (tgb == TUNE_BAD)
 			rows+=1;
 	}
@@ -252,14 +251,14 @@ void report_show_tunables(void)
 		tunable_data[0]=__("Description");
 		tunable_data[1]=__("Script");
 
-		for (i = 0; i < all_tunables.size(); i++) {
+		for (const auto &t : all_tunables) {
 			int gb;
-			gb = all_tunables[i]->good_bad();
+			gb = t->good_bad();
 			if (gb != TUNE_BAD)
 				continue;
-			tunable_data[idx]=all_tunables[i]->description();
+			tunable_data[idx]=t->description();
 			idx+=1;
-			tunable_data[idx]=std::string(all_tunables[i]->toggle_script());
+			tunable_data[idx]=std::string(t->toggle_script());
 			idx+=1;
 		}
 
@@ -278,9 +277,9 @@ void report_show_tunables(void)
 	std::vector<std::string> untunable_data(rows);
 	untunable_data[0]=__("Description");
 
-	for (i = 0; i < all_untunables.size(); i++) {
-		untunable_data[i+1]= all_untunables[i]->description();
-	}
+	size_t idx2 = 1;
+	for (const auto &u : all_untunables)
+		untunable_data[idx2++] = u->description();
 	/* Report Output */
 	report.add_title(&title_attr,__("Untunable Software Issues"));
 	report.add_table(untunable_data, &tune_table_css);
@@ -288,9 +287,9 @@ void report_show_tunables(void)
 	/* Third Table */
 	/* Set Table attributes, rows, and cols */
 	rows = 1;
-	for (i = 0; i < all_tunables.size(); i++) {
+	for (const auto &t : all_tunables) {
                 int gb;
-                gb = all_tunables[i]->good_bad();
+                gb = t->good_bad();
                 if (gb != TUNE_GOOD)
                         continue;
 		rows+=1;
@@ -302,13 +301,13 @@ void report_show_tunables(void)
 	std::vector<std::string> tuned_data(rows);
 	tuned_data[0]=__("Description");
 	idx=cols;
-	for (i = 0; i < all_tunables.size(); i++) {
+	for (const auto &t : all_tunables) {
 		int gb;
-		gb = all_tunables[i]->good_bad();
+		gb = t->good_bad();
 		if (gb != TUNE_GOOD)
 			continue;
 
-		tuned_data[idx]=all_tunables[i]->description();
+		tuned_data[idx]=t->description();
 		idx+=1;
         }
 	/* Report Output */
@@ -334,12 +333,12 @@ void clear_tuning()
 void auto_toggle_tuning(bool dump_only)
 {
 	if (dump_only) fprintf(stdout, "### auto-tune-dump commands BEGIN\n\n");
-	for (unsigned int i = 0; i < all_tunables.size(); i++) {
-		if (all_tunables[i]->good_bad() == TUNE_BAD) {
+	for (const auto &t : all_tunables) {
+		if (t->good_bad() == TUNE_BAD) {
 			if (dump_only) {
-				all_tunables[i]->dump_cmd_good(stdout);
+				t->dump_cmd_good(stdout);
 			} else {
-				all_tunables[i]->toggle();
+				t->toggle();
 			}
 		}
 	}
