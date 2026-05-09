@@ -32,7 +32,7 @@ opal_sensors_power_meter::opal_sensors_power_meter(const std::string &power_supp
 {
 }
 
-double opal_sensors_power_meter::power(void)
+double opal_sensors_power_meter::power(void) const
 {
 	bool ok;
 	int value;
@@ -45,7 +45,7 @@ double opal_sensors_power_meter::power(void)
 	return r;
 }
 
-void opal_sensors_power_meter::collect_json_fields(std::string &_js)
+void opal_sensors_power_meter::collect_json_fields(std::string &_js) const
 {
     power_meter::collect_json_fields(_js);
 }

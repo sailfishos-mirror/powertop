@@ -161,7 +161,7 @@ void sysfs_power_meter::start_measurement(void)
 	/* Battery state is generally a lagging indication, lets only measure at the end */
 }
 
-void sysfs_power_meter::collect_json_fields(std::string &_js)
+void sysfs_power_meter::collect_json_fields(std::string &_js) const
 {
     power_meter::collect_json_fields(_js);
     JSON_FIELD(capacity);

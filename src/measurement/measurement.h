@@ -39,9 +39,9 @@ public:
 
 	virtual void start_measurement(void);
 	virtual void end_measurement(void);
-	virtual double power(void);
+	virtual double power(void) const;
 
-	virtual double dev_capacity(void)
+	virtual double dev_capacity(void) const
 	{
 		return 0.0; /* in Joules */
 	}
@@ -51,13 +51,13 @@ public:
 		discharging = d;
 	}
 
-	virtual bool is_discharging()
+	virtual bool is_discharging() const
 	{
 		return discharging;
 	}
 
-	virtual void collect_json_fields(std::string &_js);
-	std::string serialize() { JSON_START(); collect_json_fields(_js); JSON_END(); }
+	virtual void collect_json_fields(std::string &_js) const;
+	std::string serialize() const { JSON_START(); collect_json_fields(_js); JSON_END(); }
 };
 
 extern std::vector<std::unique_ptr<power_meter>> power_meters;

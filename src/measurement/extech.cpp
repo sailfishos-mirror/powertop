@@ -357,12 +357,12 @@ void extech_power_meter::start_measurement(void)
 }
 
 
-double extech_power_meter::power(void)
+double extech_power_meter::power(void) const
 {
 	return rate;
 }
 
-void extech_power_meter::collect_json_fields(std::string &_js)
+void extech_power_meter::collect_json_fields(std::string &_js) const
 {
     power_meter::collect_json_fields(_js);
     JSON_FIELD(fd);

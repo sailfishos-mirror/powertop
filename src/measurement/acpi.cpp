@@ -75,12 +75,12 @@ void acpi_power_meter::start_measurement(void)
 }
 
 
-double acpi_power_meter::power(void)
+double acpi_power_meter::power(void) const
 {
 	return rate;
 }
 
-void acpi_power_meter::collect_json_fields(std::string &_js)
+void acpi_power_meter::collect_json_fields(std::string &_js) const
 {
     power_meter::collect_json_fields(_js);
     JSON_FIELD(capacity);

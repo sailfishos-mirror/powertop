@@ -37,12 +37,12 @@ void power_meter::end_measurement(void)
 {
 }
 
-double power_meter::power(void)
+double power_meter::power(void) const
 {
 	return 0.0;
 }
 
-void power_meter::collect_json_fields(std::string &_js)
+void power_meter::collect_json_fields(std::string &_js) const
 {
 	JSON_FIELD(name);
 	JSON_KV("discharging", is_discharging());

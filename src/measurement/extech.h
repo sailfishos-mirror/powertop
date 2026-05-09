@@ -45,8 +45,8 @@ public:
 	virtual void end_measurement(void) override;
 	virtual void sample(void);
 
-	virtual double power(void) override;
-	virtual double dev_capacity(void) override { return 0.0; };
-	void collect_json_fields(std::string &_js) override;
+	virtual double power(void) const override;
+	virtual double dev_capacity(void) const override { return 0.0; };
+	void collect_json_fields(std::string &_js) const override;
 };
 
