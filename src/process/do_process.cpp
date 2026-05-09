@@ -702,16 +702,12 @@ void end_process_measurement(void)
 
 static bool power_cpu_sort(const power_consumer *i, const power_consumer *j)
 {
-	double iW, jW;
-
-	iW = i->Witts();
-	jW = j->Witts();
+	const double iW = i->Witts();
+	const double jW = j->Witts();
 
 	if (equals(iW, jW)) {
-		double iR, jR;
-
-		iR = i->accumulated_runtime - i->child_runtime;
-		jR = j->accumulated_runtime - j->child_runtime;
+		const double iR = i->accumulated_runtime - i->child_runtime;
+		const double jR = j->accumulated_runtime - j->child_runtime;
 
 		if (equals(iR, jR))
 			return i->wake_ups > j->wake_ups;
@@ -1067,7 +1063,7 @@ void report_summary(void)
 	init_title_attr(&title_attr);
 
 	/* Set array for summary */
-	int summary_size = 12;
+	constexpr int summary_size = 12;
 	std::vector<std::string> summary(summary_size);
 	summary[0]=__("Target:");
 	summary[1]=__("1 units/s");
