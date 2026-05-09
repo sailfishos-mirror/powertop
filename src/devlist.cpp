@@ -105,7 +105,7 @@ void collect_open_devices(void)
 		for (const auto &fd : list_directory(std::format("/proc/{}/fd/", pid))) {
 			if (!isdigit(fd[0]))
 				continue;
-			std::string link = pt_readlink(std::format("/proc/{}/fd/{}", pid, fd));
+			const std::string link = pt_readlink(std::format("/proc/{}/fd/{}", pid, fd));
 			if (link.empty())
 				continue;
 
