@@ -32,21 +32,12 @@
 
 abstract_cpu::~abstract_cpu()
 {
-	unsigned int i=0;
-	for (i=0; i < cstates.size(); i++){
-		delete cstates[i];
-	}
-	cstates.clear();
-
-	for (i=0; i < pstates.size(); i++){
-		delete pstates[i];
-	}
-	pstates.clear();
-
-	for (i=0; i < children.size(); i++){
-		delete children[i];
-	}
-	children.clear();
+	for (auto *s : cstates)
+		delete s;
+	for (auto *s : pstates)
+		delete s;
+	for (auto *s : children)
+		delete s;
 }
 
 void abstract_cpu::account_freq(uint64_t freq, uint64_t duration)
@@ -95,18 +86,17 @@ void abstract_cpu::freq_updated(uint64_t time)
 
 void abstract_cpu::measurement_start(void)
 {
-	unsigned int i;
 	std::string filename;
 
 	last_stamp = 0;
 
-	for (i = 0; i < cstates.size(); i++)
-		delete cstates[i];
-	cstates.resize(0);
+	for (auto *s : cstates)
+		delete s;
+	cstates.clear();
 
-	for (i = 0; i < pstates.size(); i++)
-		delete pstates[i];
-	pstates.resize(0);
+	for (auto *s : pstates)
+		delete s;
+	pstates.clear();
 
 	current_frequency = 0;
 	idle = false;
@@ -121,51 +111,45 @@ void abstract_cpu::measurement_start(void)
 		stream >> max_minus_one_frequency;
 	}
 
-	for (i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->measurement_start();
+	for (auto *child : children)
+		if (child)
+			child->measurement_start();
 
 	stamp_before = pt_gettime();
 
 	last_stamp = 0;
 
-	for (i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->wiggle();
+	for (auto *child : children)
+		if (child)
+			child->wiggle();
 
 }
 
 void abstract_cpu::measurement_end(void)
 {
-	unsigned int i, j;
-
 	total_stamp = 0;
 	stamp_after = pt_gettime();
-	for (i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->wiggle();
+	for (auto *child : children)
+		if (child)
+			child->wiggle();
 
 	time_factor = 1000000.0 * (stamp_after.tv_sec - stamp_before.tv_sec) + stamp_after.tv_usec - stamp_before.tv_usec;
 
 
-	for (i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->measurement_end();
+	for (auto *child : children)
+		if (child)
+			child->measurement_end();
 
-	for (i = 0; i < children.size(); i++)
-		if (children[i]) {
-			for (j = 0; j < children[i]->cstates.size(); j++) {
-				struct idle_state *state;
-				state = children[i]->cstates[j];
+	for (auto *child : children)
+		if (child) {
+			for (auto *state : child->cstates) {
 				if (!state)
 					continue;
 
 				update_cstate( state->linux_name, state->human_name, state->usage_before, state->duration_before, state->before_count);
 				finalize_cstate(state->linux_name,                   state->usage_after,  state->duration_after,  state->after_count);
 			}
-			for (j = 0; j < children[i]->pstates.size(); j++) {
-				class frequency *state;
-				state = children[i]->pstates[j];
+			for (auto *state : child->pstates) {
 				if (!state)
 					continue;
 
@@ -174,9 +158,7 @@ void abstract_cpu::measurement_end(void)
 			}
 		}
 
-	for (i = 0; i < cstates.size(); i++) {
-		struct idle_state *state = cstates[i];
-
+	for (auto *state : cstates) {
 		if (state->after_count == 0)
 			continue;
 
@@ -308,35 +290,31 @@ void abstract_cpu::update_cstate(const std::string &linux_name, const std::strin
 
 int abstract_cpu::has_cstate_level(int level)
 {
-	unsigned int i;
-
 	if (level == LEVEL_HEADER)
 		return 1;
 
-	for (i = 0; i < cstates.size(); i++)
-		if (cstates[i]->line_level == level)
+	for (const auto *s : cstates)
+		if (s->line_level == level)
 			return 1;
 
-	for (i = 0; i < children.size(); i++)
-		if (children[i])
-			if (children[i]->has_cstate_level(level))
+	for (auto *child : children)
+		if (child)
+			if (child->has_cstate_level(level))
 				return 1;
 	return  0;
 }
 
 int abstract_cpu::has_pstate_level(int level)
 {
-	unsigned int i;
-
 	if (level == LEVEL_HEADER)
 		return 1;
 
 	if (level >= 0 && level < (int)pstates.size())
 		return 1;
 
-	for (i = 0; i < children.size(); i++)
-		if (children[i])
-			if (children[i]->has_pstate_level(level))
+	for (auto *child : children)
+		if (child)
+			if (child->has_pstate_level(level))
 				return 1;
 	return  0;
 }
@@ -409,14 +387,13 @@ void abstract_cpu::calculate_freq(uint64_t time)
 {
 	uint64_t freq = 0;
 	bool is_idle = true;
-	unsigned int i;
 
 	/* calculate the maximum frequency of all children */
-	for (i = 0; i < children.size(); i++)
-		if (children[i] && children[i]->has_pstates()) {
+	for (auto *child : children)
+		if (child && child->has_pstates()) {
 			uint64_t f = 0;
-			if (!children[i]->idle) {
-				f = children[i]->current_frequency;
+			if (!child->idle) {
+				f = child->current_frequency;
 				is_idle = false;
 			}
 			if (f > freq)
@@ -430,7 +407,6 @@ void abstract_cpu::calculate_freq(uint64_t time)
 
 void abstract_cpu::change_effective_frequency(uint64_t time, uint64_t frequency)
 {
-	unsigned int i;
 	uint64_t time_delta, fr;
 
 	if (last_stamp)
@@ -448,10 +424,9 @@ void abstract_cpu::change_effective_frequency(uint64_t time, uint64_t frequency)
 	last_stamp = time;
 
 	/* propagate to all children */
-	for (i = 0; i < children.size(); i++)
-		if (children[i]) {
-			children[i]->change_effective_frequency(time, frequency);
-		}
+	for (auto *child : children)
+		if (child)
+			child->change_effective_frequency(time, frequency);
 }
 
 
@@ -480,11 +455,10 @@ void abstract_cpu::wiggle(void)
 }
 uint64_t abstract_cpu::total_pstate_time(void)
 {
-	unsigned int i;
 	uint64_t stamp = 0;
 
-	for (i = 0; i < pstates.size(); i++)
-		stamp += pstates[i]->time_after;
+	for (const auto *s : pstates)
+		stamp += s->time_after;
 
 	return stamp;
 }
@@ -492,32 +466,27 @@ uint64_t abstract_cpu::total_pstate_time(void)
 
 void abstract_cpu::validate(void)
 {
-	unsigned int i;
-
-	for (i = 0; i < children.size(); i++) {
-		if (children[i])
-			children[i]->validate();
-	}
+	for (auto *child : children)
+		if (child)
+			child->validate();
 }
 
 void abstract_cpu::reset_pstate_data(void)
 {
-	unsigned int i;
-
-	for (i = 0; i < pstates.size(); i++) {
-		pstates[i]->time_before = 0;
-		pstates[i]->time_after = 0;
+	for (auto *s : pstates) {
+		s->time_before = 0;
+		s->time_after = 0;
 	}
-	for (i = 0; i < cstates.size(); i++) {
-		cstates[i]->duration_before = 0;
-		cstates[i]->duration_after = 0;
-		cstates[i]->before_count = 0;
-		cstates[i]->after_count = 0;
+	for (auto *s : cstates) {
+		s->duration_before = 0;
+		s->duration_after = 0;
+		s->before_count = 0;
+		s->after_count = 0;
 	}
 
-	for (i = 0; i < children.size(); i++)
-		if (children[i])
-			children[i]->reset_pstate_data();
+	for (auto *child : children)
+		if (child)
+			child->reset_pstate_data();
 }
 
 void abstract_cpu::collect_json_fields(std::string &_js)
