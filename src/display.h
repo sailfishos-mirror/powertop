@@ -109,5 +109,5 @@ extern std::map<std::string, class tab_window *> tab_windows;
 WINDOW *get_ncurses_win(const std::string &name);
 WINDOW *get_ncurses_win(int nr);
 
-void create_tab(const std::string &name, const std::string &translation, class tab_window *w = nullptr, std::string bottom_line = "");
+void create_tab(const std::string &name, const std::string &translation, class tab_window *w = nullptr, const std::string &bottom_line = "");
 

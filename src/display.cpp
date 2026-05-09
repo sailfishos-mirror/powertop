@@ -56,7 +56,7 @@ WINDOW *tab_bar = nullptr;
 WINDOW *bottom_line = nullptr;
 static WINDOW *scrollbar_win = nullptr;
 
-void create_tab(const std::string &name, const std::string &translation, class tab_window *w, std::string bottom_text)
+void create_tab(const std::string &name, const std::string &translation, class tab_window *w, const std::string &bottom_text)
 {
 	if (!w)
 		w = new tab_window;
@@ -125,10 +125,10 @@ void reset_display(void)
 
 static int current_tab;
 
-static void draw_scrollbar(class tab_window *w)
+static void draw_scrollbar(const class tab_window *w)
 {
-	int viewport_height = PAD_BOTTOM - PAD_TOP + 1;
-	int content_height = w->content_max_y;
+	const int viewport_height = PAD_BOTTOM - PAD_TOP + 1;
+	const int content_height = w->content_max_y;
 
 	if (scrollbar_win) {
 		delwin(scrollbar_win);
@@ -199,7 +199,7 @@ void show_tab(unsigned int tab)
 	wattron(bottom_line, A_REVERSE);
 	mvwprintw(bottom_line, 0, 0, "%-*s", COLS, "");
 
-	std::string bottom = bottom_lines[tab_names[tab]];
+	const std::string bottom = bottom_lines[tab_names[tab]];
 	if (!bottom.empty())
 		mvwprintw(bottom_line, 0,0, "%s", bottom.c_str());
 	else
