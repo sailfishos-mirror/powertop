@@ -3,6 +3,7 @@ import sys
 import base64
 import argparse
 import os
+import textwrap
 import tempfile
 import subprocess
 import re
@@ -107,7 +108,14 @@ def decode_content(tag, b64):
             return f"cpu={parts[0]} offset=0x{parts[1]} value=0x{parts[2]}"
         return b64
     if tag == 'T':
-        return None
+        # For T records, content lives in the path slot ("sec usec")
+        parts = (b64 or "").split()
+        if len(parts) == 2:
+            try:
+                return f"t={int(parts[0])}.{int(parts[1]):06d}s"
+            except ValueError:
+                pass
+        return b64
     if tag == 'L':
         if not b64:
             return "(broken link)"
@@ -138,8 +146,8 @@ def cmd_list(args):
         if path_filter and path_filter not in path:
             continue
         if show_content:
-            # For M records the decoded content lives in path, not b64
-            content = decode_content(tag, path if tag == 'M' else b64) or ""
+            # For M and T records the decoded content lives in path, not b64
+            content = decode_content(tag, path if tag in ('M', 'T') else b64) or ""
             # Truncate long content for display
             if len(content) > 40:
                 content = content[:37] + "..."
@@ -398,41 +406,46 @@ def cmd_add(args):
     """Append a new record to a trace file, creating it if necessary."""
     record_type = args.record_type.upper()
     path = args.path
-    value = args.value or ""
+    # Join all remaining tokens into one string so callers never need to
+    # quote multi-token arguments like "sec usec" or "mode result".
+    value_str = " ".join(args.value)
 
     if record_type == 'R':
-        b64 = base64.b64encode(value.encode('utf-8')).decode('ascii')
+        b64 = base64.b64encode(value_str.encode('utf-8')).decode('ascii')
         record = f"R {path} {b64}\n"
     elif record_type == 'W':
-        b64 = base64.b64encode(value.encode('utf-8')).decode('ascii')
+        b64 = base64.b64encode(value_str.encode('utf-8')).decode('ascii')
         record = f"W {path} {b64}\n"
     elif record_type == 'N':
         record = f"N {path}\n"
     elif record_type == 'L':
         # path = symlink path, value = target (empty = broken link)
-        b64 = base64.b64encode(value.encode('utf-8')).decode('ascii') if value else ""
+        b64 = base64.b64encode(value_str.encode('utf-8')).decode('ascii') if value_str else ""
         record = f"L {b64} {path}\n"
     elif record_type == 'T':
-        # path = "sec usec"  (two decimal integers)
-        parts = path.split()
+        # Accept:  T <sec> <usec>   (two separate tokens, no quoting needed)
+        parts = (path + " " + value_str).strip().split()
         if len(parts) != 2:
-            print("Error: T record requires path to be 'sec usec' (two integers).")
+            print("Error: T record requires exactly two integers:  T <sec> <usec>")
+            print("  Example:  add trace.ptrecord T 10 500000")
             sys.exit(1)
         try:
-            int(parts[0]); int(parts[1])
+            sec = int(parts[0])
+            usec = int(parts[1])
         except ValueError:
             print("Error: T record sec and usec must be integers.")
             sys.exit(1)
-        record = f"T {parts[0]} {parts[1]}\n"
+        record = f"T {sec} {usec}\n"
     elif record_type == 'M':
-        # path = "cpu hex_offset", value = hex_value (default 0)
-        parts = path.split()
-        if len(parts) != 2:
-            print("Error: M record path must be 'cpu hex_offset' (e.g. '0 611').")
+        # Accept:  M <cpu> <hex-offset> [<hex-value>]  (three separate tokens, no quoting)
+        parts = (path + " " + value_str).strip().split()
+        if len(parts) < 2 or len(parts) > 3:
+            print("Error: M record requires cpu, hex-offset, and optional hex-value:")
+            print("  Example:  add trace.ptrecord M 0 611 deadbeef")
             sys.exit(1)
         cpu = parts[0]
         offset = parts[1].lstrip('0x').lstrip('0X') or '0'
-        hex_value = (args.value or "0").lstrip('0x').lstrip('0X') or '0'
+        hex_value = parts[2].lstrip('0x').lstrip('0X') if len(parts) > 2 else "0"
         try:
             int(cpu)
             int(offset, 16)
@@ -442,10 +455,11 @@ def cmd_add(args):
             sys.exit(1)
         record = f"M {cpu} {offset} {hex_value}\n"
     elif record_type == 'A':
-        # path = file path, value = "mode result" e.g. "4 0" or "4 -1"
-        parts = value.split()
+        # Accept:  A <path> <mode> <result>  (mode and result as separate tokens)
+        parts = value_str.split()
         if len(parts) != 2:
-            print("Error: A record value must be 'mode result' (e.g. '4 0' for R_OK success).")
+            print("Error: A record requires mode and result after the path:")
+            print("  Example:  add trace.ptrecord A /sys/foo 4 0")
             sys.exit(1)
         try:
             int(parts[0])
@@ -457,13 +471,13 @@ def cmd_add(args):
             sys.exit(1)
         record = f"A {path} {parts[0]} {parts[1]}\n"
     elif record_type == 'D':
-        # value is space-separated entry names (empty = not-found/empty directory)
-        entries = sorted(value.split()) if value else []
+        # value tokens are directory entries (may be zero or more)
+        entries = sorted(value_str.split()) if value_str else []
         content = '\n'.join(entries)
         b64 = base64.b64encode(content.encode('utf-8')).decode('ascii')
         record = f"D {path} {b64}\n" if b64 else f"D {path}\n"
     else:
-        print(f"Error: Unknown record type '{record_type}'. Use R, W, N, L, T, D, or M.")
+        print(f"Error: Unknown record type '{record_type}'. Use R, W, N, L, T, D, M, or A.")
         sys.exit(1)
 
     try:
@@ -523,13 +537,35 @@ def main():
 
     # add
     p = subparsers.add_parser("add",
-        help="Append a record to a trace file (creates file if needed)")
+        help="Append a record to a trace file (creates file if needed)",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=textwrap.dedent("""\
+            Append one record to a trace file (file is created if it does not exist).
+
+            Record types and syntax:
+              R <path> <content>          sysfs read  (include trailing \\n in content)
+              W <path> <content>          sysfs write
+              N <path>                    read miss (file not found)
+              L <symlink-path> <target>   symlink readlink result
+              D <dir-path> [entry ...]    directory listing (omit entries for empty)
+              A <path> <mode> <result>    access(2) check  (mode=4 for R_OK; result: 0=ok, -1=fail)
+              T <sec> <usec>             timestamp from pt_gettime()
+              M <cpu> <hex-offset> [<hex-value>]  MSR read (value defaults to 0)
+
+            Examples:
+              add trace.ptrecord R /sys/class/drm/card0/device/hwmon/hwmon0/name "xe\\n"
+              add trace.ptrecord D /sys/class/drm card0
+              add trace.ptrecord D /sys/class/drm card0 card1 card2
+              add trace.ptrecord A /sys/class/drm/card0/power1_label 4 0
+              add trace.ptrecord T 10 500000
+              add trace.ptrecord M 0 611 deadbeef
+        """))
     p.add_argument("trace_file")
     p.add_argument("record_type", metavar="type", choices=["R", "W", "N", "L", "T", "D", "M", "A"],
-                   help="Record type: R=read, W=write, N=miss, L=symlink, D=directory listing, M=MSR read, A=access check")
-    p.add_argument("path", help="Sysfs/proc path (for L: the symlink path; for D: the directory path; for M: 'cpu hex_offset' e.g. '0 611')")
-    p.add_argument("value", nargs="?", default="",
-                   help="Content string (for L: symlink target; for D: space-separated entry names; for M: hex MSR value e.g. 'deadbeef'; omit for broken link, N, empty/missing dir, or MSR value 0)")
+                   help="Record type (see description above)")
+    p.add_argument("path", help="Path / first argument (see description above)")
+    p.add_argument("value", nargs="*", default=[],
+                   help="Remaining arguments (content, entries, mode+result, sec+usec, etc.)")
 
     args = parser.parse_args()
     
