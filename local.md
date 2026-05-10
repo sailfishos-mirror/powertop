@@ -250,8 +250,7 @@ Practically untestable without hardware (0% or near):
 # trace_tool.py M record support
 
 `scripts/test_tools/trace_tool.py add` now supports M (MSR) records:
-  trace_tool.py add file.ptrecord M "cpu hex_offset" [hex_value]
-  Example: trace_tool.py add f.ptrecord M "0 611" deadbeef → M 0 611 deadbeef
+  trace_tool.py add file.ptrecord M 0 611 deadbeef   # cpu offset [value]
   Default value is 0. `list --content` shows cpu/offset/value for MSR records.
   M records in replay mode: replay_msr() returns 0 (success), but note that
   rapl_interface.cpp domain detection checks ret > 0, so MSR-path domains will
@@ -263,9 +262,11 @@ Practically untestable without hardware (0% or near):
 **Never hand-compute base64 for fixture files.** Use `trace_tool.py add`:
 
   python3 scripts/test_tools/trace_tool.py add FILE R /some/path "plain text value"
-  python3 scripts/test_tools/trace_tool.py add FILE D /some/dir "entry1 entry2"
+  python3 scripts/test_tools/trace_tool.py add FILE D /some/dir entry1 entry2
   python3 scripts/test_tools/trace_tool.py add FILE N /missing/path
-  python3 scripts/test_tools/trace_tool.py add FILE M "0 611" deadbeef
+  python3 scripts/test_tools/trace_tool.py add FILE T 10 500000
+  python3 scripts/test_tools/trace_tool.py add FILE A /sys/foo 4 0
+  python3 scripts/test_tools/trace_tool.py add FILE M 0 611 deadbeef
 
 Other useful subcommands:
   list --content FILE       — show all records with decoded values
@@ -426,6 +427,22 @@ Section call order in `expose()`:
 `draw_progress_bar()` parameters: `(win, label, value, scale_min, scale_max, marker_lo,
 marker_hi, value_str, label_interval, bar_width)`. Pass `NAN` to suppress either marker.
 
+## Test coverage for Xe GPU code (as of coverage run after adding tests)
+
+- `src/devices/xe-gpu.cpp`:  71% → 93%  (test_xe_gpu_device.cpp + 4 fixtures)
+- `src/cpu/xe_gpu.cpp`:      85% → 97%  (test_xe_core.cpp + 2 fixtures)
+- `src/gpu-tab.cpp`:         44% → 44%  (ncurses rendering; not tested)
+
+Key xe_core linker gotchas:
+- Must link `frequency.cpp` alongside `abstract_cpu.cpp` (abstract_cpu instantiates frequency objects)
+- Must link `test_stubs.cpp` (parameters.cpp needs `global_power` and `save_all_results`)
+- Define `std::vector<class device *> all_devices;` in the test file (abstract_cpu.cpp references it but xe_core never touches the code paths that use it)
+
+Static cache gotcha — `find_xe_card_path()`:
+- Uses `static const std::string cached = [...]()` — result is cached forever in the process
+- Called from `gpu-tab.cpp` only, NOT from `xe_core` constructor
+- If testing gpu-tab, `find_xe_card_path()` must be the FIRST list_directory call in the process
+
 ## GPU report section (report_gpu_stats() in gpu-tab.cpp)
 
 Called from `one_measurement()` in `main.cpp`, unconditionally (report maker
@@ -461,8 +478,8 @@ sysfs reads.
 
 Add with:
 ```bash
-python3 scripts/test_tools/trace_tool.py add FILE A "{sysfs_path}/device" "4 0"
-python3 scripts/test_tools/trace_tool.py add FILE A "{sysfs_path}/device/device" "4 -1"
+python3 scripts/test_tools/trace_tool.py add FILE A "{sysfs_path}/device" 4 0
+python3 scripts/test_tools/trace_tool.py add FILE A "{sysfs_path}/device/device" 4 -1
 ```
 
 mode=4 means R_OK. result=0 means accessible; result=-1 means not accessible.
