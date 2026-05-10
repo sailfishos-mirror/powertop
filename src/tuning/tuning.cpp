@@ -61,7 +61,7 @@ static void init_tuning(void)
 	add_sysfs_tunable(_("Enable Audio codec power management"), "/sys/module/snd_hda_intel/parameters/power_save", "1");
 	add_sysfs_tunable(_("NMI watchdog should be turned off"), "/proc/sys/kernel/nmi_watchdog", "0");
 	add_sysfs_tunable(_("Power Aware CPU scheduler"), "/sys/devices/system/cpu/sched_mc_power_savings", "1");
-	add_sysfs_tunable(_("VM writeback timeout"), "/proc/sys/vm/dirty_writeback_centisecs", "1500");
+	add_numeric_sysfs_tunable(_("VM writeback timeout"), "/proc/sys/vm/dirty_writeback_centisecs", 1500);
 	add_sata_tunables();
 	add_usb_tunables();
 	add_runtime_tunables("pci");
@@ -70,12 +70,12 @@ static void init_tuning(void)
 	add_i2c_tunables();
 
 	add_numeric_sysfs_tunable(_("VM dirty ratio"), "/proc/sys/vm/dirty_ratio", 50);
-	add_sysfs_tunable(_("Tuning for scan sleep millisecs"), "/sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs", "30000");
+	add_numeric_sysfs_tunable(_("Tuning for scan sleep millisecs"), "/sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs", 30000);
 	add_sysfs_tunable(_("Tuning for cursor blink"), "/sys/devices/virtual/graphics/fbcon/cursor_blink", "0");
-	add_sysfs_tunable(_("Tuning for sleep millisecs"), "/sys/kernel/mm/ksm/sleep_millisecs", "4000");
-	add_sysfs_tunable(_("Batch size for KSM"), "/sys/kernel/mm/ksm/pages_to_scan", "1000");
+	add_numeric_sysfs_tunable(_("Tuning for sleep millisecs"), "/sys/kernel/mm/ksm/sleep_millisecs", 4000);
+	add_numeric_sysfs_tunable(_("Batch size for KSM"), "/sys/kernel/mm/ksm/pages_to_scan", 1000, false);
 	add_sysfs_tunable(_("Autogroup scheduling"), "/proc/sys/kernel/sched_autogroup_enabled", "0");
-	add_sysfs_tunable(_("Intel P-state minimum performance"), "/sys/devices/system/cpu/intel_pstate/min_perf_pct", "50");
+	add_numeric_sysfs_tunable(_("Intel P-state minimum performance"), "/sys/devices/system/cpu/intel_pstate/min_perf_pct", 50);
 	add_sysfs_tunable(_("Tuning for default qdisc"), "/proc/sys/net/core/default_qdisc", "fq");
 	add_sysfs_tunable(_("Intel ITMT (Turbo Boost Max 3.0)"), "/proc/sys/kernel/sched_itmt_enabled", "1");
 	add_sysfs_tunable(_("Intel energy performance bias"), "/sys/devices/system/cpu/cpu*/power/energy_perf_bias", "balance-performance");
