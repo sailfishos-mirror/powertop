@@ -418,7 +418,7 @@ now fills both the paths vector and the labels vector in a single pass (parallel
 ## GPU tab sections (src/gpu-tab.cpp)
 
 Section call order in `expose()`:
-1. Power Overview (placeholder text only)
+1. `show_power_section()` — scans `xegpu::power_channels`; bar+TDP marker if energy counter present, text-only TDP cap line otherwise
 2. `show_frequency_section()` — per-GT bars using hw range, policy markers, 500 MHz labels
 3. `show_idle_section()` — reads `get_xe_core()->per_gt_busy_pct`, 25% labels, no markers
 4. `show_fan_section()` — global max-seen scale (floor 1000 RPM), 500 RPM labels, no markers

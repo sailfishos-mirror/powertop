@@ -33,3 +33,4 @@ public:
 };
 
 extern void initialize_gpu_tab(void);
+extern void report_gpu_stats(void);

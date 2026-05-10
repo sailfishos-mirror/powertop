@@ -303,6 +303,7 @@ void one_measurement(int seconds, int sample_interval, const std::string &worklo
 	show_report_devices();
 	report_show_open_devices();
 
+	report_gpu_stats();
 	report_devices();
 	display_devfreq_devices();
 	report_devfreq_devices();
