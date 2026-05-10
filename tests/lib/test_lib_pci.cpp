@@ -30,8 +30,8 @@ static void test_pci_id_to_name_first_call()
 	 * and returns a std::string (not a raw pointer / exception).
 	 */
 	std::string name = pci_id_to_name(0x8086, 0x1237);
-	/* As long as pci.ids is installed, this should be non-empty */
-	PT_ASSERT_TRUE(name.size() >= 0);  /* always true — ensures no exception/crash */
+	/* Verify the call returns without throwing — size() is a no-op assertion */
+	(void)name;
 	std::cout << "  pci_id_to_name(0x8086, 0x1237) = \"" << name << "\"\n";
 }
 
@@ -43,7 +43,7 @@ static void test_pci_id_to_name_second_call()
 	 * 0x8086 / 0x29c0 = Intel 82G33/G31/P35/P31 Express DRAM Controller
 	 */
 	std::string name = pci_id_to_name(0x8086, 0x29c0);
-	PT_ASSERT_TRUE(name.size() >= 0);
+	(void)name;
 	std::cout << "  pci_id_to_name(0x8086, 0x29c0) = \"" << name << "\"\n";
 }
 
