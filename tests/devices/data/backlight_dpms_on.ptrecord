@@ -5,3 +5,5 @@ D /sys/class/drm Y2FyZDE=
 D /sys/class/drm/card1 Y2FyZDEtRFAtMQ==
 R /sys/class/drm/card1/card1-DP-1/enabled ZW5hYmxlZA==
 R /sys/class/drm/card1/card1-DP-1/dpms T24=
+A /sys/class/backlight/lcd/device 4 0
+A /sys/class/backlight/lcd/device/device 4 -1

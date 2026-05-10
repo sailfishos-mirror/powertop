@@ -1,2 +1,4 @@
 L  /sys/class/rfkill/rfkill0/device/driver
 L Li4vLi4vLi4vLi4vYnVzL3BjaS9kcml2ZXJzL2l3bHdpZmk= /sys/class/rfkill/rfkill0/device/device/driver
+A /sys/class/rfkill/rfkill0/device 4 0
+A /sys/class/rfkill/rfkill0/device/device 4 -1

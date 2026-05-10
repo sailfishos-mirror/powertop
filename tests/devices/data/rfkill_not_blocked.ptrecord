@@ -4,3 +4,5 @@ R /sys/class/rfkill/rfkill0/hard MA==
 R /sys/class/rfkill/rfkill0/soft MA==
 R /sys/class/rfkill/rfkill0/hard MA==
 R /sys/class/rfkill/rfkill0/soft MA==
+A /sys/class/rfkill/rfkill0/device 4 0
+A /sys/class/rfkill/rfkill0/device/device 4 -1

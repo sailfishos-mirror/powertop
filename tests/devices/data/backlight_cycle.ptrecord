@@ -1,3 +1,5 @@
 R /sys/class/backlight/lcd/max_brightness MTAw
 R /sys/class/backlight/lcd/actual_brightness NjA=
 R /sys/class/backlight/lcd/actual_brightness ODA=
+A /sys/class/backlight/lcd/device 4 0
+A /sys/class/backlight/lcd/device/device 4 -1

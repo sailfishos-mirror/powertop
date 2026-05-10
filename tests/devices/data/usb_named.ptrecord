@@ -3,3 +3,5 @@ R /sys/bus/usb/devices/1-1/manufacturer SW50ZWwgQ29ycC4K
 R /sys/bus/usb/devices/1-1/product VVNCIEtleWJvYXJkCg==
 R /sys/bus/usb/devices/1-1/busnum MQo=
 R /sys/bus/usb/devices/1-1/devnum Mwo=
+A /sys/bus/usb/devices/1-1/device 4 0
+A /sys/bus/usb/devices/1-1/device/device 4 -1

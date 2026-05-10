@@ -1,2 +1,4 @@
 R /sys/devices/platform/thinkpad_hwmon/fan1_input MTgwMA==
 R /sys/devices/platform/thinkpad_hwmon/fan1_input MjQwMA==
+A /sys/devices/platform/thinkpad_hwmon/device 4 0
+A /sys/devices/platform/thinkpad_hwmon/device/device 4 -1
