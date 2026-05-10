@@ -1,0 +1,8 @@
+D /sys/class/drm Y2FyZDA=
+D /sys/class/drm/card0/device dGlsZTA=
+D /sys/class/drm/card0/device/tile0 Z3Qw
+A /sys/class/drm/card0/device/tile0/gt0/gtidle/idle_residency_ms 4 0
+T 10 0
+R /sys/class/drm/card0/device/tile0/gt0/gtidle/idle_residency_ms NTAwCg==
+T 12 0
+R /sys/class/drm/card0/device/tile0/gt0/gtidle/idle_residency_ms MTAwMAo=

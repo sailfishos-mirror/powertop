@@ -415,3 +415,58 @@ test_rapl_interface_exe = executable(
 )
 
 test('devices_ rapl_interface', test_rapl_interface_exe)
+
+test_xe_gpu_device_exe = executable(
+  'powertop-test-xe-gpu-device',
+  [
+    '../../src/lib.cpp',
+    '../../src/test_framework.cpp',
+    '../../src/parameters/parameters.cpp',
+    '../../src/devices/device.cpp',
+    '../../src/devices/xe-gpu.cpp',
+    'test_stubs.cpp',
+    'test_xe_gpu_device.cpp',
+  ],
+  include_directories: [
+    include_directories('../..'),
+    include_directories('../../src'),
+    include_directories('..'),
+  ],
+  cpp_args: [
+    '-DENABLE_TEST_FRAMEWORK',
+    '-DHAVE_NO_PCI',
+    '-DTEST_DATA_DIR="' + meson.current_source_dir() / 'data' + '"',
+  ],
+  dependencies: [ncursesw_dep, libtracefs_dep],
+)
+
+test('devices_ xe_gpu_device', test_xe_gpu_device_exe)
+
+test_xe_core_exe = executable(
+  'powertop-test-xe-core',
+  [
+    '../../src/lib.cpp',
+    '../../src/test_framework.cpp',
+    '../../src/parameters/parameters.cpp',
+    '../../src/cpu/xe_gpu.cpp',
+    '../../src/cpu/abstract_cpu.cpp',
+    '../../src/cpu/cpu_core.cpp',
+    '../../src/cpu/frequency.cpp',
+    'test_stubs.cpp',
+    'test_xe_core.cpp',
+  ],
+  include_directories: [
+    include_directories('../..'),
+    include_directories('../../src'),
+    include_directories('..'),
+  ],
+  cpp_args: [
+    '-DENABLE_TEST_FRAMEWORK',
+    '-DHAVE_NO_PCI',
+    '-DTEST_DATA_DIR="' + meson.current_source_dir() / 'data' + '"',
+  ],
+  dependencies: [ncursesw_dep],
+)
+
+test('devices_ xe_core', test_xe_core_exe)
+

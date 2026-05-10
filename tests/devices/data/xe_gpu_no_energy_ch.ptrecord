@@ -1,0 +1,9 @@
+D /sys/class/drm Y2FyZDA=
+D /sys/class/drm/card0/device/hwmon aHdtb24w
+R /sys/class/drm/card0/device/hwmon/hwmon0/name eGUK
+A /sys/class/drm/card0/device/hwmon/hwmon0/power1_label 4 0
+R /sys/class/drm/card0/device/hwmon/hwmon0/power1_label cGtnCg==
+A /sys/class/drm/card0/device/hwmon/hwmon0/power1_crit 4 0
+R /sys/class/drm/card0/device/hwmon/hwmon0/power1_crit NDUwMDAwMDAK
+A /sys/class/drm/card0/device/hwmon/hwmon0/energy1_input 4 -1
+A /sys/class/drm/card0/device/hwmon/hwmon0/power2_label 4 -1
