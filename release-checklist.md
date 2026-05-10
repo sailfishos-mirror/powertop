@@ -10,7 +10,7 @@ checks below to ensure a smooth experience for our users.
 ## Version bump
 
 - [ ] Ask the user for the new version number.
-      Suggest at least two options (use git tag to check for current latest):
+      Suggest at least two options (use `git tag` to check the current latest):
       1. Next minor/major release (e.g. `v2.X`)
       2. Next release candidate (e.g. `v2.X-rc1`)
 - [ ] Update the version in `meson.build` (`version:` field)
@@ -18,42 +18,93 @@ checks below to ensure a smooth experience for our users.
 
 ## Translations
 
-- [ ] Audit and update `POTFILES.in` (check for new source files with translatable strings)
-- [ ] Regenerate the gettext template (`powertop.pot`) and merge into all `.po` files
+- [ ] Audit `POTFILES.in`: find all source files containing `_()` or `N_()` that
+      are not yet listed, add them, then remove any entries for files that no
+      longer exist.
+      ```
+      # Files with translatable strings not in POTFILES.in:
+      comm -23 <(grep -rl '\b_(\|N_(' --include="*.cpp" --include="*.h" src/ | sort) \
+               <(grep -v '^#\|^$' po/POTFILES.in | sort)
+      ```
+- [ ] Regenerate `po/powertop.pot` from all listed source files:
+      ```
+      xgettext --files-from=po/POTFILES.in --directory=. \
+        --default-domain=powertop --output=po/powertop.pot \
+        --language=C++ --keyword=_ --keyword=N_ --from-code=UTF-8 \
+        --add-comments=TRANSLATORS --copyright-holder="PowerTOP contributors" \
+        --package-name=powertop
+      ```
+- [ ] Merge updated template into all `.po` files (with fuzzy matching to
+      preserve translations for mechanically-changed strings):
+      ```
+      while IFS= read -r lang; do
+        [[ "$lang" =~ ^# ]] || [[ -z "$lang" ]] && continue
+        msgmerge --update --backup=none po/${lang}.po po/powertop.pot
+      done < po/LINGUAS
+      ```
+- [ ] For any fuzzy entries where only printf-style specifiers changed
+      (`%s`/`%d`/`%i` → `{}`), apply the replacement mechanically and
+      remove the fuzzy flag.
 
 ## Build checks (all must compile with zero errors and zero warnings)
 
 Each build must be a **clean build** (`meson setup --wipe`), not incremental.
-All builds except standard should include `-Denable-tests=true`.
+Warnings are an **absolute zero** requirement — pre-existing warnings must be
+fixed before release, not excused.
 
-- [ ] Meson standard build: `meson setup --wipe -Denable-tests=true build`
-- [ ] Meson release build: `meson setup --wipe --buildtype=release -Denable-tests=true build_release`
-- [ ] Meson debug build: `meson setup --wipe --buildtype=debug -Denable-tests=true build_debug`
-- [ ] Meson ASAN build: `meson setup --wipe -Denable-tests=true -Db_coverage=true -Db_sanitize=address build_acov`
-- [ ] Meson gcov build: `meson setup --wipe -Denable-tests=true -Db_coverage=true build_cov`
+Only ninja compiler output counts; `meson setup` warnings (e.g. netrc
+permissions) are not compiler warnings and can be ignored.
+
+- [ ] Standard build: `meson setup --wipe -Denable-tests=true build`
+- [ ] Release build:  `meson setup --wipe --buildtype=release -Denable-tests=true build_release`
+- [ ] Debug build:    `meson setup --wipe --buildtype=debug   -Denable-tests=true build_debug`
+- [ ] ASAN build:     `meson setup --wipe -Denable-tests=true -Db_coverage=true -Db_sanitize=address build_acov`
+- [ ] gcov build:     `meson setup --wipe -Denable-tests=true -Db_coverage=true build_cov`
+
+Check each with: `ninja -C <dir> 2>&1 | grep -E " error:| warning:"`
 
 ## Tests (all five build types, all must pass with no failures)
 
-- [ ] Standard build: full test suite
-- [ ] Release build: full test suite (`ninja -C build_release test`)
-- [ ] Debug build: full test suite (`ninja -C build_debug test`)
-- [ ] ASAN (Address Sanitizer) build: full test suite (`ninja -C build_acov test`)
-- [ ] gcov build: full test suite (`ninja -C build_cov test`)
+- [ ] Standard build: `ninja -C build test`
+- [ ] Release build:  `ninja -C build_release test`
+- [ ] Debug build:    `ninja -C build_debug test`
+- [ ] ASAN build:     `ninja -C build_acov test`
+- [ ] gcov build:     `ninja -C build_cov test`
 
 ## Memory leak check
 
-- [ ] Valgrind full leak check: `sudo valgrind --leak-check=full --show-leak-kinds=all build/powertop --html --time=3`
-      Only the two known library-internal leaks are acceptable (see `local.md`).
+- [ ] Valgrind full leak check (use the uninstrumented standard build):
+      ```
+      sudo valgrind --leak-check=full --show-leak-kinds=all build/powertop --html --time=3
+      ```
+      Only the two known library-internal leaks are acceptable (see `local.md`):
+      - 20 bytes: libtracefs internal strdup
+      - 21 bytes: libpci `pci_lookup_name` buffer (libpci bug)
       Any new leaks must be fixed before release.
+
+- [ ] ASAN leak check (confirms the same with sanitizer instrumentation):
+      ```
+      ASAN_OPTIONS=detect_leaks=1 sudo -E build_acov/powertop --once --time=3 2>&1 | grep -i "leak\|SUMMARY"
+      ```
+      Only the known 21-byte libpci leak is acceptable.
 
 ## Test coverage
 
-- [ ] Test coverage report on the standard test suite
-- [ ] Additional coverage from running `sudo powertop --once --time=3`
+Coverage is collected from `build_acov` (ASAN + gcov), which gives the most
+instrumentation. Run the test suite first, then the `--once` run to cover the
+display/hardware paths that tests cannot reach.
+
+- [ ] Run the test suite to populate coverage data:
+      `ninja -C build_acov test`
+- [ ] Run a live measurement to cover display and hardware paths:
+      `ASAN_OPTIONS=detect_leaks=0 sudo -E build_acov/powertop --once --time=3`
+- [ ] Capture the combined coverage snapshot:
+      `bash scripts/coverage_report.sh <version-label> build_acov`
+- [ ] Review the report for any significant regressions vs. the previous release.
 
 ## Release notes
 
-Store in `doc/relnotes.md`.
+Store in `doc/relnotes.md`. Use `git shortlog <prev-tag>..` to enumerate commits.
 
 - [ ] Update the "Recent releases" table near the top of `README.md`
       with the new version and a one-line summary
@@ -64,9 +115,10 @@ Store in `doc/relnotes.md`.
 
 ## Tagging the release
 
-> **Agent note:** Only perform this section if all items above have
-> passed. Ask the user explicitly for confirmation before tagging.
+> **Agent note:** Only perform this section after explicitly confirming
+> with the user that all checks above have passed and they are ready to tag.
 
-- [ ] Confirm with the user that all checks passed and they are ready to tag
+- [ ] Confirm with the user that all checks passed and they approve tagging
 - [ ] `git tag -a vX.Y -m "Release vX.Y"`
 - [ ] `git push origin vX.Y`
+
