@@ -289,52 +289,10 @@ is declared in `lib.h` and defined in `lib.cpp`. It converts to local time via
 Call sites use `std::chrono::system_clock::now()` instead of `time(nullptr)`.
 
 
-# ncurses fix cycle — subagent build/test/commit workflow
-
-Use `build_acov` (ASAN + coverage + tests) for all ncurses fixes.
-
-```bash
-# Build (no new warnings allowed)
-ninja -C build_acov 2>&1 | grep -E "error:|warning:" | grep -v "^ninja:"
-
-# Test suite (must be 52/52)
-ninja -C build_acov test 2>&1 | tail -8
-
-# Runtime smoke-test (ncurses display path)
-ASAN_OPTIONS=detect_leaks=0 sudo -E build_acov/powertop --once --time=2 2>&1 | grep -E "Leaving|ASAN|error"
-
-# Leak check
-ASAN_OPTIONS=detect_leaks=1 sudo -E build_acov/powertop --once --time=2 2>&1 | grep -i "leak\|SUMMARY"
-
-# Coverage snapshot (optional, for significant changes)
-bash scripts/coverage_report.sh <label> build_acov
-```
-
-Commit rules: `--no-gpg-sign`, message to file, `rm` after commit.
-After committing: update `ncurses.md` summary table with `✅ <hash>` in
-the Status column and add `✅ Fixed by <hash>` to the issue heading.
-
-
-
-## Build environment for ncurses fix cycle
-
-`build_acov` — ASAN + coverage + tests combined build directory.
-Configure: `meson setup build_acov -Denable-tests=true -Db_coverage=true -Db_sanitize=address`
-Build:     `ninja -C build_acov`
-Test:      `ninja -C build_acov test`  (52/52 pass)
-Runtime coverage: `ASAN_OPTIONS=detect_leaks=0 sudo -E build_acov/powertop --once --time=2`
-Leak check:       `ASAN_OPTIONS=detect_leaks=1 sudo -E build_acov/powertop --once --time=2`
-Coverage snapshot: `bash scripts/coverage_report.sh <label> build_acov`
-
 ## Coverage baseline (build_acov, test suite + one --once run)
 
 lines: **69.7%** (6331/9078)  functions: **75.4%** (741/983)
 Snapshot saved to: `/tmp/pt_baseline_src.info` and `/tmp/pt_baseline_html/`
-
-Notable ncurses files in baseline:
-- `display.cpp`   — 0% (no unit tests; only covered by --once run)
-- `waketab.cpp`   — 42.3%
-- `tuning/tuning.cpp` — 47.0%
 
 # Valgrind memory leak policy
 
@@ -369,38 +327,6 @@ should then pass.
 
 When adding a new tunable, place it in the correct block in alphabetical order.
 
-# Intel Xe GPU support
-
-Xe is Intel's successor to the i915 GPU driver (Meteor Lake and later).
-The two drivers are mutually exclusive on any given system and have completely
-different kernel interfaces — Xe support is implemented as parallel new files
-(not a subclass of i915gpu):
-
-- `src/devices/xe-gpu.{h,cpp}` — device tab component
-  - Detects Xe via `tracefs_event_file_exists("xe","xe_sched_job_exec","format")`
-  - Registers `xe-gpu-operations` learned parameter
-  - Finds hwmon by scanning `/sys/class/drm/card*/device/hwmon/hwmon*/name` for "xe"
-  - Uses `energy1_input` (µJ) for direct power if present; falls back to learned parameter
-  - This system (Xe integrated): only `power1_crit` (TDP cap) exposed, no `energy1_input`
-
-- `src/cpu/xe_gpu.cpp` — CPU-tab GT idle state component (`xe_core` class)
-  - Reads `tile*/gt*/gtidle/idle_residency_ms` for every GT on every tile
-  - Shows GT-C0 (active) and GT-C6 (idle) residency columns
-  - Handles multi-tile discrete Xe GPUs automatically
-
-- `src/process/do_process.cpp` — handles `xe_sched_job_exec` tracepoint
-  - Identical attribution logic to i915 (including X.org waker re-attribution)
-  - Registers `xe_sched_job_exec` event alongside i915 events (harmless if absent)
-
-## This system's Xe GPU sysfs layout (card0)
-- hwmon: `/sys/class/hwmon/hwmon0/` (name: "xe")
-  - `power1_crit`: 380000000 µW (TDP limit); no `power1_input` or `energy1_input`
-  - `temp2_input/label`: pkg temperature; `temp3_input/label`: vram temperature
-  - `fan1_input`, `fan2_input`, `fan3_input`: fan RPMs
-- GT idle: `/sys/class/drm/card0/device/tile0/gt{0,1}/gtidle/idle_residency_ms`
-  - `idle_status`: "gt-c0" (active) or "gt-c6" (idle)
-- Key tracepoint: `xe_sched_job_exec` (equivalent to i915's `i915_gem_ring_dispatch`)
-
 ## GPU tab design pattern (data vs. display separation)
 
 Measurement data lives in data classes, not in the display layer.
@@ -415,78 +341,6 @@ measurement cycle. Display code must skip negative values ("no data yet").
 
 `gt_labels` are populated once at construction time from `find_xe_gt_idle_paths()`, which
 now fills both the paths vector and the labels vector in a single pass (parallel by design).
-
-## GPU tab sections (src/gpu-tab.cpp)
-
-Section call order in `expose()`:
-1. `show_power_section()` — scans `xegpu::power_channels`; bar+TDP marker if energy counter present, text-only TDP cap line otherwise
-2. `show_frequency_section()` — per-GT bars using hw range, policy markers, 500 MHz labels
-3. `show_idle_section()` — reads `get_xe_core()->per_gt_busy_pct`, 25% labels, no markers
-4. `show_fan_section()` — global max-seen scale (floor 1000 RPM), 500 RPM labels, no markers
-
-`draw_progress_bar()` parameters: `(win, label, value, scale_min, scale_max, marker_lo,
-marker_hi, value_str, label_interval, bar_width)`. Pass `NAN` to suppress either marker.
-
-## Test coverage for Xe GPU code (as of coverage run after adding tests)
-
-- `src/devices/xe-gpu.cpp`:  71% → 93%  (test_xe_gpu_device.cpp + 4 fixtures)
-- `src/cpu/xe_gpu.cpp`:      85% → 97%  (test_xe_core.cpp + 2 fixtures)
-- `src/gpu-tab.cpp`:         44% → 44%  (ncurses rendering; not tested)
-
-Key xe_core linker gotchas:
-- Must link `frequency.cpp` alongside `abstract_cpu.cpp` (abstract_cpu instantiates frequency objects)
-- Must link `test_stubs.cpp` (parameters.cpp needs `global_power` and `save_all_results`)
-- Define `std::vector<class device *> all_devices;` in the test file (abstract_cpu.cpp references it but xe_core never touches the code paths that use it)
-
-Static cache gotcha — `find_xe_card_path()`:
-- Uses `static const std::string cached = [...]()` — result is cached forever in the process
-- Called from `gpu-tab.cpp` only, NOT from `xe_core` constructor
-- If testing gpu-tab, `find_xe_card_path()` must be the FIRST list_directory call in the process
-
-## GPU report section (report_gpu_stats() in gpu-tab.cpp)
-
-Called from `one_measurement()` in `main.cpp`, unconditionally (report maker
-is a no-op when REPORT_OFF). Returns early if no xegpu device and no xe card path.
-
-Four tables in one div ("gpuinfo"):
-- **Power**: xegpu::power_channels → 3 cols (Channel | Current (W) | TDP cap (W)); "N/A" when not available
-- **Frequency**: sysfs reads via find_xe_card_path() → 6 cols (GT | Current | Policy min | Policy max | HW min | HW max)
-- **Idle/Busy**: xe_core::per_gt_busy_pct → 2 cols (GT | Busy (%)); skips GTs with pct < 0
-- **Fan Speeds**: xe_fan_device::utilization() → 2 cols (Fan | Speed (RPM))
-
-Use `__()` (not `_()`) for report strings — `__()` passes unlocalized in CSV mode.
-
-
-# access() records (A records) in .ptrecord fixtures
-
-`device::register_sysfs_path(path)` probes `path + "/device"` repeatedly
-(up to 10 times) via `pt_access(test_path, R_OK)` to walk the sysfs device
-link chain. This was added after many fixtures were written, so any fixture
-for a class derived from `device` needs A records.
-
-**Standard two-record pattern** (used by rfkill, runtime_pm, usb, backlight,
-thinkpad, ahci, and any other `device` subclass):
-
-```
-A {sysfs_path}/device 4 0      ← first probe succeeds (device dir exists)
-A {sysfs_path}/device/device 4 -1  ← second probe fails (no deeper chain)
-```
-
-These should be the **first** records in the fixture (before R/L/D records),
-matching the constructor call order: `register_sysfs_path` runs before any
-sysfs reads.
-
-Add with:
-```bash
-python3 scripts/test_tools/trace_tool.py add FILE A "{sysfs_path}/device" 4 0
-python3 scripts/test_tools/trace_tool.py add FILE A "{sysfs_path}/device/device" 4 -1
-```
-
-mode=4 means R_OK. result=0 means accessible; result=-1 means not accessible.
-
-**If `register_sysfs_path` is NOT called** (classes that don't call it or
-call it with a path that has no `/device` entry), use a single A record with
-result=-1 so the loop terminates immediately.
 
 # test_framework debug mode
 
