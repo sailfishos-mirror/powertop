@@ -30,6 +30,7 @@
 #include "tunable.h"
 
 class sysfs_tunable : public tunable {
+protected:
 	std::string sysfs_path;
 	std::string target_value;
 	std::string bad_value;
@@ -44,6 +45,25 @@ public:
 
 };
 
+/*
+ * Numeric variant of sysfs_tunable.  Reads the sysfs file as a double and
+ * compares with >= (higher_is_better=true, the default) or <= so that a
+ * value that already exceeds the target is still reported as Good.
+ */
+class numeric_sysfs_tunable : public sysfs_tunable {
+	double target_double;
+	bool   higher_is_better;
+public:
+	numeric_sysfs_tunable(const std::string &str, const std::string &sysfs_path,
+	                      double target, bool higher_is_better = true);
+
+	int good_bad(void) override;
+
+	void collect_json_fields(std::string &_js) override;
+};
+
 extern void add_sysfs_tunable(const std::string &str, const std::string &_sysfs_path, const std::string &_target_content);
+extern void add_numeric_sysfs_tunable(const std::string &str, const std::string &_sysfs_path,
+                                      double target, bool higher_is_better = true);
 extern void add_sata_tunables(void);
 

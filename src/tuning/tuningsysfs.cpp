@@ -156,6 +156,69 @@ void add_sysfs_tunable(const std::string &str, const std::string &_sysfs_path, c
 	all_tunables.push_back(std::make_unique<sysfs_tunable>(str, _sysfs_path, _target_content));
 }
 
+numeric_sysfs_tunable::numeric_sysfs_tunable(const std::string &str, const std::string &path,
+                                             double target, bool hib)
+	: sysfs_tunable(str, path, std::format("{}", target)),
+	  target_double(target), higher_is_better(hib)
+{
+}
+
+int numeric_sysfs_tunable::good_bad(void)
+{
+	const std::vector<std::string> files = get_matching_files(sysfs_path);
+	if (files.empty())
+		return TUNE_BAD;
+
+	bool all_good = true;
+	for (const auto& file : files) {
+		const std::string content = read_sysfs_string(file);
+		double current = 0.0;
+		try { current = std::stod(content); } catch (...) { return TUNE_BAD; }
+
+		const bool good = higher_is_better ? (current >= target_double)
+		                                   : (current <= target_double);
+		if (!good) {
+			bad_value = content;
+			all_good = false;
+		}
+	}
+
+	if (all_good)
+		return TUNE_GOOD;
+
+	if (sysfs_path.find('*') != std::string::npos) {
+		toggle_bad = std::format("for i in {}; do echo '{}' > $i; done;", sysfs_path, bad_value);
+	} else {
+		toggle_bad = std::format("echo '{}' > '{}';", bad_value, sysfs_path);
+	}
+
+	return TUNE_BAD;
+}
+
+void numeric_sysfs_tunable::collect_json_fields(std::string &_js)
+{
+	sysfs_tunable::collect_json_fields(_js);
+	JSON_FIELD(target_double);
+	JSON_FIELD(higher_is_better);
+}
+
+void add_numeric_sysfs_tunable(const std::string &str, const std::string &_sysfs_path,
+                               double target, bool higher_is_better)
+{
+	const std::vector<std::string> files = get_matching_files(_sysfs_path);
+	bool any_accessible = false;
+	for (const auto& file : files) {
+		if (access(file.c_str(), R_OK) == 0) {
+			any_accessible = true;
+			break;
+		}
+	}
+	if (!any_accessible)
+		return;
+	all_tunables.push_back(
+		std::make_unique<numeric_sysfs_tunable>(str, _sysfs_path, target, higher_is_better));
+}
+
 static void add_sata_callback(const std::string &d_name)
 {
 	std::string filename;

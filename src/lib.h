@@ -154,6 +154,28 @@ inline std::string pt_json_kv(const std::string &k, unsigned long long v)
 inline std::string pt_json_kv(const std::string &k, double v)
 { return "\"" + k + "\":" + std::format("{:.6g}", v); }
 
+/* Overloads for plain-value vectors — allows JSON_FIELD(my_str_vec) etc. */
+inline std::string pt_json_kv(const std::string &k, const std::vector<std::string> &v)
+{
+	std::string out = "\"" + k + "\":[";
+	for (size_t i = 0; i < v.size(); ++i) {
+		out += "\"" + v[i] + "\"";
+		if (i + 1 < v.size()) out += ",";
+	}
+	return out + "]";
+}
+
+template<typename T>
+inline std::string pt_json_kv(const std::string &k, const std::vector<T> &v)
+{
+	std::string out = "\"" + k + "\":[";
+	for (size_t i = 0; i < v.size(); ++i) {
+		out += std::to_string(v[i]);
+		if (i + 1 < v.size()) out += ",";
+	}
+	return out + "]";
+}
+
 /*
  * pt_json_array — serializes a vector of pointers or smart pointers whose
  * pointees have a serialize() const method. Returns a JSON array string "[...]".

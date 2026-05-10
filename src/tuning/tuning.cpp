@@ -69,7 +69,7 @@ static void init_tuning(void)
 	add_wifi_tunables();
 	add_i2c_tunables();
 
-	add_sysfs_tunable(_("VM dirty ratio"), "/proc/sys/vm/dirty_ratio", "50");
+	add_numeric_sysfs_tunable(_("VM dirty ratio"), "/proc/sys/vm/dirty_ratio", 50);
 	add_sysfs_tunable(_("Tuning for scan sleep millisecs"), "/sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs", "30000");
 	add_sysfs_tunable(_("Tuning for cursor blink"), "/sys/devices/virtual/graphics/fbcon/cursor_blink", "0");
 	add_sysfs_tunable(_("Tuning for sleep millisecs"), "/sys/kernel/mm/ksm/sleep_millisecs", "4000");

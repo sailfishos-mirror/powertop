@@ -195,4 +195,7 @@ void xe_core::collect_json_fields(std::string &_js)
 	JSON_KV("before_usec", (long)before.tv_usec);
 	JSON_KV("after_sec",   (long)after.tv_sec);
 	JSON_KV("after_usec",  (long)after.tv_usec);
+	JSON_FIELD(gt_idle_paths);
+	JSON_FIELD(idle_before);
+	JSON_FIELD(idle_after);
 }

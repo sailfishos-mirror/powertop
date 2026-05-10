@@ -107,6 +107,8 @@ public:
 	void collect_json_fields(std::string &_js) override
 	{
 		device::collect_json_fields(_js);
+		JSON_FIELD(fan_path);
+		JSON_FIELD(fan_label);
 		JSON_FIELD(current_rpm);
 	}
 };
@@ -211,6 +213,10 @@ void xegpu::collect_json_fields(std::string &_js)
 	device::collect_json_fields(_js);
 	JSON_FIELD(index);
 	JSON_FIELD(rindex);
+	JSON_FIELD(hwmon_energy_path);
+	JSON_FIELD(last_energy);
+	JSON_KV("last_time_sec",  (long)last_time.tv_sec);
+	JSON_KV("last_time_usec", (long)last_time.tv_usec);
 	JSON_FIELD(consumed_power);
 }
 

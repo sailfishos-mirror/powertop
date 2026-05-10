@@ -645,3 +645,28 @@ test_network_exe = executable(
 )
 
 test('base_ network', test_network_exe)
+
+test_numeric_sysfs_tunable_exe = executable(
+  'powertop-test-numeric-sysfs-tunable',
+  [
+    '../../src/lib.cpp',
+    '../../src/test_framework.cpp',
+    '../../src/tuning/tunable.cpp',
+    '../../src/tuning/tuningsysfs.cpp',
+    'test_numeric_sysfs_tunable.cpp',
+  ],
+  include_directories: [
+    include_directories('../..'),
+    include_directories('../../src'),
+    include_directories('..'),
+  ],
+  cpp_args: [
+    '-DENABLE_TEST_FRAMEWORK',
+    '-DHAVE_NO_PCI',
+    '-DTEST_DATA_DIR="' + meson.current_source_dir() / 'data' + '"',
+  ],
+  dependencies: [ncursesw_dep],
+)
+
+test('base_ numeric_sysfs_tunable', test_numeric_sysfs_tunable_exe)
+
