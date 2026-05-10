@@ -635,6 +635,33 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 			consumer->gpu_ops++;
 		}
 	}
+	else if (event_name == "xe_sched_job_exec") {
+		/*
+		 * xe equivalent of i915_gem_ring_dispatch: a GPU job was
+		 * submitted to the GuC scheduler.  We attribute it to the
+		 * current process the same way we do for i915.
+		 */
+		class power_consumer *consumer = nullptr;
+		int flags;
+
+		ret = tep_get_common_field_val(nullptr, event, "common_flags", &rec, &val, 0);
+		if (ret < 0)
+			return;
+		flags = (int)val;
+
+		consumer = current_consumer(cpu);
+		if ((flags & TRACE_FLAG_HARDIRQ) || (flags & TRACE_FLAG_SOFTIRQ))
+			consumer = nullptr;
+
+		if (consumer && consumer->name() == "process") {
+			class process *proc = (class process *) consumer;
+			if (comm_is_xorg(proc->comm) && proc->last_waker)
+				consumer = proc->last_waker;
+		}
+
+		if (consumer)
+			consumer->gpu_ops++;
+	}
 	else if (event_name == "writeback_inode_dirty") {
 		class power_consumer *consumer = nullptr;
 		int dev;
@@ -682,6 +709,7 @@ void start_process_measurement(void)
 		perf_events->add_event("workqueue","workqueue_execute_end");
 		perf_events->add_event("i915","i915_gem_ring_dispatch");
 		perf_events->add_event("i915","i915_gem_request_submit");
+		perf_events->add_event("xe","xe_sched_job_exec");
 		perf_events->add_event("writeback","writeback_inode_dirty");
 	}
 
@@ -1210,7 +1238,8 @@ void end_process_data(void)
 {
 	report_utilization("cpu-consumption", total_cpu_time());
 	report_utilization("cpu-wakeups", total_wakeups());
-	report_utilization("gpu-operations", total_gpu_ops());
+	report_utilization("gpu-operations",    total_gpu_ops());
+	report_utilization("xe-gpu-operations", total_gpu_ops());
 	report_utilization("disk-operations", total_disk_hits());
 	report_utilization("disk-operations-hard", total_hard_disk_hits());
 	report_utilization("xwakes", total_xwakes());

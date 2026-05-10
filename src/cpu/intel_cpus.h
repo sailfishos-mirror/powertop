@@ -184,3 +184,38 @@ int is_intel_pstate_driver_loaded();
 
 std::string find_intel_rc6_card_path();
 
+/*
+ * xe_core: CPU-tab component showing GT-C0/GT-C6 residency for Intel Xe GPUs.
+ * Reads idle_residency_ms from each tile/gt via sysfs.
+ */
+class xe_core: public cpu_core
+{
+private:
+	std::vector<std::string> gt_idle_paths;
+	std::vector<uint64_t>    idle_before;
+	std::vector<uint64_t>    idle_after;
+
+	struct timeval before = {};
+	struct timeval after  = {};
+
+public:
+	xe_core();
+
+	virtual void measurement_start(void) override;
+	virtual void measurement_end(void) override;
+	virtual int  can_collapse(void) override { return 0; }
+
+	virtual std::string fill_cstate_line(int line_nr,
+				const std::string &separator) override;
+	virtual std::string fill_pstate_line(int line_nr) override;
+	virtual std::string fill_pstate_name(int line_nr) override;
+	virtual int  has_pstate_level([[maybe_unused]] int level) const override
+			{ return 0; }
+	virtual int  has_pstates(void) const override { return 0; }
+	virtual void wiggle(void) override { }
+	void collect_json_fields(std::string &_js) override;
+};
+
+std::string find_xe_card_path();
+
+

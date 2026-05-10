@@ -35,6 +35,7 @@
 #include "alsa.h"
 #include "rfkill.h"
 #include "i915-gpu.h"
+#include "xe-gpu.h"
 #include "thinkpad-fan.h"
 #include "thinkpad-light.h"
 #include "network.h"
@@ -273,6 +274,7 @@ void create_all_devices(void)
 	create_all_alsa();
 	create_all_rfkills();
 	create_i915_gpu();
+	create_xe_gpu();
 	create_thinkpad_fan();
 	create_thinkpad_light();
 	create_all_nics();

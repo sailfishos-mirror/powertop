@@ -232,6 +232,28 @@ static void handle_i965_gpu(void)
 	}
 }
 
+static class abstract_cpu * new_xe_gpu(void)
+{
+	class abstract_cpu *ret = new xe_core;
+	ret->childcount = 0;
+	ret->set_type("GPU");
+	return ret;
+}
+
+static void handle_xe_gpu(void)
+{
+	class abstract_cpu *package = system_level.children[0].get();
+
+	const unsigned int core_number = package->children.size();
+	if (package->children.size() <= core_number)
+		package->children.resize(core_number + 1);
+
+	if (!package->children[core_number]) {
+		package->children[core_number] =
+			std::unique_ptr<abstract_cpu>(new_xe_gpu());
+		package->childcount++;
+	}
+}
 
 void enumerate_cpus(void)
 {
@@ -312,6 +334,9 @@ void enumerate_cpus(void)
 
 	if (!find_intel_rc6_card_path().empty())
 		handle_i965_gpu();
+
+	if (!find_xe_card_path().empty())
+		handle_xe_gpu();
 
 	perf_events = new perf_power_bundle();
 
