@@ -72,6 +72,85 @@ static std::string find_xe_hwmon_energy_path(void)
 	return {};
 }
 
+/*
+ * xe_fan_device: shows a single GPU fan's RPM in the device stats tab.
+ *
+ * The xe hwmon exposes fan1_input .. fanN_input (in RPM).  We create one
+ * device instance per fan slot that exists in sysfs.
+ */
+class xe_fan_device : public device {
+	std::string fan_path;
+	std::string fan_label;
+	double      current_rpm = 0.0;
+
+public:
+	xe_fan_device(const std::string &path, const std::string &label)
+		: device(), fan_path(path), fan_label(label) {}
+
+	virtual void start_measurement(void) override {}
+	virtual void end_measurement(void) override
+	{
+		current_rpm = static_cast<double>(
+			read_sysfs_uint64(fan_path, nullptr));
+	}
+
+	virtual double      utilization(void) const override { return current_rpm; }
+	virtual std::string class_name(void) const override  { return "GPU"; }
+	virtual std::string device_name(void) const override { return fan_label; }
+	virtual std::string human_name(void) override        { return fan_label; }
+	virtual double      power_usage([[maybe_unused]] struct result_bundle *r,
+				        [[maybe_unused]] struct parameter_bundle *b) override
+			{ return 0.0; }
+	virtual bool        show_in_list(void) const override { return true; }
+	virtual std::string util_units(void) const override   { return _(" RPM"); }
+
+	void collect_json_fields(std::string &_js) override
+	{
+		device::collect_json_fields(_js);
+		JSON_FIELD(current_rpm);
+	}
+};
+
+/*
+ * Scan the xe hwmon for fan*_input files and register one xe_fan_device per
+ * fan slot found.  Slots reporting 0 RPM are still registered (the fan may
+ * simply be stopped or at low load).
+ */
+static void create_xe_fans(void)
+{
+	for (const auto &entry : list_directory("/sys/class/drm")) {
+		if (!entry.starts_with("card"))
+			continue;
+		if (entry.find('-') != std::string::npos)
+			continue;
+
+		const std::string hwmon_base =
+			std::format("/sys/class/drm/{}/device/hwmon", entry);
+
+		for (const auto &hwmon : list_directory(hwmon_base)) {
+			const std::string name_path =
+				std::format("{}/{}/name", hwmon_base, hwmon);
+			if (read_file_content(name_path) != "xe\n")
+				continue;
+
+			const std::string hwmon_path =
+				std::format("{}/{}", hwmon_base, hwmon);
+
+			for (int n = 1; ; ++n) {
+				const std::string fan_path =
+					std::format("{}/fan{}_input",
+						    hwmon_path, n);
+				if (access(fan_path.c_str(), R_OK) != 0)
+					break;
+				const std::string label =
+					std::format(_("Xe GPU Fan {}"), n);
+				all_devices.push_back(
+					new xe_fan_device(fan_path, label));
+			}
+		}
+	}
+}
+
 xegpu::xegpu(const std::string &energy_path)
 	: device(), hwmon_energy_path(energy_path)
 {
@@ -146,4 +225,6 @@ void create_xe_gpu(void)
 	const std::string energy_path = find_xe_hwmon_energy_path();
 	auto *gpu = new xegpu(energy_path);
 	all_devices.push_back(gpu);
+
+	create_xe_fans();
 }
