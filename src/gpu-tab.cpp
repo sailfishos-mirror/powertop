@@ -186,8 +186,7 @@ static void show_frequency_section(WINDOW *win)
 			const std::string freq =
 				std::format("{}/{}/freq0", tile_path, gt);
 
-			const double hw_min =
-				(double)read_sysfs(freq + "/rpn_freq");
+
 			const double hw_max =
 				(double)read_sysfs(freq + "/rp0_freq");
 			if (hw_max <= 0.0)
@@ -208,7 +207,7 @@ static void show_frequency_section(WINDOW *win)
 				std::min(COLS - 4, 180);
 
 			draw_progress_bar(win, label, cur,
-					  hw_min, hw_max,
+					  0.0, hw_max,
 					  pol_min, pol_max,
 					  value_str, 500.0, bar_width);
 		}
