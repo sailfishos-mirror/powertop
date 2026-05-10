@@ -5,6 +5,14 @@ power management. In addition to being a diagnostic tool, PowerTOP also has an
 interactive mode you can use to experiment with various power management
 settings, for cases where the Linux distribution has not enabled those settings.
 
+## Recent releases
+
+| Version   | Highlights |
+|-----------|------------|
+| v2.16-rc2 | Vertical scrollbar, terminal resize support, `--once` / `--auto-tune-dump` options, Meson build, C++20 |
+| v2.15     | Previous stable release |
+
+Full release notes: [`doc/relnotes.md`](doc/relnotes.md)
 
 # Build dependencies
 

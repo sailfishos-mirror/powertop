@@ -24,20 +24,21 @@ checks below to ensure a smooth experience for our users.
 ## Build checks (all must compile with zero errors and zero warnings)
 
 Each build must be a **clean build** (`meson setup --wipe`), not incremental.
+All builds except standard should include `-Denable-tests=true`.
 
-- [ ] Meson standard build
-- [ ] Meson release build
-- [ ] Meson debug build
-- [ ] Meson ASAN build
-- [ ] Meson gcov build
+- [ ] Meson standard build: `meson setup --wipe -Denable-tests=true build`
+- [ ] Meson release build: `meson setup --wipe --buildtype=release -Denable-tests=true build_release`
+- [ ] Meson debug build: `meson setup --wipe --buildtype=debug -Denable-tests=true build_debug`
+- [ ] Meson ASAN build: `meson setup --wipe -Denable-tests=true -Db_coverage=true -Db_sanitize=address build_acov`
+- [ ] Meson gcov build: `meson setup --wipe -Denable-tests=true -Db_coverage=true build_cov`
 
 ## Tests (all five build types, all must pass with no failures)
 
 - [ ] Standard build: full test suite
-- [ ] Release build: full test suite
-- [ ] Debug build: full test suite
-- [ ] ASAN (Address Sanitizer) build: full test suite
-- [ ] gcov build: full test suite
+- [ ] Release build: full test suite (`ninja -C build_release test`)
+- [ ] Debug build: full test suite (`ninja -C build_debug test`)
+- [ ] ASAN (Address Sanitizer) build: full test suite (`ninja -C build_acov test`)
+- [ ] gcov build: full test suite (`ninja -C build_cov test`)
 
 ## Memory leak check
 
