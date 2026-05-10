@@ -92,7 +92,7 @@ static void wakeup_usb_callback(const std::string &d_name)
 	std::string filename;
 
 	filename = std::format("/sys/bus/usb/devices/{}/power/wakeup", d_name);
-	if (access(filename.c_str(), R_OK) != 0)
+	if (pt_access(filename, R_OK) != 0)
 		return;
 
 	filename = std::format("/sys/bus/usb/devices/{}/power/wakeup", d_name);

@@ -538,6 +538,7 @@ test('base_ nhm_cpu', test_nhm_cpu_exe)
 test_learn_parameters_exe = executable(
   'powertop-test-learn-parameters',
   [
+    '../../src/lib.cpp',
     '../../src/test_framework.cpp',
     '../../src/parameters/parameters.cpp',
     '../../src/parameters/learn.cpp',
@@ -560,6 +561,8 @@ test('base_ learn_parameters', test_learn_parameters_exe)
 test_parameters_exe = executable(
   'powertop-test-parameters',
   [
+    '../../src/lib.cpp',
+    '../../src/test_framework.cpp',
     '../../src/parameters/parameters.cpp',
     'test_parameters.cpp',
   ],

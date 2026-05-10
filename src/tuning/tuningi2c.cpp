@@ -84,7 +84,7 @@ static void add_i2c_callback(const std::string &d_name)
 	bool is_adapter = false;
 
 	filename = std::format("/sys/bus/i2c/devices/{}/new_device", d_name);
-	if (access(filename.c_str(), W_OK) == 0)
+	if (pt_access(filename, W_OK) == 0)
 		is_adapter = true;
 
 	filename = std::format("/sys/bus/i2c/devices/{}", d_name);

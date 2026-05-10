@@ -119,7 +119,7 @@ void add_runtime_tunables(const std::string &bus)
 
 		filename = std::format("/sys/bus/{}/devices/{}/power/control", bus, dev);
 
-		if (access(filename.c_str(), R_OK) != 0)
+		if (pt_access(filename, R_OK) != 0)
 			continue;
 
 
@@ -136,7 +136,7 @@ void add_runtime_tunables(const std::string &bus)
 			port = std::format("ata{}", i);
 			filename = std::format("/sys/bus/{}/devices/{}/{}/power/control", bus, dev, port);
 
-			if (access(filename.c_str(), R_OK) != 0)
+			if (pt_access(filename, R_OK) != 0)
 				continue;
 
 			filename = std::format("/sys/bus/{}/devices/{}/{}", bus, dev, port);
@@ -155,7 +155,7 @@ void add_runtime_tunables(const std::string &bus)
 
 			filename = std::format("/sys/block/sd{}/device/power/control", blk);
 
-			if (access(filename.c_str(), R_OK) != 0)
+			if (pt_access(filename, R_OK) != 0)
 				continue;
 
 			port = std::format("sd{}", blk);

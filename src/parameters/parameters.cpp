@@ -448,9 +448,9 @@ std::string get_param_directory(const std::string &filename)
 {
 	std::string tempfilename;
 
-	if (access("/var/cache/powertop", W_OK ) == 0)
+	if (pt_access("/var/cache/powertop", W_OK ) == 0)
 		tempfilename = std::format("/var/cache/powertop/{}", filename);
-	if (access("/data/local/powertop", W_OK ) == 0)
+	if (pt_access("/data/local/powertop", W_OK ) == 0)
 		tempfilename = std::format("/data/local/powertop/{}", filename);
 
 	return tempfilename;

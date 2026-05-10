@@ -1,3 +1,5 @@
+A /sys/class/scsi_host/host0/device 4 0
+A /sys/class/scsi_host/host0/device/device 4 -1
 D /sys/class/scsi_host/host0/device dGFyZ2V0MDowOjA=
 D /sys/class/scsi_host/host0/device/target0:0:0 MDowOjA6MA==
 R /sys/class/scsi_host/host0/device/target0:0:0/0:0:0:0/model U0FNU1VORyBTU0Q=

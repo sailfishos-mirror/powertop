@@ -42,7 +42,7 @@ void device::register_sysfs_path(const std::string &path)
 
 	while (iter++ < 10) {
 		std::string test_path = current_path + "/device";
-		if (access(test_path.c_str(), R_OK) == 0)
+		if (pt_access(test_path, R_OK) == 0)
 			current_path = test_path;
 		else
 			break;

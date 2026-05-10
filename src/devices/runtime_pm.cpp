@@ -133,7 +133,7 @@ static void do_bus(const std::string &bus)
 			std::string devnode;
 			bool is_adapter = false;
 
-			if (access(std::format("/sys/bus/{}/devices/{}/new_device", bus, devname).c_str(), W_OK) == 0)
+			if (pt_access(std::format("/sys/bus/{}/devices/{}/new_device", bus, devname), W_OK) == 0)
 				is_adapter = true;
 
 			devnode = read_sysfs_string(std::format("/sys/bus/{}/devices/{}/name", bus, devname));

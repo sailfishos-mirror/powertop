@@ -1,3 +1,5 @@
+A /sys/class/scsi_host/host99/device 4 0
+A /sys/class/scsi_host/host99/device/device 4 -1
 R /sys/class/scsi_host/host99/ahci_alpm_active MTAw
 R /sys/class/scsi_host/host99/ahci_alpm_partial NTA=
 R /sys/class/scsi_host/host99/ahci_alpm_slumber MjAw

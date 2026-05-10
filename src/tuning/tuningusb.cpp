@@ -96,11 +96,11 @@ static void add_usb_callback(const std::string &d_name)
 	std::string filename;
 
 	filename = std::format("/sys/bus/usb/devices/{}/power/control", d_name);
-	if (access(filename.c_str(), R_OK) != 0)
+	if (pt_access(filename, R_OK) != 0)
 		return;
 
 	filename = std::format("/sys/bus/usb/devices/{}/power/active_duration", d_name);
-	if (access(filename.c_str(), R_OK)!=0)
+	if (pt_access(filename, R_OK)!=0)
 		return;
 
 	/* every interface of this device should support autosuspend */
@@ -112,7 +112,7 @@ static void add_usb_callback(const std::string &d_name)
 			if (!isdigit(entry[0]))
 				continue;
 			std::string ctrl = std::format("/sys/bus/usb/devices/{}/{}/supports_autosuspend", d_name, entry);
-			if (access(ctrl.c_str(), R_OK) == 0 && read_sysfs(ctrl) == 0) {
+			if (pt_access(ctrl, R_OK) == 0 && read_sysfs(ctrl) == 0) {
 				has_non_autosuspend = true;
 				break;
 			}

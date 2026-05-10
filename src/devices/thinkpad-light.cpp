@@ -77,7 +77,7 @@ void create_thinkpad_light(void)
 
 	filename = "/sys/devices/platform/thinkpad_acpi/leds/tpacpi::thinklight/brightness";
 
-	if (access(filename.c_str(), R_OK) !=0)
+	if (pt_access(filename, R_OK) !=0)
 		return;
 
 	register_parameter("thinkpad-light", 10);

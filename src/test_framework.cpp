@@ -13,6 +13,7 @@
 #include <sstream>
 #include <algorithm>
 #include <format>
+#include <cstdlib>
 #include "test_framework.h"
 
 test_framework_manager& test_framework_manager::get() {
@@ -21,7 +22,14 @@ test_framework_manager& test_framework_manager::get() {
 }
 
 #ifdef ENABLE_TEST_FRAMEWORK
-test_framework_manager::test_framework_manager() : recording(false), replaying(false) {}
+static bool pttest_debug_env()
+{
+	const char *v = std::getenv("PTTEST_DEBUG");
+	return v && v[0] == '1';
+}
+
+test_framework_manager::test_framework_manager()
+    : recording(false), replaying(false), debug_mode(pttest_debug_env()) {}
 
 test_framework_manager::~test_framework_manager() {
 	if (recording) {
@@ -57,8 +65,16 @@ std::string test_framework_manager::replay_read(const std::string& path) {
 	}
 	std::string content = read_sequences[path].front();
 	read_sequences[path].pop_front();
-	if (content == "__POWERTOP_FILE_NOT_FOUND__")
+	if (content == "__POWERTOP_FILE_NOT_FOUND__") {
+		if (debug_mode)
+			std::cerr << "[pttest] read: " << path << " -> NOT_FOUND\n";
 		return "";
+	}
+	if (debug_mode) {
+		std::string preview = content.substr(0, 60);
+		if (content.size() > 60) preview += "...";
+		std::cerr << "[pttest] read: " << path << " -> \"" << preview << "\"\n";
+	}
 	return content;
 }
 
@@ -71,6 +87,8 @@ void test_framework_manager::record_write(const std::string& path, const std::st
 void test_framework_manager::replay_write(const std::string& path, const std::string& content) {
 	if (!replaying) return;
 	write_log.push_back({path, content});
+	if (debug_mode)
+		std::cerr << "[pttest] write: " << path << " = \"" << content << "\"\n";
 	if (write_sequences.count(path) == 0) {
 		/* No W records provided for this path — captured in write_log for
 		   test-side assertion; no validation error since this is opt-in. */
@@ -107,6 +125,8 @@ int test_framework_manager::replay_msr(int cpu, uint64_t offset, uint64_t *value
 	}
 	*value = msr_sequences[key].front();
 	msr_sequences[key].pop_front();
+	if (debug_mode)
+		std::cerr << std::format("[pttest] msr: cpu={} offset=0x{:x} -> 0x{:x}\n", cpu, offset, *value);
 	return 0;
 }
 
@@ -122,6 +142,8 @@ std::string test_framework_manager::replay_readlink(const std::string& path) {
 	}
 	std::string target = link_sequences[path].front();
 	link_sequences[path].pop_front();
+	if (debug_mode)
+		std::cerr << "[pttest] readlink: " << path << " -> \"" << target << "\"\n";
 	return target;
 }
 
@@ -147,14 +169,25 @@ std::vector<std::string> test_framework_manager::replay_dir(const std::string& p
 	}
 	std::string content = dir_sequences[path].front();
 	dir_sequences[path].pop_front();
-	if (content.empty())
+	if (content.empty()) {
+		if (debug_mode)
+			std::cerr << "[pttest] dir: " << path << " -> []\n";
 		return {};
+	}
 	std::vector<std::string> result;
 	std::istringstream ss(content);
 	std::string line;
 	while (std::getline(ss, line)) {
 		if (!line.empty())
 			result.push_back(line);
+	}
+	if (debug_mode) {
+		std::cerr << "[pttest] dir: " << path << " -> [";
+		for (size_t i = 0; i < result.size(); ++i) {
+			if (i > 0) std::cerr << ", ";
+			std::cerr << result[i];
+		}
+		std::cerr << "]\n";
 	}
 	return result;
 }
@@ -164,6 +197,37 @@ void test_framework_manager::record_time(struct timeval tv) {
 	recorded_times.push_back(tv);
 }
 
+void test_framework_manager::record_access(const std::string& path, int mode, int result) {
+	if (!recording) return;
+	recorded_accesses.emplace_back(path, mode, result);
+}
+
+static std::string access_mode_str(int mode) {
+	if (mode == 0) return "F_OK";
+	std::string s;
+	if (mode & 4) s += "R_OK|";
+	if (mode & 2) s += "W_OK|";
+	if (mode & 1) s += "X_OK|";
+	if (!s.empty()) s.pop_back();
+	return s;
+}
+
+int test_framework_manager::replay_access(const std::string& path, int mode) {
+	if (!replaying) return -1;
+	auto key = std::make_pair(path, mode);
+	if (access_sequences[key].empty()) {
+		throw test_exception("TEST FAIL: No recorded access() for: " + path
+			+ " (mode=" + access_mode_str(mode) + "/" + std::to_string(mode) + ")");
+	}
+	int result = access_sequences[key].front();
+	access_sequences[key].pop_front();
+	if (debug_mode)
+		std::cerr << "[pttest] access: " << path
+		          << " mode=" << access_mode_str(mode)
+		          << " -> " << (result == 0 ? "ok" : "fail") << "\n";
+	return result;
+}
+
 void test_framework_manager::replay_time(struct timeval *tv) {
 	if (!replaying) return;
 	if (time_sequences.empty()) {
@@ -171,6 +235,8 @@ void test_framework_manager::replay_time(struct timeval *tv) {
 	}
 	*tv = time_sequences.front();
 	time_sequences.pop_front();
+	if (debug_mode)
+		std::cerr << std::format("[pttest] time: {}.{:06}\n", tv->tv_sec, tv->tv_usec);
 }
 
 void test_framework_manager::reset() {
@@ -190,6 +256,8 @@ void test_framework_manager::reset() {
 	recorded_links.clear();
 	dir_sequences.clear();
 	recorded_dirs.clear();
+	access_sequences.clear();
+	recorded_accesses.clear();
 	write_log.clear();
 }
 
@@ -223,6 +291,11 @@ void test_framework_manager::save() {
 	 * empty base64 means directory not found or empty */
 	for (const auto& p : recorded_dirs) {
 		file << "D " << p.first << " " << base64_encode(p.second) << std::endl;
+	}
+	/* A path mode result — access() interception; result is 0 or -1 */
+	for (const auto& a : recorded_accesses) {
+		file << "A " << std::get<0>(a) << " " << std::get<1>(a)
+		     << " " << std::get<2>(a) << std::endl;
 	}
 }
 
@@ -280,6 +353,19 @@ void test_framework_manager::load() {
 			std::string path = (last_space != std::string::npos) ? rest.substr(0, last_space) : rest;
 			std::string b64_content = (last_space != std::string::npos) ? rest.substr(last_space + 1) : "";
 			dir_sequences[path].push_back(base64_decode(b64_content));
+			continue;
+		}
+
+		if (type == 'A') {
+			/* format: path mode result — e.g. "/sys/foo 4 0" */
+			size_t last_space = rest.rfind(' ');
+			if (last_space == std::string::npos) continue;
+			size_t prev_space = rest.rfind(' ', last_space - 1);
+			if (prev_space == std::string::npos) continue;
+			std::string path = rest.substr(0, prev_space);
+			int mode   = std::stoi(rest.substr(prev_space + 1, last_space - prev_space - 1));
+			int result = std::stoi(rest.substr(last_space + 1));
+			access_sequences[{path, mode}].push_back(result);
 			continue;
 		}
 

@@ -79,7 +79,7 @@ xegpu::xegpu()
 	for (int n = 1; n <= 32; ++n) {
 		const std::string label_path =
 			std::format("{}/power{}_label", hwmon_dir, n);
-		if (access(label_path.c_str(), R_OK) != 0)
+		if (pt_access(label_path, R_OK) != 0)
 			break;
 
 		xe_power_channel ch;
@@ -90,7 +90,7 @@ xegpu::xegpu()
 
 		const std::string crit_path =
 			std::format("{}/power{}_crit", hwmon_dir, n);
-		if (access(crit_path.c_str(), R_OK) == 0) {
+		if (pt_access(crit_path, R_OK) == 0) {
 			const uint64_t crit_uw =
 				read_sysfs_uint64(crit_path, nullptr);
 			ch.tdp_cap_watts = (double)crit_uw / 1e6;
@@ -99,7 +99,7 @@ xegpu::xegpu()
 		channel_track track;
 		const std::string energy_path =
 			std::format("{}/energy{}_input", hwmon_dir, n);
-		if (access(energy_path.c_str(), R_OK) == 0) {
+		if (pt_access(energy_path, R_OK) == 0) {
 			track.energy_path = energy_path;
 			track.last_energy =
 				(double)read_sysfs_uint64(energy_path, nullptr);
@@ -229,7 +229,7 @@ static void create_xe_fans(void)
 				const std::string fan_path =
 					std::format("{}/fan{}_input",
 						    hwmon_path, n);
-				if (access(fan_path.c_str(), R_OK) != 0)
+				if (pt_access(fan_path, R_OK) != 0)
 					break;
 				const std::string label =
 					std::format(_("Xe GPU Fan {}"), n);

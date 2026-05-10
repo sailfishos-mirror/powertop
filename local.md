@@ -440,3 +440,41 @@ Four tables in one div ("gpuinfo"):
 Use `__()` (not `_()`) for report strings — `__()` passes unlocalized in CSV mode.
 
 
+# access() records (A records) in .ptrecord fixtures
+
+`device::register_sysfs_path(path)` probes `path + "/device"` repeatedly
+(up to 10 times) via `pt_access(test_path, R_OK)` to walk the sysfs device
+link chain. This was added after many fixtures were written, so any fixture
+for a class derived from `device` needs A records.
+
+**Standard two-record pattern** (used by rfkill, runtime_pm, usb, backlight,
+thinkpad, ahci, and any other `device` subclass):
+
+```
+A {sysfs_path}/device 4 0      ← first probe succeeds (device dir exists)
+A {sysfs_path}/device/device 4 -1  ← second probe fails (no deeper chain)
+```
+
+These should be the **first** records in the fixture (before R/L/D records),
+matching the constructor call order: `register_sysfs_path` runs before any
+sysfs reads.
+
+Add with:
+```bash
+python3 scripts/test_tools/trace_tool.py add FILE A "{sysfs_path}/device" "4 0"
+python3 scripts/test_tools/trace_tool.py add FILE A "{sysfs_path}/device/device" "4 -1"
+```
+
+mode=4 means R_OK. result=0 means accessible; result=-1 means not accessible.
+
+**If `register_sysfs_path` is NOT called** (classes that don't call it or
+call it with a path that has no `/device` entry), use a single A record with
+result=-1 so the loop terminates immediately.
+
+# test_framework debug mode
+
+Set `PTTEST_DEBUG=1` in the environment before running a test binary to print
+every intercepted call to stderr with `[pttest]` prefix (path, type, result).
+No recompile required — detected via env var in the constructor.
+Use this to diagnose which records are missing from a fixture.
+

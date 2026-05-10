@@ -37,6 +37,18 @@ def parse_line(line, line_num):
         return tag, rest, None
     if tag == 'T':
         return tag, rest, None
+    if tag == 'A':
+        # Format: A path mode result — e.g. "/sys/foo 4 0"
+        # Last two tokens are mode (int) and result (int); path may contain spaces
+        last_space = rest.rfind(' ')
+        if last_space == -1:
+            return tag, rest, None
+        prev_space = rest.rfind(' ', 0, last_space)
+        if prev_space == -1:
+            return tag, rest, None
+        path = rest[:prev_space]
+        b64 = rest[prev_space+1:last_space] + ' ' + rest[last_space+1:]  # "mode result"
+        return tag, path, b64
     if tag == 'L':
         # Format: L b64(target) path
         # b64 comes FIRST (may be empty = failed readlink: "L  path")
@@ -69,12 +81,25 @@ def get_tag_str(tag):
     if tag == 'T': return "Time"
     if tag == 'L': return "Link"
     if tag == 'D': return "Dir"
+    if tag == 'A': return "Access"
     return "????"
 
 def decode_content(tag, b64):
     """Return human-readable content for display, or None if not applicable."""
     if tag == 'N' or b64 is None:
         return None
+    if tag == 'A':
+        # b64 holds "mode result" (already decoded)
+        parts = b64.split()
+        if len(parts) == 2:
+            mode_names = {4: 'R_OK', 2: 'W_OK', 1: 'X_OK', 6: 'R_OK|W_OK', 7: 'R_OK|W_OK|X_OK'}
+            try:
+                mode_int = int(parts[0])
+                result = '0 (ok)' if parts[1] == '0' else '-1 (fail)'
+                return f"mode={mode_names.get(mode_int, parts[0])} result={result}"
+            except ValueError:
+                return b64
+        return b64
     if tag == 'M':
         # b64 is actually the raw "cpu offset value" string (stored in path slot)
         parts = b64.split()
@@ -302,7 +327,7 @@ def cmd_validate(args):
             errors += 1
             continue
         tag, path, b64 = parsed
-        if tag not in ['R', 'W', 'N', 'M', 'T', 'L', 'D']:
+        if tag not in ['R', 'W', 'N', 'M', 'T', 'L', 'D', 'A']:
             print(f"Line {i}: Invalid tag '{tag}'")
             errors += 1
         if tag == 'M':
@@ -340,6 +365,22 @@ def cmd_validate(args):
             if not path:
                 print(f"Line {i}: Link record missing path")
                 errors += 1
+        if tag == 'A':
+            # b64 field holds "mode result"
+            if b64:
+                parts = b64.split()
+                if len(parts) != 2:
+                    print(f"Line {i}: Invalid A record (expected 'mode result')")
+                    errors += 1
+                else:
+                    try:
+                        int(parts[0])
+                        if parts[1] not in ('0', '-1'):
+                            print(f"Line {i}: A record result must be 0 or -1")
+                            errors += 1
+                    except ValueError:
+                        print(f"Line {i}: A record mode must be an integer")
+                        errors += 1
         if tag in ['R', 'W', 'D'] and b64:
             try:
                 base64.b64decode(b64)
@@ -400,6 +441,21 @@ def cmd_add(args):
             print("Error: M record: cpu must be decimal, offset and value must be hex.")
             sys.exit(1)
         record = f"M {cpu} {offset} {hex_value}\n"
+    elif record_type == 'A':
+        # path = file path, value = "mode result" e.g. "4 0" or "4 -1"
+        parts = value.split()
+        if len(parts) != 2:
+            print("Error: A record value must be 'mode result' (e.g. '4 0' for R_OK success).")
+            sys.exit(1)
+        try:
+            int(parts[0])
+            if parts[1] not in ('0', '-1'):
+                print("Error: A record result must be 0 (accessible) or -1 (not accessible).")
+                sys.exit(1)
+        except ValueError:
+            print("Error: A record mode must be an integer.")
+            sys.exit(1)
+        record = f"A {path} {parts[0]} {parts[1]}\n"
     elif record_type == 'D':
         # value is space-separated entry names (empty = not-found/empty directory)
         entries = sorted(value.split()) if value else []
@@ -469,8 +525,8 @@ def main():
     p = subparsers.add_parser("add",
         help="Append a record to a trace file (creates file if needed)")
     p.add_argument("trace_file")
-    p.add_argument("record_type", metavar="type", choices=["R", "W", "N", "L", "T", "D", "M"],
-                   help="Record type: R=read, W=write, N=miss, L=symlink, D=directory listing, M=MSR read")
+    p.add_argument("record_type", metavar="type", choices=["R", "W", "N", "L", "T", "D", "M", "A"],
+                   help="Record type: R=read, W=write, N=miss, L=symlink, D=directory listing, M=MSR read, A=access check")
     p.add_argument("path", help="Sysfs/proc path (for L: the symlink path; for D: the directory path; for M: 'cpu hex_offset' e.g. '0 611')")
     p.add_argument("value", nargs="?", default="",
                    help="Content string (for L: symlink target; for D: space-separated entry names; for M: hex MSR value e.g. 'deadbeef'; omit for broken link, N, empty/missing dir, or MSR value 0)")

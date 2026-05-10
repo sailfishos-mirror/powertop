@@ -88,6 +88,7 @@ extern std::string read_sysfs_string(const std::string &filename);
 extern std::string read_file_content(const std::string &filename);
 extern std::string pt_readlink(const std::string &path);
 extern struct timeval pt_gettime(void);
+extern int pt_access(const std::string &path, int mode);
 
 extern std::string format_watts(double W, unsigned int len);
 

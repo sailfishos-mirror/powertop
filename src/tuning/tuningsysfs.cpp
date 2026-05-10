@@ -146,7 +146,7 @@ void add_sysfs_tunable(const std::string &str, const std::string &_sysfs_path, c
 	const std::vector<std::string> files = get_matching_files(_sysfs_path);
 	bool any_accessible = false;
 	for (const auto& file : files) {
-		if (access(file.c_str(), R_OK) == 0) {
+		if (pt_access(file, R_OK) == 0) {
 			any_accessible = true;
 			break;
 		}
@@ -208,7 +208,7 @@ void add_numeric_sysfs_tunable(const std::string &str, const std::string &_sysfs
 	const std::vector<std::string> files = get_matching_files(_sysfs_path);
 	bool any_accessible = false;
 	for (const auto& file : files) {
-		if (access(file.c_str(), R_OK) == 0) {
+		if (pt_access(file, R_OK) == 0) {
 			any_accessible = true;
 			break;
 		}
@@ -223,7 +223,7 @@ static void add_sata_callback(const std::string &d_name)
 {
 	std::string filename;
 	filename = std::format("/sys/class/scsi_host/{}/link_power_management_policy", d_name);
-	if (access(filename.c_str(), R_OK) != 0)
+	if (pt_access(filename, R_OK) != 0)
 		return;
 
 	add_sysfs_tunable(pt_format(_("Enable SATA link power management for {}"), d_name), filename, "med_power_with_dipm");

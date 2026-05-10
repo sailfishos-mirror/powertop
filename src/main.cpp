@@ -407,7 +407,7 @@ static void powertop_init(int auto_tune)
 		statfs("/sys/kernel/debug", &st_fs);
 
 		if (st_fs.f_type != (long) DEBUGFS_MAGIC) {
-			if (access("/bin/mount", X_OK) == 0) {
+			if (pt_access("/bin/mount", X_OK) == 0) {
 				ret = system("/bin/mount -t debugfs debugfs /sys/kernel/debug > /dev/null 2>&1");
 			} else {
 				ret = system("mount -t debugfs debugfs /sys/kernel/debug > /dev/null 2>&1");
@@ -426,7 +426,7 @@ static void powertop_init(int auto_tune)
 
 	srand(time(nullptr));
 
-	if (access("/var/cache/", W_OK) == 0)
+	if (pt_access("/var/cache/", W_OK) == 0)
 		mkdir("/var/cache/powertop", 0600);
 	else
 		mkdir("/data/local/powertop", 0600);

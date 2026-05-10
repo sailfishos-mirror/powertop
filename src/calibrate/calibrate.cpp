@@ -81,7 +81,7 @@ static void find_all_usb_callback(const std::string &d_name)
 	std::string filename;
 
 	filename = std::format("/sys/bus/usb/devices/{}/power/active_duration", d_name);
-	if (access(filename.c_str(), R_OK) != 0)
+	if (pt_access(filename, R_OK) != 0)
 		return;
 
 	std::string vendor_id = read_file_content(std::format("/sys/bus/usb/devices/{}/idVendor", d_name));
@@ -110,7 +110,7 @@ static void suspend_all_usb_devices(void)
 static void find_all_rfkill_callback(const std::string &d_name)
 {
 	const std::string filename = std::format("/sys/class/rfkill/{}/soft", d_name);
-	if (access(filename.c_str(), R_OK) != 0)
+	if (pt_access(filename, R_OK) != 0)
 		return;
 	save_sysfs(filename);
 	rfkill_devices.push_back(filename);
@@ -136,7 +136,7 @@ static void find_backlight_callback(const std::string &d_name)
 {
 	std::string filename;
 	filename = std::format("/sys/class/backlight/{}/brightness", d_name);
-	if (access(filename.c_str(), R_OK) != 0)
+	if (pt_access(filename, R_OK) != 0)
 		return;
 
 	save_sysfs(filename);
@@ -159,7 +159,7 @@ static void lower_backlight(void)
 static void find_scsi_link_callback(const std::string &d_name)
 {
 	const std::string filename = std::format("/sys/class/scsi_host/{}/link_power_management_policy", d_name);
-	if (access(filename.c_str(), R_OK)!=0)
+	if (pt_access(filename, R_OK)!=0)
 		return;
 
 	save_sysfs(filename);

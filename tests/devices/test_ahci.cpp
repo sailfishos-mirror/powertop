@@ -38,28 +38,17 @@ static void test_ahci_start_end_measurement()
 
 static void test_ahci_utilization_zero_when_no_change()
 {
+	/* All counters are zero-initialised; without any measurement, total = 0
+	 * so utilization() returns 0.0. The fixture only needs the constructor
+	 * access/dir calls — no R records needed. */
 	test_framework_manager::get().reset();
+	test_framework_manager::get().set_replay(DATA_DIR + "/ahci_host1_zero.ptrecord");
 
-	/* Provide identical start and end values — all deltas = 0 */
-	auto &tf = test_framework_manager::get();
-	tf.set_replay(DATA_DIR + "/ahci_host99.ptrecord");
-
-	ahci dev("host99", "/sys/class/scsi_host/host99");
-
-	/* Manually override: re-load same fixture but trick by using same
-	 * values for start and end via a second fixture */
-	tf.reset();
-
-	/* Create zero-delta scenario directly: after construction the
-	 * counters are all 0, so start_measurement on zeros + end on zeros
-	 * should yield utilization = 0. */
-	ahci dev2("host1", "/sys/class/scsi_host/host1");
-	/* start_measurement — both read 0 (empty content → stoi fails → 0) */
+	ahci dev("host1", "/sys/class/scsi_host/host1");
 
 	test_framework_manager::get().reset();
 
-	/* With all counters at 0, total = 0.001, active/partial deltas = 0 */
-	double util = dev2.utilization();
+	double util = dev.utilization();
 	PT_ASSERT_TRUE(util >= 0.0 && util < 1.0);
 }
 

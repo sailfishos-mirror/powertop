@@ -144,7 +144,7 @@ static void create_all_usb_devices_callback(const std::string &d_name)
 	class usbdevice *usb;
 	std::string vendorid, devid;
 
-	if (access(std::format("/sys/bus/usb/devices/{}/power/active_duration", d_name).c_str(), R_OK) != 0)
+	if (pt_access(std::format("/sys/bus/usb/devices/{}/power/active_duration", d_name), R_OK) != 0)
 		return;
 
 	vendorid = read_sysfs_string(std::format("/sys/bus/usb/devices/{}/idVendor", d_name));

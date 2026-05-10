@@ -57,12 +57,20 @@ public:
 	void record_dir_fail(const std::string& path);
 	std::vector<std::string> replay_dir(const std::string& path);
 
+	void record_access(const std::string& path, int mode, int result);
+	int  replay_access(const std::string& path, int mode);
+
+	void set_debug(bool enable) { debug_mode = enable; }
+	bool is_debug() const { return debug_mode; }
+
 	void save();
 	void load();
 	void reset();
 #else
 	void set_record(const std::string&) {}
 	void set_replay(const std::string&) {}
+	void set_debug(bool) {}
+	bool is_debug() const { return false; }
 	void reset() {}
 
 	bool is_recording() const { return false; }
@@ -93,6 +101,9 @@ public:
 	void record_dir_fail(const std::string&) {}
 	std::vector<std::string> replay_dir(const std::string&) { return {}; }
 
+	void record_access(const std::string&, int, int) {}
+	int  replay_access(const std::string&, int) { return -1; }
+
 	void save() {}
 	void load() {}
 #endif
@@ -104,6 +115,7 @@ private:
 #ifdef ENABLE_TEST_FRAMEWORK
 	bool recording = false;
 	bool replaying = false;
+	bool debug_mode = false;
 	std::string record_filename;
 	std::string replay_filename;
 
@@ -125,6 +137,10 @@ private:
 
 	std::map<std::string, std::deque<std::string>> dir_sequences;
 	std::vector<std::pair<std::string, std::string>> recorded_dirs;
+
+	/* key: "path\0mode" to distinguish same path with different modes */
+	std::map<std::pair<std::string, int>, std::deque<int>> access_sequences;
+	std::vector<std::tuple<std::string, int, int>> recorded_accesses;
 
 	std::string base64_encode(const std::string& in);
 	std::string base64_decode(const std::string& in);

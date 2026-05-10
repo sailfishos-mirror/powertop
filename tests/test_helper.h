@@ -38,8 +38,14 @@ static int pt_fail_count = 0;
 #define PT_RUN_TEST(fn) do { \
 	std::cout << "  " #fn " ... "; \
 	std::cout.flush(); \
-	fn(); \
-	std::cout << "ok\n"; \
+	try { \
+		fn(); \
+		std::cout << "ok\n"; \
+	} catch (const std::exception& _e) { \
+		std::cout << "FAILED\n"; \
+		std::cerr << "  EXCEPTION in " #fn ": " << _e.what() << "\n"; \
+		pt_fail_count++; \
+	} \
 } while (0)
 
 static inline int pt_test_summary()

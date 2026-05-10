@@ -121,7 +121,7 @@ static std::string find_drm_card_with_rc6(void)
 		if (entry.find('-') != std::string::npos)
 			continue;
 		const std::string path = std::format("/sys/class/drm/{}", entry);
-		if (access(std::format("{}/power/rc6_residency_ms", path).c_str(), R_OK) == 0)
+		if (pt_access(std::format("{}/power/rc6_residency_ms", path), R_OK) == 0)
 			return path;
 	}
 	return {};

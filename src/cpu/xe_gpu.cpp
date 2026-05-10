@@ -67,7 +67,7 @@ static void find_xe_gt_idle_paths(std::vector<std::string> &paths,
 						    "idle_residency_ms",
 						    tile_path, gt);
 
-				if (access(idle_path.c_str(), R_OK) == 0) {
+				if (pt_access(idle_path, R_OK) == 0) {
 					paths.push_back(idle_path);
 					labels.push_back(
 						std::format("{} {}", tile, gt));

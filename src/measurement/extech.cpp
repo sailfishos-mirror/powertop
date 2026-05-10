@@ -81,7 +81,7 @@ static int open_device(const std::string &device_name)
 	if (!S_ISCHR(s.st_mode))
 		return -1;
 
-	ret = access(device_name.c_str(), R_OK | W_OK);
+	ret = pt_access(device_name, R_OK | W_OK);
 	if (ret)
 		return -1;
 
