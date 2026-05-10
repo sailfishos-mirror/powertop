@@ -32,6 +32,7 @@
 
 extern void init_display(void);
 extern void reset_display(void);
+extern void create_device_stats_tab(void);
 extern int ncurses_initialized(void);
 extern void show_tab(unsigned int tab);
 extern void show_next_tab(void);

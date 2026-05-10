@@ -64,6 +64,7 @@
 #include "wakeup/wakeup.h"
 
 #include "display.h"
+#include "gpu-tab.h"
 #include "devlist.h"
 #include "report/report.h"
 
@@ -598,6 +599,10 @@ int main(int argc, char **argv)
 		if (!auto_tune)
 			init_display();
 
+		if (!auto_tune) {
+			initialize_gpu_tab();
+			create_device_stats_tab();
+		}
 		initialize_devfreq();
 		initialize_tuning();
 		initialize_wakeup();

@@ -154,6 +154,8 @@ powertop_sources = [
   'src/devlist.h',
   'src/display.cpp',
   'src/display.h',
+  'src/gpu-tab.cpp',
+  'src/gpu-tab.h',
   'src/lib.cpp',
   'src/lib.h',
   'src/main.cpp',
