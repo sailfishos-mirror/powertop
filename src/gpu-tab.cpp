@@ -255,11 +255,17 @@ static void show_idle_section(WINDOW *win)
 		const double pct = xc->per_gt_busy_pct[i];
 		if (pct < 0.0)
 			continue; /* first measurement not yet complete */
-		const std::string value_str = std::format("{:.1f}%", pct);
-		draw_progress_bar(win, xc->gt_labels[i], pct,
-				  0.0, 100.0,
-				  NAN, NAN,
-				  value_str, 25.0, bar_width);
+
+		const std::string c0_label = xc->gt_labels[i] + " C0";
+		draw_progress_bar(win, c0_label, pct,
+				  0.0, 100.0, NAN, NAN,
+				  std::format("{:.1f}%", pct), 25.0, bar_width);
+
+		const double c6_pct = 100.0 - pct;
+		const std::string c6_label = xc->gt_labels[i] + " C6";
+		draw_progress_bar(win, c6_label, c6_pct,
+				  0.0, 100.0, NAN, NAN,
+				  std::format("{:.1f}%", c6_pct), 25.0, bar_width);
 	}
 }
 
@@ -452,19 +458,22 @@ void report_gpu_stats(void)
 
 				const int rows = valid + 1;
 				table_attributes tbl;
-				init_std_table_attr(&tbl, rows, 2);
+				init_std_table_attr(&tbl, rows, 3);
 
-				std::vector<std::string> data(rows * 2);
+				std::vector<std::string> data(rows * 3);
 				data[0] = __("GT");
-				data[1] = __("Busy (%)");
+				data[1] = __("C0 / Active (%)");
+				data[2] = __("C6 / Idle (%)");
 
-				int idx = 2;
+				int idx = 3;
 				for (size_t i = 0; i < xc->per_gt_busy_pct.size(); ++i) {
 					if (xc->per_gt_busy_pct[i] < 0.0)
 						continue;
 					data[idx++] = xc->gt_labels[i];
 					data[idx++] = std::format("{:.1f}",
 						xc->per_gt_busy_pct[i]);
+					data[idx++] = std::format("{:.1f}",
+						100.0 - xc->per_gt_busy_pct[i]);
 				}
 				report.add_table(data, &tbl);
 			}

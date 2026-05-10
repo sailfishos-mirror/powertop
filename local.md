@@ -426,7 +426,17 @@ Section call order in `expose()`:
 `draw_progress_bar()` parameters: `(win, label, value, scale_min, scale_max, marker_lo,
 marker_hi, value_str, label_interval, bar_width)`. Pass `NAN` to suppress either marker.
 
-Tab key vs. translation: internal key is `"GPU"` (3 chars); translated name is
-`"Intel Xe GPU"` or `"Intel GPU"` (12 chars). Tab position advance must use
-`tab_translations[tab_names[i]].length()` not `tab_names[i].length()`.
+## GPU report section (report_gpu_stats() in gpu-tab.cpp)
+
+Called from `one_measurement()` in `main.cpp`, unconditionally (report maker
+is a no-op when REPORT_OFF). Returns early if no xegpu device and no xe card path.
+
+Four tables in one div ("gpuinfo"):
+- **Power**: xegpu::power_channels → 3 cols (Channel | Current (W) | TDP cap (W)); "N/A" when not available
+- **Frequency**: sysfs reads via find_xe_card_path() → 6 cols (GT | Current | Policy min | Policy max | HW min | HW max)
+- **Idle/Busy**: xe_core::per_gt_busy_pct → 2 cols (GT | Busy (%)); skips GTs with pct < 0
+- **Fan Speeds**: xe_fan_device::utilization() → 2 cols (Fan | Speed (RPM))
+
+Use `__()` (not `_()`) for report strings — `__()` passes unlocalized in CSV mode.
+
 
