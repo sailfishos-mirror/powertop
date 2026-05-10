@@ -1,0 +1,3 @@
+D /sys/class/scsi_host/host1/device
+A /sys/class/scsi_host/host1/device 4 0
+A /sys/class/scsi_host/host1/device/device 4 -1
