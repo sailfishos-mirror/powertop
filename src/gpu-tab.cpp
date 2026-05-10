@@ -120,22 +120,24 @@ static void draw_progress_bar(WINDOW *win,
 		wprintw(win, "%s\n", scale_line.c_str());
 	}
 
-	/* Line 4: marker carets — only emitted when at least one is set. */
+	/* Line 4: range markers — only emitted when at least one is set.
+	 * '>' marks the low end (range opens rightward),
+	 * '<' marks the high end (range closes leftward). */
 	{
 		std::string marker_line(bar_width + 2, ' ');
 		bool any = false;
 
-		auto place = [&](double mv) {
+		auto place = [&](double mv, char ch) {
 			if (std::isnan(mv))
 				return;
 			const int pos = std::clamp(
 				(int)std::round((mv - scale_min) / range * bar_width),
 				0, bar_width - 1);
-			marker_line[pos + 2] = '^';
+			marker_line[pos + 2] = ch;
 			any = true;
 		};
-		place(marker_lo);
-		place(marker_hi);
+		place(marker_lo, '>');
+		place(marker_hi, '<');
 
 		if (any)
 			wprintw(win, "%s\n", marker_line.c_str());
