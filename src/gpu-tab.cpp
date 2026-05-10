@@ -200,6 +200,44 @@ static void show_frequency_section(WINDOW *win)
 
 /* ------------------------------------------------------------------ */
 
+static void show_fan_section(WINDOW *win)
+{
+	/* Global max RPM seen across all fans — shared scale, minimum 1000. */
+	static double max_rpm_seen = 1000.0;
+
+	std::vector<device *> fans;
+	for (auto *d : all_devices) {
+		if (d->class_name() == "GPU" &&
+		    d->util_units().find("RPM") != std::string::npos)
+			fans.push_back(d);
+	}
+
+	if (fans.empty())
+		return;
+
+	for (auto *d : fans) {
+		const double rpm = d->utilization();
+		if (rpm > max_rpm_seen)
+			max_rpm_seen = rpm;
+	}
+
+	wprintw(win, "%s\n\n", _("Fan Speeds"));
+
+	const int bar_width = std::min(COLS - 4, 180);
+
+	for (auto *d : fans) {
+		const std::string value_str =
+			std::format("{} RPM", (int)d->utilization());
+
+		draw_progress_bar(win, d->human_name(), d->utilization(),
+				  0.0, max_rpm_seen,
+				  NAN, NAN,
+				  value_str, 500.0, bar_width);
+	}
+}
+
+/* ------------------------------------------------------------------ */
+
 void gpu_tab_window::repaint(void)
 {
 	expose();
@@ -217,7 +255,7 @@ void gpu_tab_window::expose(void)
 	wprintw(w, "%s\n\n", _("Power Overview"));
 	show_frequency_section(w);
 	wprintw(w, "%s\n\n", _("Idle / Busy"));
-	wprintw(w, "%s\n\n", _("Fan Speeds"));
+	show_fan_section(w);
 }
 
 /* ------------------------------------------------------------------ */
