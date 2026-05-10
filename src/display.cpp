@@ -232,7 +232,7 @@ void show_tab(unsigned int tab)
 				wattron(tab_bar, A_REVERSE);
 			mvwprintw(tab_bar, 0, tab_pos, " %s ", tab_translations[tab_names[i]].c_str());
 
-			tab_pos += 3 + tab_names[i].length();
+			tab_pos += 3 + tab_translations[tab_names[i]].length();
 	}
 
 	wrefresh(tab_bar);
