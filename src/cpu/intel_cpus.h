@@ -199,6 +199,9 @@ private:
 	struct timeval after  = {};
 
 public:
+	std::vector<std::string> gt_labels;
+	std::vector<double>      per_gt_busy_pct;
+
 	xe_core();
 
 	virtual void measurement_start(void) override;
@@ -217,5 +220,4 @@ public:
 };
 
 std::string find_xe_card_path();
-
-
+xe_core   *get_xe_core(void);

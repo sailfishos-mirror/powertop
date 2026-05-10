@@ -356,3 +356,48 @@ First create a testcase for the issue when possible at all; this test case will 
 first (to show that the issue is real). After the issue is fixed, the test
 should then pass.
 
+# tuning.cpp source ordering convention
+
+`init_tuning()` is organized into three clearly separated blocks (source order only;
+`sort_tunables()` still handles runtime order):
+1. **Dynamic helpers** (device-enumerated): `add_bt_tunable`, `add_i2c_tunables`,
+   `add_runtime_tunables("pci")`, `add_sata_tunables`, `add_usb_tunables`, `add_wifi_tunables`
+   — sorted alphabetically by function name.
+2. **String/categorical `add_sysfs_tunable` calls** — sorted alphabetically by description.
+3. **`add_numeric_sysfs_tunable` calls** — sorted alphabetically by description.
+
+When adding a new tunable, place it in the correct block in alphabetical order.
+
+# Intel Xe GPU support
+
+Xe is Intel's successor to the i915 GPU driver (Meteor Lake and later).
+The two drivers are mutually exclusive on any given system and have completely
+different kernel interfaces — Xe support is implemented as parallel new files
+(not a subclass of i915gpu):
+
+- `src/devices/xe-gpu.{h,cpp}` — device tab component
+  - Detects Xe via `tracefs_event_file_exists("xe","xe_sched_job_exec","format")`
+  - Registers `xe-gpu-operations` learned parameter
+  - Finds hwmon by scanning `/sys/class/drm/card*/device/hwmon/hwmon*/name` for "xe"
+  - Uses `energy1_input` (µJ) for direct power if present; falls back to learned parameter
+  - This system (Xe integrated): only `power1_crit` (TDP cap) exposed, no `energy1_input`
+
+- `src/cpu/xe_gpu.cpp` — CPU-tab GT idle state component (`xe_core` class)
+  - Reads `tile*/gt*/gtidle/idle_residency_ms` for every GT on every tile
+  - Shows GT-C0 (active) and GT-C6 (idle) residency columns
+  - Handles multi-tile discrete Xe GPUs automatically
+
+- `src/process/do_process.cpp` — handles `xe_sched_job_exec` tracepoint
+  - Identical attribution logic to i915 (including X.org waker re-attribution)
+  - Registers `xe_sched_job_exec` event alongside i915 events (harmless if absent)
+
+## This system's Xe GPU sysfs layout (card0)
+- hwmon: `/sys/class/hwmon/hwmon0/` (name: "xe")
+  - `power1_crit`: 380000000 µW (TDP limit); no `power1_input` or `energy1_input`
+  - `temp2_input/label`: pkg temperature; `temp3_input/label`: vram temperature
+  - `fan1_input`, `fan2_input`, `fan3_input`: fan RPMs
+- GT idle: `/sys/class/drm/card0/device/tile0/gt{0,1}/gtidle/idle_residency_ms`
+  - `idle_status`: "gt-c0" (active) or "gt-c6" (idle)
+- Key tracepoint: `xe_sched_job_exec` (equivalent to i915's `i915_gem_ring_dispatch`)
+
+

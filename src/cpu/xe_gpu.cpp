@@ -35,10 +35,13 @@
  * every Xe DRM card present in the system.  Returns an empty vector if no
  * Xe card is found.
  */
-static std::vector<std::string> find_xe_gt_idle_paths(void)
+/*
+ * Collect the sysfs idle_residency_ms paths and human labels for every GT
+ * on every tile of every Xe DRM card present in the system.
+ */
+static void find_xe_gt_idle_paths(std::vector<std::string> &paths,
+				   std::vector<std::string> &labels)
 {
-	std::vector<std::string> paths;
-
 	for (const auto &card : list_directory("/sys/class/drm")) {
 		if (!card.starts_with("card"))
 			continue;
@@ -64,12 +67,14 @@ static std::vector<std::string> find_xe_gt_idle_paths(void)
 						    "idle_residency_ms",
 						    tile_path, gt);
 
-				if (access(idle_path.c_str(), R_OK) == 0)
+				if (access(idle_path.c_str(), R_OK) == 0) {
 					paths.push_back(idle_path);
+					labels.push_back(
+						std::format("{} {}", tile, gt));
+				}
 			}
 		}
 	}
-	return paths;
 }
 
 /*
@@ -98,11 +103,20 @@ std::string find_xe_card_path(void)
 	return cached;
 }
 
+static xe_core *g_xe_core = nullptr;
+
+xe_core *get_xe_core(void)
+{
+	return g_xe_core;
+}
+
 xe_core::xe_core()
 {
-	gt_idle_paths = find_xe_gt_idle_paths();
+	find_xe_gt_idle_paths(gt_idle_paths, gt_labels);
 	idle_before.assign(gt_idle_paths.size(), 0);
 	idle_after.assign(gt_idle_paths.size(), 0);
+	per_gt_busy_pct.assign(gt_idle_paths.size(), -1.0);
+	g_xe_core = this;
 }
 
 void xe_core::measurement_start(void)
@@ -124,6 +138,10 @@ void xe_core::measurement_end(void)
 {
 	after = pt_gettime();
 
+	const double time_delta =
+		1e6 * (after.tv_sec  - before.tv_sec)
+		    + (after.tv_usec - before.tv_usec);
+
 	uint64_t total_idle_before = 0;
 	uint64_t total_idle_after  = 0;
 	for (size_t i = 0; i < gt_idle_paths.size(); ++i) {
@@ -131,6 +149,16 @@ void xe_core::measurement_end(void)
 		idle_after[i] =
 			read_sysfs_uint64(gt_idle_paths[i], nullptr);
 		total_idle_after += idle_after[i];
+
+		if (time_delta >= 1.0) {
+			/* time_delta is in µs; idle delta is in ms */
+			const double ratio = 100.0 / (time_delta / 1000.0);
+			const double idle_delta = static_cast<double>(
+				idle_after[i] - idle_before[i]);
+			per_gt_busy_pct[i] =
+				std::max(0.0, std::min(100.0,
+					100.0 - ratio * idle_delta));
+		}
 	}
 
 	update_cstate("gpu c0",    "Powered On", 0, 0,               1, 0);

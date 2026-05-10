@@ -238,6 +238,30 @@ static void show_fan_section(WINDOW *win)
 
 /* ------------------------------------------------------------------ */
 
+static void show_idle_section(WINDOW *win)
+{
+	const xe_core *xc = get_xe_core();
+	if (!xc || xc->per_gt_busy_pct.empty())
+		return;
+
+	wprintw(win, "%s\n\n", _("Idle / Busy"));
+
+	const int bar_width = std::min(COLS - 4, 180);
+
+	for (size_t i = 0; i < xc->per_gt_busy_pct.size(); i++) {
+		const double pct = xc->per_gt_busy_pct[i];
+		if (pct < 0.0)
+			continue; /* first measurement not yet complete */
+		const std::string value_str = std::format("{:.1f}%", pct);
+		draw_progress_bar(win, xc->gt_labels[i], pct,
+				  0.0, 100.0,
+				  NAN, NAN,
+				  value_str, 25.0, bar_width);
+	}
+}
+
+/* ------------------------------------------------------------------ */
+
 void gpu_tab_window::repaint(void)
 {
 	expose();
@@ -254,7 +278,7 @@ void gpu_tab_window::expose(void)
 
 	wprintw(w, "%s\n\n", _("Power Overview"));
 	show_frequency_section(w);
-	wprintw(w, "%s\n\n", _("Idle / Busy"));
+	show_idle_section(w);
 	show_fan_section(w);
 }
 
