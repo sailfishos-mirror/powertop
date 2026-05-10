@@ -26,20 +26,38 @@
 
 #include <string>
 #include <sys/time.h>
+#include <vector>
 #include "device.h"
+
+/*
+ * One power domain exposed by the xe hwmon driver.
+ * `current_watts` is -1.0 when no energy counter is available (TDP cap only).
+ * `tdp_cap_watts` is -1.0 when no power*_crit file exists for this channel.
+ */
+struct xe_power_channel {
+	std::string label;
+	double      current_watts = -1.0;
+	double      tdp_cap_watts = -1.0;
+};
 
 class xegpu: public device {
 	int index = 0;
 	int rindex = 0;
 
-	/* Non-empty when the xe hwmon exposes an energy counter. */
-	std::string hwmon_energy_path;
-	double      last_energy    = 0.0;
-	struct timeval last_time   = {};
-	double      consumed_power = 0.0;
+	/* Per-channel tracking state (parallel to power_channels). */
+	struct channel_track {
+		std::string    energy_path;
+		double         last_energy = 0.0;
+		struct timeval last_time   = {};
+	};
+	std::vector<channel_track> channel_tracks;
+
+	double consumed_power = 0.0; /* package channel, for power_usage() */
 
 public:
-	xegpu(const std::string &energy_path);
+	std::vector<xe_power_channel> power_channels;
+
+	xegpu();
 
 	virtual void start_measurement(void) override;
 	virtual void end_measurement(void) override;
@@ -58,3 +76,4 @@ public:
 };
 
 extern void create_xe_gpu(void);
+

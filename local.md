@@ -400,4 +400,33 @@ different kernel interfaces — Xe support is implemented as parallel new files
   - `idle_status`: "gt-c0" (active) or "gt-c6" (idle)
 - Key tracepoint: `xe_sched_job_exec` (equivalent to i915's `i915_gem_ring_dispatch`)
 
+## GPU tab design pattern (data vs. display separation)
+
+Measurement data lives in data classes, not in the display layer.
+Follow this pattern:
+- Add public result vectors to `xe_core` (or other data class): `gt_labels`, `per_gt_busy_pct`
+- Compute in `measurement_end()` using the before/after timestamps already present
+- Expose a singleton accessor `get_xe_core()` backed by a static pointer set in the constructor
+- Display functions call the accessor and read from it — no static tracking, no sysfs re-reads
+
+`per_gt_busy_pct[i]` is initialized to `-1.0` and left negative until the first complete
+measurement cycle. Display code must skip negative values ("no data yet").
+
+`gt_labels` are populated once at construction time from `find_xe_gt_idle_paths()`, which
+now fills both the paths vector and the labels vector in a single pass (parallel by design).
+
+## GPU tab sections (src/gpu-tab.cpp)
+
+Section call order in `expose()`:
+1. Power Overview (placeholder text only)
+2. `show_frequency_section()` — per-GT bars using hw range, policy markers, 500 MHz labels
+3. `show_idle_section()` — reads `get_xe_core()->per_gt_busy_pct`, 25% labels, no markers
+4. `show_fan_section()` — global max-seen scale (floor 1000 RPM), 500 RPM labels, no markers
+
+`draw_progress_bar()` parameters: `(win, label, value, scale_min, scale_max, marker_lo,
+marker_hi, value_str, label_interval, bar_width)`. Pass `NAN` to suppress either marker.
+
+Tab key vs. translation: internal key is `"GPU"` (3 chars); translated name is
+`"Intel Xe GPU"` or `"Intel GPU"` (12 chars). Tab position advance must use
+`tab_translations[tab_names[i]].length()` not `tab_names[i].length()`.
 

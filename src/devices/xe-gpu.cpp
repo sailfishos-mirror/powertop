@@ -37,15 +37,13 @@ extern "C" {
 #include "../process/powerconsumer.h"
 
 /*
- * Find the hwmon energy counter for the Xe GPU, if present.
+ * Scan the xe hwmon directory for all power channels (power1..powerN).
+ * For each channel found, record its label, TDP cap (power*_crit), and
+ * energy path (energy*_input) if the kernel exposes one.
  *
- * The xe driver exposes a hwmon device named "xe" under the DRM card's PCI
- * device directory.  Some hardware additionally exposes energy1_input (in
- * micro-joules) which lets us compute actual GPU power directly; other
- * hardware only exposes power1_crit (the TDP ceiling).  Return the path to
- * energy1_input if readable, or an empty string otherwise.
+ * Returns the hwmon directory path, or empty if no "xe" hwmon is found.
  */
-static std::string find_xe_hwmon_energy_path(void)
+static std::string find_xe_hwmon_dir(void)
 {
 	for (const auto &entry : list_directory("/sys/class/drm")) {
 		if (!entry.starts_with("card"))
@@ -61,15 +59,104 @@ static std::string find_xe_hwmon_energy_path(void)
 				std::format("{}/{}/name", hwmon_base, hwmon);
 			if (read_file_content(name_path) != "xe\n")
 				continue;
-
-			const std::string energy_path =
-				std::format("{}/{}/energy1_input",
-					    hwmon_base, hwmon);
-			if (access(energy_path.c_str(), R_OK) == 0)
-				return energy_path;
+			return std::format("{}/{}", hwmon_base, hwmon);
 		}
 	}
 	return {};
+}
+
+xegpu::xegpu()
+	: device()
+{
+	index  = get_param_index("xe-gpu-operations");
+	rindex = get_result_index("xe-gpu-operations");
+
+	const std::string hwmon_dir = find_xe_hwmon_dir();
+	if (hwmon_dir.empty())
+		return;
+
+	/* Scan power1..power32 for any channel that has a label file. */
+	for (int n = 1; n <= 32; ++n) {
+		const std::string label_path =
+			std::format("{}/power{}_label", hwmon_dir, n);
+		if (access(label_path.c_str(), R_OK) != 0)
+			break;
+
+		xe_power_channel ch;
+		ch.label = read_file_content(label_path);
+		/* Strip trailing newline from sysfs string. */
+		if (!ch.label.empty() && ch.label.back() == '\n')
+			ch.label.pop_back();
+
+		const std::string crit_path =
+			std::format("{}/power{}_crit", hwmon_dir, n);
+		if (access(crit_path.c_str(), R_OK) == 0) {
+			const uint64_t crit_uw =
+				read_sysfs_uint64(crit_path, nullptr);
+			ch.tdp_cap_watts = (double)crit_uw / 1e6;
+		}
+
+		channel_track track;
+		const std::string energy_path =
+			std::format("{}/energy{}_input", hwmon_dir, n);
+		if (access(energy_path.c_str(), R_OK) == 0) {
+			track.energy_path = energy_path;
+			track.last_energy =
+				(double)read_sysfs_uint64(energy_path, nullptr);
+			track.last_time   = pt_gettime();
+		}
+
+		power_channels.push_back(ch);
+		channel_tracks.push_back(track);
+	}
+}
+
+void xegpu::start_measurement(void)
+{
+	for (size_t i = 0; i < channel_tracks.size(); ++i) {
+		auto &tr = channel_tracks[i];
+		if (tr.energy_path.empty())
+			continue;
+		tr.last_time   = pt_gettime();
+		tr.last_energy =
+			(double)read_sysfs_uint64(tr.energy_path, nullptr);
+	}
+}
+
+void xegpu::end_measurement(void)
+{
+	consumed_power = 0.0;
+
+	for (size_t i = 0; i < channel_tracks.size(); ++i) {
+		auto       &tr = channel_tracks[i];
+		auto       &ch = power_channels[i];
+
+		if (tr.energy_path.empty()) {
+			ch.current_watts = -1.0;
+			continue;
+		}
+
+		const struct timeval now = pt_gettime();
+		const double delta =
+			(now.tv_sec  - tr.last_time.tv_sec)
+			+ (now.tv_usec - tr.last_time.tv_usec) / 1e6;
+
+		if (delta < 1e-5) {
+			ch.current_watts = -1.0;
+			continue;
+		}
+
+		/* energy*_input is in micro-joules */
+		const double energy =
+			(double)read_sysfs_uint64(tr.energy_path, nullptr);
+		ch.current_watts = (energy - tr.last_energy) / 1e6 / delta;
+		tr.last_energy   = energy;
+		tr.last_time     = now;
+
+		/* First channel (package) drives power_usage(). */
+		if (i == 0)
+			consumed_power = ch.current_watts;
+	}
 }
 
 /*
@@ -153,45 +240,6 @@ static void create_xe_fans(void)
 	}
 }
 
-xegpu::xegpu(const std::string &energy_path)
-	: device(), hwmon_energy_path(energy_path)
-{
-	index  = get_param_index("xe-gpu-operations");
-	rindex = get_result_index("xe-gpu-operations");
-	if (!hwmon_energy_path.empty()) {
-		last_time = pt_gettime();
-		last_energy = read_sysfs_uint64(hwmon_energy_path, nullptr);
-	}
-}
-
-void xegpu::start_measurement(void)
-{
-	if (hwmon_energy_path.empty())
-		return;
-	last_time   = pt_gettime();
-	last_energy = read_sysfs_uint64(hwmon_energy_path, nullptr);
-}
-
-void xegpu::end_measurement(void)
-{
-	if (hwmon_energy_path.empty())
-		return;
-
-	const struct timeval now   = pt_gettime();
-	const double delta = (now.tv_sec  - last_time.tv_sec)
-			   + (now.tv_usec - last_time.tv_usec) / 1e6;
-
-	consumed_power = 0.0;
-	if (delta >= 1e-5) {
-		/* energy1_input is in micro-joules */
-		const double energy =
-			read_sysfs_uint64(hwmon_energy_path, nullptr);
-		consumed_power  = (energy - last_energy) / 1e6 / delta;
-		last_energy     = energy;
-		last_time       = now;
-	}
-}
-
 double xegpu::utilization(void) const
 {
 	return get_result_value(rindex);
@@ -200,7 +248,7 @@ double xegpu::utilization(void) const
 double xegpu::power_usage(struct result_bundle *result,
 			   struct parameter_bundle *bundle)
 {
-	if (!hwmon_energy_path.empty())
+	if (!channel_tracks.empty() && !channel_tracks[0].energy_path.empty())
 		return consumed_power;
 
 	const double factor = get_parameter_value(index, bundle);
@@ -213,11 +261,13 @@ void xegpu::collect_json_fields(std::string &_js)
 	device::collect_json_fields(_js);
 	JSON_FIELD(index);
 	JSON_FIELD(rindex);
-	JSON_FIELD(hwmon_energy_path);
-	JSON_FIELD(last_energy);
-	JSON_KV("last_time_sec",  (long)last_time.tv_sec);
-	JSON_KV("last_time_usec", (long)last_time.tv_usec);
 	JSON_FIELD(consumed_power);
+	for (size_t i = 0; i < power_channels.size(); ++i) {
+		const auto &ch = power_channels[i];
+		JSON_KV(std::format("channel{}_label", i),   ch.label);
+		JSON_KV(std::format("channel{}_watts", i),   ch.current_watts);
+		JSON_KV(std::format("channel{}_tdp", i),     ch.tdp_cap_watts);
+	}
 }
 
 void create_xe_gpu(void)
@@ -228,8 +278,7 @@ void create_xe_gpu(void)
 
 	register_parameter("xe-gpu-operations");
 
-	const std::string energy_path = find_xe_hwmon_energy_path();
-	auto *gpu = new xegpu(energy_path);
+	auto *gpu = new xegpu();
 	all_devices.push_back(gpu);
 
 	create_xe_fans();

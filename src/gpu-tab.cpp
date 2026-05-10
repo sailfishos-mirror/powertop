@@ -262,6 +262,48 @@ static void show_idle_section(WINDOW *win)
 
 /* ------------------------------------------------------------------ */
 
+static void show_power_section(WINDOW *win)
+{
+	xegpu *gpu = nullptr;
+	for (auto *d : all_devices) {
+		gpu = dynamic_cast<xegpu *>(d);
+		if (gpu)
+			break;
+	}
+	if (!gpu || gpu->power_channels.empty())
+		return;
+
+	wprintw(win, "%s\n\n", _("Power Overview"));
+
+	const int bar_width = std::min(COLS - 4, 180);
+
+	for (const auto &ch : gpu->power_channels) {
+		if (ch.current_watts >= 0.0) {
+			/* We have a live measurement — draw a bar. */
+			const double scale_max =
+				ch.tdp_cap_watts > 0.0 ? ch.tdp_cap_watts
+				                        : std::max(ch.current_watts * 1.5, 10.0);
+			const double marker =
+				ch.tdp_cap_watts > 0.0 ? ch.tdp_cap_watts : NAN;
+
+			const std::string value_str =
+				std::format("{:.1f} W", ch.current_watts);
+			draw_progress_bar(win, ch.label, ch.current_watts,
+					  0.0, scale_max,
+					  NAN, marker,
+					  value_str, 25.0, bar_width);
+		} else if (ch.tdp_cap_watts > 0.0) {
+			/* TDP cap only — no energy counter on this hardware. */
+			wprintw(win, "  %s  %s\n\n",
+				ch.label.c_str(),
+				std::format(_("TDP cap: {:.0f} W"),
+					    ch.tdp_cap_watts).c_str());
+		}
+	}
+}
+
+/* ------------------------------------------------------------------ */
+
 void gpu_tab_window::repaint(void)
 {
 	expose();
@@ -276,7 +318,7 @@ void gpu_tab_window::expose(void)
 	wclear(w);
 	wmove(w, 2, 0);
 
-	wprintw(w, "%s\n\n", _("Power Overview"));
+	show_power_section(w);
 	show_frequency_section(w);
 	show_idle_section(w);
 	show_fan_section(w);
