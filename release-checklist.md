@@ -104,14 +104,27 @@ display/hardware paths that tests cannot reach.
 
 ## Release notes
 
-Store in `doc/relnotes.md`. Use `git shortlog <prev-tag>..` to enumerate commits.
+Store in `doc/relnotes.md`. Use `git shortlog <prev-stable-tag>..` to enumerate commits,
+where `<prev-stable-tag>` is the **last stable release** (e.g., `v2.15`), not the previous RC.
+This ensures the notes are cumulative and cover all RC changes as well.
+For the v2.16 cycle the base was `v2.15`.
 
+**RC cadence**: the file has a single section for the whole release cycle. When moving from
+`-rc1` to `-rc2` (or `-rc3`, etc.) **update the heading and add new items in-place** — do not
+create a new section.  The final stable tag just renames the heading (e.g., `## v2.16-rc2` →
+`## v2.16`).
+
+- [ ] Update the version heading in `doc/relnotes.md` to match the new tag
+      (for RCs: add new changes to the existing sections; do not duplicate)
 - [ ] Update the "Recent releases" table near the top of `README.md`
       with the new version and a one-line summary
 - [ ] Summary of top user-visible enhancements and changes
       (new tunables, UI changes, other new features)
 - [ ] Summary of new command-line options
 - [ ] **Short** summary of internal changes (no more than 3 lines)
+- [ ] **Thank external contributors**: run `git shortlog -sn <prev-stable-tag>..` and add a
+      "Thanks" section listing anyone who is not the project maintainer (Arjan van de Ven).
+      Use `git log --format="%an <%ae>" <prev-stable-tag>.. | sort -u` to get full name+email.
 
 ## Tagging the release
 

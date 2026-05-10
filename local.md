@@ -215,6 +215,17 @@ their divisors.
 **Empty D record format:** `D path` (no trailing b64 token) = empty/missing directory.
 `test_framework.cpp` and `trace_tool.py` both handle this correctly.
 
+# Release checklist process
+
+See `release-checklist.md` for the full pre-release checklist. Key points:
+- All five build types must be **clean builds** (`meson setup --wipe`) with zero warnings (absolute, not just "no new warnings")
+- All five build types need `-Denable-tests=true` for full test suite
+- ASAN build: `build_acov` (-Denable-tests=true -Db_coverage=true -Db_sanitize=address)
+- gcov build: `build_cov` (-Denable-tests=true -Db_coverage=true)
+- Release notes go in `doc/relnotes.md`; README.md has a "Recent releases" table to update
+- Version is in `meson.build` `version:` field
+- Tagging requires explicit user confirmation after all checks pass
+
 # Coverage baseline (as of commit 8906999)
 
 Overall: 29.0% lines (2654/9140), 43.2% functions (418/967)

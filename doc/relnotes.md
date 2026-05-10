@@ -42,9 +42,17 @@
 - `--auto-tune-dump`: run auto-tune and dump results without
   interactive display
 
-### Internal changes (summary)
+### Thanks
 
-Extensive C++ modernisation: `std::string` / `std::format` replacing
-`char[]` buffers, `std::unique_ptr` for owning containers, `const`-
-correctness sweep across the entire codebase, and range-for loop
-modernisation. Build system migrated to Meson; C++20 standard adopted.
+We thank the following external contributors who submitted patches for this release:
+
+- Anthony Ruhier
+- George Burgess IV
+- Jaroslav Škarvada
+- Johannes Truschnigg
+- Pascal Nasahl
+- Renat Sabitov
+- rottenpants466
+- Simon Howard
+- Steven Rostedt
+- Zentaro Kavanagh
