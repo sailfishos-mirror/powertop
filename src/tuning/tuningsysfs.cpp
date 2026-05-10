@@ -71,8 +71,8 @@ static std::vector<std::string> get_matching_files(const std::string& path) {
 /*
  * Some kernel sysfs files use a "selected list" format:
  *   [current_value]  other  values
- * Extract the word inside the brackets, or return an empty string if the
- * format is not present.
+ * Extract the word inside the brackets when present; otherwise return the
+ * content unchanged so plain single-value files work without special-casing.
  */
 static std::string extract_bracket_selection(const std::string &content)
 {
@@ -80,7 +80,7 @@ static std::string extract_bracket_selection(const std::string &content)
 	const size_t close = content.find(']');
 	if (open != std::string::npos && close != std::string::npos && close > open)
 		return content.substr(open + 1, close - open - 1);
-	return {};
+	return content;
 }
 
 sysfs_tunable::sysfs_tunable(const std::string &str, const std::string &_sysfs_path, const std::string &target_content) : tunable(str, 1.0, _("Good"), _("Bad"), _("Unknown"))
@@ -103,11 +103,8 @@ int sysfs_tunable::good_bad(void)
 
 	bool all_good = true;
 	for (const auto& file : files) {
-		std::string content = read_sysfs_string(file);
 		/* Handle kernel "selected list" format: [current]  other  values */
-		const std::string selected = extract_bracket_selection(content);
-		if (!selected.empty())
-			content = selected;
+		const std::string content = extract_bracket_selection(read_sysfs_string(file));
 		if (content != target_value) {
 			bad_value = content;
 			all_good = false;
