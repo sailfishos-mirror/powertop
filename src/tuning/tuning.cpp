@@ -82,6 +82,7 @@ static void init_tuning(void)
 	add_sysfs_tunable(_("Intel energy performance preference"), "/sys/devices/system/cpu/cpufreq/policy*/energy_performance_preference", "balance_performance");
 	add_sysfs_tunable(_("Intel energy performance preference"), "/sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference", "balance_performance");
 	add_sysfs_tunable(_("CPU C1 demotion"), "/sys/devices/system/cpu/cpuidle/c1_demotion", "1");
+	add_sysfs_tunable(_("Intel Xe GPU power profile"), "/sys/class/drm/card*/device/tile*/gt*/freq0/power_profile", "power_saving");
 
 	sort_tunables();
 }

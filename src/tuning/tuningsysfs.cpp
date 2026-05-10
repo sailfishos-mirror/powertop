@@ -57,13 +57,30 @@ static std::vector<std::string> get_matching_files(const std::string& path) {
 	if (!std::filesystem::exists(base_dir, ec)) return files;
 
 	for (const auto& entry : std::filesystem::directory_iterator(base_dir, ec)) {
-		std::string filename = entry.path().filename().string();
+		const std::string filename = entry.path().filename().string();
 		if (filename.starts_with(match_prefix)) {
-			std::string full_path = entry.path().string() + suffix;
-			files.push_back(full_path);
+			/* Recursively expand any remaining wildcards in the suffix. */
+			const std::string candidate = entry.path().string() + suffix;
+			const auto expanded = get_matching_files(candidate);
+			files.insert(files.end(), expanded.begin(), expanded.end());
 		}
 	}
 	return files;
+}
+
+/*
+ * Some kernel sysfs files use a "selected list" format:
+ *   [current_value]  other  values
+ * Extract the word inside the brackets, or return an empty string if the
+ * format is not present.
+ */
+static std::string extract_bracket_selection(const std::string &content)
+{
+	const size_t open  = content.find('[');
+	const size_t close = content.find(']');
+	if (open != std::string::npos && close != std::string::npos && close > open)
+		return content.substr(open + 1, close - open - 1);
+	return {};
 }
 
 sysfs_tunable::sysfs_tunable(const std::string &str, const std::string &_sysfs_path, const std::string &target_content) : tunable(str, 1.0, _("Good"), _("Bad"), _("Unknown"))
@@ -87,6 +104,10 @@ int sysfs_tunable::good_bad(void)
 	bool all_good = true;
 	for (const auto& file : files) {
 		std::string content = read_sysfs_string(file);
+		/* Handle kernel "selected list" format: [current]  other  values */
+		const std::string selected = extract_bracket_selection(content);
+		if (!selected.empty())
+			content = selected;
 		if (content != target_value) {
 			bad_value = content;
 			all_good = false;
