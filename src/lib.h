@@ -81,13 +81,21 @@ extern std::string kernel_function(uint64_t address);
 
 extern std::string get_time_string(const std::string &fmt, std::chrono::system_clock::time_point tp);
 
+/* Spoof: trace_tool.py add FILE W /path "content" */
 extern void write_sysfs(const std::string &filename, const std::string &value);
+/* Spoof: trace_tool.py add FILE R /path "value\n"  (all read_sysfs* share the R record) */
 extern int read_sysfs(const std::string &filename, bool *ok = nullptr);
+/* Spoof: trace_tool.py add FILE R /path "12345\n" */
 extern uint64_t read_sysfs_uint64(const std::string &filename, bool *ok = nullptr);
+/* Spoof: trace_tool.py add FILE R /path "value\n" */
 extern std::string read_sysfs_string(const std::string &filename);
+/* Spoof: trace_tool.py add FILE R /path "content\n"   (or N for a read miss) */
 extern std::string read_file_content(const std::string &filename);
+/* Spoof: trace_tool.py add FILE L /link/path /target  (omit target for broken link) */
 extern std::string pt_readlink(const std::string &path);
+/* Spoof: trace_tool.py add FILE T sec usec   — each call pops one T entry (FIFO) */
 extern struct timeval pt_gettime(void);
+/* Spoof: trace_tool.py add FILE A /path 4 0   (mode: 4=R_OK; result: 0=ok, -1=fail) */
 extern int pt_access(const std::string &path, int mode);
 
 extern std::string format_watts(double W, unsigned int len);
@@ -222,10 +230,13 @@ inline std::string pt_json_array(const std::vector<T> &vec)
 #define JSON_END()        return _js + "\"_end\":0}"
 
 typedef void (*callback)(const std::string&);
+/* Spoof: trace_tool.py add FILE D /dir [entry …]   (omit entries for empty/missing) */
 extern void process_directory(const std::string &d_name, callback fn);
+/* Spoof: trace_tool.py add FILE D /dir [entry …] */
 extern std::vector<std::string> list_directory(const std::string &path);
 extern int utf_ok;
 extern std::string get_user_input(unsigned sz);
+/* Spoof: trace_tool.py add FILE M cpu hex-offset [hex-value]  (value defaults to 0) */
 extern int read_msr(int cpu, uint64_t offset, uint64_t *value);
 extern int write_msr(int cpu, uint64_t offset, uint64_t value);
 
