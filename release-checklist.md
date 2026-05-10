@@ -120,6 +120,14 @@ create a new section.  The final stable tag just renames the heading (e.g., `## 
       with the new version and a one-line summary
 - [ ] Summary of top user-visible enhancements and changes
       (new tunables, UI changes, other new features)
+- [ ] **New tunables**: users care about these most — enumerate explicitly.
+      Find additions with:
+      ```
+      git diff <prev-stable-tag>.. -- src/tuning/tuning.cpp | grep "^+.*add_sysfs_tunable"
+      ```
+      List each new tunable with its description, sysfs path, and suggested value.
+      Also check for wildcard-path tunables (paths containing `*`) which apply to
+      multiple devices at once.
 - [ ] Summary of new command-line options
 - [ ] **Short** summary of internal changes (no more than 3 lines)
 - [ ] **Thank external contributors**: run `git shortlog -sn <prev-stable-tag>..` and add a

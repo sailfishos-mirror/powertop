@@ -4,6 +4,30 @@
 
 ### User-visible enhancements and changes
 
+**New tunables**
+
+The following sysfs tunables have been added (sourced from the
+`clr-power-tweaks` curated list):
+
+| Tunable | sysfs path | Suggested value |
+|---|---|---|
+| VM dirty ratio | `/proc/sys/vm/dirty_ratio` | `50` |
+| Transparent hugepage scan sleep | `/sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs` | `30000` |
+| Framebuffer cursor blink | `/sys/devices/virtual/graphics/fbcon/cursor_blink` | `0` |
+| KSM sleep interval | `/sys/kernel/mm/ksm/sleep_millisecs` | `4000` |
+| KSM batch size | `/sys/kernel/mm/ksm/pages_to_scan` | `1000` |
+| Autogroup scheduling | `/proc/sys/kernel/sched_autogroup_enabled` | `0` |
+| Intel P-state minimum performance | `/sys/devices/system/cpu/intel_pstate/min_perf_pct` | `50` |
+| Network default qdisc | `/proc/sys/net/core/default_qdisc` | `fq` |
+| Intel ITMT (Turbo Boost Max 3.0) | `/proc/sys/kernel/sched_itmt_enabled` | `1` |
+| Intel energy performance bias | `/sys/devices/system/cpu/cpu*/power/energy_perf_bias` | `balance-performance` |
+| Intel energy performance preference | `/sys/devices/system/cpu/cpufreq/policy*/energy_performance_preference` | `balance_performance` |
+| CPU C1 demotion | `/sys/devices/system/cpu/cpuidle/c1_demotion` | `1` |
+
+Wildcard sysfs paths (e.g. `cpu*`) are now handled natively — PowerTOP
+applies the tunable to all matching sysfs files and reports Good only when
+all of them are already at the suggested value.
+
 **Display / UI**
 - Show "Preparing to take measurements" message during the initial
   one-second measurement so the screen is no longer blank at startup
