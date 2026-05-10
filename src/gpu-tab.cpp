@@ -43,20 +43,29 @@ static const char * const GPU_TAB_KEY = "GPU";
 
 static constexpr int BAR_WIDTH = 50;
 
+/* Color-pair IDs for the four-segment frequency bar. */
+static constexpr int GPU_BAR_FLOOR    = 10;  /* 0 → pol_min: guaranteed floor */
+static constexpr int GPU_BAR_ACTIVE   = 11;  /* pol_min → cur: currently active */
+static constexpr int GPU_BAR_HEADROOM = 12;  /* cur → pol_max: within-policy headroom */
+static constexpr int GPU_BAR_BEYOND   = 13;  /* pol_max → hw_max: beyond policy */
+
 /*
  * Draw a horizontal progress bar with scale labels and optional policy markers.
  *
  * Outputs up to four lines into win:
  *   1.  " <label>  <value_str>"
- *   2.  "  [bar: █ filled, ░ empty]"
- *   3.  "  <scale labels at multiples of label_interval>"
- *   4.  "  <marker carets (^) at marker_lo / marker_hi>"  (omitted if no markers)
+ *   2.  "  [bar]"
+ *   3.  "  <scale labels>"
+ *   4.  "  <marker caret '<' at marker_hi>"  (only when marker_lo is NAN and marker_hi is not)
  *
- * marker_lo / marker_hi: pass NAN to omit either marker.
- * color_filled / color_empty: ncurses COLOR_PAIR IDs (0 = default terminal color).
+ * When marker_lo is provided (not NAN) the bar uses four colour segments
+ * (guaranteed floor / active / headroom / beyond-policy) and the marker
+ * line is suppressed — the policy range is encoded directly in the bar.
+ * When marker_lo is NAN but marker_hi is not, a '<' caret is printed
+ * below the bar at marker_hi (used for the power TDP cap).
  *
- * If labels at label_interval would overlap (gap < ~6 chars), the interval is
- * doubled repeatedly until labels fit.
+ * color_filled / color_empty: ncurses COLOR_PAIR IDs used in the simple
+ * two-segment mode (marker_lo == NAN).  Pass 0 for default terminal color.
  */
 static void draw_progress_bar(WINDOW *win,
 			      const std::string &label,
@@ -76,26 +85,72 @@ static void draw_progress_bar(WINDOW *win,
 	/* Line 1: label + current value — two-space indent to align with bar */
 	wprintw(win, "  %s  %s\n", label.c_str(), value_str.c_str());
 
-	/* Line 2: bar */
-	const double clamped = std::clamp(value, scale_min, scale_max);
-	const int filled = std::clamp(
-		(int)std::round((clamped - scale_min) / range * bar_width),
-		0, bar_width);
+	/* Line 2: bar.
+	 * Four-segment colour mode (marker_lo is set):
+	 *   [scale_min, marker_lo)  █ bright-green  guaranteed floor
+	 *   [marker_lo,  value)     █ green          currently active
+	 *   [value,      pol_max)   ░ yellow         within-policy headroom
+	 *   [pol_max,    scale_max] ░ dim            beyond policy (case 2 only)
+	 * When pol_max == scale_max (case 1) the headroom segment runs to the
+	 * end and there is no beyond-policy segment.
+	 * Simple two-segment mode (marker_lo is NAN): solid █ / light ░. */
+	{
+		const double clamped = std::clamp(value, scale_min, scale_max);
+		wprintw(win, "  ");
 
-	wprintw(win, "  ");
-	if (color_filled)
-		wattron(win, COLOR_PAIR(color_filled));
-	for (int i = 0; i < filled; i++)
-		wprintw(win, "█");
-	if (color_filled)
-		wattroff(win, COLOR_PAIR(color_filled));
-	if (color_empty)
-		wattron(win, COLOR_PAIR(color_empty));
-	for (int i = filled; i < bar_width; i++)
-		wprintw(win, "░");
-	if (color_empty)
-		wattroff(win, COLOR_PAIR(color_empty));
-	wprintw(win, "\n");
+		if (!std::isnan(marker_lo)) {
+			const int pos_min = std::clamp(
+				(int)std::round((marker_lo - scale_min) / range * bar_width),
+				0, bar_width);
+			const int pos_cur = std::clamp(
+				(int)std::round((clamped - scale_min) / range * bar_width),
+				0, bar_width);
+			const bool has_beyond = !std::isnan(marker_hi) &&
+						std::abs(marker_hi - scale_max) > 0.5;
+			const int pos_max = has_beyond
+				? std::clamp(
+					(int)std::round((marker_hi - scale_min) / range * bar_width),
+					0, bar_width)
+				: bar_width;
+
+			for (int i = 0; i < bar_width; i++) {
+				if (i < pos_min) {
+					wattron(win, COLOR_PAIR(GPU_BAR_FLOOR) | A_BOLD);
+					wprintw(win, "█");
+					wattroff(win, COLOR_PAIR(GPU_BAR_FLOOR) | A_BOLD);
+				} else if (i < pos_cur) {
+					wattron(win, COLOR_PAIR(GPU_BAR_ACTIVE));
+					wprintw(win, "█");
+					wattroff(win, COLOR_PAIR(GPU_BAR_ACTIVE));
+				} else if (i < pos_max) {
+					wattron(win, COLOR_PAIR(GPU_BAR_HEADROOM));
+					wprintw(win, "░");
+					wattroff(win, COLOR_PAIR(GPU_BAR_HEADROOM));
+				} else {
+					wattron(win, COLOR_PAIR(GPU_BAR_BEYOND) | A_DIM);
+					wprintw(win, "░");
+					wattroff(win, COLOR_PAIR(GPU_BAR_BEYOND) | A_DIM);
+				}
+			}
+		} else {
+			const int filled = std::clamp(
+				(int)std::round((clamped - scale_min) / range * bar_width),
+				0, bar_width);
+			if (color_filled)
+				wattron(win, COLOR_PAIR(color_filled));
+			for (int i = 0; i < filled; i++)
+				wprintw(win, "█");
+			if (color_filled)
+				wattroff(win, COLOR_PAIR(color_filled));
+			if (color_empty)
+				wattron(win, COLOR_PAIR(color_empty));
+			for (int i = filled; i < bar_width; i++)
+				wprintw(win, "░");
+			if (color_empty)
+				wattroff(win, COLOR_PAIR(color_empty));
+		}
+		wprintw(win, "\n");
+	}
 
 	/* Line 3: scale labels.
 	 * Double the interval until adjacent labels are at least 6 chars apart. */
@@ -137,27 +192,15 @@ static void draw_progress_bar(WINDOW *win,
 		wprintw(win, "%s\n", scale_line.c_str());
 	}
 
-	/* Line 4: range markers — only emitted when at least one is set.
-	 * '>' marks the low end (range opens rightward),
-	 * '<' marks the high end (range closes leftward). */
-	{
+	/* Line 4: marker caret — only when marker_lo is NAN and marker_hi is set.
+	 * (When marker_lo is set the bar's colour segments carry that information.) */
+	if (std::isnan(marker_lo) && !std::isnan(marker_hi)) {
 		std::string marker_line(bar_width + 2, ' ');
-		bool any = false;
-
-		auto place = [&](double mv, char ch) {
-			if (std::isnan(mv))
-				return;
-			const int pos = std::clamp(
-				(int)std::round((mv - scale_min) / range * bar_width),
-				0, bar_width - 1);
-			marker_line[pos + 2] = ch;
-			any = true;
-		};
-		place(marker_lo, '>');
-		place(marker_hi, '<');
-
-		if (any)
-			wprintw(win, "%s\n", marker_line.c_str());
+		const int pos = std::clamp(
+			(int)std::round((marker_hi - scale_min) / range * bar_width),
+			0, bar_width - 1);
+		marker_line[pos + 2] = '<';
+		wprintw(win, "%s\n", marker_line.c_str());
 	}
 
 	wprintw(win, "\n");
@@ -548,6 +591,12 @@ void initialize_gpu_tab(void)
 
 	if (!found_xe && !found_i915)
 		return;
+
+	/* One-time colour-pair setup for the frequency bar segments. */
+	init_pair(GPU_BAR_FLOOR,    COLOR_GREEN,  -1);
+	init_pair(GPU_BAR_ACTIVE,   COLOR_GREEN,  -1);
+	init_pair(GPU_BAR_HEADROOM, COLOR_YELLOW, -1);
+	init_pair(GPU_BAR_BEYOND,   -1,           -1);
 
 	const char *translated = found_xe ? _("Intel Xe GPU") : _("Intel GPU");
 
