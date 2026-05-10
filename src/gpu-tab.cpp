@@ -70,8 +70,8 @@ static void draw_progress_bar(WINDOW *win,
 	if (range <= 0.0)
 		return;
 
-	/* Line 1: label + current value */
-	wprintw(win, " %s  %s\n", label.c_str(), value_str.c_str());
+	/* Line 1: label + current value — two-space indent to align with bar */
+	wprintw(win, "  %s  %s\n", label.c_str(), value_str.c_str());
 
 	/* Line 2: bar */
 	const double clamped = std::clamp(value, scale_min, scale_max);
@@ -184,12 +184,14 @@ static void show_frequency_section(WINDOW *win)
 			const std::string label =
 				std::format("{} {}", tile, gt);
 			const std::string value_str =
-				std::format("{} MHz", (int)cur);
+				hz_to_human((unsigned long)cur * 1000UL);
+			const int bar_width =
+				std::min(COLS - 4, 180);
 
 			draw_progress_bar(win, label, cur,
 					  hw_min, hw_max,
 					  pol_min, pol_max,
-					  value_str, 500.0);
+					  value_str, 500.0, bar_width);
 		}
 	}
 }
