@@ -105,6 +105,13 @@ static void draw_progress_bar(WINDOW *win,
 			label_interval *= 2.0;
 
 		std::string scale_line(bar_width + 2, ' ');
+
+		/* Reserve space for the max label, right-aligned at the end. */
+		const std::string max_str =
+			std::to_string((int)std::round(scale_max));
+		const int max_start =
+			(int)scale_line.size() - (int)max_str.size();
+
 		const double first =
 			std::ceil(scale_min / label_interval) * label_interval;
 		for (double v = first;
@@ -116,10 +123,17 @@ static void draw_progress_bar(WINDOW *win,
 			const std::string num =
 				std::to_string((int)std::round(v));
 			const int write_pos = pos + 2; /* +2 for leading "  " */
+			/* Skip labels that would overlap the max-value label. */
+			if (write_pos + (int)num.size() > max_start)
+				continue;
 			if (write_pos + (int)num.size() <=
 			    (int)scale_line.size())
 				scale_line.replace(write_pos, num.size(), num);
 		}
+
+		/* Always show the maximum value, right-aligned. */
+		scale_line.replace(max_start, max_str.size(), max_str);
+
 		wprintw(win, "%s\n", scale_line.c_str());
 	}
 
