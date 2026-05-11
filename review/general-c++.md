@@ -7,13 +7,13 @@ PowerTOP uses the C++ 20 language standard
 ## Language standard
 
 - [ ] Use only constructs in the C++ 20 standard that are non-deprecated or
-    obsoloted.
+    obsoleted.
 
 - [ ] Undefined behavior (UB) language constructs are a violation of coding
     style
 
-- [ ] Any use fixed sized buffers (example: char foo[128]) must be provably
-    correct to not overflow the buffer
+- [ ] Any use of fixed sized buffers (example: char foo[128]) must be
+    **provably** correct to not overflow the buffer in any condition
 
 - [ ] "using namespace std;" is a deprecated construct
 

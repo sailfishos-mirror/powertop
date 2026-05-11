@@ -358,3 +358,24 @@ every intercepted call to stderr with `[pttest]` prefix (path, type, result).
 No recompile required — detected via env var in the constructor.
 Use this to diagnose which records are missing from a fixture.
 
+# Systematic code review workflow (file-by-file from a git tag)
+
+To review all changes since a tag:
+1. `git diff --name-only v2.16-rc2 HEAD` — get changed file list
+2. Load into SQL `review_queue` table with status 'pending'
+3. Process one file at a time using `git diff v2.16-rc2 -- <file>` + `view` of current file
+4. Immediately fix style violations; propose structural issues to user as choices
+
+Style violations to fix immediately (no user confirmation needed):
+- C-style casts: `(T)x` → `static_cast<T>(x)`
+- Ternary operators: replace all with if-statements (style.md §1.4)
+- `std::format(_("..."))` → `pt_format(_("..."))` (pt_format rule — translated strings need pt_format)
+- Spacing: `!=0)` → `!= 0)`, `){` → `) {`
+
+Structural issues to propose to user (require confirmation):
+- Dead conditions (always-true/false guards)
+- Unused variables or accumulators
+- Unsigned integer wraparound risk before floating-point cast
+
+After all files done: run `ninja -C build_tf test` (60/60), then commit with detailed message.
+
