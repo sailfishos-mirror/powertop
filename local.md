@@ -24,6 +24,12 @@ working on the testsuite.
 5. Review the change against the intent and the rultes in `review/review.md`
 6. Make a git commit with a descriptive commit message 
 
+**Build verification:** never pipe `ninja` through `grep` to filter for
+errors/warnings. `grep` returns exit code 1 when it finds no matches,
+making a clean build look like a failure. Run ninja directly and read its
+full output: `ninja -C <build_dir>`. For a clean-room check use
+`meson setup --wipe /tmp/pt_check && ninja -C /tmp/pt_check` (no grep).
+
 # [[maybe_unused]] placement rule
 
 `[[maybe_unused]]` must appear **before** the full parameter declaration,
@@ -225,6 +231,9 @@ See `release-checklist.md` for the full pre-release checklist. Key points:
 - Release notes go in `doc/relnotes.md`; README.md has a "Recent releases" table to update
 - Version is in `meson.build` `version:` field
 - Tagging requires explicit user confirmation after all checks pass
+- **Never pipe ninja through grep** in the checklist or anywhere else — this is now documented in release-checklist.md as well
+- POTFILES.in audit: `comm -23 <(grep -rl '\b_(\|N_(' --include="*.cpp" --include="*.h" src/ | sort) <(grep -v '^#\|^$' po/POTFILES.in | sort)` — run this at every release; new source files often have translatable strings that are missing
+- msgmerge only runs for languages listed in `po/LINGUAS` (11 active languages); the other .po files are not built but still exist
 
 # Coverage baseline (as of commit 8906999)
 

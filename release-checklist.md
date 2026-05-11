@@ -42,9 +42,6 @@ checks below to ensure a smooth experience for our users.
         msgmerge --update --backup=none po/${lang}.po po/powertop.pot
       done < po/LINGUAS
       ```
-- [ ] For any fuzzy entries where only printf-style specifiers changed
-      (`%s`/`%d`/`%i` → `{}`), apply the replacement mechanically and
-      remove the fuzzy flag.
 
 ## Build checks (all must compile with zero errors and zero warnings)
 
@@ -72,6 +69,9 @@ no matches, making a clean build falsely appear to fail.
 - [ ] Debug build:    `ninja -C build_debug test`
 - [ ] ASAN build:     `ninja -C build_acov test`
 - [ ] gcov build:     `ninja -C build_cov test`
+
+The ASAN build will have fewer total tests as the valgrind tests do not run
+in that build; this is expected.
 
 ## Memory leak check
 
@@ -131,7 +131,7 @@ create a new section.  The final stable tag just renames the heading (e.g., `## 
       Also check for wildcard-path tunables (paths containing `*`) which apply to
       multiple devices at once.
 - [ ] Summary of new command-line options
-- [ ] **Short** summary of internal changes (no more than 3 lines)
+- [ ] **Short** summary of internal changes (no more than 3 lines for all changes combined)
 - [ ] **Thank external contributors**: run `git shortlog -sn <prev-stable-tag>..` and add a
       "Thanks" section listing anyone who is not the project maintainer (Arjan van de Ven).
       Use `git log --format="%an <%ae>" <prev-stable-tag>.. | sort -u` to get full name+email.
