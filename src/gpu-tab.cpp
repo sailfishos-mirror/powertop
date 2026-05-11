@@ -613,21 +613,16 @@ void report_gpu_stats(void)
  * name, and register it between "Frequency stats" and "Device stats". */
 void initialize_gpu_tab(void)
 {
-	bool found_xe   = false;
-	bool found_i915 = false;
+	bool found_xe = false;
 
 	for (auto *d : all_devices) {
 		if (dynamic_cast<xegpu *>(d)) {
 			found_xe = true;
 			break;
 		}
-		if (dynamic_cast<i915gpu *>(d)) {
-			found_i915 = true;
-			break;
-		}
 	}
 
-	if (!found_xe && !found_i915)
+	if (!found_xe)
 		return;
 
 	/* One-time colour-pair setup for the frequency bar segments. */
@@ -638,9 +633,7 @@ void initialize_gpu_tab(void)
 	init_pair(GPU_BAR_BUSY,     COLOR_RED,    -1);
 	init_pair(GPU_BAR_IDLE,     COLOR_GREEN,  -1);
 
-	const char *translated = _("Intel GPU");
-	if (found_xe)
-		translated = _("Intel Xe GPU");
+	const char *translated = _("Intel Xe GPU");
 
 	auto *w = new gpu_tab_window();
 	create_tab(GPU_TAB_KEY, translated, w);
