@@ -610,19 +610,23 @@ void report_gpu_stats(void)
 /* ------------------------------------------------------------------ */
 
 /* Detect which GPU is present, create the tab with the appropriate translated
- * name, and register it between "Frequency stats" and "Device stats". */
+ * name, and register it between "Frequency stats" and "Device stats".
+ * Only show the tab when xe hwmon is present (power_channels non-empty),
+ * which confirms xe is actually managing the GPU — not merely loaded alongside
+ * an active i915 driver. */
 void initialize_gpu_tab(void)
 {
-	bool found_xe = false;
+	xegpu *gpu = nullptr;
 
 	for (auto *d : all_devices) {
-		if (dynamic_cast<xegpu *>(d)) {
-			found_xe = true;
+		auto *x = dynamic_cast<xegpu *>(d);
+		if (x && !x->power_channels.empty()) {
+			gpu = x;
 			break;
 		}
 	}
 
-	if (!found_xe)
+	if (!gpu)
 		return;
 
 	/* One-time colour-pair setup for the frequency bar segments. */
