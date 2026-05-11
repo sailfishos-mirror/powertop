@@ -61,6 +61,5 @@ public:
 	void add_summary_list(const std::vector<std::string> &list) override;
 	void add_table(const std::vector<std::string> &system_data, const struct table_attributes *tb_attr) override;private:
 	std::string escape_string(const std::string &str) override;
-	bool csv_need_quotes = false;
 };
 
