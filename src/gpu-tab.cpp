@@ -78,7 +78,9 @@ static void draw_progress_bar(WINDOW *win,
 			      double label_interval,
 			      int bar_width = BAR_WIDTH,
 			      int color_filled = 0,
-			      int color_empty = 0)
+			      int color_empty = 0,
+			      int attr_filled = 0,
+			      int attr_empty = 0)
 {
 	const double range = scale_max - scale_min;
 	if (range <= 0.0)
@@ -139,17 +141,17 @@ static void draw_progress_bar(WINDOW *win,
 				(int)std::round((clamped - scale_min) / range * bar_width),
 				0, bar_width);
 			if (color_filled)
-				wattron(win, COLOR_PAIR(color_filled));
+				wattron(win, COLOR_PAIR(color_filled) | attr_filled);
 			for (int i = 0; i < filled; i++)
 				wprintw(win, "█");
 			if (color_filled)
-				wattroff(win, COLOR_PAIR(color_filled));
+				wattroff(win, COLOR_PAIR(color_filled) | attr_filled);
 			if (color_empty)
-				wattron(win, COLOR_PAIR(color_empty));
+				wattron(win, COLOR_PAIR(color_empty) | attr_empty);
 			for (int i = filled; i < bar_width; i++)
 				wprintw(win, "░");
 			if (color_empty)
-				wattroff(win, COLOR_PAIR(color_empty));
+				wattroff(win, COLOR_PAIR(color_empty) | attr_empty);
 		}
 		wprintw(win, "\n");
 	}
@@ -349,7 +351,7 @@ static void show_idle_section(WINDOW *win)
 		draw_progress_bar(win, xc->gt_labels[i], pct,
 				  0.0, 100.0, NAN, NAN,
 				  value_str, 25.0, bar_width,
-				  GPU_BAR_BUSY, GPU_BAR_IDLE);
+				  GPU_BAR_BUSY, GPU_BAR_IDLE, 0, A_BOLD);
 	}
 }
 
