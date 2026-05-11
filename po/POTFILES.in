@@ -10,6 +10,7 @@ src/cpu/cpu_rapl_device.h
 src/cpu/intel_cpus.cpp
 src/cpu/intel_gpu.cpp
 src/cpu/rapl/rapl_interface.cpp
+src/cpu/xe_gpu.cpp
 src/devices/ahci.cpp
 src/devices/alsa.cpp
 src/devices/backlight.h
@@ -24,8 +25,11 @@ src/devices/runtime_pm.cpp
 src/devices/thinkpad-fan.h
 src/devices/thinkpad-light.h
 src/devices/usb.cpp
+src/devices/xe-gpu.cpp
+src/devices/xe-gpu.h
 src/devlist.cpp
 src/display.cpp
+src/gpu-tab.cpp
 src/lib.cpp
 src/lib.h
 src/main.cpp

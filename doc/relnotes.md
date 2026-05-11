@@ -1,6 +1,6 @@
 # PowerTOP Release Notes
 
-## v2.16-rc2
+## v2.16-rc3
 
 ### User-visible enhancements and changes
 
@@ -22,13 +22,23 @@ The following sysfs tunables have been added (sourced from the
 | Intel ITMT (Turbo Boost Max 3.0) | `/proc/sys/kernel/sched_itmt_enabled` | `1` |
 | Intel energy performance bias | `/sys/devices/system/cpu/cpu*/power/energy_perf_bias` | `balance-performance` |
 | Intel energy performance preference | `/sys/devices/system/cpu/cpufreq/policy*/energy_performance_preference` | `balance_performance` |
-| CPU C1 demotion | `/sys/devices/system/cpu/cpuidle/c1_demotion` | `1` |
+| Intel Xe GPU power profile | `/sys/class/drm/card*/device/tile*/gt*/freq0/power_profile` | `power_saving` |
+| Enable Audio codec power management | `/sys/module/snd_hda_intel/parameters/power_save` | `1` |
 
 Wildcard sysfs paths (e.g. `cpu*`) are now handled natively — PowerTOP
 applies the tunable to all matching sysfs files and reports Good only when
 all of them are already at the suggested value.
 
 **Display / UI**
+- GPU tab (Intel Xe): progress bar scale now always shows the true maximum
+  value right-aligned, suppressing any overlapping tick label
+- GPU tab: frequency bars now start at 0 instead of the hardware minimum,
+  giving a correct visual baseline
+- GPU tab: replaced `>` / `<` policy markers with a four-segment colour bar
+  (bold green = floor, green = active, yellow = headroom, dim = beyond policy)
+- GPU tab: C0/C6 idle bars merged into a single two-colour bar
+  (red = busy/C0, bright green = idle/C6) since C0 is derived from C6
+- GPU tab: active xe power profile displayed on the Power Overview section
 - Show "Preparing to take measurements" message during the initial
   one-second measurement so the screen is no longer blank at startup
 - Vertical scrollbar added to tab content panes
