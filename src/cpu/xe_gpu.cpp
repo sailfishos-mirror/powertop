@@ -31,11 +31,6 @@
 #include "../display.h"
 
 /*
- * Collect the sysfs idle_residency_ms paths for every GT on every tile of
- * every Xe DRM card present in the system.  Returns an empty vector if no
- * Xe card is found.
- */
-/*
  * Collect the sysfs idle_residency_ms paths and human labels for every GT
  * on every tile of every Xe DRM card present in the system.
  */
@@ -142,10 +137,8 @@ void xe_core::measurement_end(void)
 		1e6 * (after.tv_sec  - before.tv_sec)
 		    + (after.tv_usec - before.tv_usec);
 
-	uint64_t total_idle_before = 0;
-	uint64_t total_idle_after  = 0;
+	uint64_t total_idle_after = 0;
 	for (size_t i = 0; i < gt_idle_paths.size(); ++i) {
-		total_idle_before += idle_before[i];
 		idle_after[i] =
 			read_sysfs_uint64(gt_idle_paths[i], nullptr);
 		total_idle_after += idle_after[i];
@@ -153,8 +146,10 @@ void xe_core::measurement_end(void)
 		if (time_delta >= 1.0) {
 			/* time_delta is in µs; idle delta is in ms */
 			const double ratio = 100.0 / (time_delta / 1000.0);
-			const double idle_delta = static_cast<double>(
-				idle_after[i] - idle_before[i]);
+			double idle_delta = 0.0;
+			if (idle_after[i] >= idle_before[i])
+				idle_delta = static_cast<double>(
+					idle_after[i] - idle_before[i]);
 			per_gt_busy_pct[i] =
 				std::max(0.0, std::min(100.0,
 					100.0 - ratio * idle_delta));
@@ -187,16 +182,18 @@ std::string xe_core::fill_cstate_line(int line_nr,
 	}
 
 	const double ratio = 100000.0 / time_delta; /* % per ms */
+	double idle_ms = 0.0;
+	if (total_idle_after >= total_idle_before)
+		idle_ms = static_cast<double>(
+			total_idle_after - total_idle_before);
 	double d = -1.0;
 
 	switch (line_nr) {
 	case 0: /* GT-C0: active */
-		d = 100.0 - ratio * static_cast<double>(
-			total_idle_after - total_idle_before);
+		d = 100.0 - ratio * idle_ms;
 		break;
 	case 1: /* GT-C6: idle */
-		d = ratio * static_cast<double>(
-			total_idle_after - total_idle_before);
+		d = ratio * idle_ms;
 		break;
 	default:
 		return "";
@@ -219,10 +216,10 @@ std::string xe_core::fill_pstate_name([[maybe_unused]] int line_nr)
 void xe_core::collect_json_fields(std::string &_js)
 {
 	abstract_cpu::collect_json_fields(_js);
-	JSON_KV("before_sec",  (long)before.tv_sec);
-	JSON_KV("before_usec", (long)before.tv_usec);
-	JSON_KV("after_sec",   (long)after.tv_sec);
-	JSON_KV("after_usec",  (long)after.tv_usec);
+	JSON_KV("before_sec",  static_cast<long>(before.tv_sec));
+	JSON_KV("before_usec", static_cast<long>(before.tv_usec));
+	JSON_KV("after_sec",   static_cast<long>(after.tv_sec));
+	JSON_KV("after_usec",  static_cast<long>(after.tv_usec));
 	JSON_FIELD(gt_idle_paths);
 	JSON_FIELD(idle_before);
 	JSON_FIELD(idle_after);

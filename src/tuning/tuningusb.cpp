@@ -100,7 +100,7 @@ static void add_usb_callback(const std::string &d_name)
 		return;
 
 	filename = std::format("/sys/bus/usb/devices/{}/power/active_duration", d_name);
-	if (pt_access(filename, R_OK)!=0)
+	if (pt_access(filename, R_OK) != 0)
 		return;
 
 	/* every interface of this device should support autosuspend */

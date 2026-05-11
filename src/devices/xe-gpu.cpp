@@ -93,7 +93,7 @@ xegpu::xegpu()
 		if (pt_access(crit_path, R_OK) == 0) {
 			const uint64_t crit_uw =
 				read_sysfs_uint64(crit_path, nullptr);
-			ch.tdp_cap_watts = (double)crit_uw / 1e6;
+			ch.tdp_cap_watts = static_cast<double>(crit_uw) / 1e6;
 		}
 
 		channel_track track;
@@ -102,7 +102,7 @@ xegpu::xegpu()
 		if (pt_access(energy_path, R_OK) == 0) {
 			track.energy_path = energy_path;
 			track.last_energy =
-				(double)read_sysfs_uint64(energy_path, nullptr);
+				static_cast<double>(read_sysfs_uint64(energy_path, nullptr));
 			track.last_time   = pt_gettime();
 		}
 
@@ -148,7 +148,7 @@ void xegpu::end_measurement(void)
 
 		/* energy*_input is in micro-joules */
 		const double energy =
-			(double)read_sysfs_uint64(tr.energy_path, nullptr);
+			static_cast<double>(read_sysfs_uint64(tr.energy_path, nullptr));
 		ch.current_watts = (energy - tr.last_energy) / 1e6 / delta;
 		tr.last_energy   = energy;
 		tr.last_time     = now;
@@ -232,7 +232,7 @@ static void create_xe_fans(void)
 				if (pt_access(fan_path, R_OK) != 0)
 					break;
 				const std::string label =
-					std::format(_("Xe GPU Fan {}"), n);
+					pt_format(_("Xe GPU Fan {}"), n);
 				all_devices.push_back(
 					new xe_fan_device(fan_path, label));
 			}

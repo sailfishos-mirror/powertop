@@ -104,18 +104,18 @@ static void draw_progress_bar(WINDOW *win,
 
 		if (!std::isnan(marker_lo)) {
 			const int pos_min = std::clamp(
-				(int)std::round((marker_lo - scale_min) / range * bar_width),
+				static_cast<int>(std::round((marker_lo - scale_min) / range * bar_width)),
 				0, bar_width);
 			const int pos_cur = std::clamp(
-				(int)std::round((clamped - scale_min) / range * bar_width),
+				static_cast<int>(std::round((clamped - scale_min) / range * bar_width)),
 				0, bar_width);
 			const bool has_beyond = !std::isnan(marker_hi) &&
 						std::abs(marker_hi - scale_max) > 0.5;
-			const int pos_max = has_beyond
-				? std::clamp(
-					(int)std::round((marker_hi - scale_min) / range * bar_width),
-					0, bar_width)
-				: bar_width;
+			int pos_max = bar_width;
+			if (has_beyond)
+				pos_max = std::clamp(
+					static_cast<int>(std::round((marker_hi - scale_min) / range * bar_width)),
+					0, bar_width);
 
 			for (int i = 0; i < bar_width; i++) {
 				if (i < pos_min) {
@@ -138,7 +138,7 @@ static void draw_progress_bar(WINDOW *win,
 			}
 		} else {
 			const int filled = std::clamp(
-				(int)std::round((clamped - scale_min) / range * bar_width),
+				static_cast<int>(std::round((clamped - scale_min) / range * bar_width)),
 				0, bar_width);
 			if (color_filled)
 				wattron(win, COLOR_PAIR(color_filled) | attr_filled);
@@ -167,9 +167,9 @@ static void draw_progress_bar(WINDOW *win,
 
 		/* Reserve space for the max label, right-aligned at the end. */
 		const std::string max_str =
-			std::to_string((int)std::round(scale_max));
+			std::to_string(static_cast<int>(std::round(scale_max)));
 		const int max_start =
-			(int)scale_line.size() - (int)max_str.size();
+			static_cast<int>(scale_line.size()) - static_cast<int>(max_str.size());
 
 		const double first =
 			std::ceil(scale_min / label_interval) * label_interval;
@@ -177,16 +177,16 @@ static void draw_progress_bar(WINDOW *win,
 		     v <= scale_max + label_interval * 0.01;
 		     v += label_interval) {
 			const int pos = std::clamp(
-				(int)std::round((v - scale_min) / range * bar_width),
+				static_cast<int>(std::round((v - scale_min) / range * bar_width)),
 				0, bar_width - 1);
 			const std::string num =
-				std::to_string((int)std::round(v));
+				std::to_string(static_cast<int>(std::round(v)));
 			const int write_pos = pos + 2; /* +2 for leading "  " */
 			/* Skip labels that would overlap the max-value label. */
-			if (write_pos + (int)num.size() > max_start)
+			if (write_pos + static_cast<int>(num.size()) > max_start)
 				continue;
-			if (write_pos + (int)num.size() <=
-			    (int)scale_line.size())
+			if (write_pos + static_cast<int>(num.size()) <=
+			    static_cast<int>(scale_line.size()))
 				scale_line.replace(write_pos, num.size(), num);
 		}
 
@@ -201,7 +201,7 @@ static void draw_progress_bar(WINDOW *win,
 	if (std::isnan(marker_lo) && !std::isnan(marker_hi)) {
 		std::string marker_line(bar_width + 2, ' ');
 		const int pos = std::clamp(
-			(int)std::round((marker_hi - scale_min) / range * bar_width),
+			static_cast<int>(std::round((marker_hi - scale_min) / range * bar_width)),
 			0, bar_width - 1);
 		marker_line[pos + 2] = '<';
 		wprintw(win, "%s\n", marker_line.c_str());
@@ -262,21 +262,21 @@ static void show_frequency_section(WINDOW *win)
 
 
 			const double hw_max =
-				(double)read_sysfs(freq + "/rp0_freq");
+				static_cast<double>(read_sysfs(freq + "/rp0_freq"));
 			if (hw_max <= 0.0)
 				continue;
 
 			const double cur =
-				(double)read_sysfs(freq + "/cur_freq");
+				static_cast<double>(read_sysfs(freq + "/cur_freq"));
 			const double pol_min =
-				(double)read_sysfs(freq + "/min_freq");
+				static_cast<double>(read_sysfs(freq + "/min_freq"));
 			const double pol_max =
-				(double)read_sysfs(freq + "/max_freq");
+				static_cast<double>(read_sysfs(freq + "/max_freq"));
 
 			const std::string label =
 				std::format("{} {}", tile, gt);
 			const std::string value_str =
-				hz_to_human((unsigned long)cur * 1000UL);
+				hz_to_human(static_cast<unsigned long>(cur) * 1000UL);
 			const int bar_width =
 				std::min(COLS - 4, 180);
 
@@ -317,7 +317,7 @@ static void show_fan_section(WINDOW *win)
 
 	for (auto *d : fans) {
 		const std::string value_str =
-			std::format("{} RPM", (int)d->utilization());
+			std::format("{} RPM", static_cast<int>(d->utilization()));
 
 		draw_progress_bar(win, d->human_name(), d->utilization(),
 				  0.0, max_rpm_seen,
@@ -372,7 +372,7 @@ static void show_power_section(WINDOW *win)
 	const std::string profile = xe_power_profile();
 	if (!profile.empty())
 		wprintw(win, "  %s\n",
-			std::format(_("Power profile: {}"), profile).c_str());
+			pt_format(_("Power profile: {}"), profile).c_str());
 	wprintw(win, "\n");
 
 	const int bar_width = std::min(COLS - 4, 180);
@@ -380,11 +380,12 @@ static void show_power_section(WINDOW *win)
 	for (const auto &ch : gpu->power_channels) {
 		if (ch.current_watts >= 0.0) {
 			/* We have a live measurement — draw a bar. */
-			const double scale_max =
-				ch.tdp_cap_watts > 0.0 ? ch.tdp_cap_watts
-				                        : std::max(ch.current_watts * 1.5, 10.0);
-			const double marker =
-				ch.tdp_cap_watts > 0.0 ? ch.tdp_cap_watts : NAN;
+			double scale_max = std::max(ch.current_watts * 1.5, 10.0);
+			if (ch.tdp_cap_watts > 0.0)
+				scale_max = ch.tdp_cap_watts;
+			double marker = NAN;
+			if (ch.tdp_cap_watts > 0.0)
+				marker = ch.tdp_cap_watts;
 
 			const std::string value_str =
 				std::format("{:.1f} W", ch.current_watts);
@@ -396,8 +397,8 @@ static void show_power_section(WINDOW *win)
 			/* TDP cap only — no energy counter on this hardware. */
 			wprintw(win, "  %s  %s\n\n",
 				ch.label.c_str(),
-				std::format(_("TDP cap: {:.0f} W"),
-					    ch.tdp_cap_watts).c_str());
+				pt_format(_("TDP cap: {:.0f} W"),
+					  ch.tdp_cap_watts).c_str());
 		}
 	}
 }
@@ -451,7 +452,7 @@ void report_gpu_stats(void)
 	if (gpu && !gpu->power_channels.empty()) {
 		report.add_title(&title_attr, __("Power"));
 
-		const int rows = (int)gpu->power_channels.size() + 1;
+		const int rows = static_cast<int>(gpu->power_channels.size()) + 1;
 		table_attributes tbl;
 		init_std_table_attr(&tbl, rows, 3);
 
@@ -463,12 +464,14 @@ void report_gpu_stats(void)
 		int idx = 3;
 		for (const auto &ch : gpu->power_channels) {
 			data[idx++] = ch.label;
-			data[idx++] = ch.current_watts >= 0.0
-				? std::format("{:.1f}", ch.current_watts)
-				: __("N/A");
-			data[idx++] = ch.tdp_cap_watts > 0.0
-				? std::format("{:.0f}", ch.tdp_cap_watts)
-				: __("N/A");
+			if (ch.current_watts >= 0.0)
+				data[idx++] = std::format("{:.1f}", ch.current_watts);
+			else
+				data[idx++] = __("N/A");
+			if (ch.tdp_cap_watts > 0.0)
+				data[idx++] = std::format("{:.0f}", ch.tdp_cap_watts);
+			else
+				data[idx++] = __("N/A");
 		}
 		report.add_table(data, &tbl);
 	}
@@ -492,15 +495,15 @@ void report_gpu_stats(void)
 					continue;
 				const std::string freq =
 					std::format("{}/{}/freq0", tile_path, gt);
-				const int hw_max = (int)read_sysfs(freq + "/rp0_freq");
+				const int hw_max = static_cast<int>(read_sysfs(freq + "/rp0_freq"));
 				if (hw_max <= 0)
 					continue;
 				freq_rows.push_back({
 					std::format("{} {}", tile, gt),
-					(int)read_sysfs(freq + "/cur_freq"),
-					(int)read_sysfs(freq + "/min_freq"),
-					(int)read_sysfs(freq + "/max_freq"),
-					(int)read_sysfs(freq + "/rpn_freq"),
+					static_cast<int>(read_sysfs(freq + "/cur_freq")),
+					static_cast<int>(read_sysfs(freq + "/min_freq")),
+					static_cast<int>(read_sysfs(freq + "/max_freq")),
+					static_cast<int>(read_sysfs(freq + "/rpn_freq")),
 					hw_max
 				});
 			}
@@ -509,7 +512,7 @@ void report_gpu_stats(void)
 		if (!freq_rows.empty()) {
 			report.add_title(&title_attr, __("Frequency (MHz)"));
 
-			const int rows = (int)freq_rows.size() + 1;
+			const int rows = static_cast<int>(freq_rows.size()) + 1;
 			table_attributes tbl;
 			init_std_table_attr(&tbl, rows, 6);
 
@@ -583,7 +586,7 @@ void report_gpu_stats(void)
 		if (!fans.empty()) {
 			report.add_title(&title_attr, __("Fan Speeds"));
 
-			const int rows = (int)fans.size() + 1;
+			const int rows = static_cast<int>(fans.size()) + 1;
 			table_attributes tbl;
 			init_std_table_attr(&tbl, rows, 2);
 
@@ -595,7 +598,7 @@ void report_gpu_stats(void)
 			for (auto *d : fans) {
 				data[idx++] = d->human_name();
 				data[idx++] = std::to_string(
-					(int)d->utilization());
+					static_cast<int>(d->utilization()));
 			}
 			report.add_table(data, &tbl);
 		}
@@ -635,7 +638,9 @@ void initialize_gpu_tab(void)
 	init_pair(GPU_BAR_BUSY,     COLOR_RED,    -1);
 	init_pair(GPU_BAR_IDLE,     COLOR_GREEN,  -1);
 
-	const char *translated = found_xe ? _("Intel Xe GPU") : _("Intel GPU");
+	const char *translated = _("Intel GPU");
+	if (found_xe)
+		translated = _("Intel Xe GPU");
 
 	auto *w = new gpu_tab_window();
 	create_tab(GPU_TAB_KEY, translated, w);

@@ -159,7 +159,7 @@ static void lower_backlight(void)
 static void find_scsi_link_callback(const std::string &d_name)
 {
 	const std::string filename = std::format("/sys/class/scsi_host/{}/link_power_management_policy", d_name);
-	if (pt_access(filename, R_OK)!=0)
+	if (pt_access(filename, R_OK) != 0)
 		return;
 
 	save_sysfs(filename);

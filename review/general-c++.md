@@ -30,3 +30,9 @@ PowerTOP uses the C++ 20 language standard
 ## General C++ coding rules
 
 - [ ] Use "const" when possible for method and function parameters
+
+- [ ] Use the RAII pattern for containers whenever possible
+
+- [ ] Follow industry best practies for C++ for any new code
+    flag any existing code as a "nit" if not covered already by other review
+    rules

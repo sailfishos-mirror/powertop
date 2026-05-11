@@ -116,7 +116,7 @@ static void test_toggle_from_bad_writes_target()
 	t.toggle();
 
 	auto& log = test_framework_manager::get().get_write_log();
-	PT_ASSERT_EQ((int)log.size(), 1);
+	PT_ASSERT_EQ(static_cast<int>(log.size()), 1);
 	PT_ASSERT_EQ(log[0].first,  PATH);
 	PT_ASSERT_EQ(log[0].second, std::string("50"));
 

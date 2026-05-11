@@ -76,7 +76,7 @@ void create_thinkpad_fan(void)
 
 	filename = "/sys/devices/platform/thinkpad_hwmon/fan1_input";
 
-	if (pt_access(filename, R_OK) !=0)
+	if (pt_access(filename, R_OK) != 0)
 		return;
 
 	register_parameter("thinkpad-fan", 10);

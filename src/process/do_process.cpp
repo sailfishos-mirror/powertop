@@ -647,7 +647,7 @@ void perf_process_bundle::handle_trace_point(void *trace, int cpu, uint64_t time
 		ret = tep_get_common_field_val(nullptr, event, "common_flags", &rec, &val, 0);
 		if (ret < 0)
 			return;
-		flags = (int)val;
+		flags = static_cast<int>(val);
 
 		consumer = current_consumer(cpu);
 		if ((flags & TRACE_FLAG_HARDIRQ) || (flags & TRACE_FLAG_SOFTIRQ))

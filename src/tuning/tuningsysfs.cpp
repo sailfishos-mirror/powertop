@@ -68,13 +68,6 @@ static std::vector<std::string> get_matching_files(const std::string& path) {
 	return files;
 }
 
-/*
- * Some kernel sysfs files use a "selected list" format:
- *   [current_value]  other  values
- * Extract the word inside the brackets when present; otherwise return the
- * content unchanged so plain single-value files work without special-casing.
- */
-
 sysfs_tunable::sysfs_tunable(const std::string &str, const std::string &_sysfs_path, const std::string &target_content) : tunable(str, 1.0, _("Good"), _("Bad"), _("Unknown"))
 {
 	sysfs_path = _sysfs_path;
@@ -167,8 +160,9 @@ int numeric_sysfs_tunable::good_bad(void)
 		double current = 0.0;
 		try { current = std::stod(content); } catch (...) { return TUNE_BAD; }
 
-		const bool good = higher_is_better ? (current >= target_double)
-		                                   : (current <= target_double);
+		bool good = (current <= target_double);
+		if (higher_is_better)
+			good = (current >= target_double);
 		if (!good) {
 			bad_value = content;
 			all_good = false;

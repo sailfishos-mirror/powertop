@@ -566,10 +566,10 @@ int read_msr(int cpu, uint64_t offset, uint64_t *value)
 
 	msr_path = std::format("/dev/cpu/{}/msr", cpu);
 
-	if (pt_access(msr_path, R_OK) != 0){
+	if (pt_access(msr_path, R_OK) != 0) {
 		msr_path = std::format("/dev/msr{}", cpu);
 
-		if (pt_access(msr_path, R_OK) != 0){
+		if (pt_access(msr_path, R_OK) != 0) {
 			fprintf(stderr,
 			 _("Model-specific registers (MSR)\
 			 not found (try enabling CONFIG_X86_MSR).\n"));
@@ -606,10 +606,10 @@ int write_msr(int cpu, uint64_t offset, uint64_t value)
 
 	msr_path = std::format("/dev/cpu/{}/msr", cpu);
 
-	if (pt_access(msr_path, R_OK) != 0){
+	if (pt_access(msr_path, R_OK) != 0) {
 		msr_path = std::format("/dev/msr{}", cpu);
 
-		if (pt_access(msr_path, R_OK) != 0){
+		if (pt_access(msr_path, R_OK) != 0) {
 			fprintf(stderr,
 			 _("Model-specific registers (MSR)\
 			 not found (try enabling CONFIG_X86_MSR).\n"));

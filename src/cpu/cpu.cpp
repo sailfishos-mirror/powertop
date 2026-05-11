@@ -245,8 +245,7 @@ static void handle_xe_gpu(void)
 	class abstract_cpu *package = system_level.children[0].get();
 
 	const unsigned int core_number = package->children.size();
-	if (package->children.size() <= core_number)
-		package->children.resize(core_number + 1);
+	package->children.resize(core_number + 1);
 
 	if (!package->children[core_number]) {
 		package->children[core_number] =
