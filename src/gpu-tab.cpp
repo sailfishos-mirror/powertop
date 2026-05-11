@@ -48,6 +48,8 @@ static constexpr int GPU_BAR_FLOOR    = 10;  /* 0 → pol_min: guaranteed floor 
 static constexpr int GPU_BAR_ACTIVE   = 11;  /* pol_min → cur: currently active */
 static constexpr int GPU_BAR_HEADROOM = 12;  /* cur → pol_max: within-policy headroom */
 static constexpr int GPU_BAR_BEYOND   = 13;  /* pol_max → hw_max: beyond policy */
+static constexpr int GPU_BAR_BUSY     = 14;  /* C0 / active portion of idle bar */
+static constexpr int GPU_BAR_IDLE     = 15;  /* C6 / idle portion of idle bar */
 
 /*
  * Draw a horizontal progress bar with scale labels and optional policy markers.
@@ -339,16 +341,15 @@ static void show_idle_section(WINDOW *win)
 		if (pct < 0.0)
 			continue; /* first measurement not yet complete */
 
-		const std::string c0_label = xc->gt_labels[i] + " C0";
-		draw_progress_bar(win, c0_label, pct,
-				  0.0, 100.0, NAN, NAN,
-				  std::format("{:.1f}%", pct), 25.0, bar_width);
-
+		/* C0 is computed as 100-C6; show both in one bar:
+		 * red (█) for the busy/C0 portion, green (░) for idle/C6. */
 		const double c6_pct = 100.0 - pct;
-		const std::string c6_label = xc->gt_labels[i] + " C6";
-		draw_progress_bar(win, c6_label, c6_pct,
+		const std::string value_str =
+			std::format("C0: {:.1f}%  C6: {:.1f}%", pct, c6_pct);
+		draw_progress_bar(win, xc->gt_labels[i], pct,
 				  0.0, 100.0, NAN, NAN,
-				  std::format("{:.1f}%", c6_pct), 25.0, bar_width);
+				  value_str, 25.0, bar_width,
+				  GPU_BAR_BUSY, GPU_BAR_IDLE);
 	}
 }
 
@@ -629,6 +630,8 @@ void initialize_gpu_tab(void)
 	init_pair(GPU_BAR_ACTIVE,   COLOR_GREEN,  -1);
 	init_pair(GPU_BAR_HEADROOM, COLOR_YELLOW, -1);
 	init_pair(GPU_BAR_BEYOND,   -1,           -1);
+	init_pair(GPU_BAR_BUSY,     COLOR_RED,    -1);
+	init_pair(GPU_BAR_IDLE,     COLOR_GREEN,  -1);
 
 	const char *translated = found_xe ? _("Intel Xe GPU") : _("Intel GPU");
 
