@@ -61,7 +61,9 @@ permissions) are not compiler warnings and can be ignored.
 - [ ] ASAN build:     `meson setup --wipe -Denable-tests=true -Db_coverage=true -Db_sanitize=address build_acov`
 - [ ] gcov build:     `meson setup --wipe -Denable-tests=true -Db_coverage=true build_cov`
 
-Check each with: `ninja -C <dir> 2>&1 | grep -E " error:| warning:"`
+Check each with: `ninja -C <dir>` and read the full output directly.
+**Do not pipe ninja through grep** — grep returns exit code 1 when it finds
+no matches, making a clean build falsely appear to fail.
 
 ## Tests (all five build types, all must pass with no failures)
 
