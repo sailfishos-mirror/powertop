@@ -247,6 +247,15 @@ std::string read_sysfs_string(const std::string &filename)
 	return content;
 }
 
+std::string extract_bracket_selection(const std::string &content)
+{
+	const size_t open  = content.find('[');
+	const size_t close = content.find(']');
+	if (open != std::string::npos && close != std::string::npos && close > open)
+		return content.substr(open + 1, close - open - 1);
+	return content;
+}
+
 std::string read_file_content(const std::string &filename)
 {
 	if (test_framework_manager::get().is_replaying()) {

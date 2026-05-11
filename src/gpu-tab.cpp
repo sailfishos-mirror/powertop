@@ -208,6 +208,33 @@ static void draw_progress_bar(WINDOW *win,
 
 /* ------------------------------------------------------------------ */
 
+/* Read the active xe power profile from the first GT found.
+ * The sysfs file uses kernel "selected list" format, e.g.:
+ *   [power_saving]  balanced  performance  */
+static std::string xe_power_profile(void)
+{
+	const std::string card = find_xe_card_path();
+	if (card.empty())
+		return {};
+
+	const std::string dev = card + "/device";
+	for (const auto &tile : list_directory(dev)) {
+		if (!tile.starts_with("tile"))
+			continue;
+		const std::string tile_path = std::format("{}/{}", dev, tile);
+		for (const auto &gt : list_directory(tile_path)) {
+			if (!gt.starts_with("gt"))
+				continue;
+			const std::string raw = read_sysfs_string(
+				std::format("{}/{}/freq0/power_profile",
+					    tile_path, gt));
+			if (!raw.empty())
+				return extract_bracket_selection(raw);
+		}
+	}
+	return {};
+}
+
 static void show_frequency_section(WINDOW *win)
 {
 	const std::string card = find_xe_card_path();
@@ -338,7 +365,12 @@ static void show_power_section(WINDOW *win)
 	if (!gpu || gpu->power_channels.empty())
 		return;
 
-	wprintw(win, "%s\n\n", _("Power Overview"));
+	wprintw(win, "%s\n", _("Power Overview"));
+	const std::string profile = xe_power_profile();
+	if (!profile.empty())
+		wprintw(win, "  %s\n",
+			std::format(_("Power profile: {}"), profile).c_str());
+	wprintw(win, "\n");
 
 	const int bar_width = std::min(COLS - 4, 180);
 

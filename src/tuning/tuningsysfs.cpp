@@ -74,14 +74,6 @@ static std::vector<std::string> get_matching_files(const std::string& path) {
  * Extract the word inside the brackets when present; otherwise return the
  * content unchanged so plain single-value files work without special-casing.
  */
-static std::string extract_bracket_selection(const std::string &content)
-{
-	const size_t open  = content.find('[');
-	const size_t close = content.find(']');
-	if (open != std::string::npos && close != std::string::npos && close > open)
-		return content.substr(open + 1, close - open - 1);
-	return content;
-}
 
 sysfs_tunable::sysfs_tunable(const std::string &str, const std::string &_sysfs_path, const std::string &target_content) : tunable(str, 1.0, _("Good"), _("Bad"), _("Unknown"))
 {

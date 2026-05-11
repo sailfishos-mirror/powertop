@@ -89,6 +89,13 @@ extern int read_sysfs(const std::string &filename, bool *ok = nullptr);
 extern uint64_t read_sysfs_uint64(const std::string &filename, bool *ok = nullptr);
 /* Spoof: trace_tool.py add FILE R /path "value\n" */
 extern std::string read_sysfs_string(const std::string &filename);
+/*
+ * Some kernel sysfs files use a "selected list" format:
+ *   [current_value]  other  values
+ * Extract the word inside the brackets when present; otherwise return the
+ * content unchanged so plain single-value files work without special-casing.
+ */
+extern std::string extract_bracket_selection(const std::string &content);
 /* Spoof: trace_tool.py add FILE R /path "content\n"   (or N for a read miss) */
 extern std::string read_file_content(const std::string &filename);
 /* Spoof: trace_tool.py add FILE L /link/path /target  (omit target for broken link) */
