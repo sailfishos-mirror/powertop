@@ -348,7 +348,7 @@ if valgrind.found() and get_option('b_sanitize') == 'none'
     '--show-leak-kinds=all',
     '--errors-for-leak-kinds=definite,indirect',
     '--error-exitcode=1',
-    '--suppressions=' + meson.source_root() / 'scripts/valgrind.supp',
+    '--suppressions=' + meson.project_source_root() / 'scripts/valgrind.supp',
   ]
   test('valgrind-html',
     valgrind,
@@ -372,7 +372,7 @@ if valgrind.found() and get_option('b_sanitize') == 'none'
     valgrind,
     args: valgrind_common_args + [
       powertop_exe.full_path(),
-      '--bypass-root-check', '--csv=' + meson.build_root() / 'valgrind-test.csv', '--time=1',
+      '--bypass-root-check', '--csv=' + meson.project_build_root() / 'valgrind-test.csv', '--time=1',
     ],
     timeout: 120,
     suite: 'valgrind',
@@ -381,7 +381,7 @@ if valgrind.found() and get_option('b_sanitize') == 'none'
     valgrind,
     args: valgrind_common_args + [
       powertop_exe.full_path(),
-      '--bypass-root-check', '--markdown=' + meson.build_root() / 'valgrind-test.md', '--time=1',
+      '--bypass-root-check', '--markdown=' + meson.project_build_root() / 'valgrind-test.md', '--time=1',
     ],
     timeout: 120,
     suite: 'valgrind',
