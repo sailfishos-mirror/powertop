@@ -81,6 +81,7 @@ static void init_tuning(void)
 	add_sysfs_tunable(_("Tuning for default qdisc"), "/proc/sys/net/core/default_qdisc", "fq");
 
 	/* Numeric sysfs tunables — alphabetical by description */
+	add_numeric_sysfs_tunable(_("AMD GPU panel power savings"), "/sys/class/drm/*/amdgpu/panel_power_savings", 2);
 	add_numeric_sysfs_tunable(_("Batch size for KSM"), "/sys/kernel/mm/ksm/pages_to_scan", 1000, false);
 	add_numeric_sysfs_tunable(_("Intel P-state minimum performance"), "/sys/devices/system/cpu/intel_pstate/min_perf_pct", 50);
 	add_numeric_sysfs_tunable(_("Tuning for scan sleep millisecs"), "/sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs", 30000);
