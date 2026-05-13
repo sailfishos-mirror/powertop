@@ -24,6 +24,7 @@
  */
 #include <format>
 #include <algorithm>
+#include <unistd.h>
 
 #include "intel_cpus.h"
 #include "../lib.h"
