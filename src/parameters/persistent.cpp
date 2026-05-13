@@ -73,6 +73,9 @@ void load_results(const std::string &filename)
 	const std::string pathname = get_param_directory(filename);
 	int bundle_saved = 0;
 
+	if (pathname.empty() || pt_access(pathname, R_OK) != 0)
+		return;
+
 	const std::string content = read_file_content(pathname);
 	if (content.empty()) {
 		fprintf(stderr, "%s %s\n", _("Cannot load from file"), pathname.c_str());
@@ -98,6 +101,7 @@ void load_results(const std::string &filename)
 		}
 
 		if (line.length() < 3) {
+			bundle_saved = 1;
 			const int overflow_index = 50 + (rand() % MAX_KEEP);
 			if (past_results.size() >= MAX_PARAM) {
 				delete past_results[overflow_index];
@@ -157,10 +161,12 @@ void load_parameters(const std::string &filename)
 	std::string line;
 	const std::string pathname = get_param_directory(filename);
 
+	if (pathname.empty() || pt_access(pathname, R_OK) != 0)
+		return;
+
 	const std::string content = read_file_content(pathname);
 	if (content.empty()) {
 		fprintf(stderr, "%s %s\n", _("Cannot load from file"), pathname.c_str());
-		fprintf(stderr, _("File will be loaded after taking minimum number of measurement(s) with battery only\n"));
 		return;
 	}
 
