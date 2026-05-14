@@ -48,6 +48,7 @@ inline std::string pt_format(std::string_view fmt, Args&&... args)
 #include <libintl.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 /* Include only for Automake builds */
 #ifdef HAVE_CONFIG_H

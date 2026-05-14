@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <format>
 #include <cstdlib>
+#include <unistd.h>
 #include "test_framework.h"
 
 test_framework_manager& test_framework_manager::get() {
@@ -203,11 +204,11 @@ void test_framework_manager::record_access(const std::string& path, int mode, in
 }
 
 static std::string access_mode_str(int mode) {
-	if (mode == 0) return "F_OK";
+	if (mode == F_OK) return "F_OK";
 	std::string s;
-	if (mode & 4) s += "R_OK|";
-	if (mode & 2) s += "W_OK|";
-	if (mode & 1) s += "X_OK|";
+	if (mode & R_OK) s += "R_OK|";
+	if (mode & W_OK) s += "W_OK|";
+	if (mode & X_OK) s += "X_OK|";
 	if (!s.empty()) s.pop_back();
 	return s;
 }
